@@ -1,7 +1,8 @@
 * TODOs
 
 - [ ] add better font: Deja Vu Sans Mono
-- [ ] add markdown-mode
+- [ ] add better markdown-mode
 - [ ] add sidebar
+- [ ] add sublimity
 
 
