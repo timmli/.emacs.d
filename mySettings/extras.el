@@ -3,7 +3,9 @@
 (when (>= emacs-major-version 24)
   (require 'package)
   (add-to-list 'package-archives
-	       '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+	       '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+  ;; (add-to-list 'package-archives
+	;;        '("melpa" . "http://melpa.org/packages/") t)
   (package-initialize))
 ;; list the packages you want
 (setq package-list '(auctex auto-complete counsel flycheck flx-ido smartparens monokai-theme ))
