@@ -8,7 +8,7 @@
 	       '("melpa" . "http://melpa.org/packages/") t)
   (package-initialize))
 ;; list the packages you want
-(setq package-list '(auctex auto-complete counsel flycheck flx-ido smartparens monokai-theme sr-speedbar ))
+(setq package-list '(auctex auto-complete auto-complete-auctex counsel flycheck flx-ido ido-grid-mode ido-vertical-mode smartparens monokai-theme sr-speedbar ))
 ;; fetch the list of packages available
 (unless package-archive-contents
   (package-refresh-contents))
@@ -27,6 +27,10 @@
 ;; disable ido faces to see flx highlights.
 (setq ido-enable-flex-matching t)
 (setq ido-use-faces nil)
+;; add vertical mode to ido
+(ido-vertical-mode 1)
+;; add grid mode
+(ido-grid-mode 1)
 
 ;; counsel adds fuzzy search to command completion 
 (require 'counsel)
@@ -41,8 +45,10 @@
 
 ;; auto-complete
 (require 'auto-complete)
-(auto-complete-mode 1)
-(ac-config-default)
+(require 'auto-complete-auctex)
+(global-auto-complete-mode 1)
+;; (ac-config-default)
+;; (add-to-list 'ac-modes 'latex-mode)     ; activate auto-complete for latex <modes (AUCTeX or Emacs' builtin one).
 
 ;; flycheck
 (require 'flycheck)
@@ -65,5 +71,7 @@
 (require 'sr-speedbar)
 (global-set-key (kbd "C-x C-k C-b") 'sr-speedbar-toggle)
 (setq sr-speedbar-right-side nil)
+;; disable linum for speedbar
+(add-hook 'speedbar-mode-hook '(lambda () (linum-mode 0)))
 
 ;;; extras.el ends here

@@ -24,6 +24,9 @@
 ;; apply syntax highlighting to all buffers
 (global-font-lock-mode t)
 
+;; highlight line of cursor
+(global-hl-line-mode t)
+
 ;; delete marked text on typing
 (delete-selection-mode t)
 
@@ -35,8 +38,8 @@
 (global-visual-line-mode t)
 
 ;; line numbers
-(linum-mode t)
-(setq linum-format " %4d ")
+(global-linum-mode t)
+(setq linum-format " %3d ")
 
 ;; shorten yes/no answers to y/n
 (fset 'yes-or-no-p 'y-or-n-p)
@@ -44,7 +47,21 @@
 ;; ido improves buffer switching experience
 (ido-mode 1)
 
+;; recent files
+(require 'recentf)
+(recentf-mode 1)
+; 50 files ought to be enough.
+(global-set-key (kbd "C-x C-r") 'ido-recentf-open)
+(setq recentf-max-saved-items 50)
+(defun ido-recentf-open ()
+  "Use `ido-completing-read' to \\[find-file] a recent file"
+  (interactive)
+  (if (find-file (ido-completing-read "Find recent file: " recentf-list))
+      (message "Opening file...")
+    (message "Aborting")))
 
+;; flyspell
+(setq ispell-program-name "")
 
 
 ;;==========================================================
@@ -57,7 +74,7 @@
                         (local-set-key (kbd "M-x") 'abort-recursive-edit)))
 
 ;; commenting
-(global-set-key "\C-c\C-c" 'comment-or-uncomment-region-or-line)
+(global-set-key (kbd "C-;") 'comment-or-uncomment-region-or-line)
 (defun comment-or-uncomment-region-or-line ()
   "Comments or uncomments the region or the current line if there's no active region."
   (interactive)
