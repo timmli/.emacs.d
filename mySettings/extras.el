@@ -2,13 +2,13 @@
 ;; package managing
 (when (>= emacs-major-version 24)
   (require 'package)
-  (add-to-list 'package-archives
-	       '("melpa-stable" . "http://stable.melpa.org/packages/") t)
   ;; (add-to-list 'package-archives
-	;;        '("melpa" . "http://melpa.org/packages/") t)
+	;;        '("melpa-stable" . "http://stable.melpa.org/packages/") t)
+  (add-to-list 'package-archives
+	       '("melpa" . "http://melpa.org/packages/") t)
   (package-initialize))
 ;; list the packages you want
-(setq package-list '(auctex auto-complete counsel flycheck flx-ido smartparens monokai-theme ))
+(setq package-list '(auctex auto-complete counsel flycheck flx-ido smartparens monokai-theme sr-speedbar ))
 ;; fetch the list of packages available
 (unless package-archive-contents
   (package-refresh-contents))
@@ -56,8 +56,14 @@
 (if (file-exists-p "~/.emacs.d/mySettings/extas-latex.el")
     (load-file "~/.emacs.d/mySettings/extras-latex.el"))
 
-;; history
+;; cursor position history
 (load-file "~/.emacs.d/mySettings/point-undo.el")
 (global-set-key [M-left] 'point-undo)
 (global-set-key [M-right] 'point-redo)
 
+;; sr-speedbar
+(require 'sr-speedbar)
+(global-set-key (kbd "C-x C-k C-b") 'sr-speedbar-toggle)
+(setq sr-speedbar-right-side nil)
+
+;;; extras.el ends here
