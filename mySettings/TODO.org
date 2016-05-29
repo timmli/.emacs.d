@@ -1,8 +1,8 @@
 * TODOs
 
-- [ ] add better font: Deja Vu Sans Mono
+- [X] add better font: Deja Vu Sans Mono
 - [ ] add better markdown-mode
-- [ ] add sidebar
+- [X] add sidebar
 - [ ] add sublimity
 - [ ] change key for commenting
 
