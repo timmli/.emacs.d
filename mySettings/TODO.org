@@ -4,5 +4,5 @@
 - [ ] add better markdown-mode
 - [ ] add sidebar
 - [ ] add sublimity
-
+- [ ] change key for commenting
 
