@@ -7,6 +7,9 @@
 ;; don't show startup message
 (setq inhibit-startup-message t)
 
+;; don't show toolbar
+(tool-bar-mode 0)
+
 ;; brackets
 (show-paren-mode 1)
 (setq show-paren-delay 0)
