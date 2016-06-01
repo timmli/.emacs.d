@@ -35,7 +35,7 @@
 
 ;; don't use tabs for indent; replace tabs with two spaces.
 (setq-default tab-width 2)
-(setq-default indent-tabs-mode nil)
+(setq-default indent-tabs-mode t)
 
 ;; soft-wrap lines
 (global-visual-line-mode t)
@@ -95,6 +95,14 @@
 (global-set-key (kbd "M-S-<right>") 'windmove-right)
 (global-set-key (kbd "M-S-<up>")    'windmove-up)
 (global-set-key (kbd "M-S-<down>")  'windmove-down)
+
+(defun cygwin-shell ()
+  "Run cygwin bash in shell mode."
+  (interactive)
+  (let ((explicit-shell-file-name "C:/cygwin/bin/bash"))
+    (call-interactively 'shell))
+	(setq explicit-bash-args '("-l")))
+	
 
 
 ;;; basics.el ends here

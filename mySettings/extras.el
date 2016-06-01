@@ -8,7 +8,7 @@
 	       '("melpa" . "http://melpa.org/packages/") t)
   (package-initialize))
 ;; list the packages you want
-(setq package-list '(auctex auto-complete auto-complete-auctex counsel flycheck flx-ido ido-grid-mode ido-vertical-mode smartparens smex monokai-theme sr-speedbar ))
+(setq package-list '(auctex auto-complete auto-complete-auctex counsel flycheck flx-ido ido-grid-mode ido-vertical-mode monokai-theme markdown-mode smartparens smex sr-speedbar ))
 ;; fetch the list of packages available
 (unless package-archive-contents
   (package-refresh-contents))
@@ -74,6 +74,14 @@
 (add-hook 'speedbar-mode-hook '(lambda () (linum-mode 0))) ; disable linum for speedbar
 (setq speedbar-show-unknown-files t)                       ; show all files
 (setq sr-speedbar-width 30)                                ; default width
+
+(defun my-markdown-mode-config ()
+	"settings for markdown mode"
+	(interactive)
+	(setq-default tab-width 4)
+	(setq-default indent-tabs-mode t))
+
+(add-hook 'markdown-mode 'my-markdown-mode-config)
 
 
 ;;; extras.el ends here
