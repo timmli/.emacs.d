@@ -8,7 +8,7 @@
 	       '("melpa" . "http://melpa.org/packages/") t)
   (package-initialize))
 ;; list the packages you want
-(setq package-list '(auctex auto-complete auto-complete-auctex counsel flycheck flx-ido ido-grid-mode ido-vertical-mode smartparens monokai-theme sr-speedbar ))
+(setq package-list '(auctex auto-complete auto-complete-auctex counsel flycheck flx-ido ido-grid-mode ido-vertical-mode smartparens smex monokai-theme sr-speedbar ))
 ;; fetch the list of packages available
 (unless package-archive-contents
   (package-refresh-contents))
@@ -41,7 +41,7 @@
 (setq ivy-initial-inputs-alist nil) ; omit ^
 
 ;; ;; smex helps to remember often used commands; used by ido and counsel
-;; (require 'smex)
+(require 'smex)
 
 ;; auto-complete
 (require 'auto-complete)
@@ -70,8 +70,10 @@
 ;; sr-speedbar
 (require 'sr-speedbar)
 (global-set-key (kbd "C-x C-k C-b") 'sr-speedbar-toggle)
-(setq sr-speedbar-right-side nil)
-;; disable linum for speedbar
-(add-hook 'speedbar-mode-hook '(lambda () (linum-mode 0)))
+(setq sr-speedbar-right-side nil)                          ; always on left side
+(add-hook 'speedbar-mode-hook '(lambda () (linum-mode 0))) ; disable linum for speedbar
+(setq speedbar-show-unknown-files t)                       ; show all files
+(setq sr-speedbar-width 30)                                ; default width
+
 
 ;;; extras.el ends here
