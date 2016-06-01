@@ -8,7 +8,7 @@
 	       '("melpa" . "http://melpa.org/packages/") t)
   (package-initialize))
 ;; list the packages you want
-(setq package-list '(auctex auto-complete auto-complete-auctex counsel flycheck flx-ido ido-grid-mode ido-vertical-mode monokai-theme markdown-mode smartparens smex sr-speedbar ))
+(setq package-list '(auctex auto-complete auto-complete-auctex counsel flycheck flx-ido ido-grid-mode ido-vertical-mode monokai-theme markdown-mode powershell smartparens smex sr-speedbar ))
 ;; fetch the list of packages available
 (unless package-archive-contents
   (package-refresh-contents))
@@ -80,8 +80,10 @@
 	(interactive)
 	(setq-default tab-width 4)
 	(setq-default indent-tabs-mode t))
-
 (add-hook 'markdown-mode 'my-markdown-mode-config)
+
+;; adds support of the windows powershell
+(require 'powershell)
 
 
 ;;; extras.el ends here

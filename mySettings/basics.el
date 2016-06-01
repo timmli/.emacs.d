@@ -96,13 +96,9 @@
 (global-set-key (kbd "M-S-<up>")    'windmove-up)
 (global-set-key (kbd "M-S-<down>")  'windmove-down)
 
-(defun cygwin-shell ()
-  "Run cygwin bash in shell mode."
-  (interactive)
-  (let ((explicit-shell-file-name "C:/cygwin/bin/bash"))
-    (call-interactively 'shell))
-	(setq explicit-bash-args '("-l")))
-	
+
+
+
 
 
 ;;; basics.el ends here
