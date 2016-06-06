@@ -25,7 +25,7 @@
 (setq linum-format " %3d ")
 
 ;; theme
-(eval-after-load 'monokai-theme '(load-theme 'monokai t))
+(eval-after-load 'monokai-theme '(load-theme n'monokai t))
 
 
 

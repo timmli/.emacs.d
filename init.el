@@ -13,6 +13,13 @@
 ;; set up appearance early
 (require 'appearance)
 
+;; character encodings default to utf-8.
+(prefer-coding-system 'utf-8)
+(set-language-environment 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+
 ;; write backup files to own directory
 (setq backup-directory-alist
       `(("." . ,(expand-file-name
@@ -37,10 +44,14 @@
                      auto-complete
                      auto-complete-auctex
                      counsel
+                     expand-region
                      flycheck
                      flx-ido
                      ido-grid-mode
                      ido-vertical-mode
+                     imenu-anywhere
+                     imenu-list
+                     js2-mode
                      monokai-theme
                      markdown-mode
                      powershell
@@ -48,6 +59,7 @@
                      smex
                      sr-speedbar
                      ;;yasnippets
+                     web-mode
                      ))
 ;; fetch the list of packages available
 (unless package-archive-contents
@@ -64,7 +76,14 @@
 ;;       (init--install-packages)))
 
 
+(require 'web-mode)                  ; for improved html support
+(require 'js2-mode)                  ;5u; for improved JavaScript support
+
 (require 'setup-minibuffer)
-(require 'setup-buffer.el)
+(require 'setup-buffer)
 (require 'setup-speedbar)
 (require 'setup-latex)
+(require 'setup-frame)
+
+;; map files to modes
+(require 'mode-file-associations)

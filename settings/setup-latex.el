@@ -1,7 +1,5 @@
 
 
-;; LaTeX stuff
-;;
 ;; to activate auctex
 (setq TeX-auto-save t)
 (setq TeX-parse-self t)
@@ -9,6 +7,7 @@
 (add-hook 'LaTeX-mode-hook
 	  (lambda ()
 	    (require 'reftex)))
+
 ;; beamer
 (eval-after-load "tex"
   '(TeX-add-style-hook "beamer" 'my-beamer-mode))
@@ -20,9 +19,12 @@
 	 ("frametitle" . 3)))
   (reftex-reset-mode)
   )
+
 ;; reftex
 (add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 (setq reftex-plug-into-AUCTeX t)
+;;(setq reftex-toc-split-windows-horizontally t)
+
 ;; make LaTeXmk default
 (add-hook 'LaTeX-mode-hook
 	  (lambda ()
