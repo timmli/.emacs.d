@@ -25,7 +25,10 @@
 (setq linum-format " %3d ")
 
 ;; theme
-(eval-after-load 'monokai-theme '(load-theme n'monokai t))
+(setq themes-dir
+      (expand-file-name "themes" user-emacs-directory))
+(add-to-list 'custom-theme-load-path themes-dir)
+(load-theme 'monokai t)
 
 
 
