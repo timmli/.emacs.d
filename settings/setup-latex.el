@@ -28,3 +28,5 @@
 	  (lambda ()
 	    (setq TeX-command-default "LaTeXmk")))
 
+
+(provide 'setup-latex)

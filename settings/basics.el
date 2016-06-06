@@ -4,15 +4,6 @@
 ;;;
 ;;; Code:
 
-;; don't show startup message
-(setq inhibit-startup-message t)
-
-;; don't show toolbar
-(tool-bar-mode 0)
-
-;; brackets
-(show-paren-mode 1)
-(setq show-paren-delay 0)
 
 ;; automatically update buffers when files change
 (global-auto-revert-mode t)
@@ -24,11 +15,6 @@
 (set-terminal-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
 
-;; apply syntax highlighting to all buffers
-(global-font-lock-mode t)
-
-;; highlight line of cursor
-(global-hl-line-mode t)
 
 ;; delete marked text on typing
 (delete-selection-mode t)
@@ -37,12 +23,6 @@
 (setq-default tab-width 2)
 (setq-default indent-tabs-mode t)
 
-;; soft-wrap lines
-(global-visual-line-mode t)
-
-;; line numbers
-(global-linum-mode t)
-(setq linum-format " %3d ")
 
 ;; shorten yes/no answers to y/n
 (fset 'yes-or-no-p 'y-or-n-p)
