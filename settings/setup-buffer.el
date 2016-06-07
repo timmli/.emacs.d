@@ -37,7 +37,7 @@
 
 ;; expand-region (intelligent selction)
 (require 'expand-region)
-(global-set-key (kbd "C-=") 'er/expand-region)
+(global-set-key (kbd "C-+") 'er/expand-region)
 
 ;; cursor position history
 (require 'point-undo)
@@ -66,10 +66,13 @@
   (interactive)
   (let (beg end)
     (if (region-active-p)
-	(setq beg (region-beginning) end (region-end))
+				(setq beg (region-beginning) end (region-end))
       (setq beg (line-beginning-position) end (line-end-position)))
     (comment-or-uncomment-region beg end)
     (next-line)))
+
+(global-set-key (kbd "<tab>") 'indent-region)
+
 
 
 (provide 'setup-buffer)

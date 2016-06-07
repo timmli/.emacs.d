@@ -11,3 +11,5 @@ Just clone this repository into `~/.emacs.d`.
 	- [ ] depending on the OS
 	- [ ] depending on the text-mode
 	- [ ] define a toggle key
+	
+- [ ] key to jump to last buffer in history (M-tab)

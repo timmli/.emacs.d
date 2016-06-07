@@ -23,11 +23,11 @@
 (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
 (setq recentf-max-saved-items 50)
 (defun ido-recentf-open ()
-  "Use `ido-completing-read' to \\[find-file] a recent file"
-  (interactive)
-  (if (find-file (ido-completing-read "Find recent file: " recentf-list))
-      (message "Opening file...")
-    (message "Aborting")))
+	"Use `ido-completing-read' to \\[find-file] a recent file"
+	(interactive)
+	(if (find-file (ido-completing-read "Find recent file: " recentf-list))
+			(message "Opening file...")
+		(message "Aborting")))
 
 
 ;; counsel adds fuzzy search to command completion 
@@ -35,7 +35,7 @@
 (global-set-key (kbd "M-x") 'counsel-M-x)
 (setq ivy-display-style 'fancy)
 (setq ivy-re-builders-alist ; use flx
-      '((t . ivy--regex-fuzzy)))
+			'((t . ivy--regex-fuzzy)))
 (setq ivy-initial-inputs-alist nil) ; omit ^
 
 ;; ;; smex helps to remember often used commands; used by ido and counsel
@@ -48,8 +48,8 @@
 
 ;; M-x in minibuffer quits the minibuffer
 (add-hook 'minibuffer-setup-hook
-          (lambda ()
-            (local-set-key (kbd "M-x") 'abort-recursive-edit)))
+					(lambda ()
+						(local-set-key (kbd "M-x") 'abort-recursive-edit)))
 
 (global-set-key (kbd "C-x C-b") 'switch-to-buffer) ; instead of 'list-buffers
 
