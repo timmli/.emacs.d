@@ -49,6 +49,7 @@
                      flx-ido
                      ido-grid-mode
                      ido-vertical-mode
+										 iflipb
                      imenu-anywhere
                      imenu-list
                      js2-mode

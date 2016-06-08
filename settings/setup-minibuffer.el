@@ -53,8 +53,8 @@
 
 (global-set-key (kbd "C-x C-b") 'switch-to-buffer) ; instead of 'list-buffers
 
-(global-set-key (kbd "C-i") #'imenu-anywhere)
-(global-set-key (kbd "C-S-i") #'imenu-list-minor-mode)
+(global-set-key (kbd "C-o") #'imenu-anywhere)
+(global-set-key (kbd "C-S-o") #'imenu-list-minor-mode)
 (setq imenu-list-focus-after-activation t)
 (setq imenu-list-auto-resize t)
 

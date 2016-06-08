@@ -67,6 +67,10 @@
 ;; adds support of the windows powershell
 (require 'powershell)
 
+;; switching between buffers with C-tab
+(require 'iflipb)
+(global-set-key (kbd "<C-tab>") 'iflipb-next-buffer)
+
 
 ;;==========================================================
 ;;      KEYS
@@ -84,7 +88,6 @@
     (comment-or-uncomment-region beg end)
     (next-line)))
 
-(global-set-key (kbd "<tab>") 'indent-region)
 
 
 
