@@ -71,6 +71,9 @@
 (require 'iflipb)
 (global-set-key (kbd "<C-tab>") 'iflipb-next-buffer)
 
+;; adds ace jump mode
+(require 'ace-jump-mode)
+(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
 
 ;;==========================================================
 ;;      KEYS

@@ -43,6 +43,7 @@
 (setq package-list '(auctex
                      auto-complete
                      auto-complete-auctex
+										 ace-jump-mode
                      counsel
                      expand-region
                      flycheck
@@ -59,7 +60,7 @@
                      smartparens
                      smex
                      sr-speedbar
-                     ;;yasnippets
+                     yasnippet
                      web-mode
                      ))
 ;; fetch the list of packages available
