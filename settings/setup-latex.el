@@ -30,5 +30,11 @@
 	  (lambda ()
 	    (setq TeX-command-default "LaTeXmk")))
 
+;; useful command to align arrays
+(add-hook 'LaTeX-mode-hook
+					(function
+					 (lambda ()
+						 (define-key LaTeX-mode-map (kbd "C-c a")
+							 'align-current))))
 
 (provide 'setup-latex)
