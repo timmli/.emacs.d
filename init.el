@@ -41,6 +41,7 @@
   (package-initialize))
 ;; list the packages you want
 (setq package-list '(auctex
+										 auctex-latexmk
                      auto-complete
                      auto-complete-auctex
 										 ace-jump-mode
