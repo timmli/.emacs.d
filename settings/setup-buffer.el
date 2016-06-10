@@ -32,18 +32,66 @@
 ;; flyspell
 (setq ispell-program-name "C:\\Program Files (x86)\\Aspell\\bin\\aspell.exe")
 (global-set-key (kbd "<f6>") 'flyspell-buffer)
+(global-set-key (kbd "M-<f6>") 'ispell-word)
+(global-set-key (kbd "C-<f6>") 'flyspell-goto-next-error)
+(global-set-key (kbd "C-S-<f6>") 'flyspell-goto-previous-error)
+;; remove keybinding for autocorrect
+(eval-after-load "flyspell"
+	'(dolist
+			 (define-key flyspell-mode-map (kbd "C-;") nil)
+		 (define-key flyspell-mode-map (kbd "C-.") nil)))
+;; activate for text
 (dolist (hook '(text-mode-hook LaTeX-mode-hook))
 	(add-hook hook (lambda () (flyspell-mode 1))))
-;; cycle through dictionaries
-(let ((langs '("english" "american" "deutsch" )))
-	(setq lang-ring (make-ring (length langs)))
-	(dolist (elem langs) (ring-insert lang-ring elem)))
-(defun cycle-ispell-languages ()
-	(interactive)
-	(let ((lang (ring-ref lang-ring -1)))
-		(ring-insert lang-ring lang)
-		(ispell-change-dictionary lang)))
-(global-set-key (kbd "C-<f6>") 'cycle-ispell-languages)
+;; ;; cycle through dictionaries
+;; (let ((langs '("english" "american" "deutsch" )))
+;; 	(setq lang-ring (make-ring (length langs)))
+;; 	(dolist (elem langs) (ring-insert lang-ring elem)))
+;; (defun cycle-ispell-languages ()
+;; 	(interactive)
+;; 	(let ((lang (ring-ref lang-ring -1)))
+;; 		(ring-insert lang-ring lang)
+;; 		(ispell-change-dictionary lang)))
+;; (global-set-key (kbd "C-<f6>") 'cycle-ispell-languages)
+;; move point to previous error
+;; based on code by hatschipuh at
+;; http://emacs.stackexchange.com/a/14912/2017
+(defun flyspell-goto-previous-error (arg)
+  "Go to arg previous spelling error."
+  (interactive "p")
+  (while (not (= 0 arg))
+    (let ((pos (point))
+          (min (point-min)))
+      (if (and (eq (current-buffer) flyspell-old-buffer-error)
+               (eq pos flyspell-old-pos-error))
+          (progn
+            (if (= flyspell-old-pos-error min)
+                ;; goto beginning of buffer
+                (progn
+                  (message "Restarting from end of buffer")
+                  (goto-char (point-max)))
+              (backward-word 1))
+            (setq pos (point))))
+      ;; seek the next error
+      (while (and (> pos min)
+                  (let ((ovs (overlays-at pos))
+                        (r '()))
+                    (while (and (not r) (consp ovs))
+                      (if (flyspell-overlay-p (car ovs))
+                          (setq r t)
+                        (setq ovs (cdr ovs))))
+                    (not r)))
+        (backward-word 1)
+        (setq pos (point)))
+      ;; save the current location for next invocation
+      (setq arg (1- arg))
+      (setq flyspell-old-pos-error pos)
+      (setq flyspell-old-buffer-error (current-buffer))
+      (goto-char pos)
+      (if (= pos min)
+          (progn
+            (message "No more miss-spelled word!")
+            (setq arg 0))))))
 
 ;; smartparens
 (require 'smartparens-config)
@@ -84,8 +132,10 @@
 	"settings for markdown mode"
 	(interactive)
 	(setq-default tab-width 4)
-	(setq-default indent-tabs-mode t))
+	(setq-default indent-tabs-mode t)
+	(setq markdown-enable-math t))
 (add-hook 'markdown-mode 'my-markdown-mode-config)
+(setq markdown-enable-math t)
 
 ;; adds support of the windows powershell
 (require 'powershell)
@@ -104,6 +154,8 @@
 
 ;; commenting
 (global-set-key (kbd "C-;") 'comment-or-uncomment-region-or-line)
+(eval-after-load "LaTeX-mode"
+	'(define-key LaTeX-mode-map (kbd "C-;") 'comment-or-uncomment-region-or-line))
 (defun comment-or-uncomment-region-or-line ()
   "Comments or uncomments the region or the current line if there's no active region."
   (interactive)
