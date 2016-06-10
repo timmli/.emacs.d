@@ -4,9 +4,13 @@
 ;; delete marked text on typing
 (delete-selection-mode t)
 
-;; don't use tabs for indent; replace tabs with two spaces.
+;; use tabs for indent
 (setq-default tab-width 2)
 (setq-default indent-tabs-mode t)
+
+;; scrolling
+(setq scroll-step            1
+      scroll-conservatively  10000)
 
 ;; auto-complete
 (require 'auto-complete)
