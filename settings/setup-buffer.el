@@ -43,18 +43,7 @@
 ;; activate for text
 (dolist (hook '(text-mode-hook LaTeX-mode-hook))
 	(add-hook hook (lambda () (flyspell-mode 1))))
-;; ;; cycle through dictionaries
-;; (let ((langs '("english" "american" "deutsch" )))
-;; 	(setq lang-ring (make-ring (length langs)))
-;; 	(dolist (elem langs) (ring-insert lang-ring elem)))
-;; (defun cycle-ispell-languages ()
-;; 	(interactive)
-;; 	(let ((lang (ring-ref lang-ring -1)))
-;; 		(ring-insert lang-ring lang)
-;; 		(ispell-change-dictionary lang)))
-;; (global-set-key (kbd "C-<f6>") 'cycle-ispell-languages)
 ;; move point to previous error
-;; based on code by hatschipuh at
 ;; http://emacs.stackexchange.com/a/14912/2017
 (defun flyspell-goto-previous-error (arg)
   "Go to arg previous spelling error."
