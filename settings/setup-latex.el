@@ -31,6 +31,7 @@
 (require 'auctex-latexmk)
 (auctex-latexmk-setup)
 (setq auctex-latexmk-inherit-TeX-PDF-mode t)
+(setq TeX-command-force "LatexMk")
 
 ;; useful command to align arrays
 (add-hook 'LaTeX-mode-hook
@@ -39,6 +40,7 @@
 						 (define-key LaTeX-mode-map (kbd "C-c a")
 							 'align-current))))
 
+;; keys for error browsing
 (define-key LaTeX-mode-map (kbd "<f4>") 'TeX-next-error)
 (define-key LaTeX-mode-map (kbd "S-<f4>") 'TeX-previous-error)
 (define-key LaTeX-mode-map (kbd "C-<f4>") 'TeX-error-overview)
