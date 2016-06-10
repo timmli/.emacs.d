@@ -30,7 +30,20 @@
 (global-flycheck-mode t)
 
 ;; flyspell
-(setq ispell-program-name "")
+(setq ispell-program-name "C:\\Program Files (x86)\\Aspell\\bin\\aspell.exe")
+(global-set-key (kbd "<f6>") 'flyspell-buffer)
+(dolist (hook '(text-mode-hook LaTeX-mode-hook))
+	(add-hook hook (lambda () (flyspell-mode 1))))
+;; cycle through dictionaries
+(let ((langs '("english" "american" "deutsch" )))
+	(setq lang-ring (make-ring (length langs)))
+	(dolist (elem langs) (ring-insert lang-ring elem)))
+(defun cycle-ispell-languages ()
+	(interactive)
+	(let ((lang (ring-ref lang-ring -1)))
+		(ring-insert lang-ring lang)
+		(ispell-change-dictionary lang)))
+(global-set-key (kbd "C-<f6>") 'cycle-ispell-languages)
 
 ;; smartparens
 (require 'smartparens-config)
