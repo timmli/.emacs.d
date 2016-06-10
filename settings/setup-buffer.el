@@ -1,11 +1,11 @@
 ;; automatically update buffers when files change
 (global-auto-revert-mode t)
-(setq ring-bell-function (lambda ()
-                           (invert-face 'mode-line)
-                           (run-with-timer 0.05 nil 'invert-face 'mode-line)))
 
 ;; visible bell
 (setq visible-bell t)
+(setq ring-bell-function (lambda ()
+                           (invert-face 'mode-line)
+                           (run-with-timer 0.05 nil 'invert-face 'mode-line)))
 
 ;; delete marked text on typing
 (delete-selection-mode t)
