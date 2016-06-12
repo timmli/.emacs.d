@@ -40,13 +40,17 @@
 (global-set-key (kbd "C-<f6>") 'flyspell-goto-next-error)
 (global-set-key (kbd "C-S-<f6>") 'flyspell-goto-previous-error)
 ;; remove keybinding for autocorrect
-(eval-after-load "flyspell"
-	'(dolist
-			 (define-key flyspell-mode-map (kbd "C-;") nil)
-		 (define-key flyspell-mode-map (kbd "C-.") nil)))
-;; activate for text
-(dolist (hook '(text-mode-hook LaTeX-mode-hook))
-	(add-hook hook (lambda () (flyspell-mode 1))))
+(add-hook 'flyspell-mode-hook (function (lambda ()
+																					(local-unset-key (kbd "C-;")))))
+(add-hook 'flyspell-mode-hook (function (lambda ()
+																					(local-unset-key (kbd "C-.")))))
+;; (eval-after-load "flyspell"
+;; 	'(dolist
+;; 			 (define-key flyspell-mode-map (kbd "C-;") nil)
+;; 		 (define-key flyspell-mode-map (kbd "C-.") nil)))
+;; ;; activate for text
+;; (dolist (hook '(text-mode-hook LaTeX-mode-hook))
+;; 	(add-hook hook (lambda () (flyspell-mode 1))))
 ;; move point to previous error
 ;; http://emacs.stackexchange.com/a/14912/2017
 (defun flyspell-goto-previous-error (arg)
@@ -148,6 +152,8 @@
 ;; commenting
 (global-set-key (kbd "C-;") 'comment-or-uncomment-region-or-line)
 (eval-after-load "LaTeX-mode"
+	'(define-key LaTeX-mode-map (kbd "C-;") 'comment-or-uncomment-region-or-line))
+(eval-after-load "markdown-mode"
 	'(define-key LaTeX-mode-map (kbd "C-;") 'comment-or-uncomment-region-or-line))
 (defun comment-or-uncomment-region-or-line ()
   "Comments or uncomments the region or the current line if there's no active region."
