@@ -25,6 +25,10 @@
 ;; (ac-config-default)
 ;; (add-to-list 'ac-modes 'latex-mode)     ; activate auto-complete for latex <modes (AUCTeX or Emacs' builtin one).
 
+;; yasnippet
+(require 'yasnippet)
+(yas-global-mode 1)
+
 ;; flycheck
 (require 'flycheck)
 (global-flycheck-mode t)
