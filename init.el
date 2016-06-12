@@ -55,8 +55,9 @@
                      imenu-anywhere
                      imenu-list
                      js2-mode
-                     monokai-theme
                      markdown-mode
+                     monokai-theme
+										 multi-project
                      powershell
                      smartparens
                      smex
@@ -77,6 +78,9 @@
 ;;   (error
 ;;    (package-refresh-contents)
 ;;       (init--install-packages)))
+
+(require 'multi-project)
+(global-multi-project-mode)
 
 
 (require 'web-mode)                  ; for improved html support
