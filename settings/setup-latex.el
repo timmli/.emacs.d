@@ -40,6 +40,34 @@
 						 (define-key LaTeX-mode-map (kbd "C-c a")
 							 'align-current))))
 
+;; wrap quotes around active region
+(defadvice TeX-insert-quote (around wrap-region activate)
+      (cond
+       (mark-active
+        (let ((skeleton-end-newline nil))
+          (skeleton-insert `(nil ,TeX-open-quote _ ,TeX-close-quote) -1)))
+       ((looking-at (regexp-opt (list TeX-open-quote TeX-close-quote)))
+        (forward-char (length TeX-open-quote)))
+       (t
+        ad-do-it)))
+(put 'TeX-insert-quote 'delete-selection nil)
+;; the same for single quotes
+(defun TeX-insert-single-quote (arg)
+	(interactive "p")
+	(cond
+	 (mark-active
+		(let ((skeleton-end-newline nil))
+			(skeleton-insert
+			 `(nil ?` _ ?') -1)))
+	 ((or (looking-at "\\<")
+				(looking-back "^\\|\\s-\\|`"))
+		(insert "`"))
+	 (t
+		(self-insert-command arg))))
+(add-hook 'LaTeX-mode-hook
+					'(lambda ()
+						 (local-set-key "'" 'TeX-insert-single-quote)))
+
 ;; keys for error browsing
 (define-key LaTeX-mode-map (kbd "<f4>") 'TeX-next-error)
 (define-key LaTeX-mode-map (kbd "S-<f4>") 'TeX-previous-error)
@@ -56,5 +84,9 @@
   '(progn
      (assq-delete-all 'output-pdf TeX-view-program-selection)
      (add-to-list 'TeX-view-program-selection '(output-pdf "Sumatra PDF"))))
+
+
+;; miscellaneous keys
+(define-key LaTeX-mode-map (kbd "C-l <backspace>") 'TeX-clean)
 
 (provide 'setup-latex)
