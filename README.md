@@ -7,6 +7,8 @@ Just clone this repository into `~/.emacs.d`.
 
 ## TODO
 
+- [ ] add yasnippets for LaTeX
+
 - [ ] configure `flyspell`
 	- [ ] depending on the OS
 	- [ ] depending on the text-mode
