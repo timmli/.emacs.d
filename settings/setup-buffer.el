@@ -35,7 +35,7 @@
 
 ;; flyspell
 (setq ispell-program-name "C:\\Program Files (x86)\\Aspell\\bin\\aspell.exe")
-(global-set-key (kbd "<f6>") 'flyspell-buffer)
+(global-set-key (kbd "<f6>") 'flyspell-toggle)
 (global-set-key (kbd "M-<f6>") 'ispell-word)
 (global-set-key (kbd "C-<f6>") 'flyspell-goto-next-error)
 (global-set-key (kbd "C-S-<f6>") 'flyspell-goto-previous-error)
@@ -51,6 +51,16 @@
 ;; ;; activate for text
 ;; (dolist (hook '(text-mode-hook LaTeX-mode-hook))
 ;; 	(add-hook hook (lambda () (flyspell-mode 1))))
+(defun flyspell-toggle (arg)
+	(interactive "p")
+	(if (bound-and-true-p flyspell-mode)
+			(progn
+				 (flyspell-mode -1)
+			)	 
+		(progn
+			(flyspell-mode)
+			(flyspell-buffer)
+			)))
 ;; move point to previous error
 ;; http://emacs.stackexchange.com/a/14912/2017
 (defun flyspell-goto-previous-error (arg)
