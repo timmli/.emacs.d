@@ -88,5 +88,6 @@
 
 ;; miscellaneous keys
 (define-key LaTeX-mode-map (kbd "C-l <backspace>") 'TeX-clean)
+(define-key LaTeX-mode-map (kbd "C-<return>") 'LaTeX-close-environment)
 
 (provide 'setup-latex)
