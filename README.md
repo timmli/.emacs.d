@@ -11,6 +11,7 @@ Just clone this repository into `~/.emacs.d`.
 	- [ ] depending on the OS
 	- [ ] depending on the text-mode
 	- [ ] define a toggle key
+	- [ ] `flyspell-popup`
 
 - [ ] integrate [CriticMarkup](https://github.com/CriticMarkup/CriticMarkup-toolkit)
 	
