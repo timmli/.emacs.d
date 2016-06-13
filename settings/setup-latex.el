@@ -34,11 +34,7 @@
 (setq TeX-command-force "LatexMk")
 
 ;; useful command to align arrays
-(add-hook 'LaTeX-mode-hook
-					(function
-					 (lambda ()
-						 (define-key LaTeX-mode-map (kbd "C-c a")
-							 'align-current))))
+(define-key LaTeX-mode-map (kbd "C-l C-a") 'align-current)
 
 ;; wrap quotes around active region
 (defadvice TeX-insert-quote (around wrap-region activate)
