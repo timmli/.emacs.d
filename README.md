@@ -11,6 +11,8 @@ Just clone this repository into `~/.emacs.d`.
 	- [ ] depending on the OS
 	- [ ] depending on the text-mode
 	- [ ] define a toggle key
+
+- [ ] integrate [CriticMarkup](https://github.com/CriticMarkup/CriticMarkup-toolkit)
 	
 - [X] key to jump to last buffer in history (M-tab)
 - [X] add yasnippet
