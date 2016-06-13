@@ -18,16 +18,50 @@
 (setq scroll-step            1
       scroll-conservatively  10000)
 
-;; auto-complete
-(require 'auto-complete)
-(require 'auto-complete-auctex)
-(global-auto-complete-mode 1)
-;; (ac-config-default)
-;; (add-to-list 'ac-modes 'latex-mode)     ; activate auto-complete for latex <modes (AUCTeX or Emacs' builtin one).
-
-;; yasnippet
+;; yasnippet (before auto-complete)
 (require 'yasnippet)
 (yas-global-mode 1)
+
+;; ;; auto-complete, sequence is important
+;; (require 'auto-complete)
+;; (require 'auto-complete-auctex)
+;; (require 'auto-complete-config)
+;; (ac-config-default)
+;; (setq ac-auto-show-menu t)
+;; (setq ac-auto-show-menu 1)
+;; (global-auto-complete-mode 1)
+;; ;; (add-to-list 'ac-modes 'latex-mode)     ; activate auto-complete for latex <modes (AUCTeX or Emacs' builtin one).
+;; (add-hook 'latex-mode-hook (function (lambda ()
+;; 																					(ac-source-yasnippet))))
+
+;; company
+(require 'company)
+(add-hook 'after-init-hook 'global-company-mode)
+(require 'company-auctex)
+(company-auctex-init)
+;; yasnippet integration
+(defvar company-mode/enable-yas t
+  "Enable yasnippet for all backends.")
+(defun company-mode/backend-with-yas (backend)
+  (if (or (not company-mode/enable-yas)
+          (and (listp backend) (member 'company-yasnippet backend)))
+      backend
+    (append (if (consp backend) backend (list backend))
+            '(:with company-yasnippet))))
+(setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+;; some general variables
+(setq company-idle-delay 0.3
+			company-minimum-prefix-length 1
+			company-selection-wrap-around t
+			;; company-show-numbers t
+			company-dabbrev-downcase nil
+			company-auto-complete nil
+			company-transformers '(company-sort-by-occurrence))
+;; (eval-after-load 'company
+;;   '(progn
+;;      (define-key company-active-map (kbd "TAB") 'company-select-next)
+;;      (define-key company-active-map [tab] 'company-select-next)))
+(with-eval-after-load 'company (company-flx-mode +1))
 
 ;; flycheck
 (require 'flycheck)

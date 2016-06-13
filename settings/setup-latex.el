@@ -34,7 +34,7 @@
 (setq TeX-command-force "LatexMk")
 
 ;; useful command to align arrays
-(define-key LaTeX-mode-map (kbd "C-l C-a") 'align-current)
+(define-key LaTeX-mode-map (kbd "C-l C-q") 'align-current)
 
 ;; wrap quotes around active region
 (defadvice TeX-insert-quote (around wrap-region activate)
@@ -106,6 +106,9 @@
 (define-key LaTeX-mode-map (kbd "C-l C-b") 'TeX-bold)
 (define-key LaTeX-mode-map (kbd "C-l C-t") 'TeX-typewriter)
 (define-key LaTeX-mode-map (kbd "C-l C-e") 'TeX-emphasis)
-(define-key LaTeX-mode-map (kbd "C-l C-s") 'TeX-smallcaps) 
+(define-key LaTeX-mode-map (kbd "C-l C-s") 'TeX-smallcaps)
+
+(define-key LaTeX-mode-map (kbd "C-l C-a") 'LaTeX-find-matching-begin)
+(define-key LaTeX-mode-map (kbd "C-l C-e") 'LaTeX-find-matching-end)
 
 (provide 'setup-latex)

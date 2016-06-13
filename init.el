@@ -45,6 +45,9 @@
                      auto-complete
                      auto-complete-auctex
 										 ace-jump-mode
+										 company
+										 company-auctex
+										 company-flx
                      counsel
                      expand-region
                      flycheck
