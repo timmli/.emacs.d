@@ -144,8 +144,11 @@
       (setq beg (line-beginning-position) end (line-end-position)))
     (comment-or-uncomment-region beg end)
     (next-line)))
+
 ;; delete line
 (global-set-key (kbd "C-S-o") 'delete-blank-lines)
 
+;; center line
+(global-set-key (kbd "C-S-l") 'recenter-top-bottom)
 
 (provide 'setup-buffer)
