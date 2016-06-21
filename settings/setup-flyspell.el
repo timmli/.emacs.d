@@ -8,16 +8,11 @@
 		 (define-key flyspell-mode-map (kbd "<f6>") 'flyspell-next-and-ispell-word)
 		 (define-key flyspell-mode-map (kbd "S-<f6>") 'flyspell-previous-and-ispell-word)))
 
-;; remove keybinding for autocorrect; TODO: does not work! 
-(add-hook 'flyspell-mode-hook
-					(function (lambda ()
-											(dolist
-													(define-key flyspell-mode-map (kbd "C-;") nil)
-												(define-key flyspell-mode-map (kbd "C-.") nil)))))
-(eval-after-load "flyspell-mode"
-	'(dolist
-			 (define-key flyspell-mode-map (kbd "C-;") nil)
-		 (define-key flyspell-mode-map (kbd "C-.") nil)))
+;; remove keybindings for autocorrect 
+(eval-after-load "flyspell"
+	'(define-key flyspell-mode-map (kbd "C-;") nil))
+(eval-after-load "flyspell"
+	'(define-key flyspell-mode-map (kbd "C-.") nil))
 
 ;; ;; activate for text
 ;; (dolist (hook '(text-mode-hook LaTeX-mode-hook))

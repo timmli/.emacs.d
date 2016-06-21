@@ -31,7 +31,7 @@
 (require 'auctex-latexmk)
 (auctex-latexmk-setup)
 (setq auctex-latexmk-inherit-TeX-PDF-mode t)
-(setq TeX-command-force "LatexMk")
+(setq TeX-command-force "LatexMk")  ;; remember to set path variable accordingly!
 
 ;; useful command to align arrays
 (define-key LaTeX-mode-map (kbd "C-l C-q") 'align-current)
