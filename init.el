@@ -65,6 +65,7 @@
                      smartparens
                      smex
                      sr-speedbar
+										 swiper
                      yasnippet
                      web-mode
                      ))

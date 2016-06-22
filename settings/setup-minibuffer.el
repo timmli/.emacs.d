@@ -30,6 +30,7 @@
 		(message "Aborting")))
 
 
+;; ivy componente
 ;; counsel adds fuzzy search to command completion 
 (require 'counsel)
 (global-set-key (kbd "M-x") 'counsel-M-x)
@@ -37,6 +38,9 @@
 (setq ivy-re-builders-alist ; use flx
 			'((t . ivy--regex-fuzzy)))
 (setq ivy-initial-inputs-alist nil) ; omit ^
+;; use swiper for buffer search
+(global-set-key (kbd "C-s") 'swiper)
+(setq ivy-wrap t) ;; cycle through results
 
 ;; ;; smex helps to remember often used commands; used by ido and counsel
 (require 'smex)
