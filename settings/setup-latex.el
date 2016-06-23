@@ -27,6 +27,22 @@
   (reftex-reset-mode)
   )
 
+;; ivy-bibtex
+(require 'ivy-bibtex)
+(setq bibtex-completion-bibliography '("./references.bib"))
+(setq bibtex-completion-additional-search-fields '(bibtexkey))
+(define-key LaTeX-mode-map (kbd "C-l C-r") 'ivy-bibtex)
+(defun ivy-bibtex (&optional arg)
+  "Search BibTeX entries using ivy. With a prefix ARG the cache is invalidated and the bibliography reread."
+  (interactive "P")
+  (when arg
+    (setq bibtex-completion-bibliography-hash ""))
+  (bibtex-completion-init)
+  (ivy-read "BibTeX Items: "
+            (bibtex-completion-candidates 'ivy-bibtex-candidates-formatter)
+            :caller 'ivy-bibtex
+            :action 'bibtex-completion-insert-key))
+
 ;; make LaTeXmk default
 (require 'auctex-latexmk)
 (auctex-latexmk-setup)

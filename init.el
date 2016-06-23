@@ -57,7 +57,8 @@
 										 iflipb
                      imenu-anywhere
                      imenu-list
-                     js2-mode
+                     ivy-bibtex
+										 js2-mode
                      markdown-mode
                      monokai-theme
 										 multi-project
