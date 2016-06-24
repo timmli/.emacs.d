@@ -52,6 +52,7 @@
                      expand-region
                      flycheck
                      flx-ido
+										 highlight-indent-guides
                      ido-grid-mode
                      ido-vertical-mode
 										 iflipb
@@ -89,7 +90,7 @@
 
 
 (require 'web-mode)                  ; for improved html support
-(require 'js2-mode)                  ;5u; for improved JavaScript support
+(require 'js2-mode)                  ; for improved JavaScript support
 
 (require 'setup-minibuffer)
 (require 'setup-buffer)
