@@ -49,6 +49,7 @@
 										 company-auctex
 										 company-flx
                      counsel
+										 ebib
                      expand-region
                      flycheck
                      flx-ido
@@ -79,11 +80,6 @@
   (unless (package-installed-p package)
     (package-install package)))
 
-;; (condition-case nil
-;;     (init--install-packages)
-;;   (error
-;;    (package-refresh-contents)
-;;       (init--install-packages)))
 
 (require 'multi-project)
 (global-multi-project-mode)

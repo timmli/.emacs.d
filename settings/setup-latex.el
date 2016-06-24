@@ -29,9 +29,11 @@
 
 ;; ivy-bibtex
 (require 'ivy-bibtex)
-(setq bibtex-completion-bibliography '("./references.bib"))
+;; (setq bibtex-completion-bibliography '("./references.bib"))
 (setq bibtex-completion-additional-search-fields '(bibtexkey))
-(define-key LaTeX-mode-map (kbd "C-l C-r") 'ivy-bibtex)
+;; (define-key LaTeX-mode-map (kbd "C-l C-r") 'ivy-bibtex)
+(define-key LaTeX-mode-map (kbd "C-l C-r") 'ivy-bibtex-with-local-bibliography)
+;; The standard function ivy-bibtex with modified default action  
 (defun ivy-bibtex (&optional arg)
   "Search BibTeX entries using ivy. With a prefix ARG the cache is invalidated and the bibliography reread."
   (interactive "P")
@@ -42,6 +44,16 @@
             (bibtex-completion-candidates 'ivy-bibtex-candidates-formatter)
             :caller 'ivy-bibtex
             :action 'bibtex-completion-insert-key))
+;; look for local bibliographies
+(require 'ebib)
+(defun ivy-bibtex-with-local-bibliography ()
+    (interactive)
+    (let ((bibtex-completion-bibliography
+                 (if (eq major-mode 'latex-mode)
+										 (ebib--get-local-databases)
+									 ;; (bibtex-completion--get-local-databases)
+                     bibtex-completion-bibliography)))
+        (ivy-bibtex)))
 
 ;; make LaTeXmk default
 (require 'auctex-latexmk)
