@@ -10,7 +10,7 @@ Just clone this repository into `~/.emacs.d`.
 - [ ] configure `flyspell`
 	- [ ] depending on the OS
 	- [ ] depending on the text-mode
-	- [ ] define a toggle key
+	- [X] define a toggle key
 	- [ ] `flyspell-popup`
 
 - [ ] integrate [CriticMarkup](https://github.com/CriticMarkup/CriticMarkup-toolkit)
