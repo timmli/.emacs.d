@@ -72,14 +72,22 @@
                      yasnippet
                      web-mode
                      ))
-;; fetch the list of packages available
-(unless package-archive-contents
-  (package-refresh-contents))
-;; install the missing packages
+;; ;; fetch the list of packages available
+;; (unless package-archive-contents
+;;   (package-refresh-contents))
+
+;; install the missing packages (and refresh the package list if necessary)
+(setq package-list-refreshed nil)
 (dolist (package package-list)
   (unless (package-installed-p package)
-    (package-install package)))
-
+		(if package-list-refreshed 				; package list already refreshed?
+				(package-install package)				; package list already refreshed!
+			(progn  (package-refresh-contents) ; package list not yet refreshed!
+							(setq package-list-refreshed t)
+							(package-install package))
+			)
+		)
+)
 
 (require 'multi-project)
 (global-multi-project-mode)
