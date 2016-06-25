@@ -49,7 +49,6 @@
 										 company-auctex
 										 company-flx
                      counsel
-										 ebib
                      expand-region
                      flycheck
                      flx-ido

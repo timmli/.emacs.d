@@ -33,7 +33,7 @@
 (setq bibtex-completion-additional-search-fields '(bibtexkey))
 ;; (define-key LaTeX-mode-map (kbd "C-l C-r") 'ivy-bibtex)
 (define-key LaTeX-mode-map (kbd "C-l C-r") 'ivy-bibtex-with-local-bibliography)
-;; The standard function ivy-bibtex with modified default action  
+;; The standard function with modified default action  
 (defun ivy-bibtex (&optional arg)
   "Search BibTeX entries using ivy. With a prefix ARG the cache is invalidated and the bibliography reread."
   (interactive "P")
@@ -45,15 +45,51 @@
             :caller 'ivy-bibtex
             :action 'bibtex-completion-insert-key))
 ;; look for local bibliographies
-(require 'ebib)
+;; (require 'ebib)
 (defun ivy-bibtex-with-local-bibliography ()
     (interactive)
     (let ((bibtex-completion-bibliography
                  (if (eq major-mode 'latex-mode)
-										 (ebib--get-local-databases)
-									 ;; (bibtex-completion--get-local-databases)
+										 ;; (ebib--get-local-databases)
+									 (bibtex-completion--get-local-databases)
                      bibtex-completion-bibliography)))
-        (ivy-bibtex)))
+			(ivy-bibtex)))
+;; proposal by jagrg: https://github.com/tmalsburg/helm-bibtex/issues/112 
+(defun bibtex-completion--get-local-databases ()
+  "Return a list of .bib files associated with the current file."
+  (let ((texfile nil)
+				(cb (current-buffer)))
+    (when (and (boundp 'TeX-master)
+							 (stringp TeX-master))
+      (setq texfile (if (file-name-extension TeX-master)
+												TeX-master
+											(concat TeX-master ".tex"))))
+    (with-temp-buffer
+      (if (and texfile (file-readable-p texfile))
+					(insert-file-contents texfile)
+				(insert-buffer-substring cb))
+      (save-match-data
+				(goto-char (point-min))
+				(cond
+				 ;; bibtex
+				 ((re-search-forward "\\\\\\(?:no\\)*bibliography{\\(.*?\\)}" nil t)
+					(mapcar (lambda (fname)
+										(if (file-name-extension fname)
+												fname
+											(concat fname ".bib")))
+									(split-string (match-string-no-properties 1) ",[ ]*")))
+				 ;; biblatex
+				 ((re-search-forward "\\\\addbibresource\\(\\[.*?\\]\\)?{\\(.*?\\)}" nil t)
+					(mapcar (lambda (fname)
+										(if (file-name-extension fname)
+												fname
+											(concat fname ".bib")))
+									(let ((option (match-string 1))
+												(file (match-string-no-properties 2)))
+										(unless (and option (string-match-p "location=remote" option))
+											(split-string file ",[ ]*")))))
+				 (t
+					bibtex-completion-bibliography))))))
 
 ;; make LaTeXmk default
 (require 'auctex-latexmk)
