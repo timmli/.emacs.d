@@ -130,6 +130,8 @@
 (require 'ace-jump-mode)
 (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
 
+
+
 ;;==========================================================
 ;;      KEYS
 ;;==========================================================
@@ -155,5 +157,17 @@
 
 ;; center line
 (global-set-key (kbd "C-S-l") 'recenter-top-bottom)
+
+;; open untitiled new buffer
+(defun xah-new-empty-buffer ()
+  "Open a new empty buffer.
+URL `http://ergoemacs.org/emacs/emacs_new_empty_buffer.html'
+Version 2015-06-12"
+  (interactive)
+  (let ((buf (generate-new-buffer "untitled")))
+    (switch-to-buffer buf)
+    (funcall (and initial-major-mode))
+    (setq buffer-offer-save t)))
+(global-set-key (kbd "<f7>") 'xah-new-empty-buffer)
 
 (provide 'setup-buffer)
