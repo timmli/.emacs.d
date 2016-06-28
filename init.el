@@ -63,6 +63,7 @@
                      markdown-mode
                      monokai-theme
 										 multi-project
+										 multiple-cursors
                      powershell
                      smartparens
                      smex
