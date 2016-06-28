@@ -6,6 +6,11 @@
 (setq-default TeX-master nil)
 (setq TeX-save-query nil) ;;autosave before compiling
 
+;; don't indent
+;(setq LaTeX-indent-level 0)
+;(setq LaTeX-item-indent 0)
+
+
 ;; reftex
 (add-hook 'LaTeX-mode-hook
 	  (lambda ()
@@ -174,5 +179,9 @@
 
 (define-key LaTeX-mode-map (kbd "C-l C-a") 'LaTeX-find-matching-begin)
 (define-key LaTeX-mode-map (kbd "C-l C-e") 'LaTeX-find-matching-end)
+
+;; make square brackets indent correctly (testing)
+;(modify-syntax-entry ?\[ "(]" LaTeX-mode-syntax-table)
+;(modify-syntax-entry ?\] ")[" LaTeX-mode-syntax-table)
 
 (provide 'setup-latex)
