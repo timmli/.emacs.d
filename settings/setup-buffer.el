@@ -131,6 +131,7 @@
 
 ;; switching between buffers with C-tab
 (require 'iflipb)
+(setq iflipb-wrap-around t)
 (global-set-key (kbd "<C-tab>") 'iflipb-next-buffer)
 
 ;; adds ace jump mode
