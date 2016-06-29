@@ -18,10 +18,10 @@
 (setq scroll-step            1
       scroll-conservatively  10000)
 
-;; show vertical line per indentation level
-(require 'highlight-indent-guides)
-(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-(setq highlight-indent-guides-method 'character)
+;; show vertical line per indentation level (BUG: highlight-indent-guides-mode: Wrong number of arguments: (2 . &rest), 1)
+;; (require 'highlight-indent-guides)
+;; (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+;; (setq highlight-indent-guides-method 'character)
 
 ;; yasnippet (before auto-complete)
 (require 'yasnippet)

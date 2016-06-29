@@ -65,6 +65,7 @@
 										 multi-project
 										 multiple-cursors
                      powershell
+										 paradox
                      smartparens
                      smex
                      sr-speedbar
@@ -87,7 +88,9 @@
 							(package-install package))
 			)
 		)
-)
+	)
+;; upgrade packages (this slows down start-up somewhat)
+;(paradox-upgrade-packages)
 
 (require 'multi-project)
 (global-multi-project-mode)
