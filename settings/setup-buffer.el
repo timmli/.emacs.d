@@ -81,12 +81,15 @@
 (--each '(css-mode-hook
           restclient-mode-hook
           js-mode-hook
-          java-mode
-          ruby-mode
+          java-mode-hook
+          ruby-mode-hook
+					emacs-lisp-mode-hook
+					LaTeX-mode-hook
+					TeX-mode-hook
           markdown-mode
-          groovy-mode
-          scala-mode)
-  (add-hook it 'turn-on-smartparens-mode))
+          groovy-mode-hook
+          scala-mode-hook)
+  (add-hook it #'smartparens-mode))
 
 ;; jump to matching paren
 (defun goto-match-paren (arg)
