@@ -1,7 +1,9 @@
 
 
 ;; to activate auctex
-(setq TeX-auto-save t)
+(setq TeX-auto-save t)  
+(setq TeX-auto-local
+			(expand-file-name "temp" user-emacs-directory))
 (setq TeX-parse-self t)
 (setq-default TeX-master nil)
 (setq TeX-save-query nil) ;;autosave before compiling
