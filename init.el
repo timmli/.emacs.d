@@ -40,7 +40,8 @@
 	       '("melpa" . "http://melpa.org/packages/") t)
   (package-initialize))
 ;; list the packages you want
-(setq package-list '(auctex
+(setq package-list '(async 							; paradox needs async
+										 auctex
 										 auctex-latexmk
                      auto-complete
                      auto-complete-auctex
