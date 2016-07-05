@@ -30,6 +30,12 @@
 (add-to-list 'custom-theme-load-path themes-dir)
 (load-theme 'monokai t)
 
+;; show file path in window title
+(setq frame-title-format
+      '(buffer-file-name "%b - %f" ; File buffer
+        (dired-directory dired-directory ; Dired buffer
+         (revert-buffer-function "%b" ; Buffer Menu
+          ("%b - Dir: " default-directory))))) ; Plain buffer
 
 
 (provide 'appearance)
