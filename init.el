@@ -67,6 +67,7 @@
 										 multiple-cursors
                      powershell
 										 paradox
+										 ranger
                      smartparens
                      smex
                      sr-speedbar
