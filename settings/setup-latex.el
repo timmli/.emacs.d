@@ -21,6 +21,7 @@
 (setq reftex-plug-into-AUCTeX t)
 ;;(setq reftex-toc-split-windows-horizontally t)
 (setq reftex-bibliography-commands '("bibliography" "nobibliography" "addbibresource"))
+(setq reftex-ref-macro-prompt nil)			; go straight to the labels when referencing
 
 ;; reftex config for beamer
 (eval-after-load "tex"
