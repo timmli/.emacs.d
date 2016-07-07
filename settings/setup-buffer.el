@@ -141,6 +141,7 @@
 (require 'ace-jump-mode)
 (define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
 
+;; use deer instead plain directory listing
 (require 'ranger)
 (global-set-key (kbd "C-x C-d") 'deer)
 
