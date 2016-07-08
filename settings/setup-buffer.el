@@ -90,6 +90,7 @@
           groovy-mode-hook
           scala-mode-hook)
   (add-hook it #'smartparens-mode))
+(require 'smartparens-latex)
 
 ;; jump to matching paren
 (defun goto-match-paren (arg)
@@ -103,6 +104,11 @@
         ((looking-back "[\[\(\{]" 1) (backward-char) (forward-sexp))
         (t nil)))
 (global-set-key (kbd "C-M-m") 'goto-match-paren)
+(global-set-key (kbd "M-p M-p") 'goto-match-paren)
+(global-set-key (kbd "M-p M-a") 'sp-beginning-of-sexp)
+(global-set-key (kbd "M-p M-e") 'sp-end-of-sexp)
+(global-set-key (kbd "M-p M-DEL") 'sp-unwrap-sexp)
+
 
 ;; expand-region (intelligent selction)
 (require 'expand-region)
