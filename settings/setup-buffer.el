@@ -109,6 +109,32 @@
 (global-set-key (kbd "M-p M-e") 'sp-end-of-sexp)
 (global-set-key (kbd "M-p M-DEL") 'sp-unwrap-sexp)
 
+;; https://ebzzry.github.io/emacs-pairs.html
+(defmacro def-pairs (pairs)
+  `(progn
+     ,@(loop for (key . val) in pairs
+          collect
+            `(defun ,(read (concat
+                            "wrap-with-"
+                            (prin1-to-string key)
+                            "s"))
+                 (&optional arg)
+               (interactive "p")
+               (sp-wrap-with-pair ,val)))))
+
+(def-pairs ((paren        . "(")
+            (bracket      . "[")
+            (brace        . "{")
+            (single-quote . "'")
+            (double-quote . "\"")
+            (back-quote   . "`")))
+(global-set-key (kbd "M-p M-[") 'wrap-with-brackets)
+(global-set-key (kbd "M-p M-(") 'wrap-with-parens)
+(global-set-key (kbd "M-p M-{") 'wrap-with-braces)
+
+
+
+
 
 ;; expand-region (intelligent selction)
 (require 'expand-region)
