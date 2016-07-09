@@ -41,6 +41,8 @@
 ;; use swiper for buffer search
 (global-set-key (kbd "C-s") 'swiper)
 (setq ivy-wrap t) ;; cycle through results
+;; ivy + imenu
+(global-set-key (kbd "C-ß") #'ivy-imenu-anywhere)
 
 ;; ;; smex helps to remember often used commands; used by ido and counsel
 (require 'smex)
@@ -55,9 +57,15 @@
 					(lambda ()
 						(local-set-key (kbd "M-x") 'abort-recursive-edit)))
 
-(global-set-key (kbd "C-x C-b") 'switch-to-buffer) ; instead of 'list-buffers
+;; C-ß in minibuffer quits the minibuffer
+(add-hook 'minibuffer-setup-hook
+					(lambda ()
+						(local-set-key (kbd "C-ß") 'abort-recursive-edit)))
 
-(global-set-key (kbd "C-ß") #'imenu-anywhere)
+(global-set-key (kbd "C-x C-b") 'switch-to-buffer) ; instead of 'list-buffers
+(global-set-key (kbd "C-x C-k") 'kill-buffer)  
+
+
 (global-set-key (kbd "C-?") #'imenu-list-minor-mode)
 (setq imenu-list-focus-after-activation t)
 (setq imenu-list-auto-resize t)

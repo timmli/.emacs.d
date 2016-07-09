@@ -201,6 +201,8 @@
 
 ;; delete line
 (global-set-key (kbd "C-S-o") 'delete-blank-lines)
+(global-set-key (kbd "C-S-d") 'kill-whole-line)
+
 
 ;; center line
 (global-set-key (kbd "C-S-l") 'recenter-top-bottom)
