@@ -112,27 +112,26 @@
 (global-set-key (kbd "M-DEL") 'sp-unwrap-sexp)
 
 ;; https://ebzzry.github.io/emacs-pairs.html
-(defmacro def-pairs (pairs)
-  `(progn
-     ,@(loop for (key . val) in pairs
-          collect
-            `(defun ,(read (concat
-                            "wrap-with-"
-                            (prin1-to-string key)
-                            "s"))
-                 (&optional arg)
-               (interactive "p")
-               (sp-wrap-with-pair ,val)))))
-
-(def-pairs ((paren        . "(")
-            (bracket      . "[")
-            (brace        . "{")
-            (single-quote . "'")
-            (double-quote . "\"")
-            (back-quote   . "`")))
-(global-set-key (kbd "C-[") 'wrap-with-brackets)
-(global-set-key (kbd "C-(") 'wrap-with-parens)
-(global-set-key (kbd "C-{") 'wrap-with-braces)
+;; (defmacro def-pairs (pairs)
+;;   `(progn
+;;      ,@(loop for (key . val) in pairs
+;;           collect
+;;             `(defun ,(read (concat
+;;                             "wrap-with-"
+;;                             (prin1-to-string key)
+;;                             "s"))
+;;                  (&optional arg)
+;;                (interactive "p")
+;;                (sp-wrap-with-pair ,val)))))
+;; (def-pairs ((paren        . "(")
+;;             (bracket      . "[")
+;;             (brace        . "{")
+;;             (single-quote . "'")
+;;             (double-quote . "\"")
+;;             (back-quote   . "`")))
+;; (global-set-key (kbd "C-[") 'wrap-with-brackets) ; TODO: find nice key bindings
+;; (global-set-key (kbd "C-(") 'wrap-with-parens)
+;; (global-set-key (kbd "C-{") 'wrap-with-braces)
 
 ;; expand-region (intelligent selction)
 (require 'expand-region)
@@ -149,6 +148,10 @@
 (require 'point-undo)
 (global-set-key [M-left] 'point-undo)
 (global-set-key [M-right] 'point-redo)
+
+;; cursor position undo history
+(require 'goto-last-change)
+(global-set-key (kbd "M-_") 'goto-last-change)
 
 (defun my-markdown-mode-config ()
 	"settings for markdown mode"
