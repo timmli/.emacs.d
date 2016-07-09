@@ -104,10 +104,12 @@
         ((looking-back "[\[\(\{]" 1) (backward-char) (forward-sexp))
         (t nil)))
 (global-set-key (kbd "C-M-m") 'goto-match-paren)
-(global-set-key (kbd "M-p M-p") 'goto-match-paren)
-(global-set-key (kbd "M-p M-a") 'sp-beginning-of-sexp)
-(global-set-key (kbd "M-p M-e") 'sp-end-of-sexp)
-(global-set-key (kbd "M-p M-DEL") 'sp-unwrap-sexp)
+(global-set-key (kbd "M-p") 'sp-backward-sexp)
+(global-set-key (kbd "M-n") 'sp-forward-sexp)
+(global-set-key (kbd "M-m") 'goto-match-paren)
+(global-set-key (kbd "M-a") 'sp-beginning-of-sexp)
+(global-set-key (kbd "M-e") 'sp-end-of-sexp)
+(global-set-key (kbd "M-DEL") 'sp-unwrap-sexp)
 
 ;; https://ebzzry.github.io/emacs-pairs.html
 (defmacro def-pairs (pairs)
@@ -128,13 +130,13 @@
             (single-quote . "'")
             (double-quote . "\"")
             (back-quote   . "`")))
-(global-set-key (kbd "M-p M-[") 'wrap-with-brackets)
-(global-set-key (kbd "M-p M-(") 'wrap-with-parens)
-(global-set-key (kbd "M-p M-{") 'wrap-with-braces)
-
-
-
-
+(global-set-key (kbd "C-M-p") nil)
+(global-set-key (kbd "C-M-p C-M-[") 'wrap-with-brackets)
+(global-set-key (kbd "C-M-p C-M-(") 'wrap-with-parens)
+(global-set-key (kbd "C-M-p C-M-{") 'wrap-with-braces)
+(global-set-key (kbd "C-M-p [") 'wrap-with-brackets)
+(global-set-key (kbd "C-M-p (") 'wrap-with-parens)
+(global-set-key (kbd "C-M-p {") 'wrap-with-braces)
 
 ;; expand-region (intelligent selction)
 (require 'expand-region)
