@@ -35,6 +35,10 @@
   (reftex-reset-mode)
   )
 
+;; connect reftex to imenu
+(add-hook 'reftex-load-hook 'imenu-add-menubar-index)
+(add-hook 'reftex-mode-hook 'imenu-add-menubar-index)
+
 ;; ivy-bibtex
 (require 'ivy-bibtex)
 ;; (setq bibtex-completion-bibliography '("./references.bib"))
