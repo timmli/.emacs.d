@@ -19,6 +19,10 @@
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
+;; treat clipboard input as UTF-8 string first; compound text next, etc.
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+;; MS Windows clipboard is UTF-16LE 
+(set-clipboard-coding-system 'utf-16le-dos)
 
 ;; write backup files to own directory
 (setq backup-directory-alist
