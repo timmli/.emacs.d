@@ -39,7 +39,10 @@
 			'((t . ivy--regex-fuzzy)))
 (setq ivy-initial-inputs-alist nil) ; omit ^
 ;; use swiper for buffer search
-(global-set-key (kbd "C-s") 'swiper)
+(add-hook 'prog-mode-hook
+						(lambda ()
+							(local-set-key (kbd "C-s") 'swiper)))
+;; (global-set-key (kbd "C-s") 'swiper) ; not good in text-mode
 (setq ivy-wrap t) ;; cycle through results
 ;; ivy + imenu
 (global-set-key (kbd "C-ß") #'ivy-imenu-anywhere)
