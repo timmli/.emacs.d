@@ -104,12 +104,13 @@
         ((looking-back "[\[\(\{]" 1) (backward-char) (forward-sexp))
         (t nil)))
 (global-set-key (kbd "C-M-m") 'goto-match-paren)
-(global-set-key (kbd "M-p") 'sp-backward-sexp)
-(global-set-key (kbd "M-n") 'sp-forward-sexp)
+(global-set-key (kbd "M-(") 'sp-backward-sexp)
+(global-set-key (kbd "M-)") 'sp-forward-sexp)
 (global-set-key (kbd "M-m") 'goto-match-paren)
-(global-set-key (kbd "M-a") 'sp-beginning-of-sexp)
-(global-set-key (kbd "M-e") 'sp-end-of-sexp)
-(global-set-key (kbd "M-DEL") 'sp-unwrap-sexp)
+(global-set-key (kbd "M-[") 'sp-beginning-of-sexp)
+(global-set-key (kbd "M-]") 'sp-end-of-sexp)
+(global-set-key (kbd "M-DEL") nil)
+(global-set-key (kbd "M-DEL M-[") 'sp-unwrap-sexp)
 
 ;; https://ebzzry.github.io/emacs-pairs.html
 ;; (defmacro def-pairs (pairs)
@@ -201,7 +202,8 @@
 
 ;; delete line
 (global-set-key (kbd "C-S-o") 'delete-blank-lines)
-(global-set-key (kbd "C-S-d") 'kill-whole-line)
+(global-set-key (kbd "C-S-k") 'kill-whole-line)
+(global-set-key (kbd "C-S-d") 'kill-word)
 
 
 ;; center line
