@@ -61,6 +61,7 @@
                      imenu-list
                      ivy-bibtex
 										 js2-mode
+										 magit
                      markdown-mode
                      monokai-theme
 										 multi-project
@@ -109,3 +110,7 @@
 
 ;; map files to modes
 (require 'mode-file-associations)
+
+;; magit
+ (require 'magit)
+(global-set-key (kbd "C-x g") 'magit-status)
