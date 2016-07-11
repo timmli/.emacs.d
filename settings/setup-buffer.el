@@ -85,6 +85,7 @@
           ruby-mode-hook
 					emacs-lisp-mode-hook
 					LaTeX-mode-hook
+					bibtex-mode-hook
 					TeX-mode-hook
           markdown-mode
           groovy-mode-hook
