@@ -66,6 +66,7 @@
 						(local-set-key (kbd "C-ß") 'abort-recursive-edit)))
 
 (global-set-key (kbd "C-x C-b") 'switch-to-buffer) ; instead of 'list-buffers
+(global-set-key (kbd "C-x b") 'ibuffer)
 (global-set-key (kbd "C-x C-k") 'kill-buffer)  
 
 
