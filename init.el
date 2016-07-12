@@ -57,6 +57,7 @@
                      expand-region
                      flycheck
                      flx-ido
+										 goto-last-change
 										 highlight-indent-guides
                      ido-grid-mode
                      ido-vertical-mode
