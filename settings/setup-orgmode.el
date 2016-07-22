@@ -7,7 +7,7 @@
 ;;      FILES
 ;;==========================================================
 
-(setq org-directory (concat (getenv "HOME") "\\Dropbox\\Notizen\\org"))
+(setq org-directory (concat (getenv "HOME") "/Dropbox/Notizen/org"))
 (setq org-agenda-files (list org-directory))
 
 

@@ -5,6 +5,9 @@
 ;; don't show startup message
 (setq inhibit-startup-message t)
 
+(setq default-directory (concat (getenv "HOME") "/"))
+
+
 ;; set path to settings
 (setq settings-dir
       (expand-file-name "settings" user-emacs-directory))
