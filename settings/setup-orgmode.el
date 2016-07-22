@@ -51,6 +51,9 @@
 (global-set-key (kbd "C-<f9>") 'org-cycle-agenda-files)
 (global-set-key (kbd "<f9> s") 'org-search-view)
 
+(with-eval-after-load 'org
+  (define-key org-mode-map (kbd "C-<tab>") nil ))
+
 
 
 ;; (bind-key "C-c r" 'org-capture)
