@@ -19,13 +19,17 @@
       scroll-conservatively  10000)
 
 ;; show vertical line per indentation level (BUG: highlight-indent-guides-mode: Wrong number of arguments: (2 . &rest), 1)
-;; (require 'highlight-indent-guides)
-;; (add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-;; (setq highlight-indent-guides-method 'character)
+(use-package highlight-indent-guides
+	:ensure t
+	:config
+	(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+	(setq highlight-indent-guides-method 'character)
+	)
 
 ;; yasnippet (before auto-complete)
-(require 'yasnippet)
-(yas-global-mode 1)
+(use-package yasnippet
+	:ensure t
+	:config (yas-global-mode 1))
 
 ;; ;; auto-complete, sequence is important
 ;; (require 'auto-complete)
@@ -40,59 +44,72 @@
 ;; 																					(ac-source-yasnippet))))
 
 ;; company
-(require 'company)
-(add-hook 'after-init-hook 'global-company-mode)
-(require 'company-auctex)
-(company-auctex-init)
-;; yasnippet integration
-(defvar company-mode/enable-yas t
-  "Enable yasnippet for all backends.")
-(defun company-mode/backend-with-yas (backend)
-  (if (or (not company-mode/enable-yas)
-          (and (listp backend) (member 'company-yasnippet backend)))
-      backend
-    (append (if (consp backend) backend (list backend))
-            '(:with company-yasnippet))))
-(setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
-;; some general variables
-(setq company-idle-delay 0.3
-			company-minimum-prefix-length 1
-			company-selection-wrap-around t
-			;; company-show-numbers t
-			company-dabbrev-downcase nil
-			company-auto-complete nil
-			company-transformers '(company-sort-by-occurrence))
-;; (eval-after-load 'company
-;;   '(progn
-;;      (define-key company-active-map (kbd "TAB") 'company-select-next)
-;;      (define-key company-active-map [tab] 'company-select-next)))
-(with-eval-after-load 'company (company-flx-mode +1))
+(use-package company
+	:ensure t
+	:config
+	(use-package company-auctex
+		:ensure t
+		:config (company-auctex-init))
+	(add-hook 'after-init-hook 'global-company-mode)
+	;; yasnippet integration
+	(defvar company-mode/enable-yas t
+		"Enable yasnippet for all backends.")
+	(defun company-mode/backend-with-yas (backend)
+		(if (or (not company-mode/enable-yas)
+						(and (listp backend) (member 'company-yasnippet backend)))
+				backend
+			(append (if (consp backend) backend (list backend))
+							'(:with company-yasnippet))))
+	(setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+	;; some general variables
+	(setq company-idle-delay 0.3
+				company-minimum-prefix-length 1
+				company-selection-wrap-around t
+				;; company-show-numbers t
+				company-dabbrev-downcase nil
+				company-auto-complete nil
+				company-transformers '(company-sort-by-occurrence))
+	;; (eval-after-load 'company
+	;;   '(progn
+	;;      (define-key company-active-map (kbd "TAB") 'company-select-next)
+	;;      (define-key company-active-map [tab] 'company-select-next)))
+	(with-eval-after-load 'company (company-flx-mode +1))
+	)
+
 
 ;; flycheck
-(require 'flycheck)
-(global-flycheck-mode t)
+(use-package flycheck
+	:ensure t
+	:config
+	(global-flycheck-mode t)
+	)
+
 
 ;; flyspell
 (require 'setup-flyspell)
 
 ;; smartparens
-(require 'smartparens-config)
-(setq sp-autoescape-string-quote nil)
-(--each '(css-mode-hook
-          restclient-mode-hook
-          js-mode-hook
-          java-mode-hook
-          ruby-mode-hook
-					emacs-lisp-mode-hook
-					LaTeX-mode-hook
-					bibtex-mode-hook
-					shell-mode-hook
-					TeX-mode-hook
-          markdown-mode
-          groovy-mode-hook
-          scala-mode-hook)
-  (add-hook it #'smartparens-mode))
-(require 'smartparens-latex)
+(use-package smartparens
+	:ensure t
+	:config
+	(require 'smartparens-config)
+	(setq sp-autoescape-string-quote nil)
+	(--each '(css-mode-hook
+						restclient-mode-hook
+						js-mode-hook
+						java-mode-hook
+						ruby-mode-hook
+						emacs-lisp-mode-hook
+						LaTeX-mode-hook
+						bibtex-mode-hook
+						shell-mode-hook
+						TeX-mode-hook
+						markdown-mode
+						groovy-mode-hook
+						scala-mode-hook)
+		(add-hook it #'smartparens-mode))
+	(require 'smartparens-latex)
+	)
 
 ;; jump to matching paren
 (defun goto-match-paren (arg)
@@ -137,49 +154,70 @@
 ;; (global-set-key (kbd "C-{") 'wrap-with-braces)
 
 ;; expand-region (intelligent selction)
-(require 'expand-region)
-(global-set-key (kbd "C-+") 'er/expand-region)
+(use-package expand-region
+	:ensure t
+	:bind ("C-+" . er/expand-region)
+	)
+
+
 
 ;; multiple cursors
-(require 'multiple-cursors)
-(global-set-key (kbd "C-S-c C-S-c") 'mc/edit-lines)
-(global-set-key (kbd "C->") 'mc/mark-next-like-this)
-(global-set-key (kbd "C-<") 'mc/mark-previous-like-this)
-(global-set-key (kbd "C-c C-<") 'mc/mark-all-like-this)
+(use-package multiple-cursors
+	:ensure t
+	:bind
+	("C-S-c C-S-c" . mc/edit-lines)
+	("C->" . mc/mark-next-like-this)
+	("C-<" . mc/mark-previous-like-this)
+	("C-c C-<" . mc/mark-all-like-this)
+	)
 
-;; cursor position history
+;; cursor position history (LOCAL)
 (require 'point-undo)
 (global-set-key [M-left] 'point-undo)
 (global-set-key [M-right] 'point-redo)
 
 ;; cursor position undo history
-(require 'goto-last-change)
-(global-set-key (kbd "M-_") 'goto-last-change)
+(use-package goto-last-change
+	:ensure t
+	:bind
+	("M-_" . goto-last-change))
 
-(defun my-markdown-mode-config ()
-	"settings for markdown mode"
-	(interactive)
-	(setq-default tab-width 4)
-	(setq-default indent-tabs-mode t)
-	(setq markdown-enable-math t))
-(add-hook 'markdown-mode 'my-markdown-mode-config)
-(setq markdown-enable-math t)
+(use-package markdown-mode
+	:ensure t
+	:config 
+	(defun my-markdown-mode-config ()
+		"settings for markdown mode"
+		(interactive)
+		(setq-default tab-width 4)
+		(setq-default indent-tabs-mode t)
+		(setq markdown-enable-math t))
+	(add-hook 'markdown-mode 'my-markdown-mode-config)
+	(setq markdown-enable-math t)
+)
 
 ;; adds support of the windows powershell
-(require 'powershell)
+(use-package powershell
+	:ensure t)
 
 ;; switching between buffers with C-tab
-(require 'iflipb)
-(setq iflipb-wrap-around t)
-(global-set-key (kbd "<C-tab>") 'iflipb-next-buffer)
+(use-package iflipb
+	:ensure t
+	:config
+	(setq iflipb-wrap-around t)
+	:bind
+	("<C-tab>" . iflipb-next-buffer))
 
 ;; adds ace jump mode
-(require 'ace-jump-mode)
-(define-key global-map (kbd "C-c SPC") 'ace-jump-mode)
+(use-package ace-jump-mode
+	:ensure t
+	:bind 
+	("C-c SPC" . ace-jump-mode))
 
 ;; use deer instead plain directory listing
-(require 'ranger)
-(global-set-key (kbd "C-x C-d") 'deer)
+(use-package ranger
+	:ensure t
+	:bind
+	("C-x C-d" . deer))
 
 
 ;;==========================================================

@@ -1,3 +1,7 @@
+;;==========================================================
+;;      GENERAL SETUP
+;;==========================================================
+
 ;; don't show startup message
 (setq inhibit-startup-message t)
 
@@ -35,7 +39,10 @@
 (setq save-place-file (expand-file-name ".places" user-emacs-directory))
 
 
-;; package managing
+;;==========================================================
+;;      PACKAGE MANAGEMENT
+;;==========================================================
+
 (when (>= emacs-major-version 24)
   (require 'package)
   ;; (add-to-list 'package-archives
@@ -45,41 +52,8 @@
   (package-initialize))
 ;; list the packages you want
 (setq package-list '(async 							; paradox needs async
-										 auctex
-										 auctex-latexmk
-                     auto-complete
-                     auto-complete-auctex
-										 ace-jump-mode
-										 company
-										 company-auctex
-										 company-flx
-                     counsel
-                     expand-region
-                     flycheck
-                     flx-ido
-										 goto-last-change
-										 highlight-indent-guides
-                     ido-grid-mode
-                     ido-vertical-mode
-										 iflipb
-                     imenu-anywhere
-                     imenu-list
-                     ivy-bibtex
-										 js2-mode
-										 magit
-                     markdown-mode
-                     monokai-theme
-										 multi-project
-										 multiple-cursors
-                     powershell
 										 paradox
-										 ranger
-                     smartparens
-                     smex
-                     sr-speedbar
-										 swiper
-                     yasnippet
-                     web-mode
+										 use-package
                      ))
 ;; ;; fetch the list of packages available
 ;; (unless package-archive-contents
@@ -100,23 +74,60 @@
 ;; upgrade packages (this slows down start-up somewhat)
 ;(paradox-upgrade-packages)
 
-(require 'multi-project)
-(global-multi-project-mode)
+;; use-package
+(setq use-package-verbose t)
 
 
-(require 'web-mode)                  ; for improved html support
-(require 'js2-mode)                  ; for improved JavaScript support
+
+;;==========================================================
+;;      MAJOR MODES
+;;==========================================================
+
+;; (use-package multi-project
+;; 	:ensure t
+;; 	:config
+;; 	(global-multi-project-mode))
+
+(use-package web-mode										; for improved html support
+	:ensure t
+	:mode
+	("\\.phtml\\'" . web-mode)
+	("\\.tpl\\.php\\'" . web-mode)
+	("\\.[agj]sp\\'" . web-mode)
+	("\\.as[cp]x\\'" . web-mode)
+	("\\.erb\\'" . web-mode)
+	("\\.mustache\\'" . web-mode)
+	("\\.djhtml\\'" . web-mode)
+	("\\.html?\\'" . web-mode)
+	("\\.xml\\'" . web-mode)
+	("\\.css\\'" . web-mode)
+)
+
+(use-package js2-mode										; for improved JavaScript support
+	:ensure t
+	:mode
+	("\\.js\\'" . js2-mode))
+
+(use-package tex
+	:ensure auctex												; because auctex overwrites tex
+	:config
+	)
+
+
+;;==========================================================
+;;      SPECIFIC SETUP 
+;;==========================================================
+
 
 (require 'setup-minibuffer)
 (require 'setup-buffer)
+(require 'setup-latex)									; TODO: include into (use-package tex)
 (require 'setup-speedbar)
-(require 'setup-latex)
 (require 'setup-frame)
 
-;; map files to modes
-(require 'mode-file-associations)
-
 ;; magit
-(require 'magit)
-(global-set-key (kbd "C-x g") 'magit-status)
-(global-set-key (kbd "C-x C-g") 'magit-status)
+(use-package magit
+	:ensure t
+	:bind
+	("C-x g" . magit-status)
+	("C-x C-g" . magit-status))

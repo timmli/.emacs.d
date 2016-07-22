@@ -3,17 +3,23 @@
 
 ;; ido improves buffer switching experience
 (ido-mode 1)
-;; add flx to ido 
-(require 'flx-ido)
 (ido-everywhere 1)
-(flx-ido-mode 1)
-;; disable ido faces to see flx highlights.
-(setq ido-enable-flex-matching t)
-(setq ido-use-faces nil)
 ;; add vertical mode to ido
-(ido-vertical-mode 1)
+(use-package ido-vertical-mode	
+	:ensure t
+	:config (ido-vertical-mode 1)	)
 ;; add grid mode
-(ido-grid-mode 1)
+(use-package ido-grid-mode
+	:ensure t
+	:config (ido-grid-mode 1))												
+;; add flx to ido 
+(use-package flx-ido
+	:ensure t
+	:config 
+	(flx-ido-mode 1)
+	;; disable ido faces to see flx highlights.
+	(setq ido-enable-flex-matching t)
+	(setq ido-use-faces nil))
 
 
 ;; recent files
@@ -32,23 +38,44 @@
 
 ;; ivy componente
 ;; counsel adds fuzzy search to command completion 
-(require 'counsel)
-(global-set-key (kbd "M-x") 'counsel-M-x)
-(setq ivy-display-style 'fancy)
-(setq ivy-re-builders-alist ; use flx
-			'((t . ivy--regex-fuzzy)))
-(setq ivy-initial-inputs-alist nil) ; omit ^
-;; use swiper for buffer search
-(add-hook 'prog-mode-hook
+(use-package counsel
+	:ensure t
+	:config
+	(setq ivy-display-style 'fancy)
+	(setq ivy-re-builders-alist ; use flx
+				'((t . ivy--regex-fuzzy)))
+	(setq ivy-initial-inputs-alist nil) ; omit ^
+	(setq ivy-wrap t) ;; cycle through results
+	:bind
+	("M-x" . counsel-M-x)
+	("C-ß" . ivy-imenu-anywhere) ; ivy + imenu
+	)
+;; swiper
+(use-package swiper
+	:ensure t
+	:config
+	;; use swiper for buffer search
+	(add-hook 'prog-mode-hook
 						(lambda ()
 							(local-set-key (kbd "C-s") 'swiper)))
-;; (global-set-key (kbd "C-s") 'swiper) ; not good in text-mode
-(setq ivy-wrap t) ;; cycle through results
-;; ivy + imenu
-(global-set-key (kbd "C-ß") #'ivy-imenu-anywhere)
+	;; (global-set-key (kbd "C-s") 'swiper) ; not good in text-mode
+	)
 
-;; ;; smex helps to remember often used commands; used by ido and counsel
-(require 'smex)
+;; imenu
+(use-package imenu-anywhere
+	:ensure t)
+(use-package imenu-list
+	:ensure t
+	:bind
+	("C-?" . imenu-list-minor-mode)
+	:config
+	(setq imenu-list-focus-after-activation t)
+	(setq imenu-list-auto-resize t)
+	)
+
+;; smex helps to remember often used commands; used by ido and counsel
+(use-package smex
+	:ensure t)
 
 
 ;;==========================================================
@@ -70,8 +97,6 @@
 (global-set-key (kbd "C-x C-k") 'kill-buffer)  
 
 
-(global-set-key (kbd "C-?") #'imenu-list-minor-mode)
-(setq imenu-list-focus-after-activation t)
-(setq imenu-list-auto-resize t)
+
 
 (provide 'setup-minibuffer)
