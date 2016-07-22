@@ -222,6 +222,7 @@
 
 ;; visualize the undo history
 (use-package undo-tree
+	:ensure t
   :diminish undo-tree-mode
   :config
   (progn
