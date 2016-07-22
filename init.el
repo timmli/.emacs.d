@@ -112,6 +112,8 @@
 	:ensure auctex												; because auctex overwrites tex
 	:config
 	)
+(require 'setup-latex)									; TODO: include into (use-package tex)
+
 
 (use-package markdown-mode
 	:ensure t
@@ -124,7 +126,12 @@
 		(setq markdown-enable-math t))
 	(add-hook 'markdown-mode 'my-markdown-mode-config)
 	(setq markdown-enable-math t)
-)
+	)
+
+
+(require 'setup-orgmode)
+
+
 
 
 ;;==========================================================
@@ -134,7 +141,6 @@
 
 (require 'setup-minibuffer)
 (require 'setup-buffer)
-(require 'setup-latex)									; TODO: include into (use-package tex)
 (require 'setup-speedbar)
 (require 'setup-frame)
 
