@@ -1,3 +1,9 @@
+
+
+;;==========================================================
+;;      GENERAL CONFIGURATION
+;;==========================================================
+
 ;; automatically update buffers when files change
 (global-auto-revert-mode t)
 
@@ -25,6 +31,11 @@
 	(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
 	(setq highlight-indent-guides-method 'character)
 	)
+
+
+;;==========================================================
+;;      AUTOCOMPLETE
+;;==========================================================
 
 ;; yasnippet (before auto-complete)
 (use-package yasnippet
@@ -77,6 +88,10 @@
 	)
 
 
+;;==========================================================
+;;      SYNTAX CHECK
+;;==========================================================
+
 ;; flycheck
 (use-package flycheck
 	:ensure t
@@ -84,9 +99,13 @@
 	(global-flycheck-mode t)
 	)
 
-
 ;; flyspell
 (require 'setup-flyspell)
+
+
+;;==========================================================
+;;      PAREN HANDLING
+;;==========================================================
 
 ;; smartparens
 (use-package smartparens
@@ -153,6 +172,11 @@
 ;; (global-set-key (kbd "C-(") 'wrap-with-parens)
 ;; (global-set-key (kbd "C-{") 'wrap-with-braces)
 
+
+;;==========================================================
+;;      SELECTION
+;;==========================================================
+
 ;; expand-region (intelligent selction)
 (use-package expand-region
 	:ensure t
@@ -160,6 +184,15 @@
 	)
 
 
+;;==========================================================
+;;      CURSOR PLACEMENT 
+;;==========================================================
+
+;; adds ace jump mode
+(use-package ace-jump-mode
+	:ensure t
+	:bind 
+	("C-c SPC" . ace-jump-mode))
 
 ;; multiple cursors
 (use-package multiple-cursors
@@ -182,22 +215,33 @@
 	:bind
 	("M-_" . goto-last-change))
 
-(use-package markdown-mode
-	:ensure t
-	:config 
-	(defun my-markdown-mode-config ()
-		"settings for markdown mode"
-		(interactive)
-		(setq-default tab-width 4)
-		(setq-default indent-tabs-mode t)
-		(setq markdown-enable-math t))
-	(add-hook 'markdown-mode 'my-markdown-mode-config)
-	(setq markdown-enable-math t)
-)
+
+;;==========================================================
+;;      UNDO
+;;==========================================================
+
+;; visualize the undo history
+(use-package undo-tree
+  :diminish undo-tree-mode
+  :config
+  (progn
+    (global-undo-tree-mode)
+    (setq undo-tree-visualizer-timestamps t)
+    (setq undo-tree-visualizer-diff t)))
+
+
+;;==========================================================
+;;      SHELL SUPPORT
+;;==========================================================
 
 ;; adds support of the windows powershell
 (use-package powershell
 	:ensure t)
+
+
+;;==========================================================
+;;     SWITCH BETWEEN BUFFERS
+;;==========================================================
 
 ;; switching between buffers with C-tab
 (use-package iflipb
@@ -207,11 +251,10 @@
 	:bind
 	("<C-tab>" . iflipb-next-buffer))
 
-;; adds ace jump mode
-(use-package ace-jump-mode
-	:ensure t
-	:bind 
-	("C-c SPC" . ace-jump-mode))
+
+;;==========================================================
+;;      FILE BROWSER
+;;==========================================================
 
 ;; use deer instead plain directory listing
 (use-package ranger

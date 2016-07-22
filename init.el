@@ -113,6 +113,19 @@
 	:config
 	)
 
+(use-package markdown-mode
+	:ensure t
+	:config 
+	(defun my-markdown-mode-config ()
+		"settings for markdown mode"
+		(interactive)
+		(setq-default tab-width 4)
+		(setq-default indent-tabs-mode t)
+		(setq markdown-enable-math t))
+	(add-hook 'markdown-mode 'my-markdown-mode-config)
+	(setq markdown-enable-math t)
+)
+
 
 ;;==========================================================
 ;;      SPECIFIC SETUP 
