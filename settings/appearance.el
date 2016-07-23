@@ -20,9 +20,9 @@
 ;; soft-wrap lines
 (global-visual-line-mode t)
 
-;; line numbers
-(global-linum-mode t)
-(setq linum-format " %3d ")
+;; ;; line numbers
+;; (global-linum-mode t)
+;; (setq linum-format " %3d ")
 
 ;; theme
 (setq themes-dir
