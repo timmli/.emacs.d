@@ -45,17 +45,14 @@
 
 
 ;; LaTeX support
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((latex . t)))
+(org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
+(setq org-highlight-latex-and-related '(latex script entities)) ; inline sytax highlighting
 
 ;; plantuml
 ;; http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
 (setq org-plantuml-jar-path
       (expand-file-name "plantuml.jar" org-directory))
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((plantuml . t)))
+(org-babel-do-load-languages  'org-babel-load-languages '((plantuml . t)))
 
 ;;==========================================================
 ;;      TAGS

@@ -168,7 +168,7 @@
 	:ensure t
 	:config
 	(global-git-gutter-mode +1)
-	;; (git-gutter:linum-setup)
+	;; (git-gutter:linum-setup) ; git-gutter is struggling with linum-mode
 	(custom-set-variables
 	 '(git-gutter:update-interval 2))
 	:bind
