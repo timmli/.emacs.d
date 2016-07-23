@@ -160,7 +160,23 @@
 	:ensure t
 	:bind
 	("C-x g" . magit-status)
-	("C-x C-g" . magit-status))
+	;; ("C-x C-g" . magit-status)
+	)
+
+;; git-gutter
+(use-package git-gutter
+	:ensure t
+	:config
+	(global-git-gutter-mode +1)
+	;; (git-gutter:linum-setup)
+	(custom-set-variables
+	 '(git-gutter:update-interval 2))
+	:bind
+	("C-x C-g" . nil)
+	("C-x C-g TAB" . git-gutter:popup-hunk)
+	("C-x C-g _" . git-gutter:revert-hunk)
+	("C-x C-g C-g" . git-gutter-mode)
+	)
 
 ;; adds support of the windows powershell
 (if (eq system-type 'windows-nt)
