@@ -39,6 +39,10 @@
 ;;  '(org-load-modules-maybe t))
 ;; (setq org-expiry-inactive-timestamps t)
 
+(setq org-support-shift-select t)
+;; (setq org-completion-use-ido t)
+(setq org-src-fontify-natively t)
+
 
 ;;==========================================================
 ;;      KEYS

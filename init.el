@@ -2,11 +2,14 @@
 ;;      GENERAL SETUP
 ;;==========================================================
 
+;; speed up start
+(setq gc-cons-threshold 100000000)			; provide more memory
+
 ;; don't show startup message
 (setq inhibit-startup-message t)
 
+;; set home directory
 (setq default-directory (concat (getenv "HOME") "/"))
-
 
 ;; set path to settings
 (setq settings-dir
@@ -80,6 +83,11 @@
 ;; use-package
 (setq use-package-verbose t)
 
+;;==========================================================
+;;      MINIBUFFER SETUP 
+;;==========================================================
+
+(require 'setup-minibuffer)
 
 
 ;;==========================================================
@@ -117,7 +125,6 @@
 	)
 (require 'setup-latex)									; TODO: include into (use-package tex)
 
-
 (use-package markdown-mode
 	:ensure t
 	:config 
@@ -131,19 +138,20 @@
 	(setq markdown-enable-math t)
 	)
 
-
 (require 'setup-orgmode)
 
 
-
-
 ;;==========================================================
-;;      SPECIFIC SETUP 
+;;      BUFFER SETUP 
 ;;==========================================================
 
-
-(require 'setup-minibuffer)
 (require 'setup-buffer)
+
+
+;;==========================================================
+;;      MISCELLANEOUS
+;;==========================================================
+
 (require 'setup-speedbar)
 (require 'setup-frame)
 

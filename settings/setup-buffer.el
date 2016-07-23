@@ -84,7 +84,14 @@
 	;;   '(progn
 	;;      (define-key company-active-map (kbd "TAB") 'company-select-next)
 	;;      (define-key company-active-map [tab] 'company-select-next)))
+	(use-package company-flx
+		:ensure t)
 	(with-eval-after-load 'company (company-flx-mode +1))
+	;; add company to org-mode
+ 	(setq company-backends '(company-capf))
+	(defun add-pcomplete-to-capf ()
+		(add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
+	(add-hook 'org-mode-hook #'add-pcomplete-to-capf)
 	)
 
 
