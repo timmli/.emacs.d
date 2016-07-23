@@ -35,7 +35,11 @@
       '(buffer-file-name "%b - %f" ; File buffer
         (dired-directory dired-directory ; Dired buffer
          (revert-buffer-function "%b" ; Buffer Menu
-          ("%b - Dir: " default-directory))))) ; Plain buffer
+																 ("%b - Dir: " default-directory))))) ; Plain buffer
+
+;; show date and time
+(setq display-time-24hr-format t)
+(display-time-mode +1)
 
 
 (provide 'appearance)
