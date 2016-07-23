@@ -88,7 +88,7 @@
 		:ensure t)
 	(with-eval-after-load 'company (company-flx-mode +1))
 	;; add company to org-mode
- 	(setq company-backends '(company-capf))
+ 	(add-to-list 'company-backends 'company-capf)
 	(defun add-pcomplete-to-capf ()
 		(add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
 	(add-hook 'org-mode-hook #'add-pcomplete-to-capf)
@@ -131,6 +131,7 @@
 						shell-mode-hook
 						TeX-mode-hook
 						markdown-mode
+						org-mode
 						groovy-mode-hook
 						scala-mode-hook)
 		(add-hook it #'smartparens-mode))
