@@ -161,3 +161,9 @@
 	:bind
 	("C-x g" . magit-status)
 	("C-x C-g" . magit-status))
+
+;; adds support of the windows powershell
+(if (eq system-type 'windows-nt)
+		(use-package powershell
+			:ensure t)
+)
