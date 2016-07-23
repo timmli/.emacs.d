@@ -44,6 +44,19 @@
 (setq org-src-fontify-natively t)
 
 
+;; LaTeX support
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((latex . t)))
+
+;; plantuml
+;; http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
+(setq org-plantuml-jar-path
+      (expand-file-name "plantuml.jar" org-directory))
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((plantuml . t)))
+
 ;;==========================================================
 ;;      KEYS
 ;;==========================================================
