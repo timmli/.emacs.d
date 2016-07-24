@@ -43,6 +43,8 @@
 ;; (setq org-completion-use-ido t)
 (setq org-src-fontify-natively t)
 
+;; todo lists
+(setq org-enforce-todo-dependencies t)
 
 ;; LaTeX support
 (org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
@@ -81,7 +83,7 @@
   (define-key org-mode-map (kbd "C-<tab>") nil ))
 
 ;; (bind-key "C-c r" 'org-capture)
-;; (bind-key "C-c a" 'org-agenda)
+(bind-key "C-c a" 'org-agenda)
 ;; (bind-key "C-c l" 'org-store-link)
 ;; (bind-key "C-c L" 'org-insert-link-global)
 ;; (bind-key "C-c O" 'org-open-at-point-global)
@@ -98,6 +100,24 @@
 
 ;; (with-eval-after-load 'org-agenda
 ;;   (bind-key "i" 'org-agenda-clock-in org-agenda-mode-map))
+
+
+;;==========================================================
+;;      CAPTURE TEMPLATES
+;;==========================================================
+
+(setq org-capture-templates
+      '(("a" "My TODO task format." entry
+         (file (concat org-directory "/todo.org"))
+         "* TODO %?
+SCHEDULED: %t")))
+
+(defun direct-org-task-capture ()
+  "Capture a task with my default template."
+  (interactive)
+  (org-capture nil "a"))
+
+(global-set-key (kbd "<f9> <f9>") 'direct-org-task-capture)
 
 
 ;;==========================================================
