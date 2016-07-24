@@ -69,17 +69,16 @@
 ;;      KEYS
 ;;==========================================================
 
-
 (global-set-key (kbd "<f9> c") 'org-goto-calendar)
 (global-set-key (kbd "<f9> a") 'org-agenda-list)
 (global-set-key (kbd "<f9> t") 'org-todo-list)
 (global-set-key (kbd "C-<f9>") 'org-cycle-agenda-files)
 (global-set-key (kbd "<f9> s") 'org-search-view)
+(global-set-key (kbd "<f9> l") 'org-tags-view)
+(global-set-key (kbd "<f9> r") 'org-reload)
 
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "C-<tab>") nil ))
-
-
 
 ;; (bind-key "C-c r" 'org-capture)
 ;; (bind-key "C-c a" 'org-agenda)
