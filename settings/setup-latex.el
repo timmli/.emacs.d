@@ -104,7 +104,6 @@
 					 (t
 						bibtex-completion-bibliography))))))
 	:bind (:map LaTeX-mode-map 
-							("C-l C-r" . ivy-bibtex-with-local-bibliography)
 							("C-l C-r" . ivy-bibtex-with-local-bibliography))
 	)
 

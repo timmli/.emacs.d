@@ -39,12 +39,18 @@
 ;;  '(org-load-modules-maybe t))
 ;; (setq org-expiry-inactive-timestamps t)
 
+
+;; selection
 (setq org-support-shift-select t)
-;; (setq org-completion-use-ido t)
+
+;; source blocks
 (setq org-src-fontify-natively t)
 
 ;; todo lists
 (setq org-enforce-todo-dependencies t)
+
+;; links
+(setq org-return-follows-link t)
 
 ;; LaTeX support
 (org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
@@ -55,6 +61,9 @@
 (setq org-plantuml-jar-path
       (expand-file-name "plantuml.jar" org-directory))
 (org-babel-do-load-languages  'org-babel-load-languages '((plantuml . t)))
+
+
+
 
 ;;==========================================================
 ;;      TAGS
@@ -81,6 +90,10 @@
 
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "C-<tab>") nil ))
+(with-eval-after-load 'org
+  (define-key org-mode-map (kbd "S-<up>") nil ))
+(with-eval-after-load 'org
+  (define-key org-mode-map (kbd "S-<down>") nil ))
 
 ;; (bind-key "C-c r" 'org-capture)
 (bind-key "C-c a" 'org-agenda)
@@ -107,17 +120,20 @@
 ;;==========================================================
 
 (setq org-capture-templates
-      '(("a" "My TODO task format." entry
+      '(("t" "My TODO task format." entry
          (file (concat org-directory "/todo.org"))
-         "* TODO %?
-SCHEDULED: %t")))
+         "* TODO %?\n SCHEDULED: %t")
+        ("j" "Journal" entry (file+datetree (concat org-directory "/journal.org"))
+				 "* %?\nEntered on %U\n  %i\n  %a"))
+			)
 
 (defun direct-org-task-capture ()
   "Capture a task with my default template."
   (interactive)
-  (org-capture nil "a"))
+  (org-capture nil "t"))
 
-(global-set-key (kbd "<f9> <f9>") 'direct-org-task-capture)
+(global-set-key (kbd "<f9> <f9> t") (lambda () (interactive) (org-capture nil "t")))
+(global-set-key (kbd "<f9> <f9> j") (lambda () (interactive) (org-capture nil "j")))
 
 
 ;;==========================================================
