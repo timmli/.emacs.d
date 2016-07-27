@@ -205,7 +205,7 @@
 ;;      SELECTION
 ;;==========================================================
 
-;; expand-region (intelligent selction)
+;; expand-region (intelligent selection)
 (use-package expand-region
 	:ensure t
 	:bind ("C-+" . er/expand-region)
