@@ -9,6 +9,25 @@
 (setq inhibit-startup-message t)
 
 ;; set home directory
+;; 1: check HOME variable
+(when (or
+			 (string-equal (getenv "HOME") nil)
+			 (string-equal (getenv "HOME") "")
+			 )
+	(if (y-or-n-p  "Environment variable HOME not set! Do this now?")
+			(progn
+				(call-interactively 'tl-ask-home)
+				)
+		(progn )
+		)
+	)
+;; 2: ask for HOME path
+(defun tl-ask-home (path)
+	(interactive "sHOME: ")
+	(setenv "HOME" path)
+	(message "HOME variable was set to: %s (only for this session)" path)
+	)
+;; 3: set default-directory
 (setq default-directory (concat (getenv "HOME") "/"))
 
 ;; set path to settings
