@@ -8,7 +8,9 @@
 ;;==========================================================
 
 (setq org-directory (concat (getenv "HOME") "/Dropbox/Notizen/org"))
-(setq org-agenda-files (list org-directory))
+(setq org-agenda-files (append
+												(list org-directory)
+												(file-expand-wildcards (concat org-directory "/*/*.org"))))
 
 
 ;;==========================================================
@@ -55,6 +57,7 @@
 ;; LaTeX support
 (org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
 (setq org-highlight-latex-and-related '(latex script entities)) ; inline sytax highlighting
+(plist-put org-format-latex-options :scale 1.2) ; scale inline PNGs
 
 ;; plantuml
 ;; http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
