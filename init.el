@@ -109,6 +109,7 @@
 ;; use-package
 (setq use-package-verbose t)
 
+
 ;;==========================================================
 ;;      MINIBUFFER SETUP 
 ;;==========================================================
@@ -124,6 +125,8 @@
 ;; 	:ensure t
 ;; 	:config
 ;; 	(global-multi-project-mode))
+
+
 
 (use-package web-mode										; for improved html support
 	:ensure t
@@ -145,6 +148,8 @@
 	:mode
 	("\\.js\\'" . js2-mode))
 
+(require 'setup-orgmode)								; must appear before tex stuff!
+
 (use-package tex
 	:ensure auctex												; because auctex overwrites tex
 	:config
@@ -163,8 +168,6 @@
 	(add-hook 'markdown-mode 'my-markdown-mode-config)
 	(setq markdown-enable-math t)
 	)
-
-(require 'setup-orgmode)
 
 
 ;;==========================================================

@@ -2,12 +2,12 @@
 ;; http://pages.sachachua.com/.emacs.d/Sacha.html#orgfe5d909
 ;; http://doc.norang.ca/org-mode.html#Setup
 
-
 ;;==========================================================
 ;;      FILES
 ;;==========================================================
 
 (setq org-directory (concat (getenv "HOME") "/Dropbox/Notizen/org"))
+(setq home-directory (getenv "HOME"))
 (global-set-key (kbd "<f9> u")
 								'(lambda ()
 									 (interactive)
@@ -69,15 +69,26 @@
 ;; LaTeX support
 (org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
 (setq org-highlight-latex-and-related '(latex script entities)) ; inline sytax highlighting
+(add-to-list 'org-latex-packages-alist '("" "tikz" t))
+(add-to-list 'org-latex-packages-alist '("" "forest" t))
 (plist-put org-format-latex-options :scale 1.2) ; scale inline PNGs
+;; org-ref
+;; (setq org-ref-completion-library 'org-ref-ivy-cite) ; must appear before org-ref
+(use-package org-ref
+	:ensure t
+	:config
+	(setq reftex-default-bibliography '((concat home-directory "/Dropbox/Forschung/timm-bib.bib"))) ; FIXME
+	(setq org-ref-default-bibliography (concat home-directory "/Dropbox/Forschung/timm-bib.bib")
+			;; org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org"
+      ;; org-ref-pdf-directory "~/Dropbox/bibliography/bibtex-pdfs/"
+			)
+)
 
 ;; plantuml
 ;; http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
 (setq org-plantuml-jar-path
       (expand-file-name "plantuml.jar" org-directory))
 (org-babel-do-load-languages  'org-babel-load-languages '((plantuml . t)))
-
-
 
 
 ;;==========================================================
