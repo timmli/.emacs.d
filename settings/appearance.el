@@ -1,6 +1,5 @@
 ;;; appearance --- General appearence of emacs
 
-
 ;; don't show toolbar
 (tool-bar-mode 0)
 

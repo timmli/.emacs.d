@@ -35,6 +35,13 @@
       (expand-file-name "settings" user-emacs-directory))
 (add-to-list 'load-path settings-dir)
 
+;; font
+;; ;; default (can be overridden by custom.el)
+;; (add-to-list 'default-frame-alist
+;;              '(font . "DejaVu Sans Mono-11"))
+;; stolen from custom.el (can be overridden by custom.el)
+(custom-set-faces
+ '(default ((t (:family "DejaVu Sans Mono" :foundry "outline" :slant normal :weight normal :height 113 :width normal)))))
 ;; load custom file
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
