@@ -1,6 +1,10 @@
 ;; shorten yes/no answers to y/n
 (fset 'yes-or-no-p 'y-or-n-p)
 
+;;==========================================================
+;;      IDO, IVY, IMENU
+;;==========================================================
+
 ;; ido improves buffer switching experience
 (ido-mode 1)
 (ido-everywhere 1)

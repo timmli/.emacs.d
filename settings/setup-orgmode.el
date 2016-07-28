@@ -90,6 +90,29 @@
       (expand-file-name "plantuml.jar" org-directory))
 (org-babel-do-load-languages  'org-babel-load-languages '((plantuml . t)))
 
+;; spell checking
+;; ispell
+(add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:"))
+(add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
+;; flyspell
+;; http://emacs.stackexchange.com/a/9347/12336
+;; NO spell check for embedded snippets
+(defadvice org-mode-flyspell-verify (after org-mode-flyspell-verify-hack activate)
+  (let ((rlt ad-return-value)
+        (begin-regexp "^[ \t]*#\\+begin_\\(src\\|html\\|latex\\)")
+        (end-regexp "^[ \t]*#\\+end_\\(src\\|html\\|latex\\)")
+        old-flag
+        b e)
+    (when ad-return-value
+      (save-excursion
+        (setq old-flag case-fold-search)
+        (setq case-fold-search t)
+        (setq b (re-search-backward begin-regexp nil t))
+        (if b (setq e (re-search-forward end-regexp nil t)))
+        (setq case-fold-search old-flag))
+      (if (and b e (< (point) e)) (setq rlt nil)))
+    (setq ad-return-value rlt)))
+
 
 ;;==========================================================
 ;;      TAGS
