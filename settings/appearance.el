@@ -40,4 +40,7 @@
 (setq display-time-24hr-format t)
 (display-time-mode +1)
 
+;; fringe style
+;; (set-face-attribute 'fringe nil :background "#3F3F3F" :foreground "#3F3F3F")
+
 (provide 'appearance)
