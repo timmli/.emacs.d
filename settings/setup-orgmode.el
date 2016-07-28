@@ -53,7 +53,6 @@
 ;;  '(org-load-modules-maybe t))
 ;; (setq org-expiry-inactive-timestamps t)
 
-
 ;; selection
 (setq org-support-shift-select t)
 
