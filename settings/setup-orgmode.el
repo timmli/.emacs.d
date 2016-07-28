@@ -8,10 +8,22 @@
 ;;==========================================================
 
 (setq org-directory (concat (getenv "HOME") "/Dropbox/Notizen/org"))
-(setq org-agenda-files (append
-												(list org-directory)
-												(file-expand-wildcards (concat org-directory "/*/*.org"))))
+(global-set-key (kbd "<f9> u")
+								'(lambda ()
+									 (interactive)
+									 (setq org-agenda-files
+												 (append
+													(list org-directory)
+													(file-expand-wildcards (concat org-directory "/*/*.org"))))
+									 (message "org-agenda-files updated")
+									 ))
 
+;; ;; Doing this at every start-up is maybe not a good idea:
+;; (setq org-agenda-files
+;; 			(append
+;; 			 (list org-directory)
+;; 			 (file-expand-wildcards (concat org-directory "/*/*.org"))))
+								
 
 ;;==========================================================
 ;;      MODULES
