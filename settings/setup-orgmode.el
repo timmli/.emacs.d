@@ -65,11 +65,14 @@
 ;; links
 (setq org-return-follows-link t)
 
+;; block
+(setq org-hide-block-startup t) 				; hide blocks at startup
+
 ;; LaTeX support
 (org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
 (setq org-highlight-latex-and-related '(latex script entities)) ; inline sytax highlighting
-(add-to-list 'org-latex-packages-alist '("" "tikz" t))
-(add-to-list 'org-latex-packages-alist '("" "forest" t))
+;; (add-to-list 'org-latex-packages-alist '("" "tikz" t))					; unfortunately this breaks the color of fonts in inline previews
+;; (add-to-list 'org-latex-packages-alist '("" "forest" t))
 (plist-put org-format-latex-options :scale 1.2) ; scale inline PNGs
 ;; org-ref
 ;; (setq org-ref-completion-library 'org-ref-ivy-cite) ; must appear before org-ref

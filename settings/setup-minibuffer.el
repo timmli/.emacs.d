@@ -109,12 +109,13 @@
 					)
     (helm-mode))
   :bind (("M-y" . helm-mini)
-				 ("C-x C-r" . helm-mini)
+				 ("C-x C-r" . helm-recentf)
          ("C-h a" . helm-apropos)
          ("C-x C-b" . helm-buffers-list)
          ("C-x b" . helm-buffers-list)
 				 ("C-x C-f" . helm-find-files)
-         ;; ("M-y" . helm-show-kill-ring)
+         ("C-x C-_" . helm-show-kill-ring)
+         ("C-x _" . helm-show-kill-ring)
          ("M-x" . helm-M-x)
          ("C-s" . helm-occur)
          ;; ("C-x c s" . helm-swoop)
@@ -144,6 +145,11 @@
 (add-hook 'minibuffer-setup-hook
 					(lambda ()
 						(local-set-key (kbd "M-x") 'abort-recursive-edit)))
+
+;; M-y in minibuffer quits the minibuffer
+(add-hook 'minibuffer-setup-hook
+					(lambda ()
+						(local-set-key (kbd "M-y") 'abort-recursive-edit)))
 
 ;; C-ß in minibuffer quits the minibuffer
 (add-hook 'minibuffer-setup-hook
