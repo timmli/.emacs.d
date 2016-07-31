@@ -130,7 +130,7 @@
 	:ensure t
 	:config
 	(helm-flx-mode +1))
-;; helm-flx: improves fuzzy matching even more by taking more candidates into account
+;; helm-fuzzier: improves fuzzy matching even more by taking more candidates into account
 (use-package helm-fuzzier
 	:ensure t
 	:config
