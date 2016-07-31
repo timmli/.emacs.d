@@ -125,6 +125,16 @@
 				 ("C-S-?" . helm-imenu-anywhere)
 				 ))
 (ido-mode -1)														; turn off ido mode, just in case
+;; helm-flx: improves fuzzy matching
+(use-package helm-flx
+	:ensure t
+	:config
+	(helm-flx-mode +1))
+;; helm-flx: improves fuzzy matching even more by taking more candidates into account
+(use-package helm-fuzzier
+	:ensure t
+	:config
+	(helm-fuzzier-mode 1))
 
 ;;==========================================================
 ;;      KEYS
