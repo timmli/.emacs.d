@@ -46,9 +46,6 @@
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (load custom-file)
 
-;; set up appearance early
-(require 'appearance)
-
 ;; character encodings default to utf-8.
 (prefer-coding-system 'utf-8)
 (set-language-environment 'utf-8)
@@ -111,6 +108,14 @@
 
 
 ;;==========================================================
+;;      GENERAL APPEARANCE
+;;==========================================================
+
+;; set up appearance early
+(require 'appearance)
+
+
+;;==========================================================
 ;;      MINIBUFFER SETUP 
 ;;==========================================================
 
@@ -125,8 +130,6 @@
 ;; 	:ensure t
 ;; 	:config
 ;; 	(global-multi-project-mode))
-
-
 
 (use-package web-mode										; for improved html support
 	:ensure t

@@ -43,4 +43,13 @@
 ;; fringe style
 ;; (set-face-attribute 'fringe nil :background "#3F3F3F" :foreground "#3F3F3F")
 
+;; distraction-free mode
+(use-package writeroom-mode
+	:ensure t
+	:bind	(:map writeroom-mode-map
+							("C-M-<" . writeroom-decrease-width)
+							("C-M->" . writeroom-increase-width)
+							("C-M-=" . writeroom-adjust-width)
+							))
+
 (provide 'appearance)
