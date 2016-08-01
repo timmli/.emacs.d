@@ -258,6 +258,12 @@
     (setq undo-tree-visualizer-timestamps t)
     (setq undo-tree-visualizer-diff t)))
 
+;; critical markup
+(use-package cm-mode
+	:ensure t
+	:config
+	(setq-default cm-author "TL"))
+
 
 ;;==========================================================
 ;;     SWITCH BETWEEN BUFFERS
