@@ -17,16 +17,43 @@
 													(file-expand-wildcards (concat org-directory "/*/*.org"))))
 									 (message "org-agenda-files updated")
 									 ))
-(if (eq org-agenda-files nil)						; FIXME
-		()
-	())
+;; (if (eq org-agenda-files nil)						; FIXME
+;; 		()
+;; 	())
 
 ;; ;; Doing this at every start-up is maybe not a good idea:
 ;; (setq org-agenda-files
 ;; 			(append
 ;; 			 (list org-directory)
 ;; 			 (file-expand-wildcards (concat org-directory "/*/*.org"))))
-								
+
+;;==========================================================
+;;      GENERAL APPEARANCE
+;;==========================================================
+
+;; (font-lock-add-keywords 'org-mode
+;;                         '(("^ +\\([-*]\\) "
+;;                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
+(add-hook 'org-mode-hook (lambda ()
+													 (variable-pitch-mode t)
+													 (text-scale-increase 0.5)
+													 ))
+
+;; (set-face-attribute 'org-block-background nil :inherit 'fixed-pitch)
+(custom-set-faces
+ '(org-block-background ((t (:inherit fixed-pitch :background "#3E3D31"))))
+ '(org-level-1 ((t (:inherit outline-1 :height 1.5))))
+ '(org-level-2 ((t (:inherit outline-2 :height 1.25))))
+ '(org-level-3 ((t (:inherit outline-3 :height 1.1))))
+ '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
+ '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
+ )
+
+
+
+(setq org-hide-emphasis-markers t)
+
 
 ;;==========================================================
 ;;      MODULES
