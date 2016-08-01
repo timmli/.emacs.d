@@ -37,7 +37,7 @@
 
 (add-hook 'org-mode-hook (lambda ()
 													 (variable-pitch-mode t)
-													 (text-scale-increase 0.5)
+													 ;; (text-scale-increase 0.5)
 													 ))
 
 ;; (set-face-attribute 'org-block-background nil :inherit 'fixed-pitch)
