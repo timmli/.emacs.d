@@ -17,6 +17,9 @@
 													(file-expand-wildcards (concat org-directory "/*/*.org"))))
 									 (message "org-agenda-files updated")
 									 ))
+(if (eq org-agenda-files nil)						; FIXME
+		()
+	())
 
 ;; ;; Doing this at every start-up is maybe not a good idea:
 ;; (setq org-agenda-files

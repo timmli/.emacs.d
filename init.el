@@ -44,7 +44,10 @@
  '(default ((t (:family "DejaVu Sans Mono" :foundry "outline" :slant normal :weight normal :height 113 :width normal)))))
 ;; load custom file
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
-(load custom-file)
+(if (file-exists-p custom-file)
+    (load custom-file)
+  (message "Warning: custom.el not found.")
+)
 
 ;; character encodings default to utf-8.
 (prefer-coding-system 'utf-8)
