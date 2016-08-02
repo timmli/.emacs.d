@@ -31,9 +31,9 @@
 ;;      GENERAL APPEARANCE
 ;;==========================================================
 
-;; (font-lock-add-keywords 'org-mode
-;;                         '(("^ +\\([-*]\\) "
-;;                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+(font-lock-add-keywords 'org-mode
+                        '(("^ +\\([-*]\\) "
+                           (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
 (add-hook 'org-mode-hook (lambda ()
 													 (variable-pitch-mode t)
