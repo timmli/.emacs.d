@@ -29,6 +29,16 @@
 (add-to-list 'custom-theme-load-path themes-dir)
 (load-theme 'monokai t)
 
+;; mode line
+(use-package smart-mode-line
+	:ensure t
+	:init
+	;; (setq sml/theme 'dark)
+	(setq sml/no-confirm-load-theme t)
+	:config
+	(sml/setup)
+	)
+
 ;; show file path in window title
 (setq frame-title-format
       '(buffer-file-name "%b - %f" ; File buffer
