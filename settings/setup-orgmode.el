@@ -98,6 +98,9 @@
 ;; block
 (setq org-hide-block-startup t) 				; hide blocks at startup
 
+;; indent automatically
+(add-hook 'org-mode-hook 'org-indent-mode)
+
 ;; LaTeX support
 (org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
 (setq org-highlight-latex-and-related '(latex script entities)) ; inline sytax highlighting
