@@ -118,7 +118,7 @@
 (use-package smartparens
 	:ensure t
 	:config
-	(require 'smartparens-config)
+	(use-package smartparens-config)
 	(setq sp-autoescape-string-quote nil)
 	(--each '(css-mode-hook
 						restclient-mode-hook
@@ -130,27 +130,21 @@
 						bibtex-mode-hook
 						shell-mode-hook
 						TeX-mode-hook
-						markdown-mode
-						org-mode
+						markdown-mode-hook
+						org-mode-hook
 						groovy-mode-hook
 						scala-mode-hook)
 		(add-hook it #'smartparens-mode))
 	(require 'smartparens-latex)
-	;;; org-mode
+	;; org-mode
 	(sp-with-modes 'org-mode
-		(sp-local-pair "*" "*" :actions '(insert wrap) :unless '(sp-point-after-word-p sp-point-at-bol-p) :wrap "C-*" :skip-match 'sp--org-skip-asterisk)
-		(sp-local-pair "_" "_" :unless '(sp-point-after-word-p) :wrap "C-_")
-		(sp-local-pair "/" "/" :unless '(sp-point-after-word-p) :post-handlers '(("[d1]" "SPC")))
-		(sp-local-pair "~" "~" :unless '(sp-point-after-word-p) :post-handlers '(("[d1]" "SPC")))
-		(sp-local-pair "=" "=" :unless '(sp-point-after-word-p) :post-handlers '(("[d1]" "SPC")))
+		(sp-local-pair "*" "*" :actions '(insert wrap) :unless '(sp-point-after-word-p sp-point-at-bol-p) )
+		(sp-local-pair "_" "_" :unless '(sp-point-after-word-p) )
+		(sp-local-pair "/" "/" :unless '(sp-point-after-word-p) )
+		(sp-local-pair "~" "~" :unless '(sp-point-after-word-p) )
+		(sp-local-pair "=" "=" :unless '(sp-point-after-word-p) )
+		(sp-local-pair "+" "+" :unless '(sp-point-after-word-p) )
 		(sp-local-pair "«" "»"))
-
-	(defun sp--org-skip-asterisk (ms mb me)
-		(or (and (= (line-beginning-position) mb)
-						 (eq 32 (char-after (1+ mb))))
-				(and (= (1+ (line-beginning-position)) me)
-						 (eq 32 (char-after me)))))
-
 	)
 
 ;; jump to matching paren
