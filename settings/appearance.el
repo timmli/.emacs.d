@@ -19,6 +19,10 @@
 ;; soft-wrap lines
 (global-visual-line-mode t)
 
+;; cursor
+(blink-cursor-mode 1)										; blink
+(setq blink-cursor-blinks 0)						; blink forever
+
 ;; ;; line numbers
 ;; (global-linum-mode t)
 ;; (setq linum-format " %3d ")
