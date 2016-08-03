@@ -101,7 +101,7 @@
 
 ;; support for inline tasks
 (load "org-inlinetask")
-(define-key org-mode-map "C-c C-x C-t" 'org-inlinetask-insert-task)
+(define-key org-mode-map (kbd "C-c C-x C-t") 'org-inlinetask-insert-task)
 
 ;; LaTeX support
 (org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
