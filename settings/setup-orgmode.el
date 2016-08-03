@@ -50,8 +50,6 @@
  '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
  )
 
-
-
 (setq org-hide-emphasis-markers t)
 
 
@@ -101,6 +99,10 @@
 ;; indent automatically
 (add-hook 'org-mode-hook 'org-indent-mode)
 
+;; support for inline tasks
+(load "org-inlinetask")
+(define-key org-mode-map "C-c C-x C-t" 'org-inlinetask-insert-task)
+
 ;; LaTeX support
 (org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
 (setq org-highlight-latex-and-related '(latex script entities)) ; inline sytax highlighting
@@ -147,7 +149,6 @@
         (setq case-fold-search old-flag))
       (if (and b e (< (point) e)) (setq rlt nil)))
     (setq ad-return-value rlt)))
-
 
 ;;==========================================================
 ;;      TAGS
