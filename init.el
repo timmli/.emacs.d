@@ -35,6 +35,11 @@
       (expand-file-name "settings" user-emacs-directory))
 (add-to-list 'load-path settings-dir)
 
+;; set path to local lisp libaries
+(setq lisp-dir
+      (expand-file-name "lisp" user-emacs-directory))
+(add-to-list 'load-path lisp-dir)
+
 ;; font
 ;; ;; default (can be overridden by custom.el)
 ;; (add-to-list 'default-frame-alist
