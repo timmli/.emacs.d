@@ -107,7 +107,29 @@
 					helm-completion-in-region-fuzzy-match t
 					helm-autoresize-mode 1 				; re-size the completion window based on number of candidates 
 					)
-    (helm-mode))
+    (helm-mode)
+
+		;; http://emacs.stackexchange.com/a/7896/12336
+		;; <return> opens directory in helm, not dired
+		(defun fu/helm-find-files-navigate-forward (orig-fun &rest args)
+			(if (file-directory-p (helm-get-selection))
+					(apply orig-fun args)
+				(helm-maybe-exit-minibuffer)))
+		(advice-add 'helm-execute-persistent-action :around #'fu/helm-find-files-navigate-forward)
+		(define-key helm-find-files-map (kbd "<return>") 'helm-execute-persistent-action)
+		;; <backspace> before backslash lets helm  move one directory up
+		(defun fu/helm-find-files-navigate-back (orig-fun &rest args)
+			(if (= (length helm-pattern) (length (helm-find-files-initial-input)))
+					(helm-find-files-up-one-level 1)
+				(apply orig-fun args)))
+		(advice-add 'helm-ff-delete-char-backward :around #'fu/helm-find-files-navigate-back)
+		;; https://redd.it/3f55nm
+		;; remove . and .. from helm
+		(advice-add 'helm-ff-filter-candidate-one-by-one
+								:around (lambda (fcn file)
+													(unless (string-match "\\(?:/\\|\\`\\)\\.\\{1,2\\}\\'" file)
+														(funcall fcn file))))
+		)
   :bind (("M-y" . helm-mini)
 				 ("C-x C-r" . helm-recentf)
          ("C-h a" . helm-apropos)
