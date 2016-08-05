@@ -108,7 +108,7 @@
 (setq org-highlight-latex-and-related '(latex script entities)) ; inline sytax highlighting
 ;; (add-to-list 'org-latex-packages-alist '("" "tikz" t))					; unfortunately this breaks the color of fonts in inline previews
 ;; (add-to-list 'org-latex-packages-alist '("" "forest" t))
-(plist-put org-format-latex-options :scale 1.2) ; scale inline PNGs
+(plist-put org-format-latex-options :scale 1.3) ; scale inline PNGs
 ;; org-ref
 ;; (setq org-ref-completion-library 'org-ref-ivy-cite) ; must appear before org-ref
 (use-package org-ref
@@ -181,6 +181,9 @@
   (define-key org-mode-map (kbd "S-<up>") nil ))
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "S-<down>") nil ))
+(with-eval-after-load 'org
+  (define-key org-mode-map (kbd "C-c C-f") 'org-footnote-action ))
+
 
 ;; (bind-key "C-c r" 'org-capture)
 (bind-key "C-c a" 'org-agenda)
