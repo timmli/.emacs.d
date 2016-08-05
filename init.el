@@ -209,7 +209,8 @@
   :config (setq deft-directory notes-dir
                 deft-extensions '("md" "org")
 								deft-recursive t
-								deft-use-filename-as-title t))
+								deft-use-filename-as-title t
+								deft-use-filter-string-for-filename t))
 
 
 ;;==========================================================

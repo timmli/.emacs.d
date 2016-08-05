@@ -107,6 +107,10 @@
 					helm-completion-in-region-fuzzy-match t
 					helm-autoresize-mode 1 				; re-size the completion window based on number of candidates 
 					)
+		(setq bibtex-completion-bibliography (concat home-directory "/Dropbox/Forschung/timm-bib.bib")
+					bibtex-completion-library-path (concat home-directory "/ownCloud/Bib") ; directory of PDFs
+					;; bibtex-completion-notes-path "~/Dropbox/bibliography/helm-bibtex-notes"
+					)
     (helm-mode)
 
 		;; http://emacs.stackexchange.com/a/7896/12336

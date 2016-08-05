@@ -117,7 +117,7 @@
 	(setq reftex-default-bibliography '((concat home-directory "/Dropbox/Forschung/timm-bib.bib"))) ; FIXME
 	(setq org-ref-default-bibliography (concat home-directory "/Dropbox/Forschung/timm-bib.bib")
 			;; org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org"
-      ;; org-ref-pdf-directory "~/Dropbox/bibliography/bibtex-pdfs/"
+				org-ref-pdf-directory (concat home-directory "/owncloud/Bib")
 			)
 )
 

@@ -276,6 +276,53 @@
 	:config
 	(setq-default cm-author "TL"))
 
+;;==========================================================
+;;      TRACKING CHANGES
+;;==========================================================
+
+;; http://emacs-fu.blogspot.de/2009/05/tracking-changes.html
+;; higlight changes in documents
+(global-highlight-changes-mode t)
+(setq highlight-changes-visibility-initial-state nil); initially hide
+;; toggle visibility
+(global-set-key (kbd "<f8>")      'highlight-changes-visible-mode) ;; changes
+;; remove the change-highlight in region
+(global-set-key (kbd "S-<f8>")    'highlight-changes-remove-highlight)
+;; if you're not already using it for something else...
+(global-set-key (kbd "<M-prior>") 'highlight-changes-next-change)
+(global-set-key (kbd "<M-next>")  'highlight-changes-previous-change)
+;; faces
+(set-face-foreground 'highlight-changes nil)
+(set-face-background 'highlight-changes "#916868")
+(set-face-foreground 'highlight-changes-delete nil)
+(set-face-background 'highlight-changes-delete "#916868")
+
+;; http://stackoverflow.com/a/21084181/6452961
+;; show mark in fringe
+(eval-after-load "hilit-chg"
+  '(progn
+     (defvar highlight-fringe-mark 'filled-square
+       "The fringe bitmap name marked at changed line.
+Should be selected from `fringe-bitmaps'.")
+
+     (defadvice hilit-chg-make-ov (after hilit-chg-add-fringe activate)
+       (mapc (lambda (ov)
+							 (if (overlay-get ov 'hilit-chg)
+									 (let ((fringe-anchor (make-string 1 ?x)))
+										 (put-text-property 0 1 'display
+																				(list 'left-fringe highlight-fringe-mark)
+																				fringe-anchor)
+										 (overlay-put ov 'before-string fringe-anchor))
+								 ))
+						 (overlays-at (ad-get-arg 1))))))
+;; remove highlights on save time
+(add-hook 'after-save-hook
+          (lambda ()
+            (when highlight-changes-mode
+              (save-restriction
+                (widen)
+                (highlight-changes-remove-highlight (point-min) (point-max))))))
+
 
 ;;==========================================================
 ;;     SWITCH BETWEEN BUFFERS
