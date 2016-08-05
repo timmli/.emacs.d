@@ -6,8 +6,8 @@
 ;;      FILES
 ;;==========================================================
 
-(setq org-directory (concat (getenv "HOME") "/Dropbox/Notizen/org"))
-(setq home-directory (getenv "HOME"))
+(defvar org-directory)
+(setq org-directory notes-dir)
 (global-set-key (kbd "<f9> u")
 								'(lambda ()
 									 (interactive)

@@ -8,6 +8,22 @@
 ;; don't show startup message
 (setq inhibit-startup-message t)
 
+;; character encodings default to utf-8.
+(prefer-coding-system 'utf-8)
+(set-language-environment 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-selection-coding-system 'utf-8)
+;; treat clipboard input as UTF-8 string first; compound text next, etc.
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+;; MS Windows clipboard is UTF-16LE 
+(set-clipboard-coding-system 'utf-16le-dos)
+
+
+;;==========================================================
+;;      DIRECTORIES SETUP
+;;==========================================================
+
 ;; set home directory
 ;; 1: check HOME variable
 (when (or
@@ -29,16 +45,40 @@
 	)
 ;; 3: set default-directory
 (setq default-directory (concat (getenv "HOME") "/"))
+(defvar home-directory)
+(setq home-directory default-directory)
 
 ;; set path to settings
+(defvar settings-dir)
 (setq settings-dir
       (expand-file-name "settings" user-emacs-directory))
 (add-to-list 'load-path settings-dir)
 
 ;; set path to local lisp libaries
+(defvar lisp-dir)
 (setq lisp-dir
       (expand-file-name "lisp" user-emacs-directory))
 (add-to-list 'load-path lisp-dir)
+
+;; set path to notes directory
+(defvar notes-dir)
+(setq notes-dir
+      (expand-file-name "Dropbox/Notizen" default-directory))
+
+;; write backup files to own directory
+(setq backup-directory-alist
+      `(("." . ,(expand-file-name
+                 (concat user-emacs-directory "temp")))))
+
+;; save point position between sessions
+(require 'saveplace)
+(setq-default save-place t)
+(setq save-place-file (expand-file-name ".places" user-emacs-directory))
+
+
+;;==========================================================
+;;      CUSTOM.EL
+;;=========================================================
 
 ;; font
 ;; ;; default (can be overridden by custom.el)
@@ -56,27 +96,6 @@
     (load custom-file)
   (message "Warning: custom.el not found.")
 )
-
-;; character encodings default to utf-8.
-(prefer-coding-system 'utf-8)
-(set-language-environment 'utf-8)
-(set-default-coding-systems 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-;; treat clipboard input as UTF-8 string first; compound text next, etc.
-(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
-;; MS Windows clipboard is UTF-16LE 
-(set-clipboard-coding-system 'utf-16le-dos)
-
-;; write backup files to own directory
-(setq backup-directory-alist
-      `(("." . ,(expand-file-name
-                 (concat user-emacs-directory "temp")))))
-
-;; save point position between sessions
-(require 'saveplace)
-(setq-default save-place t)
-(setq save-place-file (expand-file-name ".places" user-emacs-directory))
 
 
 ;;==========================================================
@@ -182,6 +201,15 @@
 	(add-hook 'markdown-mode 'my-markdown-mode-config)
 	(setq markdown-enable-math t)
 	)
+
+(use-package deft												; for displaying list of note files
+	:ensure t
+  :bind ("<f9> f" . deft)
+  :commands (deft)
+  :config (setq deft-directory notes-dir
+                deft-extensions '("md" "org")
+								deft-recursive t
+								deft-use-filename-as-title t))
 
 
 ;;==========================================================
