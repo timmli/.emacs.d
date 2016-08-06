@@ -105,7 +105,8 @@
 					helm-M-x-fuzzy-match t
 					helm-imenu-fuzzy-match t
 					helm-completion-in-region-fuzzy-match t
-					helm-autoresize-mode 1 				; re-size the completion window based on number of candidates 
+					helm-autoresize-mode 1 				; re-size the completion window based on number of candidates
+					helm-adaptive-mode t					; show commonly used commands first
 					)
 		(setq bibtex-completion-bibliography (concat home-directory "/Dropbox/Forschung/timm-bib.bib")
 					bibtex-completion-library-path (concat home-directory "/ownCloud/Bib") ; directory of PDFs

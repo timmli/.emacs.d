@@ -138,13 +138,13 @@
 	(require 'smartparens-latex)
 	;; org-mode
 	(sp-with-modes 'org-mode
-		(sp-local-pair "*" "*" :actions '(insert wrap) :unless '(sp-point-after-word-p sp-point-at-bol-p sp-in-math-p) )
-		(sp-local-pair "_" "_" :unless '(sp-point-after-word-p sp-in-math-p) )
-		(sp-local-pair "/" "/" :unless '(sp-point-after-word-p sp-in-math-p) )
-		(sp-local-pair "~" "~" :unless '(sp-point-after-word-p sp-in-math-p) )
-		(sp-local-pair "=" "=" :unless '(sp-point-after-word-p sp-in-math-p) )
-		(sp-local-pair "+" "+" :unless '(sp-point-after-word-p sp-in-math-p tl/sp-point-after-punct-p) )
-		(sp-local-pair "$" "$" :unless '(sp-point-after-word-p) )
+		(sp-local-pair "*" "*" :actions '(insert wrap) :unless '(sp-point-after-word-p sp-point-before-word-p sp-point-at-bol-p sp-in-math-p) )
+		(sp-local-pair "_" "_" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p) )
+		(sp-local-pair "/" "/" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p) )
+		(sp-local-pair "~" "~" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p) )
+		(sp-local-pair "=" "=" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p) )
+		(sp-local-pair "+" "+" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p tl/sp-point-after-punct-p) )
+		(sp-local-pair "$" "$" :unless '(sp-point-after-word-p sp-point-before-word-p) )
 		(sp-local-pair "«" "»"))
 	(defun tl/sp-point-after-punct-p (id action context) ; FIXME
 		(sp--looking-back-p "[[:punct:]]'"))
