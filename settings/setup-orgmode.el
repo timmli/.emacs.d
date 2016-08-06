@@ -210,20 +210,16 @@
 ;;==========================================================
 
 (setq org-capture-templates
-      '(("t" "My TODO task format." entry
-         (file (concat org-directory "/todo.org"))
-         "* TODO %?\n SCHEDULED: %t")
-        ("j" "Journal" entry (file+datetree (concat org-directory "/journal.org"))
-				 "* %?\nEntered on %U\n  %i\n  %a"))
-			)
+      '(("t" "Todo" entry (file (concat org-directory "/todo.org"))
+         "* TODO %?\t%^g\n SCHEDULED: %t\n About region:%i\n %a")
+        ("n" "Notes" entry (file+datetree (concat org-directory "/journal.org"))
+				 "* %?\t%^g\n Entered on %U\n About region:%i\n %a")
+				("c" "Code" entry (file (concat org-directory "/code.org"))
+         "* %?\t%^g\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n Entered on %U\n About region:%i\n %a")
+				))
 
-(defun direct-org-task-capture ()
-  "Capture a task with my default template."
-  (interactive)
-  (org-capture nil "t"))
-
-(global-set-key (kbd "<f9> <f9> t") (lambda () (interactive) (org-capture nil "t")))
-(global-set-key (kbd "<f9> <f9> j") (lambda () (interactive) (org-capture nil "j")))
+(global-set-key (kbd "<f9> <f9>") 'org-capture)
+;; (global-set-key (kbd "<f9> <f9> t") (lambda () (interactive) (org-capture nil "t")))
 
 
 ;;==========================================================
