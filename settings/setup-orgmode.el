@@ -7,7 +7,7 @@
 ;;==========================================================
 
 (defvar org-directory)
-(setq org-directory notes-dir)
+(setq org-directory (concat notes-dir "/org"))
 (global-set-key (kbd "<f9> u")
 								'(lambda ()
 									 (interactive)
