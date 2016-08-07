@@ -107,7 +107,9 @@
   ;; (add-to-list 'package-archives
 	;;        '("melpa-stable" . "http://stable.melpa.org/packages/") t)
   (add-to-list 'package-archives
-	       '("melpa" . "http://melpa.org/packages/") t)
+							 '("melpa" . "http://melpa.org/packages/") t)
+	;; (add-to-list 'package-archives 				; repository of the sunrise commander
+	;; 						 '("SC"   . "http://joseito.republika.pl/sunrise-commander/") t)
   (package-initialize))
 ;; list the packages you want
 (setq package-list '(async 							; paradox needs async

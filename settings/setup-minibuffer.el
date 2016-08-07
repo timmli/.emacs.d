@@ -151,7 +151,11 @@
          ("C-x c SPC" . helm-all-mark-rings)
 				 ("C-ß" . helm-imenu)
 				 ("C-S-?" . helm-imenu-anywhere)
-				 ))
+				 )
+	:config
+	(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; complete with <tab> (default is <ret>)
+	(define-key helm-map (kbd "C-z") 'helm-select-action) ; show actions (default is <tab>)
+)
 (ido-mode -1)														; turn off ido mode, just in case
 ;; helm-flx: improves fuzzy matching
 (use-package helm-flx
