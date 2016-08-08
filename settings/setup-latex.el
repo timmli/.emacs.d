@@ -171,7 +171,7 @@
 (define-key LaTeX-mode-map (kbd "S-<f4>") 'TeX-previous-error)
 (define-key LaTeX-mode-map (kbd "C-<f4>") 'TeX-error-overview)
 																				;
-;; jumping around like in org-mode FIXME
+;; jumping around like in org-mode
 (define-key LaTeX-mode-map (kbd "C-c C-j") 'tl/reftex-in-follow-mode)
 (define-key LaTeX-mode-map (kbd "C-c C-n") 'tl/reftex-next)
 (define-key LaTeX-mode-map (kbd "C-c C-p") 'tl/reftex-previous)
@@ -181,6 +181,7 @@
 	(reftex-toc))
 (defun tl/reftex-next ()
 	(interactive)
+	(next-line)														; no clue why this is necessary
 	(tl/reftex-in-follow-mode)
 	(reftex-toc-next)
 	(reftex-toc-goto-line-and-hide))
