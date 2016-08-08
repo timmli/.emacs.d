@@ -170,6 +170,25 @@
 (define-key LaTeX-mode-map (kbd "<f4>") 'TeX-next-error)
 (define-key LaTeX-mode-map (kbd "S-<f4>") 'TeX-previous-error)
 (define-key LaTeX-mode-map (kbd "C-<f4>") 'TeX-error-overview)
+																				;
+;; jumping around like in org-mode FIXME
+(define-key LaTeX-mode-map (kbd "C-c C-j") 'tl/reftex-in-follow-mode)
+(define-key LaTeX-mode-map (kbd "C-c C-n") 'tl/reftex-next)
+(define-key LaTeX-mode-map (kbd "C-c C-p") 'tl/reftex-previous)
+(defun tl/reftex-in-follow-mode()
+	(interactive)
+	(setq reftex-toc-follow-mode t)
+	(reftex-toc))
+(defun tl/reftex-next ()
+	(interactive)
+	(tl/reftex-in-follow-mode)
+	(reftex-toc-next)
+	(reftex-toc-goto-line-and-hide))
+(defun tl/reftex-previous ()
+	(interactive)
+	(tl/reftex-in-follow-mode)
+	(reftex-toc-previous)
+	(reftex-toc-goto-line-and-hide))
 
 ;; viewer
 (setq TeX-PDF-mode t)
