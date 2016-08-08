@@ -118,7 +118,11 @@
 	(setq org-ref-default-bibliography (concat home-directory "/Dropbox/Forschung/timm-bib.bib")
 			;; org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org"
 				org-ref-pdf-directory (concat home-directory "/owncloud/Bib")
-			)
+				)
+	:bind (:map org-mode-map
+							("C-c ]" . org-ref-helm-insert-cite-link)
+							("C-c )" . org-ref-helm-insert-ref-link)
+							("C-c (" . org-ref-helm-insert-label-link))
 )
 
 ;; plantuml
