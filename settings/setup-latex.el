@@ -184,12 +184,15 @@
 	(next-line)														; no clue why this is necessary
 	(tl/reftex-in-follow-mode)
 	(reftex-toc-next)
-	(reftex-toc-goto-line-and-hide))
+	(reftex-toc-goto-line-and-hide)
+	(recenter))
 (defun tl/reftex-previous ()
 	(interactive)
+	(next-line)														; no clue why this is necessary
 	(tl/reftex-in-follow-mode)
 	(reftex-toc-previous)
-	(reftex-toc-goto-line-and-hide))
+	(reftex-toc-goto-line-and-hide)
+	(recenter))
 
 ;; viewer
 (setq TeX-PDF-mode t)
