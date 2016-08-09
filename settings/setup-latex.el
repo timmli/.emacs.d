@@ -123,6 +123,7 @@
 ;; 							("C-l C-r" . ivy-bibtex-with-local-bibliography))
 ;; 	)
 
+;; see  pull request: https://github.com/tmalsburg/helm-bibtex/pull/113
 ;; ;; helm-bibtex FIXME: 
 ;; (use-package helm-bibtex
 ;; 	:ensure t
@@ -172,9 +173,11 @@
 (define-key LaTeX-mode-map (kbd "C-<f4>") 'TeX-error-overview)
 																				;
 ;; jumping around like in org-mode
-(define-key LaTeX-mode-map (kbd "C-c C-j") 'tl/reftex-in-follow-mode)
-(define-key LaTeX-mode-map (kbd "C-c C-n") 'tl/reftex-next)
-(define-key LaTeX-mode-map (kbd "C-c C-p") 'tl/reftex-previous)
+(eval-after-load 'tex
+	'(progn 
+		 (define-key LaTeX-mode-map (kbd "C-c C-j") 'tl/reftex-in-follow-mode)
+		 (define-key LaTeX-mode-map (kbd "C-c C-n") 'tl/reftex-next)
+		 (define-key LaTeX-mode-map (kbd "C-c C-p") 'tl/reftex-previous)))
 (defun tl/reftex-in-follow-mode()
 	(interactive)
 	(setq reftex-toc-follow-mode t)
