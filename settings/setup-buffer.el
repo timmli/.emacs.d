@@ -285,9 +285,9 @@
 (global-highlight-changes-mode t)
 (setq highlight-changes-visibility-initial-state nil); initially hide
 ;; toggle visibility
-(global-set-key (kbd "<f8>")      'highlight-changes-visible-mode) ;; changes
+(global-set-key (kbd "<f8>") 'highlight-changes-visible-mode) ;; changes
 ;; remove the change-highlight in region
-(global-set-key (kbd "S-<f8>")    'highlight-changes-remove-highlight)
+(global-set-key (kbd "S-<f8>") 'highlight-changes-remove-highlight)
 ;; if you're not already using it for something else...
 (global-set-key (kbd "<M-prior>") 'highlight-changes-next-change)
 (global-set-key (kbd "<M-next>")  'highlight-changes-previous-change)

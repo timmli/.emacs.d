@@ -26,75 +26,15 @@
 		'(progn
 			 (assq-delete-all 'output-pdf TeX-view-program-selection)
 			 (add-to-list 'TeX-view-program-selection '(output-pdf "Sumatra PDF"))))
-
-	;; reftex
-	(use-package reftex
-		:diminish reftex-mode
-		:init
-		(add-hook 'latex-mode-hook 'turn-on-reftex)
-		(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
-		(setq reftex-plug-into-AUCTeX t
-					reftex-ref-style-default-list '("Cleveref" "Hyperref" "Fancyref")
-					;;reftex-toc-split-windows-horizontally t
-					reftex-ref-macro-prompt nil			; go straight to the labels when referencing
-					reftex-bibliography-commands '("bibliography" "nobibliography" "addbibresource")
-					;; reftex-default-bibliography '()
-					)
 		
-		;; ;; reftex config for beamer
-		;; (eval-after-load "tex"
-		;; 	'(TeX-add-style-hook "beamer" 'my-beamer-mode))
-		;; (defun my-beamer-mode ()
-		;; 	(require 'reftex)
-		;; 	(set (make-local-variable 'reftex-section-levels)
-		;; 			 '(("section" . 1)
-		;; 				 ("subsection" . 2)
-		;; 				 ("frametitle" . 3)))
-		;; 	(reftex-reset-mode)
-		;; 	)
-		
-		;; connect reftex to imenu
-		(add-hook 'reftex-load-hook 'imenu-add-menubar-index)
-		(add-hook 'reftex-mode-hook 'imenu-add-menubar-index)
-		
+	;; make LaTeXmk default
+	(use-package auctex-latexmk
+		:ensure t
 		:config
-		
-		;; jumping around like in org-mode
-		(define-key LaTeX-mode-map (kbd "C-c C-j") 'tl/reftex-in-follow-mode)
-		(define-key LaTeX-mode-map (kbd "C-c C-n") 'tl/reftex-next)
-		(define-key LaTeX-mode-map (kbd "C-c C-p") nil)
-		(define-key LaTeX-mode-map (kbd "C-c C-p") 'tl/reftex-previous)
-		(defun tl/reftex-in-follow-mode()
-			(interactive)
-			(setq reftex-toc-follow-mode t)
-			(reftex-toc))
-		(defun tl/reftex-next ()
-			(interactive)
-			(next-line)														; no clue why this is necessary
-			(tl/reftex-in-follow-mode)
-			(reftex-toc-next)
-			(reftex-toc-goto-line-and-hide)
-			(recenter))
-		(defun tl/reftex-previous ()
-			(interactive)
-			(next-line)														; no clue why this is necessary
-			(tl/reftex-in-follow-mode)
-			(reftex-toc-previous)
-			(reftex-toc-goto-line-and-hide)
-			(recenter))
-		
-		:bind (:map LaTeX-mode-map
-								("C-c ]" . reftex-citation)) ; same as in org-mode
+		(auctex-latexmk-setup)
+		(setq auctex-latexmk-inherit-TeX-PDF-mode t)
+		(setq TeX-command-force "LatexMk")  ;; remember to set path variable accordingly!
 		)
-		
-		;; make LaTeXmk default
-		(use-package auctex-latexmk
-			:ensure t
-			:config
-			(auctex-latexmk-setup)
-			(setq auctex-latexmk-inherit-TeX-PDF-mode t)
-			(setq TeX-command-force "LatexMk")  ;; remember to set path variable accordingly!
-			)
 		
 	:config
 	
@@ -218,7 +158,68 @@
 							 )
 	)
 
+;; unset key for preview 
+(add-hook 'LaTeX-mode-hook
+					'(define-key LaTeX-mode-map (kbd "C-c C-p") nil))
 
+;; reftex
+(use-package reftex
+	:diminish reftex-mode
+	:init
+	(add-hook 'latex-mode-hook 'turn-on-reftex)
+	(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
+	(setq reftex-plug-into-AUCTeX t
+				reftex-ref-style-default-list '("Cleveref" "Hyperref" "Fancyref")
+				;;reftex-toc-split-windows-horizontally t
+				reftex-ref-macro-prompt nil			; go straight to the labels when referencing
+				reftex-bibliography-commands '("bibliography" "nobibliography" "addbibresource")
+				;; reftex-default-bibliography '()
+				)
 
+	;; add frametitle to TOC
+	(setq reftex-section-levels '(("part" . 0)
+																("chapter" . 1)
+																("section" . 2)
+																("subsection" . 3)
+																("subsubsection" . 4)
+																("frametitle" . 4)
+																("paragraph" . 5)
+																("subparagraph" . 6)
+																("addchap" . -1)
+																("addsec" . -2)))
+	
+	;; connect reftex to imenu
+	(add-hook 'reftex-load-hook 'imenu-add-menubar-index)
+	(add-hook 'reftex-mode-hook 'imenu-add-menubar-index)
+	
+	:config
+	
+	;; jumping around like in org-mode
+	(define-key LaTeX-mode-map (kbd "C-c C-j") 'tl/reftex-in-follow-mode)
+	(define-key LaTeX-mode-map (kbd "C-c C-n") 'tl/reftex-next)
+	(define-key LaTeX-mode-map (kbd "C-c C-p") 'tl/reftex-previous)
+	(defun tl/reftex-in-follow-mode()
+		(interactive)
+		(setq reftex-toc-follow-mode t)
+		(reftex-toc))
+	(defun tl/reftex-next ()
+		(interactive)
+		(next-line)														; no clue why this is necessary
+		(tl/reftex-in-follow-mode)
+		(reftex-toc-next)
+		(reftex-toc-goto-line-and-hide)
+		(recenter))
+	(defun tl/reftex-previous ()
+		(interactive)
+		(next-line)														; no clue why this is necessary
+		(tl/reftex-in-follow-mode)
+		(reftex-toc-previous)
+		(reftex-toc-goto-line-and-hide)
+		(recenter))
+	
+	:bind (:map LaTeX-mode-map
+							("C-c ]" . reftex-citation); same as in org-mode
+						  ) 
+	)
 
 (provide 'setup-latex)
