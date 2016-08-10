@@ -185,11 +185,7 @@
 
 (require 'setup-orgmode)								; must appear before tex stuff!
 
-(use-package tex
-	:ensure auctex												; because auctex overwrites tex
-	:config
-	)
-(require 'setup-latex)									; TODO: include into (use-package tex)
+(require 'setup-latex)									
 
 (use-package markdown-mode
 	:ensure t
