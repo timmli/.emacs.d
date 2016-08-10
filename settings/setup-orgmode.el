@@ -2,6 +2,13 @@
 ;; http://pages.sachachua.com/.emacs.d/Sacha.html#orgfe5d909
 ;; http://doc.norang.ca/org-mode.html#Setup
 
+(use-package org
+:ensure t
+:config
+(progn
+	;; config stuff
+	))
+
 ;;==========================================================
 ;;      FILES
 ;;==========================================================
@@ -109,16 +116,19 @@
 ;; (add-to-list 'org-latex-packages-alist '("" "tikz" t))					; unfortunately this breaks the color of fonts in inline previews
 ;; (add-to-list 'org-latex-packages-alist '("" "forest" t))
 (plist-put org-format-latex-options :scale 1.3) ; scale inline PNGs
+
 ;; org-ref
 ;; (setq org-ref-completion-library 'org-ref-ivy-cite) ; must appear before org-ref
 (use-package org-ref
 	:ensure t
-	:config
+	:init
+	(require 'org-ref) 										; don't know why I need this
 	(setq reftex-default-bibliography '((concat home-directory "/Dropbox/Forschung/timm-bib.bib"))) ; FIXME
 	(setq org-ref-default-bibliography (concat home-directory "/Dropbox/Forschung/timm-bib.bib")
 			;; org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org"
 				org-ref-pdf-directory (concat home-directory "/owncloud/Bib")
 				)
+	:config
 	:bind (:map org-mode-map
 							("C-c ]" . org-ref-helm-insert-cite-link)
 							("C-c )" . org-ref-helm-insert-ref-link)

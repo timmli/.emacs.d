@@ -85,8 +85,9 @@
 	;;      (define-key company-active-map (kbd "TAB") 'company-select-next)
 	;;      (define-key company-active-map [tab] 'company-select-next)))
 	(use-package company-flx
-		:ensure t)
-	(with-eval-after-load 'company (company-flx-mode +1))
+		:ensure t
+		:config
+		(company-flx-mode +1))
 	;; add company to org-mode
  	(add-to-list 'company-backends 'company-capf)
 	(defun add-pcomplete-to-capf ()

@@ -136,6 +136,11 @@
 ;(paradox-upgrade-packages)
 
 ;; use-package
+;; taken from https://github.com/jwiegley/use-package
+(eval-when-compile											
+  (require 'use-package))
+(require 'diminish)                ;; if you use :diminish
+(require 'bind-key)               
 (setq use-package-verbose t)
 
 

@@ -157,6 +157,7 @@
 	(define-key helm-map (kbd "C-z") 'helm-select-action) ; show actions (default is <tab>)
 )
 (ido-mode -1)														; turn off ido mode, just in case
+
 ;; helm-flx: improves fuzzy matching
 (use-package helm-flx
 	:ensure t
@@ -167,6 +168,11 @@
 	:ensure t
 	:config
 	(helm-fuzzier-mode 1))
+
+;; list active key bindings 
+(use-package helm-descbinds
+	:ensure t
+  :bind ("C-h b" . helm-descbinds))
 
 ;;==========================================================
 ;;      KEYS
@@ -186,6 +192,11 @@
 (add-hook 'minibuffer-setup-hook
 					(lambda ()
 						(local-set-key (kbd "C-ß") 'abort-recursive-edit)))
+
+;; C-s in minibuffer quits the minibuffer
+(add-hook 'minibuffer-setup-hook
+					(lambda ()
+						(local-set-key (kbd "C-s") 'abort-recursive-edit)))
 
 ;; (global-set-key (kbd "C-x C-b") 'switch-to-buffer) ; instead of 'list-buffers (see helm)
 ;; (global-set-key (kbd "C-x b") 'ibuffer)
