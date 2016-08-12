@@ -23,6 +23,9 @@
 ;; scrolling
 (setq scroll-step            1
       scroll-conservatively  10000)
+;; autoscroll compilation output
+(setq compilation-scroll-output t)
+
 
 ;; show vertical line per indentation level 
 (use-package highlight-indent-guides
@@ -32,8 +35,6 @@
 	(setq highlight-indent-guides-method 'character)
 	)
 
-;; Compilation output
-(setq compilation-scroll-output t)
 
 
 ;;==========================================================
