@@ -24,13 +24,16 @@
 (setq scroll-step            1
       scroll-conservatively  10000)
 
-;; show vertical line per indentation level (BUG: highlight-indent-guides-mode: Wrong number of arguments: (2 . &rest), 1)
+;; show vertical line per indentation level 
 (use-package highlight-indent-guides
 	:ensure t
 	:config
 	(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
 	(setq highlight-indent-guides-method 'character)
 	)
+
+;; Compilation output
+(setq compilation-scroll-output t)
 
 
 ;;==========================================================

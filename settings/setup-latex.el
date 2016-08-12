@@ -9,7 +9,8 @@
 				(expand-file-name "temp" user-emacs-directory))
 	(setq TeX-parse-self t)
 	(setq-default TeX-master nil)
-	(setq TeX-save-query nil) ;;autosave before compiling
+	(setq TeX-save-query nil) ; autosave before compiling 
+	(setq TeX-show-compilation t) ; always show last line of TeX output
 
 	;; don't indent
 	;; (setq LaTeX-indent-level 0)
