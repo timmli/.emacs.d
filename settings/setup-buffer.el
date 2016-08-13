@@ -253,6 +253,8 @@
 (require 'point-undo)
 (global-set-key [M-left] 'point-undo)
 (global-set-key [M-right] 'point-redo)
+(global-set-key (kbd "M-j") 'point-undo)
+(global-set-key (kbd "M-k") 'point-redo)
 
 ;; cursor position undo history
 (use-package goto-last-change
@@ -376,6 +378,7 @@ Should be selected from `fringe-bitmaps'.")
 ;; delete line
 (global-set-key (kbd "C-S-o") 'delete-blank-lines)
 (global-set-key (kbd "C-S-k") 'kill-whole-line)
+(global-set-key (kbd "C-k") 'kill-sentence)
 (global-set-key (kbd "C-S-d") 'kill-word)
 
 

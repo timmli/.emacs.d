@@ -7,7 +7,10 @@
 :config
 (progn
 	;; config stuff
-	))
+	)
+:bind
+;; ("C-c C-b" . org-mark-ring-goto)
+)
 
 ;;==========================================================
 ;;      FILES

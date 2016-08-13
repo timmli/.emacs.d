@@ -222,6 +222,7 @@
 
 (require 'setup-buffer)
 
+(require 'underi-mode)
 
 ;;==========================================================
 ;;      MISCELLANEOUS

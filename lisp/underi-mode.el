@@ -45,6 +45,11 @@
 						(define-key map (kbd "M-j") 'left-word)
 						(define-key map (kbd "M-l") 'right-word)
 
+						(define-key map (kbd "C-M-j")  'windmove-left)
+						(define-key map (kbd "C-M-l") 'windmove-right)
+						(define-key map (kbd "C-M-i")    'windmove-up)
+						(define-key map (kbd "C-M-k")  'windmove-down)
+
 						;; delete 
 						(define-key map (kbd "C-d") nil)
 						(define-key map (kbd "C-d <down>") 'kill-line)
@@ -54,11 +59,6 @@
 						(define-key map (kbd "C-d C-e") 'kill-line)
 						(define-key map (kbd "C-d C-a") '(lambda () (interactive) (kill-line 0)))
 						(define-key map (kbd "C-S-d") 'kill-whole-line)
-
-						(define-key map (kbd "C-M-j")  'windmove-left)
-						(define-key map (kbd "C-M-l") 'windmove-right)
-						(define-key map (kbd "C-M-i")    'windmove-up)
-						(define-key map (kbd "C-M-k")  'windmove-down)
 						
 						;; miscellaneous actions
 						(define-key map (kbd "C-s") 'save-buffer)
@@ -105,7 +105,8 @@
 		))
 
 
-;; (add-hook 'text-mode-hook 'underi-mode)
+(add-hook 'text-mode-hook 'underi-mode)
+(add-hook 'prog-mode-hook 'underi-mode)
 
 (provide 'underi-mode)
 
