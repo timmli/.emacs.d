@@ -36,8 +36,8 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 						;; (define-key map (kbd "C-l") 'right-char)
 
 						;; move cursor
-						(define-key map (kbd "M-p") 'scroll-up-command)
-						(define-key map (kbd "M-n") 'scroll-down-command)
+						(define-key map (kbd "M-n") 'scroll-up-command)
+						(define-key map (kbd "M-p") 'scroll-down-command)
 						(define-key map (kbd "M-o") 'point-redo)
 						(define-key map (kbd "M-u") 'point-undo)
 						(define-key map (kbd "M-z") 'goto-last-change)
