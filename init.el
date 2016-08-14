@@ -75,6 +75,12 @@
 (setq-default save-place t)
 (setq save-place-file (expand-file-name ".places" user-emacs-directory))
 
+(if (eq system-type 'windows-nt)
+		;; make PC keyboard's Win key to type Super or Hyper, for emacs running on Windows.
+		(progn
+			(setq w32-pass-lwindow-to-system nil)
+			(setq w32-lwindow-modifier 'super) ; Left Windows key
+			))
 
 ;;==========================================================
 ;;      CUSTOM.EL

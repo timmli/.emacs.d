@@ -25,6 +25,8 @@
       scroll-conservatively  10000)
 ;; autoscroll compilation output
 (setq compilation-scroll-output t)
+;; scroll to the first/last line
+(setq scroll-error-top-bottom t)
 
 
 ;; show vertical line per indentation level 
@@ -376,10 +378,33 @@ Should be selected from `fringe-bitmaps'.")
     (next-line)))
 
 ;; delete line
-(global-set-key (kbd "C-S-o") 'delete-blank-lines)
+;; (global-set-key (kbd "C-d C-o") 'delete-blank-lines) ; not allowed here, see underi-mode.el
+;; (global-set-key (kbd "C-d C-m") 'delete-blank-lines)
 (global-set-key (kbd "C-S-k") 'kill-whole-line)
-(global-set-key (kbd "C-k") 'kill-sentence)
-(global-set-key (kbd "C-S-d") 'kill-word)
+;; (global-set-key (kbd "C-k") 'kill-sentence) ; too greedy
+(global-set-key (kbd "C-S-d") 'kill-whole-line)
+
+;; new line
+(global-set-key (kbd "S-<return>") 'smart-open-line)
+(global-set-key (kbd "C-o") 'smart-open-line)
+(global-set-key (kbd "C-S-<return>") 'smart-open-line-above)
+(global-set-key (kbd "C-S-o") 'smart-open-line-above)
+;; http://emacsredux.com/blog/2013/03/26/smarter-open-line/
+(defun smart-open-line ()
+  "Insert an empty line after the current line.
+Position the cursor at its beginning, according to the current mode."
+  (interactive)
+  (move-end-of-line nil)
+  (newline-and-indent))
+;; http://emacsredux.com/blog/2013/06/15/open-line-above/
+(defun smart-open-line-above ()
+  "Insert an empty line above the current line.
+Position the cursor at it's beginning, according to the current mode."
+  (interactive)
+  (move-beginning-of-line nil)
+  (newline-and-indent)
+  (forward-line -1)
+  (indent-according-to-mode))
 
 
 ;; center line

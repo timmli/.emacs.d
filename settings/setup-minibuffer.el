@@ -143,6 +143,8 @@
 				 ("C-x C-f" . helm-find-files)
          ("C-x C-y" . helm-show-kill-ring)
          ("C-x y" . helm-show-kill-ring)
+         ("C-x <space>" . helm-all-mark-rings)
+         ("C-x C-<space>" . helm-all-mark-rings)				 
          ("M-x" . helm-M-x)
          ("C-s" . helm-occur)
          ;; ("C-x c s" . helm-swoop)
