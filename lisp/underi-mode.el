@@ -12,7 +12,8 @@
 ;;; Code:
 
 
-(require 'helm)
+;; (require 'helm)
+;; (require 'ace-jump-mode)
 
 (define-minor-mode underi-mode
 	"Keymap for the 21th century.
@@ -30,7 +31,7 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 						(define-key key-translation-map (kbd "M-K") (kbd "S-<down>"))
 						(define-key key-translation-map (kbd "M-J") (kbd "S-<left>"))		
 						(define-key key-translation-map (kbd "M-L") (kbd "S-<right>"))
-	
+
 						;; move cursor
 						(define-key map (kbd "M-n") 'scroll-up-command)
 						(define-key map (kbd "M-p") 'scroll-down-command)
@@ -62,11 +63,20 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 						(define-key map (kbd "C-d C-a") '(lambda () (interactive) (kill-line 0)))
 						(define-key map (kbd "C-S-d") 'kill-whole-line)
 
+						;; return
+						(define-key input-decode-map (kbd "C-m") (kbd "H-o")) ; to disentangle <return> and C-m
+						(define-key key-translation-map (kbd "H-o") (kbd "RET"))
+						(define-key map (kbd "C-S-m") 'smart-open-line)
+						
 						;; miscellaneous actions
-						;; (define-key map (kbd "C-s") 'save-buffer)
-						;; (define-key map (kbd "C-S-s") 'save-some-buffers)
-						;; (define-key map (kbd "C-x C-s") 'helm-occur)
-						(define-key map (kbd "C-f") 'isearch-search)
+						(define-key map (kbd "C-s") 'save-buffer)
+						(define-key map (kbd "C-S-s") 'write-file)
+						(define-key map (kbd "C-f") 'helm-occur)
+						(define-key map (kbd "C-S-f") 'helm-swoop)
+						;; (define-key map (kbd "C-f") 'isearch-search)
+						(define-key map (kbd "C-r") 'query-replace)
+						(define-key map (kbd "C-S-r") 'query-replace-regexp)
+						(define-key map (kbd "C-o") 'helm-find-files)
 						(define-key map (kbd "C-x C-a") 'mark-whole-buffer)
 						;; (define-key map (kbd "C-p") 'recenter-top-bottom)
 						(define-key key-translation-map (kbd "M-q") (kbd "C-g"))
@@ -85,7 +95,7 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 ;; http://stackoverflow.com/a/12010437/6452961
 
 (defun underi-minibuffer ()
-	""
+	"Keymap for the minibuffer."
 	(let ((map minibuffer-local-map))
 
 		;; move cursor
