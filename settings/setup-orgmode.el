@@ -53,8 +53,10 @@
 ;; (set-face-attribute 'org-block-background nil :inherit 'fixed-pitch)
 (custom-set-faces
  '(org-block-background ((t (:inherit fixed-pitch :background "#3E3D31"))))
- '(org-level-1 ((t (:inherit outline-1 :height 1.5))))
- '(org-level-2 ((t (:inherit outline-2 :height 1.25))))
+ '(org-block-begin-line ((t (:underline t))))
+ '(org-block-end-line  ((t (:overline t))))
+ '(org-level-1 ((t (:inherit outline-1 :overline t :height 1.5))))
+ '(org-level-2 ((t (:inherit outline-2 :overline t :height 1.25))))
  '(org-level-3 ((t (:inherit outline-3 :height 1.1))))
  '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
  '(org-level-5 ((t (:inherit outline-5 :height 1.0))))

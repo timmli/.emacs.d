@@ -65,17 +65,24 @@
 ;; 	;; (global-set-key (kbd "C-s") 'swiper) ; not good in text-mode
 ;; 	)
 
-;; ;; imenu
-;; (use-package imenu-anywhere
-;; 	:ensure t)
-;; (use-package imenu-list
-;; 	:ensure t
-;; 	:bind
-;; 	("C-?" . imenu-list-minor-mode)
-;; 	:config
-;; 	(setq imenu-list-focus-after-activation t)
-;; 	(setq imenu-list-auto-resize t)
-;; 	)
+;; imenu
+(use-package imenu-anywhere
+	:ensure t)
+(use-package imenu-list
+	:ensure t
+	:bind
+	("C-?" . imenu-list)
+	:init
+	(setq imenu-list-focus-after-activation t)
+	;; (setq imenu-list-auto-resize t)
+	(setq imenu-list-position (quote left))
+	(setq imenu-list-size 30)
+	:config
+	(add-hook 'text-mode-hook 'imenu-list-minor-mode)
+	(add-hook 'prog-mode-hook 'imenu-list-minor-mode)
+	)
+(add-hook 'imenu-list-minor-mode-hook (lambda () (toggle-truncate-lines))) ; FIXME
+(setq org-imenu-depth 4)
 
 ;; ;; smex helps to remember often used commands; used by ido and counsel
 ;; (use-package smex
@@ -175,6 +182,11 @@
 (use-package helm-descbinds
 	:ensure t
   :bind ("C-h b" . helm-descbinds))
+
+(use-package helm-swoop
+	:ensure t
+  :bind ("C-c /" . helm-swoop))
+
 
 ;;==========================================================
 ;;      KEYS

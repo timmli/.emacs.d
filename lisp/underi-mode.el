@@ -73,6 +73,9 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 						(define-key map (kbd "C-z") 'undo-tree-undo)
 						(define-key map (kbd "C-S-z") 'undo-tree-redo)
 						(define-key map (kbd "C-j") 'ace-jump-mode)
+						(define-key map (kbd "H-i") 'helm-imenu)
+						(define-key map (kbd "C-S-i") 'imenu-list)
+						
 						map
 						)
 	(add-hook 'minibuffer-setup-hook 'underi-minibuffer)
@@ -86,16 +89,16 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 	(let ((map minibuffer-local-map))
 
 		;; move cursor
-		(define-key map (kbd "M-S-i") 'scroll-up-command)
-		(define-key map (kbd "M-S-i") 'scroll-down-command)
-		(define-key map (kbd "C-o") 'point-redo)
-		(define-key map (kbd "C-u") 'point-undo)
-		(define-key map (kbd "M-u") 'goto-last-change)
-		(define-key map (kbd "M-i") 'backward-paragraph)
-		(define-key map (kbd "M-k") 'forward-paragraph)
-		(define-key map (kbd "M-j") 'left-word)
-		(define-key map (kbd "M-l") 'right-word)
-
+		(define-key map (kbd "M-n") 'scroll-up-command)
+		(define-key map (kbd "M-p") 'scroll-down-command)
+		(define-key map (kbd "M-o") 'point-redo)
+		(define-key map (kbd "M-u") 'point-undo)
+		(define-key map (kbd "M-z") 'goto-last-change)
+		(define-key map (kbd "C-M-i") 'backward-paragraph)
+		(define-key map (kbd "C-M-k") 'forward-paragraph)
+		(define-key map (kbd "C-M-j") 'left-word)
+		(define-key map (kbd "C-M-l") 'right-word)
+		
 		;; delete 
 		(define-key map (kbd "C-d") nil)
 		(define-key map (kbd "C-d C-k") 'kill-line)
