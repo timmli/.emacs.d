@@ -51,7 +51,13 @@
 													 ))
 
 ;; (set-face-attribute 'org-block-background nil :inherit 'fixed-pitch)
+(custom-set-variables
+ '(org-ref-label-color "magenta")
+ '(org-ref-ref-color "Deepskyblue1")
+ )
 (custom-set-faces
+ '(org-done ((t (:overline t))))
+ '(org-todo ((t (:overline t))))
  '(org-block-background ((t (:inherit fixed-pitch :background "#3E3D31"))))
  '(org-block-begin-line ((t (:underline t))))
  '(org-block-end-line  ((t (:overline t))))
