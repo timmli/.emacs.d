@@ -121,8 +121,9 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 
 		))
 
-(add-hook 'text-mode-hook 'underi-mode)
-(add-hook 'prog-mode-hook 'underi-mode)
+(add-hook 'fundamental-mode-hook 'underi-mode)
+;; (add-hook 'text-mode-hook 'underi-mode)
+;; (add-hook 'prog-mode-hook 'underi-mode)
 
 (provide 'underi-mode)
 
