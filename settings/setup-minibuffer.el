@@ -112,6 +112,7 @@
 					helm-M-x-fuzzy-match t
 					helm-imenu-fuzzy-match t
 					helm-completion-in-region-fuzzy-match t
+					helm-apropos-fuzzy-match t
 					helm-autoresize-mode 1 				; re-size the completion window based on number of candidates
 					helm-adaptive-mode t					; show commonly used commands first
 					)
@@ -170,13 +171,15 @@
 ;; helm-flx: improves fuzzy matching
 (use-package helm-flx
 	:ensure t
+	:after helm
 	:config
 	(helm-flx-mode +1))
 ;; helm-fuzzier: improves fuzzy matching even more by taking more candidates into account
 (use-package helm-fuzzier
 	:ensure t
+	:after helm
 	:config
-	(helm-fuzzier-mode 1))
+	(helm-fuzzier-mode +1))
 
 ;; list active key bindings 
 (use-package helm-descbinds
