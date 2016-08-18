@@ -234,6 +234,7 @@
 (require 'setup-buffer)
 
 (require 'underi-mode)
+(require 'winkeys-mode)
 
 ;;==========================================================
 ;;      MISCELLANEOUS

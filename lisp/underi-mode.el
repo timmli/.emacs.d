@@ -16,7 +16,7 @@
 ;; (require 'ace-jump-mode)
 
 (define-minor-mode underi-mode
-	"Keymap for the 21th century.
+	"Key bindings for more ergonomic cursor movement: the cursor movement keys are under the <i> key and get activated with the Meta/Alt key. 
 Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 	:lighter " ui"
 	;; :global "t"
@@ -24,6 +24,8 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 	:keymap (let ((map (make-keymap)))
 
 						(define-key input-decode-map (kbd "C-i") (kbd "H-i")) ; to disentangle <tab> and C-i
+
+						;; cursor keys
 						(define-key key-translation-map (kbd "M-i") (kbd "<up>"))
 						(define-key key-translation-map (kbd "M-k") (kbd "<down>"))
 						(define-key key-translation-map (kbd "M-j") (kbd "<left>"))		
@@ -33,7 +35,7 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 						(define-key key-translation-map (kbd "M-J") (kbd "S-<left>"))		
 						(define-key key-translation-map (kbd "M-L") (kbd "S-<right>"))
 
-						;; move cursor
+						;; more cursor keys
 						(define-key map (kbd "M-n") 'scroll-up-command)
 						(define-key map (kbd "M-p") 'scroll-down-command)
 						(define-key map (kbd "M-o") 'point-redo)
@@ -70,19 +72,6 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 						(define-key map (kbd "C-S-m") 'smart-open-line)
 						
 						;; miscellaneous actions
-						(define-key map (kbd "C-s") 'save-buffer)
-						(define-key map (kbd "C-S-s") 'write-file)
-						(define-key map (kbd "C-f") 'helm-occur)
-						(define-key map (kbd "C-S-f") 'helm-swoop)
-						;; (define-key map (kbd "C-f") 'isearch-search)
-						(define-key map (kbd "C-r") 'query-replace)
-						(define-key map (kbd "C-S-r") 'query-replace-regexp)
-						(define-key map (kbd "C-o") 'helm-find-files)
-						(define-key map (kbd "C-x C-a") 'mark-whole-buffer)
-						;; (define-key map (kbd "C-p") 'recenter-top-bottom)
-						(define-key key-translation-map (kbd "M-q") (kbd "C-g"))
-						(define-key map (kbd "C-z") 'undo-tree-undo)
-						(define-key map (kbd "C-S-z") 'undo-tree-redo)
 						(define-key map (kbd "C-j") 'ace-jump-mode)
 						(define-key map (kbd "H-i") 'helm-imenu)
 						(define-key map (kbd "C-S-i") 'imenu-list)
