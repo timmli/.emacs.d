@@ -216,7 +216,9 @@
 
 (use-package deft												; for displaying list of note files
 	:ensure t
-  :bind ("<f9> f" . deft)
+  :bind
+	("<f9> f" . deft)
+	("<f9> o" . deft)
   :commands (deft)
   :config (setq deft-directory notes-dir
                 deft-extensions '("md" "org")
