@@ -471,5 +471,9 @@ Version 2016-06-18"
     (forward-char)
     ))
 
+;; kill buffer
+(global-set-key (kbd "M-<f4>") 'kill-this-buffer)
+
+
 
 (provide 'setup-buffer)
