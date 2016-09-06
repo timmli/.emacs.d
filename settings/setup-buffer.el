@@ -230,6 +230,9 @@
 	:bind ("C-+" . er/expand-region)
 	)
 
+;; copy mouse selection to kill-ring
+(setq mouse-drag-copy-region t)
+
 
 ;;==========================================================
 ;;      CURSOR PLACEMENT 

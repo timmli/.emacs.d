@@ -145,6 +145,7 @@
 ;; (setq org-ref-completion-library 'org-ref-ivy-cite) ; must appear before org-ref
 (use-package org-ref
 	:ensure t
+	:after org
 	:init
 	(require 'org-ref) 										; don't know why I need this
 	(setq reftex-default-bibliography '((concat home-directory "/Dropbox/Forschung/timm-bib.bib"))) ; FIXME
