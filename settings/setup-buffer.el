@@ -477,6 +477,11 @@ Version 2016-06-18"
 ;; kill buffer
 (global-set-key (kbd "M-<f4>") 'kill-this-buffer)
 
+;; revert buffer
+(global-set-key (kbd "<f5>") 'revert-buffer)
+
+
+
 
 
 (provide 'setup-buffer)
