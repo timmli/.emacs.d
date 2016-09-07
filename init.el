@@ -219,6 +219,7 @@
   :bind
 	("<f9> f" . deft)
 	("<f9> o" . deft)
+	("<f9> d" . deft)
   :commands (deft)
   :config (setq deft-directory notes-dir
                 deft-extensions '("md" "org")
@@ -273,3 +274,4 @@
 		(use-package powershell
 			:ensure t)
 )
+(put 'upcase-region 'disabled nil)

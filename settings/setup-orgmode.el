@@ -68,6 +68,8 @@
  '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
  )
 
+(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+
 (setq org-hide-emphasis-markers t)
 
 ;; nicer bullets
@@ -288,8 +290,11 @@
 (global-set-key (kbd "<f9> t") 'org-todo-list)
 (global-set-key (kbd "C-<f9>") 'org-cycle-agenda-files)
 (global-set-key (kbd "<f9> s") 'org-search-view)
+(global-set-key (kbd "<f9> f") 'org-search-view)
 (global-set-key (kbd "<f9> l") 'org-tags-view)
 (global-set-key (kbd "<f9> r") 'org-reload)
+(global-set-key (kbd "<f9> w")
+								(lambda() (interactive)(find-file (concat org-directory "/forschung/wip.org"))))
 
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "C-<tab>") nil ))
@@ -300,10 +305,9 @@
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "C-c C-f") 'org-footnote-action ))
 
-
 ;; (bind-key "C-c r" 'org-capture)
 (bind-key "C-c a" 'org-agenda)
-;; (bind-key "C-c l" 'org-store-link)
+(bind-key "C-c l" 'org-store-link)
 ;; (bind-key "C-c L" 'org-insert-link-global)
 ;; (bind-key "C-c O" 'org-open-at-point-global)
 ;; (bind-key "<f9> <f9>" 'org-agenda-list)
