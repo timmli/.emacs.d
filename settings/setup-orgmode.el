@@ -68,7 +68,9 @@
  '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
  )
 
-(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+(with-eval-after-load 'org
+  (set-face-attribute 'org-table nil :inherit 'fixed-pitch))
+
 
 (setq org-hide-emphasis-markers t)
 
