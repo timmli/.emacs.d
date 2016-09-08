@@ -333,11 +333,11 @@
 
 (setq org-capture-templates
       '(("t" "Todo" entry (file (concat org-directory "/todo.org"))
-         "* TODO %?\t%^g\n SCHEDULED: %t\n About region:%i\n %a")
+         "* TODO %?\t%^g\n CREATED: %U\n About region:%i\n %a")
         ("n" "Note" entry (file+datetree (concat org-directory "/notes.org"))
-				 "* %?\t%^g\n Entered on %U\n About region:%i\n %a")
+				 "* %?\t%^g\n CREATED: %U\n About region:%i\n %a")
 				("c" "Code" entry (file (concat org-directory "/code.org"))
-         "* %?\t%^g\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n Entered on %U\n About region:%i\n %a")
+         "* %?\t%^g\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a")
 				))
 
 (global-set-key (kbd "<f9> <f9>") 'org-capture)
