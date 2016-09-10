@@ -150,12 +150,16 @@
 		(sp-local-pair "/" "/" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p) )
 		(sp-local-pair "~" "~" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p) )
 		(sp-local-pair "=" "=" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p) )
-		(sp-local-pair "+" "+" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p tl/sp-point-after-punct-p) )
+		(sp-local-pair "+" "+" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p tl/sp-point-after-hash-p) )
 		(sp-local-pair "$" "$" :unless '(sp-point-after-word-p sp-point-before-word-p) )
 		(sp-local-pair "«" "»"))
-	(defun tl/sp-point-after-punct-p (id action context) ; FIXME
-		(sp--looking-back-p "[[:punct:]]'"))
 	)
+(defun tl/sp-point-after-hash-p (id action context)
+  "Return t if point is after a hash, nil otherwise.
+This predicate is only tested on \"insert\" action.
+Its definition follows the one of sp-point-after-word-p."
+  (when (eq action 'insert)
+		(sp--looking-back-p (concat "\\(#\\)" (regexp-quote id)))))
 
 ;; jump to matching paren
 (defun goto-match-paren (arg)
@@ -358,6 +362,9 @@ Should be selected from `fringe-bitmaps'.")
 	:ensure t
 	:bind
 	("C-x C-d" . deer))
+
+;; open file from inside a buffer
+(global-set-key (kbd "C-x f") 'find-file-at-point)
 
 
 ;;==========================================================
