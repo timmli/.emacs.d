@@ -77,7 +77,6 @@
 (with-eval-after-load 'org
   (set-face-attribute 'org-table nil :inherit 'fixed-pitch))
 
-
 (setq org-hide-emphasis-markers t)
 
 ;; nicer bullets
@@ -92,6 +91,9 @@
 
 ;; folding symbol
 (setq org-ellipsis " ▼")
+
+;; replace HTML/LaTeX code by UTF-8 characters (see org-pretty-entities for an enumeration)
+(setq org-pretty-entities t)
 
 
 ;;==========================================================
