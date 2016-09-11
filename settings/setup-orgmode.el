@@ -37,6 +37,12 @@
 ;; 			 (list org-directory)
 ;; 			 (file-expand-wildcards (concat org-directory "/*/*.org"))))
 
+;; set refile targets to move entries inside org-agenda 
+(setq org-refile-targets '(
+													 (nil :maxlevel . 2)             ; refile to headings in the current buffer
+													 (org-agenda-files :maxlevel . 2) ; refile to any of these files
+													 ))
+
 ;;==========================================================
 ;;      GENERAL APPEARANCE
 ;;==========================================================
