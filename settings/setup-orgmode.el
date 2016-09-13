@@ -305,6 +305,8 @@
 (global-set-key (kbd "<f9> r") 'org-reload)
 (global-set-key (kbd "<f9> w")
 								(lambda() (interactive)(find-file (concat org-directory "/forschung/wip.org"))))
+(global-set-key (kbd "<f9> n")
+								(lambda() (interactive)(find-file (concat org-directory "/notes.org"))))
 
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "C-<tab>") nil ))
