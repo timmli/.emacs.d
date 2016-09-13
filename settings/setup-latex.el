@@ -149,24 +149,24 @@
 	(define-key LaTeX-mode-map (kbd "C-c C-f e") 'TeX-emphasis)
 	(define-key LaTeX-mode-map (kbd "C-c C-f s") 'TeX-smallcaps)
 	(define-key LaTeX-mode-map (kbd "C-c C-f c") 'TeX-smallcaps)
-	(define-key LaTeX-mode-map (kbd "C-c C-f d") 'TeX-deletefont
-		)	
-	;; make square brackets indent correctly (testing)
-																				;(modify-syntax-entry ?\[ "(]" LaTeX-mode-syntax-table)
-																				;(modify-syntax-entry ?\] ")[" LaTeX-mode-syntax-table)
+	(define-key LaTeX-mode-map (kbd "C-c C-f d") 'TeX-deletefont)	
 	
 	:bind (:map  LaTeX-mode-map
 							 ("C-l C-q" . align-current) ; useful command to align arrays
+							 ("C-l H-i" . align-current) ; useful command to align arrays							 
 							 ;; keys for error browsing
 							 ("<f4>" . TeX-next-error)	 
 							 ("S-<f4>" . TeX-previous-error)
 							 ("C-<f4>" . TeX-error-overview)
 							 ;; miscellaneous keys
 							 ("C-l <backspace>" . TeX-clean)
+							 ("C-c <backspace>" . TeX-clean)
 							 ("C-<return>" . LaTeX-close-environment)
 							 ;; goto keys
 							 ("C-l C-a" . LaTeX-find-matching-begin)
 							 ("C-l C-e" . LaTeX-find-matching-end)
+							 ("C-c C-a" . LaTeX-find-matching-begin)
+							 ("C-c C-e" . LaTeX-find-matching-end)
 							 )
 	)
 
@@ -233,5 +233,9 @@
 							("C-c ]" . reftex-citation); same as in org-mode
 						  ) 
 	)
+
+;; make square brackets indent correctly (testing)
+(modify-syntax-entry ?\[ "(]" LaTeX-mode-syntax-table)
+(modify-syntax-entry ?\] ")[" LaTeX-mode-syntax-table)
 
 (provide 'setup-latex)
