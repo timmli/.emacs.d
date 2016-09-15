@@ -273,7 +273,7 @@ Its definition follows the one of sp-point-after-word-p."
 
 
 ;;==========================================================
-;;      UNDO
+;;      UNDO, COMMENT & REMOVE
 ;;==========================================================
 
 ;; visualize the undo history
@@ -291,6 +291,17 @@ Its definition follows the one of sp-point-after-word-p."
 	:ensure t
 	:config
 	(setq-default cm-author "TL"))
+
+;; remove newlines from region
+;; http://stackoverflow.com/a/5194503
+(defun remove-newlines-in-region ()
+  "Removes all newlines in the region."
+  (interactive)
+  (save-restriction
+    (narrow-to-region (point) (mark))
+    (goto-char (point-min))
+    (while (search-forward "\n" nil t) (replace-match " " nil t))))
+
 
 ;;==========================================================
 ;;      TRACKING CHANGES
