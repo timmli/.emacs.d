@@ -165,8 +165,8 @@
 							 ;; goto keys
 							 ("C-l C-a" . LaTeX-find-matching-begin)
 							 ("C-l C-e" . LaTeX-find-matching-end)
-							 ("C-c C-a" . LaTeX-find-matching-begin)
-							 ("C-c C-e" . LaTeX-find-matching-end)
+							 ("C-c C-{" . LaTeX-find-matching-begin)
+							 ("C-c C-}" . LaTeX-find-matching-end)
 							 )
 	)
 
