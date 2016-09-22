@@ -316,6 +316,9 @@
   (define-key org-mode-map (kbd "S-<down>") nil ))
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "C-c C-f") 'org-footnote-action ))
+(with-eval-after-load 'org
+  (define-key org-mode-map (kbd "C-c C-x C-b") 'org-tree-to-indirect-buffer ))
+
 
 ;; (bind-key "C-c r" 'org-capture)
 (bind-key "C-c a" 'org-agenda)
