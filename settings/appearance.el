@@ -60,10 +60,14 @@
 ;; distraction-free mode
 (use-package writeroom-mode
 	:ensure t
-	:bind	(:map writeroom-mode-map
-							("C-M-<" . writeroom-decrease-width)
-							("C-M->" . writeroom-increase-width)
-							("C-M-=" . writeroom-adjust-width)
-							))
+	:bind
+	(:map writeroom-mode-map
+				("C-M-<" . writeroom-decrease-width)
+				("C-M->" . writeroom-increase-width)
+				("C-M-=" . writeroom-adjust-width)
+				("C-<f10>" . writeroom-toggle-mode-line)
+				)
+	)
+(global-set-key (kbd "<f10>") 'writeroom-mode)
 
 (provide 'appearance)
