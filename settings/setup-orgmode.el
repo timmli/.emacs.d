@@ -319,7 +319,6 @@
 (with-eval-after-load 'org
   (define-key org-mode-map (kbd "C-c C-x C-b") 'org-tree-to-indirect-buffer ))
 
-
 ;; (bind-key "C-c r" 'org-capture)
 (bind-key "C-c a" 'org-agenda)
 (bind-key "C-c l" 'org-store-link)
