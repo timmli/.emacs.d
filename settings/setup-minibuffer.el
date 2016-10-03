@@ -195,6 +195,11 @@
 ;;      KEYS
 ;;==========================================================
 
+(use-package which-key
+	:ensure t
+	:config
+	(which-key-mode))
+
 ;; M-x in minibuffer quits the minibuffer
 (add-hook 'minibuffer-setup-hook
 					(lambda ()
