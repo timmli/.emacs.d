@@ -150,6 +150,15 @@
 	(define-key LaTeX-mode-map (kbd "C-c C-f s") 'TeX-smallcaps)
 	(define-key LaTeX-mode-map (kbd "C-c C-f c") 'TeX-smallcaps)
 	(define-key LaTeX-mode-map (kbd "C-c C-f d") 'TeX-deletefont)	
+	(define-key LaTeX-mode-map (kbd "C-c C-f DEL") 'TeX-deletefont)
+	(define-key LaTeX-mode-map (kbd "C-c f i") 'TeX-italic)
+	(define-key LaTeX-mode-map (kbd "C-c f b") 'TeX-bold)
+	(define-key LaTeX-mode-map (kbd "C-c f t") 'TeX-typewriter)
+	(define-key LaTeX-mode-map (kbd "C-c f e") 'TeX-emphasis)
+	(define-key LaTeX-mode-map (kbd "C-c f s") 'TeX-smallcaps)
+	(define-key LaTeX-mode-map (kbd "C-c f c") 'TeX-smallcaps)
+	(define-key LaTeX-mode-map (kbd "C-c f d") 'TeX-deletefont)	
+	(define-key LaTeX-mode-map (kbd "C-c f DEL") 'TeX-deletefont)
 	
 	:bind (:map  LaTeX-mode-map
 							 ("C-l C-q" . align-current) ; useful command to align arrays
