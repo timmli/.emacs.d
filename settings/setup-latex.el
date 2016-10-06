@@ -190,8 +190,8 @@
 	(add-hook 'latex-mode-hook 'turn-on-reftex)
 	(add-hook 'LaTeX-mode-hook 'turn-on-reftex)
 	(setq reftex-plug-into-AUCTeX t
-				reftex-ref-style-default-list '("Cleveref" "Hyperref" "Fancyref")
-				;;reftex-toc-split-windows-horizontally t
+				;; reftex-ref-style-default-list '("Cleveref" "Hyperref" "Fancyref")
+				;; reftex-toc-split-windows-horizontally t
 				reftex-ref-macro-prompt nil			; go straight to the labels when referencing
 				reftex-bibliography-commands '("bibliography" "nobibliography" "addbibresource")
 				;; reftex-default-bibliography '()
