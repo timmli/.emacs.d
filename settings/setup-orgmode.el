@@ -201,6 +201,11 @@
       (if (and b e (< (point) e)) (setq rlt nil)))
     (setq ad-return-value rlt)))
 
+;; show notifications of agenda events
+(use-package org-alert
+	:ensure t
+	)
+
 ;;==========================================================
 ;;      TAGS
 ;;==========================================================
