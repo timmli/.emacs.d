@@ -152,12 +152,6 @@
 	(defun TeX-deletefont()
 		(interactive)
 		(TeX-font nil ?\C-d))
-	(define-key LaTeX-mode-map (kbd "C-l C-i") 'TeX-italic)
-	(define-key LaTeX-mode-map (kbd "C-l C-b") 'TeX-bold)
-	(define-key LaTeX-mode-map (kbd "C-l C-t") 'TeX-typewriter)
-	(define-key LaTeX-mode-map (kbd "C-l C-e") 'TeX-emphasis)
-	(define-key LaTeX-mode-map (kbd "C-l C-s") 'TeX-smallcaps)
-	(define-key LaTeX-mode-map (kbd "C-l C-d") 'TeX-deletefont)
 	(define-key LaTeX-mode-map (kbd "C-c C-f i") 'TeX-italic)
 	(define-key LaTeX-mode-map (kbd "C-c C-f b") 'TeX-bold)
 	(define-key LaTeX-mode-map (kbd "C-c C-f t") 'TeX-typewriter)
@@ -188,19 +182,16 @@
 	(define-key LaTeX-mode-map (kbd "C-c f ! c") 'TeX-smallcaps-replace)
 	
 	:bind (:map  LaTeX-mode-map
-							 ("C-l C-q" . align-current) ; useful command to align arrays
-							 ("C-l H-i" . align-current) ; useful command to align arrays							 
+							 ;; ("C-l C-q" . align-current) ; useful command to align arrays
+							 ;; ("C-l H-i" . align-current) ; useful command to align arrays							 
 							 ;; keys for error browsing
 							 ("<f4>" . TeX-next-error)	 
 							 ("S-<f4>" . TeX-previous-error)
 							 ("C-<f4>" . TeX-error-overview)
 							 ;; miscellaneous keys
-							 ("C-l <backspace>" . TeX-clean)
 							 ("C-c <backspace>" . TeX-clean)
 							 ("C-<return>" . LaTeX-close-environment)
 							 ;; goto keys
-							 ("C-l C-a" . LaTeX-find-matching-begin)
-							 ("C-l C-e" . LaTeX-find-matching-end)
 							 ("C-c {" . LaTeX-find-matching-begin)
 							 ("C-c }" . LaTeX-find-matching-end)
 							 )
