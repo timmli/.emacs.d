@@ -62,8 +62,8 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 						(define-key map (kbd "C-d C-l") 'delete-forward-char)
 						(define-key map (kbd "C-d C-e") 'kill-line)
 						(define-key map (kbd "C-d C-o") 'delete-blank-lines)
-						(define-key map (kbd "C-d C-m") 'delete-blank-lines)
-						(define-key map (kbd "C-d \\") 'remove-newlines-in-region) 
+						(define-key map (kbd "C-d C-m") 'remove-newlines-or-blank-lines-dwim)
+						(define-key map (kbd "C-d C-<return>") 'remove-newlines-or-blank-lines-dwim)
 						(define-key map (kbd "C-d C-a") '(lambda () (interactive) (kill-line 0)))
 						(define-key map (kbd "C-S-d") 'kill-whole-line)
 

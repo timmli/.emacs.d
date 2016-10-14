@@ -302,6 +302,26 @@ Its definition follows the one of sp-point-after-word-p."
     (goto-char (point-min))
     (while (search-forward "\n" nil t) (replace-match " " nil t))))
 
+(defun remove-newline ()
+	(save-excursion 
+		(search-forward "\n")
+		(replace-match " ")))
+
+(defun remove-newlines-or-blank-lines-dwim ()
+	(interactive)
+	(progn (if (use-region-p)
+						 (remove-newlines-in-region)
+					 (if (next-line-empty-p)
+							 (delete-blank-lines)
+						 (remove-newline)
+					 ))))
+
+(defun next-line-empty-p ()
+  (save-excursion
+		(next-line)
+    (beginning-of-line)
+    (looking-at "[[:space:]]*$")))
+
 
 ;;==========================================================
 ;;      TRACKING CHANGES
@@ -447,8 +467,9 @@ is already narrowed."
 
 ;; new line
 (global-set-key (kbd "S-<return>") 'smart-open-line)
-(global-set-key (kbd "C-o") 'smart-open-line)
+(global-set-key (kbd "C-x C-<return>") 'smart-open-line)
 (global-set-key (kbd "C-S-<return>") 'smart-open-line-above)
+(global-set-key (kbd "C-o") 'smart-open-line)
 (global-set-key (kbd "C-S-o") 'smart-open-line-above)
 ;; http://emacsredux.com/blog/2013/03/26/smarter-open-line/
 (defun smart-open-line ()
@@ -471,7 +492,7 @@ Position the cursor at it's beginning, according to the current mode."
 ;; center line
 (global-set-key (kbd "C-S-l") 'recenter-top-bottom)
 
-;; open untitiled new buffer
+;; open untitled new buffer
 (defun xah-new-empty-buffer ()
   "Open a new empty buffer.
 URL `http://ergoemacs.org/emacs/emacs_new_empty_buffer.html'
