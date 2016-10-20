@@ -275,3 +275,7 @@
 			:ensure t)
 )
 (put 'upcase-region 'disabled nil)
+
+;; eshell settings
+(add-hook 'eshell-mode-hook
+					'(lambda () (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)))
