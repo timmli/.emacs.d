@@ -264,6 +264,42 @@ Its definition follows the one of sp-point-after-word-p."
 (global-set-key [M-right] 'point-redo)
 (global-set-key (kbd "M-j") 'point-undo)
 (global-set-key (kbd "M-k") 'point-redo)
+;; focus on line-based jumps
+;; http://emacs.stackexchange.com/a/28078/12336
+(defvar point-undo-ring-length 100)
+(defvar point-undo-ring (make-ring point-undo-ring-length))
+(make-variable-buffer-local 'point-undo-ring)
+(defvar point-redo-ring (make-ring point-undo-ring-length))
+(make-variable-buffer-local 'point-redo-ring)
+(defun point-undo-pre-command-hook ()
+  "Save positions before command."
+  (unless (or (eq this-command 'point-undo)
+              (eq this-command 'point-redo))
+    (let ((line (line-number-at-pos)))
+      (when (eq line (cdr (nth 0 (ring-elements point-undo-ring))))
+        (ring-remove point-undo-ring 0))
+      (ring-insert point-undo-ring (cons (point) line))
+      (setq point-redo-ring (make-ring point-undo-ring-length)))))
+(add-hook 'pre-command-hook 'point-undo-pre-command-hook)
+(defun point-undo-doit (ring1 ring2)
+  "ring1, ring2 = {point-undo-ring, point-redo-ring}"
+  (condition-case nil
+      (progn
+        (goto-char (car (nth 0 (ring-elements ring1)))) 
+        (ring-insert ring2 (ring-remove ring1 0)))
+    (error nil)))
+(defun point-undo ()
+  "Undo position."
+  (interactive)
+  (point-undo-doit point-undo-ring point-redo-ring))
+(defun point-redo ()
+  "Redo position."
+  (interactive)
+  (when (or (eq last-command 'point-undo)
+            (eq last-command 'point-redo))
+    (point-undo-doit point-redo-ring point-undo-ring)))
+
+
 
 ;; cursor position undo history
 (use-package goto-last-change
