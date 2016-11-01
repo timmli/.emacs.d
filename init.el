@@ -264,9 +264,11 @@
 	("C-x C-g" . nil)
 	("C-x C-g TAB" . git-gutter:popup-hunk)
 	("C-x C-g _" . git-gutter:revert-hunk)
+	("C-x C-g z" . git-gutter:revert-hunk)
 	("C-x C-g C-g" . git-gutter-mode)
-	("C-x C-g C-n" . git-gutter:next-hunk)
-	("C-x C-g C-p" . git-gutter:previous-hunk)
+	("C-x C-g g" . git-gutter-mode)
+	("C-x C-g n" . git-gutter:next-hunk)
+	("C-x C-g p" . git-gutter:previous-hunk)
 	)
 
 ;; adds support of the windows powershell
