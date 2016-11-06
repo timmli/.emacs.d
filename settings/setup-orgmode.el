@@ -297,6 +297,56 @@
 
 
 ;;==========================================================
+;;      TABLES
+;;==========================================================
+
+;; http://emacs.stackexchange.com/a/28298/12336
+(defun org-table-goto-col-beginning ()
+  "Go to beginning of current column and return `point'."
+  (interactive)
+  (assert (org-table-p) "Not in org-table.")
+  (org-table-align)
+  (let ((col (org-table-current-column)))
+    (goto-char (org-table-begin))
+    (org-table-goto-column col))
+  (point))
+
+(defun org-table-col-beginning ()
+  "Return beginning position of current column."
+  (save-excursion
+    (org-table-goto-col-beginning)))
+
+(defun org-table-goto-col-end ()
+  "Goto end of current column and return `point'."
+  (interactive)
+  (assert (org-table-p) "Not in org-table.")
+  (org-table-align)
+  (let ((col (org-table-current-column)))
+    (goto-char (1- (org-table-end)))
+    (org-table-goto-column col)
+    (skip-chars-forward "^|"))
+  (point))
+
+(defun org-table-col-end ()
+  "Return end position of current column."
+  (save-excursion
+    (org-table-goto-col-end)))
+
+(defun org-table-select-col ()
+  "Select current column."
+  (interactive)
+  (set-mark (org-table-col-beginning))
+  (org-table-goto-col-end))
+
+(defun org-table-copy-col ()
+  "Copy current column."
+  (interactive)
+  (save-excursion
+    (org-table-copy-region (org-table-goto-col-beginning)
+													 (org-table-goto-col-end))))
+
+
+;;==========================================================
 ;;      KEYS
 ;;==========================================================
 
