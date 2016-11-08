@@ -188,6 +188,29 @@
 
 (use-package helm-swoop
 	:ensure t
+	:config
+	;; Move up and down like isearch
+	(define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
+	(define-key helm-swoop-map (kbd "C-s") 'helm-next-line)
+	(define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
+	(define-key helm-multi-swoop-map (kbd "C-s") 'helm-next-line)
+
+	;; From helm-swoop to helm-multi-swoop-all
+	(define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
+
+	;; Instead of helm-multi-swoop-all, you can also use helm-multi-swoop-current-mode
+	(define-key helm-swoop-map (kbd "M-m") 'helm-multi-swoop-current-mode-from-helm-swoop)
+	
+	;; If nil, you can slightly boost invoke speed in exchange for text color
+	(setq helm-swoop-speed-or-color t)
+	
+	;; Optional face for line numbers
+	;; Face name is `helm-swoop-line-number-face`
+	(setq helm-swoop-use-line-number-face t)
+
+	;; If you prefer fuzzy matching (seems to be already activated)
+	;; (setq helm-swoop-use-fuzzy-match t) 
+
   :bind ("C-c /" . helm-swoop))
 
 
