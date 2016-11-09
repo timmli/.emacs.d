@@ -27,8 +27,9 @@
 						(define-key map (kbd "C-S-s") 'write-file)
 
 						;; search and replace
-						(define-key map (kbd "C-f") 'helm-occur)
-						(define-key map (kbd "C-S-f") 'helm-swoop)
+						(define-key map (kbd "C-f") 'helm-swoop)
+						(define-key map (kbd "C-S-f a") 'helm-multi-swoop-all)
+						(define-key map (kbd "C-S-f m") 'helm-multi-swoop-current)
 						;; (define-key map (kbd "C-f") 'isearch-search)
 						(define-key map (kbd "C-r") 'query-replace)
 						(define-key map (kbd "C-S-r") 'query-replace-regexp)
@@ -50,7 +51,6 @@
 						map
 						)
 	(add-hook 'minibuffer-setup-hook 'winkeys-minibuffer)
-	
 	)
 
 (defun winkeys-minibuffer ()
