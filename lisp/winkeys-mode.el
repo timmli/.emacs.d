@@ -51,12 +51,6 @@
 						map
 						)
 	(add-hook 'minibuffer-setup-hook 'winkeys-minibuffer)
-	(with-eval-after-load 'helm-swop
-		(define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
-		(define-key helm-swoop-map (kbd "C-f") 'helm-next-line)
-		(define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
-		(define-key helm-multi-swoop-map (kbd "C-f") 'helm-next-line)
-	 )
 	)
 
 (defun winkeys-minibuffer ()
@@ -68,6 +62,15 @@
 		(define-key map (kbd "C-S-z") 'undo-tree-redo)
 		
 		))
+
+;; FIXME: How to make this a proper part of the mode, i.e., how to disable this when disabeling the mode? 
+(with-eval-after-load 'helm-swoop
+	(define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
+	(define-key helm-swoop-map (kbd "C-f") 'helm-next-line)
+	(define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
+	(define-key helm-multi-swoop-map (kbd "C-f") 'helm-next-line)
+	(define-key helm-swoop-map (kbd "C-S-f a") 'helm-multi-swoop-all-from-helm-swoop)
+	(define-key helm-swoop-map (kbd "C-S-f m") 'helm-multi-swoop-current-mode-from-helm-swoop))
 
 
 (provide 'winkeys-mode)
