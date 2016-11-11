@@ -282,3 +282,7 @@
 ;; eshell settings
 (add-hook 'eshell-mode-hook
 					'(lambda () (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)))
+(defun tl/eshell ()										; http://emacs.stackexchange.com/a/28603/12336
+  (interactive)
+  (eshell t))
+(global-set-key (kbd "<f7> e") 'tl/eshell)

@@ -524,7 +524,6 @@ Position the cursor at it's beginning, according to the current mode."
   (forward-line -1)
   (indent-according-to-mode))
 
-
 ;; center line
 (global-set-key (kbd "C-S-l") 'recenter-top-bottom)
 
@@ -538,8 +537,7 @@ Version 2015-06-12"
     (switch-to-buffer buf)
     (funcall (and initial-major-mode))
     (setq buffer-offer-save t)))
-(global-set-key (kbd "<f7>") 'xah-new-empty-buffer)
-
+(global-set-key (kbd "<f7> <f7>") 'xah-new-empty-buffer)
 
 ;; copy/cut whole line or region
 (global-set-key (kbd "C-w") 'xah-cut-line-or-region) ; cut
