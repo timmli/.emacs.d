@@ -29,7 +29,7 @@
 						;; search and replace
 						(define-key map (kbd "C-f") 'helm-swoop)
 						(define-key map (kbd "C-S-f a") 'helm-multi-swoop-all)
-						(define-key map (kbd "C-S-f m") 'helm-multi-swoop-current)
+						(define-key map (kbd "C-S-f m") 'helm-multi-swoop-current-mode)
 						;; (define-key map (kbd "C-f") 'isearch-search)
 						(define-key map (kbd "C-r") 'query-replace)
 						(define-key map (kbd "C-S-r") 'query-replace-regexp)
@@ -70,7 +70,9 @@
 	(define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
 	(define-key helm-multi-swoop-map (kbd "C-f") 'helm-next-line)
 	(define-key helm-swoop-map (kbd "C-S-f a") 'helm-multi-swoop-all-from-helm-swoop)
-	(define-key helm-swoop-map (kbd "C-S-f m") 'helm-multi-swoop-current-mode-from-helm-swoop))
+	(define-key helm-swoop-map (kbd "C-S-f m") 'helm-multi-swoop-current-mode-from-helm-swoop)
+	(define-key helm-swoop-map (kbd "M-a") 'helm-multi-swoop-all-from-helm-swoop))
+
 
 
 (provide 'winkeys-mode)
