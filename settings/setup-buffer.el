@@ -416,6 +416,7 @@ Should be selected from `fringe-bitmaps'.")
 	:ensure t
 	:config
 	(setq iflipb-wrap-around t)
+	(setq iflipb-include-more-buffers t)
 	:bind
 	("<C-tab>" . iflipb-next-buffer))
 
