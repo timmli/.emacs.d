@@ -209,7 +209,11 @@
 	(setq helm-swoop-use-line-number-face t)
 
 	;; If you prefer fuzzy matching (seems to be already activated)
-	;; (setq helm-swoop-use-fuzzy-match t) 
+	;; (setq helm-swoop-use-fuzzy-match t)
+
+	;; Do not call helm-swoop with symbol or word at point
+	(setq helm-swoop-pre-input-function
+				(lambda () nil))
 
   :bind ("C-c /" . helm-swoop))
 
