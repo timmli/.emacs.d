@@ -109,7 +109,8 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 		(define-key map (kbd "C-d C-e") 'kill-line)
 		(define-key map (kbd "C-d C-a") '(lambda () (interactive) (kill-line 0)))
 		(define-key map (kbd "C-S-d") 'kill-whole-line)
-
+		(define-key map (kbd "C-d <space>") 'tl/remove-extra-spaces-dwim)
+		(define-key map (kbd "C-d C-<space>") 'tl/remove-extra-spaces-dwim)
 		))
 
 (define-key helm-map (kbd "H-i") 'helm-select-action) ; show actions (default is <tab>)

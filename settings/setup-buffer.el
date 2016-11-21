@@ -359,6 +359,23 @@ Its definition follows the one of sp-point-after-word-p."
     (looking-at "[[:space:]]*$")))
 
 
+;; remove extra spaces from line or region (TODO)
+(defun tl/remove-extra-spaces-dwim ()
+	"Remove extra spaces in line or in region."
+	(interactive)
+	(if (region-active-p)
+			(save-restriction
+				(narrow-to-region (point) (mark))
+				(save-excursion 
+					(goto-char (point-min))
+					(while (re-search-forward "[ ]+" nil t) (replace-match " " nil t))))
+		(save-excursion
+			(move-beginning-of-line nil)  					; FIXME: undo doesn't see save-excursion
+			(while (re-search-forward "[ ]+" (line-end-position) t)
+				(replace-match " "))))
+	)
+
+
 ;;==========================================================
 ;;      TRACKING CHANGES
 ;;==========================================================
