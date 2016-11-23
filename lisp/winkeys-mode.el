@@ -66,14 +66,22 @@
 ;; FIXME: How to make this a proper part of the mode, i.e., how to disable this when disabeling the mode? 
 (with-eval-after-load 'helm-swoop
 	(define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
-	(define-key helm-swoop-map (kbd "C-f") 'helm-next-line)
+	(define-key helm-swoop-map (kbd "C-f") 'tl/helm-swoop-C-s) 
 	(define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
 	(define-key helm-multi-swoop-map (kbd "C-f") 'helm-next-line)
 	(define-key helm-swoop-map (kbd "C-S-f a") 'helm-multi-swoop-all-from-helm-swoop)
 	(define-key helm-swoop-map (kbd "C-S-f m") 'helm-multi-swoop-current-mode-from-helm-swoop)
 	(define-key helm-swoop-map (kbd "M-a") 'helm-multi-swoop-all-from-helm-swoop))
 
-
+;; Let helm-swoop behave more like isearch
+(defun tl/helm-swoop-C-s ()
+	(interactive)
+	(if (boundp 'helm-swoop-pattern)
+			(if (equal helm-swoop-pattern "")
+					(previous-history-element 1)
+				(helm-next-line))
+		(helm-next-line)
+		))
 
 (provide 'winkeys-mode)
 
