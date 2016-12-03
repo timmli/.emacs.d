@@ -75,7 +75,8 @@
  )
 
 (with-eval-after-load 'org
-  (set-face-attribute 'org-table nil :inherit 'fixed-pitch))
+  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+	(set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch :background "#3E3D31"))
 
 (setq org-hide-emphasis-markers t)
 
@@ -172,7 +173,6 @@
 							("C-c (" . org-ref-helm-insert-label-link))
 )
 
-;; plantuml
 ;; http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
 (setq org-plantuml-jar-path
       (expand-file-name "plantuml.jar" org-directory))
