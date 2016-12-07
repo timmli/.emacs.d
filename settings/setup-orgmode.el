@@ -77,7 +77,11 @@
 (with-eval-after-load 'org
   (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
 	(set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch :background "#3E3D31")
-	(set-face-attribute 'org-latex-and-related nil :inherit 'fixed-pitch :background "#3E3D31"))
+	(set-face-attribute 'org-latex-and-related nil :inherit 'fixed-pitch :background "#3E3D31")
+	(set-face-attribute 'org-link nil :inherit 'fixed-pitch)
+	(set-face-attribute 'org-date nil :inherit 'fixed-pitch)
+
+	)
 
 (setq org-hide-emphasis-markers t)
 
