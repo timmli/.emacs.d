@@ -601,8 +601,9 @@ Version 2016-06-18"
         (if current-prefix-arg
             (message "Buffer text copied")
           (message "Text copied"))))
-    (end-of-line)
-    (forward-char)
+		;; TL: commented out the following two lines. Cursor remains at region.
+    ;; (end-of-line)   
+    ;; (forward-char)
     ))
 
 ;; toggle letter case
