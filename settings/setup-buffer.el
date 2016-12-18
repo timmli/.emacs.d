@@ -86,10 +86,12 @@
 				company-dabbrev-downcase nil
 				company-auto-complete nil
 				company-transformers '(company-sort-by-occurrence))
-	;; (eval-after-load 'company
-	;;   '(progn
-	;;      (define-key company-active-map (kbd "TAB") 'company-select-next)
-	;;      (define-key company-active-map [tab] 'company-select-next)))
+	(add-hook 'eshell-mode-hook '(lambda () (setq company-idle-delay 0)))
+	(eval-after-load 'company
+	  '(progn
+	     (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
+	     ;; (define-key company-active-map (kbd "<tab>") 'company-select-next))
+		))
 	(use-package company-flx
 		:ensure t
 		:config

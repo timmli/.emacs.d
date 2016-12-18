@@ -282,6 +282,7 @@
 ;; eshell settings
 (add-hook 'eshell-mode-hook
 					'(lambda () (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)))
+(setq eshell-cmpl-dir-ignore "\`\\(CVS\\)/\\'") ; in order to complete `..` to `../`
 (defun tl/eshell ()										; http://emacs.stackexchange.com/a/28603/12336
   (interactive)
   (eshell t))
