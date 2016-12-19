@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: org-mode tikz
-# key: orgtikz
+# key: <tikz
 # --
 #+BEGIN_SRC latex :file ${1:tikz}.pdf :packages '(("" "tikz")("" "forest")) :border 0em
 $0

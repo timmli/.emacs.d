@@ -1,7 +1,6 @@
 # -*- mode: snippet -*-
 # name: org-mode header
-# key: orgheader
-# condition: (eq (point) (point-min))
+# key: <header
 # --
 #+TITLE: ${1:Notes on research literature}
 #+AUTHOR: ${2:Timm Lichte}
