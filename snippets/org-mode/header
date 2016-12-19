@@ -1,0 +1,15 @@
+# -*- mode: snippet -*-
+# name: org-mode header
+# key: orgheader
+# condition: (eq (point) (point-min))
+# --
+#+TITLE: ${1:Notes on research literature}
+#+AUTHOR: ${2:Timm Lichte}
+#+FILETAGS: ${3:research}
+#+STARTUP: #latexpreview 
+#+STARTUP: indent
+#+STARTUP: hideblocks content
+#+TODO: TODO | DONE CANCELED
+#+bibliography: C:/Users/timm/Dropbox/Forschung/timm-bib.bib
+
+$0
