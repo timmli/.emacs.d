@@ -13,8 +13,8 @@
 	;; (setq TeX-show-compilation t) ; always show and follow TeX output
 
 	;; don't indent
-	;; (setq LaTeX-indent-level 0)
-	;; (setq LaTeX-item-indent 0)
+	(setq LaTeX-indent-level 0)
+	(setq LaTeX-item-indent 0)
 
 	;; viewer
 	(setq TeX-PDF-mode t)
@@ -260,6 +260,9 @@
 							("C-c ]" . reftex-citation); same as in org-mode
 						  ) 
 	)
+
+;; add \frametitle to outline (and imenu)
+(add-to-list 'TeX-outline-extra '("\\\\frametitle\\b" 5))
 
 ;; make square brackets indent correctly (testing)
 (modify-syntax-entry ?\[ "(]" LaTeX-mode-syntax-table)
