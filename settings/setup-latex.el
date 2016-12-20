@@ -221,7 +221,7 @@
 																("section" . 2)
 																("subsection" . 3)
 																("subsubsection" . 4)
-																("frametitle" . 4)
+																("frametitle" . -3)
 																("paragraph" . 5)
 																("subparagraph" . 6)
 																("addchap" . -1)
@@ -262,7 +262,7 @@
 	)
 
 ;; add \frametitle to outline (and imenu)
-(add-to-list 'TeX-outline-extra '("\\\\frametitle\\b" 5))
+(add-to-list 'TeX-outline-extra '("\\\\frametitle\\b" 4))
 
 ;; make square brackets indent correctly (testing)
 (modify-syntax-entry ?\[ "(]" LaTeX-mode-syntax-table)
