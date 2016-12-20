@@ -90,6 +90,9 @@
 	(eval-after-load 'company
 	  '(progn
 	     (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
+			 (define-key company-active-map (kbd "<return>") nil)
+			 (define-key company-active-map (kbd "RET") nil)
+	     ;; (define-key company-active-map (kbd "<tab>") 'company-complete-common)  ; Insert the common part of all candidates.  
 	     ;; (define-key company-active-map (kbd "<tab>") 'company-select-next))
 		))
 	(use-package company-flx
