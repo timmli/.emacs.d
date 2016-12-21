@@ -116,6 +116,7 @@
 	:ensure t
 	:config
 	(global-flycheck-mode t)
+	(add-hook 'text-mode-hook '(lambda ()(flycheck-mode 0)))
 	)
 
 ;; flyspell
