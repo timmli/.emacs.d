@@ -57,14 +57,14 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 						;; delete 
 						(define-key map (kbd "C-d") nil)
 						(define-key map (kbd "C-d C-k") 'kill-line)
-						(define-key map (kbd "C-d <up>") '(lambda () (interactive) (kill-line -1)))
+						(define-key map (kbd "C-d <up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
 						(define-key map (kbd "C-d <left>") 'delete-backward-char)
 						(define-key map (kbd "C-d <right>") 'delete-forward-char)
-						(define-key map (kbd "C-d <down>") 'kill-line)
-						(define-key map (kbd "C-d C-<up>") '(lambda () (interactive) (kill-line -1)))
+						(define-key map (kbd "C-d <down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
+						(define-key map (kbd "C-d C-<up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
 						(define-key map (kbd "C-d C-<left>") 'delete-backward-char)
 						(define-key map (kbd "C-d C-<right>") 'delete-forward-char)
-						(define-key map (kbd "C-d C-<down>") 'kill-line)
+						(define-key map (kbd "C-d C-<down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
 						(define-key map (kbd "C-d C-o") 'delete-blank-lines)
 						(define-key map (kbd "C-d C-m") 'remove-newlines-or-blank-lines-dwim)
 						(define-key map (kbd "C-d C-<return>") 'remove-newlines-or-blank-lines-dwim)
@@ -99,6 +99,12 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 ;; TODO: make C-d switch to delete-mode?
 ;; http://stackoverflow.com/a/12010437/6452961
 
+(defun tl/kill-forward-line (N)
+	(interactive)
+	(save-excursion
+		(when (= (forward-line N) 0)
+			(kill-whole-line))))
+
 (defun underi-minibuffer ()
 	"Keymap for the minibuffer."
 	(let ((map minibuffer-local-map))
@@ -117,14 +123,14 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 		;; delete 
 		(define-key map (kbd "C-d") nil)
 		(define-key map (kbd "C-d C-k") 'kill-line)
-		(define-key map (kbd "C-d <up>") '(lambda () (interactive) (kill-line -1)))
+		(define-key map (kbd "C-d <up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
 		(define-key map (kbd "C-d <left>") 'delete-backward-char)
 		(define-key map (kbd "C-d <right>") 'delete-forward-char)
-		(define-key map (kbd "C-d <down>") 'kill-line)
-		(define-key map (kbd "C-d C-<up>") '(lambda () (interactive) (kill-line -1)))
+		(define-key map (kbd "C-d <down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
+		(define-key map (kbd "C-d C-<up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
 		(define-key map (kbd "C-d C-<left>") 'delete-backward-char)
 		(define-key map (kbd "C-d C-<right>") 'delete-forward-char)
-		(define-key map (kbd "C-d C-<down>") 'kill-line)
+		(define-key map (kbd "C-d C-<down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
 		(define-key map (kbd "C-d C-a") '(lambda () (interactive) (kill-line 0)))
 		(define-key map (kbd "C-S-d") 'kill-whole-line)
 		(define-key map (kbd "C-d [") 'sp-unwrap-sexp)
