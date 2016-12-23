@@ -2280,9 +2280,9 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
     :ensure t
     :config (progn
               (bbdb-initialize)
-              ;(add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
-              ;(add-hook 'gnus-startup-hook 'bbdb-insinuate-message)
-              ;(add-hook 'message-setup-hook 'bbdb-define-all-aliases)
+                                          ;(add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
+                                          ;(add-hook 'gnus-startup-hook 'bbdb-insinuate-message)
+                                          ;(add-hook 'message-setup-hook 'bbdb-define-all-aliases)
 
               (setq bbdb-file "~/Dropbox/bbdb"
                     bbdb-auto-revert t
@@ -2293,12 +2293,12 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
                     bbdb-pop-up-target-lines 1 ; The window should be as small as possible
                     bbdb-use-pop-up nil        ; Show pup-up?
 
-                    ;bbdb/news-auto-create-p t
+                                          ;bbdb/news-auto-create-p t
                     bbdb-complete-name-allow-cycling t
                     bbdb-complete-mail-allow-cycling t
                     bbdb-complete-name-full-completion t
                     bbdb-completion-type 'primary-or-name
-                    ;bbdb-use-pop-up nil
+                                          ;bbdb-use-pop-up nil
 
                     bbdb-offer-save 1  ; Always save
                     bbdb-electric-p t)
@@ -2309,5 +2309,6 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
   (use-package helm-bbdb
     :ensure t)
+  (global-set-key (kbd "<f7> c") 'helm-bbdb)
 
 #+END_SRC
