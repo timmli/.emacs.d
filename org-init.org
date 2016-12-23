@@ -996,20 +996,27 @@ http://emacs.stackexchange.com/a/28298/12336
 ** Calendar
 
 #+BEGIN_SRC emacs-lisp
-(setq calendar-week-start-day 1)
+  (setq calendar-week-start-day 1)
 
-(setq calendar-intermonth-text
-      '(propertize
-        (format "%2d"
-                (car
-                 (calendar-iso-from-absolute
-                  (calendar-absolute-from-gregorian (list month day year)))))
-        'font-lock-face 'font-lock-warning-face))
+  (setq calendar-intermonth-text
+        '(propertize
+          (format "%2d"
+                  (car
+                   (calendar-iso-from-absolute
+                    (calendar-absolute-from-gregorian (list month day year)))))
+          'font-lock-face 'font-lock-warning-face))
 
-(setq calendar-intermonth-header
-      (propertize "KW"                  ; or e.g. "KW" in Germany
-                  'font-lock-face 'font-lock-keyword-face))
+  (setq calendar-intermonth-header
+        (propertize "KW"                  ; or e.g. "KW" in Germany
+                    'font-lock-face 'font-lock-keyword-face))
+
+  (global-set-key (kbd "<f7> a") 'helm-bbdb)
+
 #+END_SRC
+
+*** calfw 
+
+http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 
 ** LaTeX
 
@@ -2306,9 +2313,10 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
   (use-package bbdb-vcard
     :ensure t)
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
   (use-package helm-bbdb
     :ensure t)
-  (global-set-key (kbd "<f7> c") 'helm-bbdb)
-
+  (global-set-key (kbd "<f7> a") 'helm-bbdb)
 #+END_SRC
