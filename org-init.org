@@ -2270,3 +2270,44 @@ Better keys for switching between windows:
   (eshell t))
 (global-set-key (kbd "<f7> e") 'tl/eshell)
  #+END_SRC
+
+* bbdb
+
+http://sachachua.com/notebook/emacs/bbdb-config.el
+
+#+BEGIN_SRC emacs-lisp
+  (use-package bbdb
+    :ensure t
+    :config (progn
+              (bbdb-initialize)
+              ;(add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
+              ;(add-hook 'gnus-startup-hook 'bbdb-insinuate-message)
+              ;(add-hook 'message-setup-hook 'bbdb-define-all-aliases)
+
+              (setq bbdb-file "~/Dropbox/bbdb"
+                    bbdb-auto-revert t
+                    bbdb-check-auto-save-file t
+                    bbdb-expand-mail-aliases t
+                    bbdb-phone-style nil
+                    ;; bbdb-pop-up-window-size 10
+                    bbdb-pop-up-target-lines 1 ; The window should be as small as possible
+                    bbdb-use-pop-up nil        ; Show pup-up?
+
+                    ;bbdb/news-auto-create-p t
+                    bbdb-complete-name-allow-cycling t
+                    bbdb-complete-mail-allow-cycling t
+                    bbdb-complete-name-full-completion t
+                    bbdb-completion-type 'primary-or-name
+                    ;bbdb-use-pop-up nil
+
+                    bbdb-offer-save 1  ; Always save
+                    bbdb-electric-p t)
+              ))
+
+  (use-package bbdb-vcard
+    :ensure t)
+
+  (use-package helm-bbdb
+    :ensure t)
+
+#+END_SRC
