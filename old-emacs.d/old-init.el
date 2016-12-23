@@ -153,9 +153,137 @@
 (setq use-package-verbose t)
 
 
-;; the remaining settings are in org-init.org
-(require 'org)
-(org-babel-load-file
- (expand-file-name "org-init.org"
-                   user-emacs-directory))
+;;==========================================================
+;;      GENERAL APPEARANCE
+;;==========================================================
 
+;; set up appearance early
+(require 'appearance)
+
+
+;;==========================================================
+;;      MINIBUFFER SETUP 
+;;==========================================================
+
+(require 'setup-minibuffer)
+
+
+;;==========================================================
+;;      MAJOR MODES
+;;==========================================================
+
+;; (use-package multi-project
+;; 	:ensure t
+;; 	:config
+;; 	(global-multi-project-mode))
+
+(use-package web-mode										; for improved html support
+	:ensure t
+	:mode
+	("\\.phtml\\'" . web-mode)
+	("\\.tpl\\.php\\'" . web-mode)
+	("\\.[agj]sp\\'" . web-mode)
+	("\\.as[cp]x\\'" . web-mode)
+	("\\.erb\\'" . web-mode)
+	("\\.mustache\\'" . web-mode)
+	("\\.djhtml\\'" . web-mode)
+	("\\.html?\\'" . web-mode)
+	("\\.xml\\'" . web-mode)
+	("\\.css\\'" . web-mode)
+)
+
+(use-package js2-mode										; for improved JavaScript support
+	:ensure t
+	:mode
+	("\\.js\\'" . js2-mode))
+
+(require 'setup-orgmode)								; must appear before tex stuff!
+
+(require 'setup-latex)									
+
+(use-package markdown-mode
+	:ensure t
+	:config 
+	(defun my-markdown-mode-config ()
+		"settings for markdown mode"
+		(interactive)
+		(setq-default tab-width 4)
+		(setq-default indent-tabs-mode t)
+		(setq markdown-enable-math t))
+	(add-hook 'markdown-mode 'my-markdown-mode-config)
+	(setq markdown-enable-math t)
+	)
+
+(use-package deft												; for displaying list of note files
+	:ensure t
+  :bind
+	("<f9> f" . deft)
+	("<f9> o" . deft)
+	("<f9> d" . deft)
+  :commands (deft)
+  :config (setq deft-directory notes-dir
+                deft-extensions '("md" "org")
+								deft-recursive t
+								deft-use-filename-as-title t
+								deft-use-filter-string-for-filename t))
+
+
+;;==========================================================
+;;      BUFFER SETUP 
+;;==========================================================
+
+(require 'setup-buffer)
+
+(require 'underi-mode)
+(require 'winkeys-mode)
+
+
+;;==========================================================
+;;      MISCELLANEOUS
+;;==========================================================
+
+(require 'setup-speedbar)
+(require 'setup-frame)
+
+;; magit
+(use-package magit
+	:ensure t
+	:bind
+	("C-x g" . magit-status)
+	;; ("C-x C-g" . magit-status)
+	)
+
+;; git-gutter
+(use-package git-gutter
+	:ensure t
+	:config
+	(global-git-gutter-mode +1)
+	;; (git-gutter:linum-setup) ; git-gutter is struggling with linum-mode
+	(custom-set-variables
+	 '(git-gutter:update-interval 2))
+	:bind
+	("C-x C-g" . nil)
+	("C-x C-g TAB" . git-gutter:popup-hunk)
+	("C-x C-g _" . git-gutter:revert-hunk)
+	("C-x C-g z" . git-gutter:revert-hunk)
+	("C-x C-g C-g" . git-gutter-mode)
+	("C-x C-g g" . git-gutter-mode)
+	("C-x C-g n" . git-gutter:next-hunk)
+	("C-x C-g p" . git-gutter:previous-hunk)
+	)
+
+;; adds support of the windows powershell
+(if (eq system-type 'windows-nt)
+		(use-package powershell
+			:ensure t)
+)
+(put 'upcase-region 'disabled nil)
+
+;; eshell settings
+(add-hook 'eshell-mode-hook
+					'(lambda () (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)))
+(setq eshell-cmpl-dir-ignore "\`\\(CVS\\)/\\'") ; in order to complete `..` to `../`
+(defun tl/eshell ()										; http://emacs.stackexchange.com/a/28603/12336
+  (interactive)
+  (eshell t))
+(global-set-key (kbd "<f7> e") 'tl/eshell)
