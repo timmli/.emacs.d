@@ -993,6 +993,24 @@ http://emacs.stackexchange.com/a/28298/12336
 ;;               ("PHONE" :foreground "forest green" :weight bold))))
 #+END_SRC
 
+** Calendar
+
+#+BEGIN_SRC emacs-lisp
+(setq calendar-week-start-day 1)
+
+(setq calendar-intermonth-text
+      '(propertize
+        (format "%2d"
+                (car
+                 (calendar-iso-from-absolute
+                  (calendar-absolute-from-gregorian (list month day year)))))
+        'font-lock-face 'font-lock-warning-face))
+
+(setq calendar-intermonth-header
+      (propertize "KW"                  ; or e.g. "KW" in Germany
+                  'font-lock-face 'font-lock-keyword-face))
+#+END_SRC
+
 ** LaTeX
 
 *** AUCTeX 
