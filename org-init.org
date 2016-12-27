@@ -1010,13 +1010,36 @@ http://emacs.stackexchange.com/a/28298/12336
         (propertize "KW"                  ; or e.g. "KW" in Germany
                     'font-lock-face 'font-lock-keyword-face))
 
-  (global-set-key (kbd "<f7> a") 'helm-bbdb)
-
 #+END_SRC
 
-*** calfw 
+*** German holidays
+
+#+BEGIN_SRC emacs-lisp
+  (use-package german-holidays
+    :ensure t
+    :config
+    (setq calendar-holidays holiday-german-holidays)
+    ;; (setq calendar-holidays holiday-german-BW-holidays)
+    )
+#+END_SRC
+
+
+*** TODO calfw 
 
 http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
+
+#+BEGIN_SRC emacs-lisp
+  (use-package calfw
+    :ensure t
+    :config
+    (require 'calfw-org)
+    (require 'calfw-ical)
+    (load-file "~/Dropbox/emacs/calendar-calfw-settings.el")
+  )
+
+  (global-set-key (kbd "<f7> c") 'cfw:open-org-calendar-buffer)
+
+#+END_SRC
 
 ** LaTeX
 
