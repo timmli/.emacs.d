@@ -1024,9 +1024,11 @@ http://emacs.stackexchange.com/a/28298/12336
 #+END_SRC
 
 
-*** TODO calfw 
+*** calfw 
 
 http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
+
+**** TODO use defvar to externalize personal data 
 
 #+BEGIN_SRC emacs-lisp
   (use-package calfw
@@ -1037,7 +1039,7 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
     (load-file "~/Dropbox/emacs/calendar-calfw-settings.el")
   )
 
-  (global-set-key (kbd "<f7> c") 'cfw:open-org-calendar-buffer)
+  (global-set-key (kbd "<f7> c") 'cfw:open-org-calendar)
 
 #+END_SRC
 
@@ -2343,3 +2345,4 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
     :ensure t)
   (global-set-key (kbd "<f7> a") 'helm-bbdb)
 #+END_SRC
+
