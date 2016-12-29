@@ -1031,15 +1031,16 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 **** TODO use defvar to externalize personal data 
 
 #+BEGIN_SRC emacs-lisp
-  (use-package calfw
-    :ensure t
-    :config
-    (require 'calfw-org)
-    (require 'calfw-ical)
-    (load-file "~/Dropbox/emacs/calendar-calfw-settings.el")
-  )
+    (use-package calfw
+      :ensure t
+      :config
+      (require 'calfw-org)
+      (require 'calfw-ical)
+      (load-file "~/Dropbox/emacs/calendar-calfw-settings.el")
+      (setq cfw:render-line-breaker 'cfw:render-line-breaker-simple)
+    )
 
-  (global-set-key (kbd "<f7> c") 'cfw:open-org-calendar)
+    (global-set-key (kbd "<f7> c") 'cfw:open-org-calendar)
 
 #+END_SRC
 
@@ -1931,13 +1932,13 @@ Should be selected from `fringe-bitmaps'.")
 
 Switching between buffers with C-tab:
 #+begin_src emacs-lisp
-(use-package iflipb
-	:ensure t
-	:config
-	(setq iflipb-wrap-around t)
-	(setq iflipb-include-more-buffers t)
-	:bind
-	("<C-tab>" . iflipb-next-buffer))
+  (use-package iflipb
+    :ensure t
+    :config
+    (setq iflipb-wrap-around t)
+    (setq iflipb-ignore-buffers "^ ")     ; include all buffers
+    :bind
+    ("<C-tab>" . iflipb-next-buffer))
 #+end_src
 
 
