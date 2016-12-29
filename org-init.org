@@ -557,6 +557,36 @@ http://doc.norang.ca/org-mode.html#Setup
 													 ))
 #+END_SRC
 
+*** General keys
+
+#+BEGIN_SRC emacs-lisp
+  (global-set-key (kbd "<f9> c") 'org-goto-calendar)
+  (global-set-key (kbd "<f9> a") 'org-agenda-list)
+  (global-set-key (kbd "<f9> t") 'org-todo-list)
+  (global-set-key (kbd "C-<f9>") 'org-cycle-agenda-files)
+  (global-set-key (kbd "<f9> s") 'org-search-view)
+  (global-set-key (kbd "<f9> f") 'org-search-view)
+  (global-set-key (kbd "<f9> l") 'org-tags-view)
+  (global-set-key (kbd "<f9> r") 'org-reload)
+  (global-set-key (kbd "<f9> w")
+                  (lambda() (interactive)(find-file (concat org-directory "/forschung/wip.org"))))
+  (global-set-key (kbd "<f9> n")
+                  (lambda() (interactive)(find-file (concat org-directory "/notes.org"))))
+  (global-set-key (kbd "C-c a") 'org-agenda)
+  (global-set-key (kbd "C-c l") 'org-store-link)
+
+  (with-eval-after-load 'org
+    (define-key org-mode-map (kbd "C-<tab>") nil )
+    (define-key org-mode-map (kbd "S-<up>") nil )
+    (define-key org-mode-map (kbd "S-<down>") nil )
+    ;; (define-key org-mode-map (kbd "S-<left>") nil )
+    ;; (define-key org-mode-map (kbd "S-<right>") nil )
+    (define-key org-mode-map (kbd "C-c C-f") 'org-footnote-action )
+    (define-key org-mode-map (kbd "C-c C-x C-b") 'org-tree-to-indirect-buffer ))
+
+  ;; (with-eval-after-load 'org-agenda
+  ;;   (bind-key "i" 'org-agenda-clock-in org-agenda-mode-map))
+#+END_SRC
 
 *** General appearence
 
@@ -626,7 +656,6 @@ http://doc.norang.ca/org-mode.html#Setup
 (setq org-pretty-entities t)
 
 #+END_SRC
-
 
 *** Modules
 
@@ -763,7 +792,6 @@ http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
     (setq ad-return-value rlt)))
 #+END_SRC
 
-
 *** Agenda
 
 Show notifications of agenda events:
@@ -862,7 +890,6 @@ Show notifications of agenda events:
 											))
 #+END_SRC
 
-
 *** Tables
 
 http://emacs.stackexchange.com/a/28298/12336
@@ -910,53 +937,6 @@ http://emacs.stackexchange.com/a/28298/12336
   (save-excursion
     (org-table-copy-region (org-table-goto-col-beginning)
 													 (org-table-goto-col-end))))
-#+END_SRC
-
-*** Keys
-
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "<f9> c") 'org-goto-calendar)
-(global-set-key (kbd "<f9> a") 'org-agenda-list)
-(global-set-key (kbd "<f9> t") 'org-todo-list)
-(global-set-key (kbd "C-<f9>") 'org-cycle-agenda-files)
-(global-set-key (kbd "<f9> s") 'org-search-view)
-(global-set-key (kbd "<f9> f") 'org-search-view)
-(global-set-key (kbd "<f9> l") 'org-tags-view)
-(global-set-key (kbd "<f9> r") 'org-reload)
-(global-set-key (kbd "<f9> w")
-								(lambda() (interactive)(find-file (concat org-directory "/forschung/wip.org"))))
-(global-set-key (kbd "<f9> n")
-								(lambda() (interactive)(find-file (concat org-directory "/notes.org"))))
-
-(with-eval-after-load 'org
-  (define-key org-mode-map (kbd "C-<tab>") nil ))
-(with-eval-after-load 'org
-  (define-key org-mode-map (kbd "S-<up>") nil ))
-(with-eval-after-load 'org
-  (define-key org-mode-map (kbd "S-<down>") nil ))
-(with-eval-after-load 'org
-  (define-key org-mode-map (kbd "C-c C-f") 'org-footnote-action ))
-(with-eval-after-load 'org
-  (define-key org-mode-map (kbd "C-c C-x C-b") 'org-tree-to-indirect-buffer ))
-
-;; (bind-key "C-c r" 'org-capture)
-(bind-key "C-c a" 'org-agenda)
-(bind-key "C-c l" 'org-store-link)
-;; (bind-key "C-c L" 'org-insert-link-global)
-;; (bind-key "C-c O" 'org-open-at-point-global)
-;; (bind-key "<f9> <f9>" 'org-agenda-list)
-;; (bind-key "<f9> n" 'org-cycle-agenda-files)
-;; (bind-key "<f9> <f8>" (lambda () (interactive) (org-capture nil "r")))
-
-;; (with-eval-after-load 'org
-;;   (bind-key "C-M-w" 'append-next-kill org-mode-map)
-;;   (bind-key "C-TAB" 'org-cycle org-mode-map)
-;;   (bind-key "C-c v" 'org-show-todo-tree org-mode-map)
-;;   (bind-key "C-c C-r" 'org-refile org-mode-map)
-;;   (bind-key "C-c R" 'org-reveal org-mode-map)
-
-;; (with-eval-after-load 'org-agenda
-;;   (bind-key "i" 'org-agenda-clock-in org-agenda-mode-map))
 #+END_SRC
 
 *** Capture templates
@@ -1022,7 +1002,6 @@ http://emacs.stackexchange.com/a/28298/12336
     ;; (setq calendar-holidays holiday-german-BW-holidays)
     )
 #+END_SRC
-
 
 *** calfw 
 
@@ -1367,7 +1346,6 @@ Make square brackets indent correctly (testing):
 
 * Buffer
 
-
 ** General configuration
 
 Automatically update buffers when files change:
@@ -1413,7 +1391,6 @@ Show vertical line per indentation level:
 	(setq highlight-indent-guides-method 'character)
 	)
 #+end_src
-
 
 ** Autocomplete
 
@@ -1708,7 +1685,6 @@ https://www.emacswiki.org/emacs/AutoIndentation
 									(indent-region (region-beginning) (region-end) nil))))))
 #+end_src
 
-
 ** Selection
 
 *** expand-region
@@ -1941,7 +1917,6 @@ Switching between buffers with C-tab:
     ("<C-tab>" . iflipb-next-buffer))
 #+end_src
 
-
 ** Narrowing
 
 http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
@@ -1997,7 +1972,6 @@ Use deer instead plain directory listing:
 (global-set-key (kbd "C-x f") 'find-file-at-point)
 #+end_src
 
-
 ** Commenting
 
 #+begin_src emacs-lisp
@@ -2026,10 +2000,7 @@ Use deer instead plain directory listing:
 	(setq-default cm-author "TL"))
 #+end_src
 
-
-
 ** Line actions
-
 *** Delete line
 #+begin_src emacs-lisp
 ;; (global-set-key (kbd "C-d C-o") 'delete-blank-lines) ; not allowed here, see underi-mode.el
@@ -2090,8 +2061,8 @@ Version 2016-06-18"
     ))
 #+end_src
 
-
 *** New line
+
 #+begin_src emacs-lisp
 (global-set-key (kbd "S-<return>") 'smart-open-line)
 (global-set-key (kbd "C-x C-<return>") 'smart-open-line)
