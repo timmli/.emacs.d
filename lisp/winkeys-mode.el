@@ -51,6 +51,7 @@
 						map
 						)
 	(add-hook 'minibuffer-setup-hook 'winkeys-minibuffer)
+	(add-hook 'org-src-mode-hook (lambda ()((define-key (kbd "C-s") 'org-edit-src-save))))
 	)
 
 (defun winkeys-minibuffer ()

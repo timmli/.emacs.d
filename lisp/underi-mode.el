@@ -94,7 +94,11 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
 						map
 						)
 	(add-hook 'minibuffer-setup-hook 'underi-minibuffer)
-	
+	(with-eval-after-load 'org
+    (define-key org-mode-map (kbd "C-d c") 'org-table-delete-column )
+    (define-key org-mode-map (kbd "C-d C-c") 'org-table-delete-column )
+		)																	
+
 )	
 ;; TODO: make C-d switch to delete-mode?
 ;; http://stackoverflow.com/a/12010437/6452961

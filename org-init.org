@@ -686,7 +686,7 @@ See http://orgmode.org/worg/org-contrib/
 ;; (setq org-expiry-inactive-timestamps t)
 #+END_SRC
 
-*** Miscellaneous
+*** Miscellaneous settings
 
 Selection
 #+BEGIN_SRC emacs-lisp
@@ -723,6 +723,32 @@ Support for inline tasks
 #+BEGIN_SRC emacs-lisp
 (load "org-inlinetask")
 (define-key org-mode-map (kbd "C-c C-x C-t") 'org-inlinetask-insert-task)
+#+END_SRC
+
+*** Newline
+
+#+BEGIN_SRC emacs-lisp
+  (defun tl/org-return ()
+    (interactive)
+    (if (not (org-table-p))
+        (org-return)
+      (let ((home (point)))
+        (org-table-insert-row t)
+        (goto-char home))
+      (org-table-wrap-region nil))
+  )
+
+  (defun tl/org-shift-return ()
+    (interactive)
+    (let ((home (point)))
+      (org-table-insert-row t)
+      (goto-char home))
+    (org-table-next-row)
+  )
+
+  (with-eval-after-load 'org
+    (define-key org-mode-map (kbd "<return>") 'tl/org-return) ; not org-table-next-row
+    (define-key org-mode-map (kbd "S-<return>") 'tl/org-shift-return )) ; not org-table-copy-down
 #+END_SRC
 
 *** LaTeX support
