@@ -2242,6 +2242,16 @@ Better keys for switching between windows:
 (global-set-key (kbd "<f2> Z") 'winner-redo) ; redo pane configuration
 #+END_SRC
 
+** golden-ratio
+
+#+BEGIN_SRC emacs-lisp
+(use-package golden-ratio
+  :ensure t
+  :diminish golden-ratio-mode
+  :init
+  (golden-ratio-mode 1))
+#+END_SRC
+
 * Git
 
 ** magit
