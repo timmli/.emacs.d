@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-# name: org-mode header
-# key: <header
+# name: header
+# key: header
 # --
 #+TITLE: ${1:Notes on research literature}
 #+AUTHOR: ${2:Timm Lichte}
