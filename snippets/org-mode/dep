@@ -1,0 +1,23 @@
+# -*- mode: snippet -*-
+# name: org-mode dep
+# key: <dep
+# --
+#+NAME:${1:tikz`(format-time-string "%y%m%d%H%M")`}
+#+BEGIN_SRC latex :file $1.pdf :packages '(("" "tikz-dependency")) :border 0em :noweb yes :tangle $1.tex
+\begin{dependency}
+[edge above,edge slant=3pt,edge horizontal padding=4pt,edge vertical padding=0ex,
+ % arc edge=false,text only label=false,
+ theme=default, % theme=simple
+]
+\begin{deptext}[column sep=0cm, row sep=0ex]
+$0 My \& dog \& also \&[.7cm] likes \& eating \& sausage \\\
+PRP\$ \& NN \& RB \&[.5cm] VBZ \& VBG \& NN \\\
+\end{deptext}
+\depedge{2}{1}{poss}
+\depedge{4}{2}{nsubj}
+\depedge{4}{3}{advmod}
+\depedge{4}{5}{xcomp}
+\depedge{5}{6}{dobj}
+\deproot[edge unit distance=3ex]{4}{root}
+\end{dependency}
+#+END_SRC
