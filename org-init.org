@@ -816,7 +816,8 @@ Show notifications of agenda events:
 	)
 #+END_SRC
 
-Add linked org-mode files to =org-agenda-files=:
+**** Add linked org-mode files to =org-agenda-files=:
+
 #+BEGIN_SRC emacs-lisp 
 	(defun add-links-to-org-agenda-files ()
 		 (interactive)
@@ -836,6 +837,9 @@ Add linked org-mode files to =org-agenda-files=:
 							 (add-to-list 'org-agenda-files org-link-path)
 					 )))))
 #+END_SRC
+
+***** TODO add reference "inspired by ..."
+
 
 *** Tags
 
