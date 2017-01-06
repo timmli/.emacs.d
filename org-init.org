@@ -601,38 +601,39 @@ http://doc.norang.ca/org-mode.html#Setup
 **** Fonts
 
 #+begin_src emacs-lisp
-(add-hook 'org-mode-hook (lambda ()
-													 (variable-pitch-mode t)
-													 ;; (text-scale-increase 0.5)
-													 ))
+	(add-hook 'org-mode-hook (lambda ()
+														 (variable-pitch-mode t)
+														 ;; (text-scale-increase 0.5)
+														 ))
 
-;; (set-face-attribute 'org-block-background nil :inherit 'fixed-pitch)
-(custom-set-variables
- '(org-ref-label-color "magenta")
- '(org-ref-ref-color "Deepskyblue1")
- )
-(custom-set-faces
- '(org-done ((t (:overline t))))
- '(org-todo ((t (:overline t))))
- '(org-block-background ((t (:inherit fixed-pitch :background "#3E3D31"))))
- '(org-block-begin-line ((t (:underline t))))
- '(org-block-end-line  ((t (:overline t))))
- '(org-level-1 ((t (:inherit outline-1 :overline t :height 1.5))))
- '(org-level-2 ((t (:inherit outline-2 :overline t :height 1.25))))
- '(org-level-3 ((t (:inherit outline-3 :height 1.1))))
- '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
- '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
- )
+	;; (set-face-attribute 'org-block-background nil :inherit 'fixed-pitch)
+	(custom-set-variables
+	 '(org-ref-label-color "magenta")
+	 '(org-ref-ref-color "Deepskyblue1")
+	 )
+	(custom-set-faces
+	 '(org-done ((t (:overline t))))
+	 '(org-todo ((t (:overline t))))
+	 '(org-block ((t (:inherit fixed-pitch :background "#3E3D31")))) ; org-mode >9
+	 '(org-block-background ((t (:inherit fixed-pitch :background "#3E3D31"))))
+	 '(org-block-begin-line ((t (:underline t))))
+	 '(org-block-end-line  ((t (:overline t))))
+	 '(org-level-1 ((t (:inherit outline-1 :overline t :height 1.5))))
+	 '(org-level-2 ((t (:inherit outline-2 :overline t :height 1.25))))
+	 '(org-level-3 ((t (:inherit outline-3 :height 1.1))))
+	 '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
+	 '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
+	 )
 
-(with-eval-after-load 'org
-  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-	(set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch :background "#3E3D31")
-	(set-face-attribute 'org-latex-and-related nil :inherit 'fixed-pitch :background "#3E3D31")
-	(set-face-attribute 'org-link nil :inherit 'fixed-pitch)
-	(set-face-attribute 'org-date nil :inherit 'fixed-pitch)
-	)
+	(with-eval-after-load 'org
+		(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+		(set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch :background "#3E3D31")
+		(set-face-attribute 'org-latex-and-related nil :inherit 'fixed-pitch :background "#3E3D31")
+		(set-face-attribute 'org-link nil :inherit 'fixed-pitch)
+		(set-face-attribute 'org-date nil :inherit 'fixed-pitch)
+		)
 
-(setq org-hide-emphasis-markers t)
+	(setq org-hide-emphasis-markers t)
 
 #+end_src
 
