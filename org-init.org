@@ -52,7 +52,6 @@ Line numbers:
 ;; (setq linum-format " %3d ")
 #+END_SRC
 
-
 ** Cursor
 
 Cursor blinking:
@@ -122,7 +121,6 @@ Distraction-free mode:
 (global-set-key (kbd "<f10>") 'writeroom-mode)
 #+END_SRC
 
-
 ** Font 
 
 Toggle proportional mode when appropriate.
@@ -189,9 +187,6 @@ Inspired by https://ogbe.net/blog/toggle-serif.html
                (message "Restored default fonts."))))))
 #+END_SRC
 
-
-
-
 * Minibuffer
 
 Shorten yes/no answers to y/n:
@@ -225,7 +220,6 @@ Shorten yes/no answers to y/n:
 ;; 	(setq ido-use-faces nil))
 #+END_SRC
 
-
 *** Recent files
 
 #+BEGIN_SRC emacs-lisp
@@ -243,8 +237,6 @@ Shorten yes/no answers to y/n:
 ;; 		(message "Aborting")))
 
 #+END_SRC
-
-
 
 *** ivy, counsel, swiper
 
@@ -273,7 +265,6 @@ Shorten yes/no answers to y/n:
 ;; 	;; (global-set-key (kbd "C-s") 'swiper) ; not good in text-mode
 ;; 	)
 #+END_SRC
-
 
 *** imenu
 
@@ -448,7 +439,6 @@ Smex helps to remember often used commands; used by ido and counsel
 	(which-key-mode))
 #+END_SRC
 
-
 #+BEGIN_SRC emacs-lisp
 ;; M-x in minibuffer quits the minibuffer
 (add-hook 'minibuffer-setup-hook
@@ -475,7 +465,6 @@ Smex helps to remember often used commands; used by ido and counsel
 (global-set-key (kbd "C-x C-k") 'kill-buffer)  
 #+END_SRC
 
-
 * Major modes
 
 ** web-mode
@@ -496,7 +485,6 @@ Smex helps to remember often used commands; used by ido and counsel
 	("\\.css\\'" . web-mode)
 )
 #+END_SRC
-
 
 ** js2-mode
 
@@ -826,6 +814,27 @@ Show notifications of agenda events:
 (use-package org-alert
 	:ensure t
 	)
+#+END_SRC
+
+Add linked org-mode files to =org-agenda-files=:
+#+BEGIN_SRC emacs-lisp 
+	(defun add-links-to-org-agenda-files ()
+		 (interactive)
+		 (princ "Added the following files to org-agenda-files:")
+		 (org-element-map  
+				 (org-element-parse-buffer)
+				 'link
+			 (lambda (x)
+				 (let ((org-link-path (org-element-property :path x))
+							 (org-link-type (org-element-property :type x)))
+					 (when (and (equal org-link-type "file") ; only links to files
+										(string-prefix-p "~/" org-link-path) ; relative paths are bad
+										(equal "org" (file-name-extension org-link-path)) ;only org-mode files
+										(file-exists-p org-link-path) ; only existing files
+										)
+							 (princ (concat " " org-link-path))
+							 (add-to-list 'org-agenda-files org-link-path)
+					 )))))
 #+END_SRC
 
 *** Tags
