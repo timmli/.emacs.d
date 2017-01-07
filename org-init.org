@@ -820,6 +820,7 @@ Show notifications of agenda events:
 
 #+BEGIN_SRC emacs-lisp 
 	(defun add-links-to-org-agenda-files ()
+		"Inspired by: http://stackoverflow.com/questions/38061773/add-linked-org-files-to-org-agenda-files"
 		 (interactive)
 		 (princ "Added the following files to org-agenda-files:")
 		 (org-element-map  
@@ -837,9 +838,6 @@ Show notifications of agenda events:
 							 (add-to-list 'org-agenda-files org-link-path)
 					 )))))
 #+END_SRC
-
-***** TODO add reference "inspired by ..."
-
 
 *** Tags
 
