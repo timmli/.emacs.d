@@ -839,15 +839,16 @@ Add linked org-mode files to =org-agenda-files=:
 
 Integrate Google Calendar with org-gcal:
 #+BEGIN_SRC emacs-lisp
-(setq package-check-signature nil)
+	(setq package-check-signature nil)
 
-(use-package org-gcal
-  :ensure t
-  :config
-  (load-file "~/Dropbox/emacs/gcal-credentials.el")
-  (setq org-gcal-client-id my-org-gcal-client-id
-	org-gcal-client-secret my-org-gcal-client-secret
-	org-gcal-file-alist '((my-gmail-address .  "~/Dropbox/Notizen/org/gcal.org"))))
+	(use-package org-gcal
+		:ensure t
+		:config
+		(when (load-file "~/Dropbox/emacs/gcal-credentials.el")
+			(setq org-gcal-client-id my-org-gcal-client-id
+						org-gcal-client-secret my-org-gcal-client-secret
+						org-gcal-file-alist '((my-gmail-address .  "~/Dropbox/Notizen/org/gcal.org")))
+	))
 #+END_SRC
 
 *** Tags
@@ -1057,28 +1058,30 @@ http://emacs.stackexchange.com/a/28298/12336
 http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 
  #+BEGIN_SRC emacs-lisp
-	(use-package calfw
-		:ensure t
-		:config
-		(require 'calfw-org)
-		(require 'calfw-ical)
-		(setq cfw:render-line-breaker 'cfw:render-line-breaker-simple)
-		(load-file "~/Dropbox/emacs/calendar-calfw-settings.el")
+ 	(use-package calfw
+     		:ensure t
+     		:config
+     		(require 'calfw-org)
+     		(require 'calfw-ical)
+     		(setq cfw:render-line-breaker 'cfw:render-line-breaker-simple)
 
-		(defun my-open-calfw ()
-			(interactive)
-			(cfw:open-calendar-buffer
-			 :contents-sources
-			 (list 
-				 (cfw:org-create-source "Orangered1")  ; orgmode source
-				 ;; (cfw:cal-create-source "Orange") ; diary source
-				 (cfw:ical-create-source "verena" gcal-verena-ics "DarkOliveGreen") ; google calendar ICS
-				 (cfw:ical-create-source "emmy" gcal-emmy-ics "CornflowerBlue") ; google calendar ICS
-				 (cfw:ical-create-source "clcoll" gcal-clcoll-ics "CornflowerBlue") ; google calendar ICS
-				 )))
+ 				(defun my-open-calfw ()
+        		(interactive)
+     				(when (load-file "~/Dropbox/emacs/calendar-calfw-settings.el")
+  						(tl/update-my-calendars))
+        		(cfw:open-calendar-buffer
+        		 :contents-sources
+        		 (list 
+        			 (cfw:org-create-source "Orangered1")  ; orgmode source
+        			 ;; (cfw:cal-create-source "Orange") ; diary source
+        			 (cfw:ical-create-source "verena" gcal-verena.ics "DarkOliveGreen") ; google calendar ICS
+        			 (cfw:ical-create-source "emmy" gcal-emmy.ics "CornflowerBlue") ; google calendar ICS
+        			 (cfw:ical-create-source "clcoll" gcal-clcoll.ics "CornflowerBlue") ; google calendar ICS
+        			 )))
 
-		(global-set-key (kbd "<f7> c") 'my-open-calfw)
-	)
+     		(global-set-key (kbd "<f7> c") 'my-open-calfw)
+ 				(define-key cfw:calendar-mode-map (kbd "u") 'my-open-calfw)
+ 	)
 
 #+END_SRC
 
