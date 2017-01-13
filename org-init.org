@@ -1058,30 +1058,40 @@ http://emacs.stackexchange.com/a/28298/12336
 http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 
  #+BEGIN_SRC emacs-lisp
+
+ 	(defvar privat-calendar-settings.el "~/Dropbox/emacs/calendar-calfw-settings.el")
+
  	(use-package calfw
-     		:ensure t
-     		:config
-     		(require 'calfw-org)
-     		(require 'calfw-ical)
-     		(setq cfw:render-line-breaker 'cfw:render-line-breaker-simple)
+      			:ensure t
+      			:config
+      			(require 'calfw-org)
+      			(require 'calfw-ical)
+      			(setq cfw:render-line-breaker 'cfw:render-line-breaker-simple)
 
- 				(defun my-open-calfw ()
-        		(interactive)
-     				(when (load-file "~/Dropbox/emacs/calendar-calfw-settings.el")
-  						(tl/update-my-calendars))
-        		(cfw:open-calendar-buffer
-        		 :contents-sources
-        		 (list 
-        			 (cfw:org-create-source "Orangered1")  ; orgmode source
-        			 ;; (cfw:cal-create-source "Orange") ; diary source
-        			 (cfw:ical-create-source "verena" gcal-verena.ics "DarkOliveGreen") ; google calendar ICS
-        			 (cfw:ical-create-source "emmy" gcal-emmy.ics "CornflowerBlue") ; google calendar ICS
-        			 (cfw:ical-create-source "clcoll" gcal-clcoll.ics "CornflowerBlue") ; google calendar ICS
-        			 )))
+    				(if (file-exists-p privat-calendar-settings.el)
+    						(load-file privat-calendar-settings.el)
+    					(display-warning "calfw" (concat "Could not load " privat-calendar-settings.el)))
 
-     		(global-set-key (kbd "<f7> c") 'my-open-calfw)
- 				(define-key cfw:calendar-mode-map (kbd "u") 'my-open-calfw)
- 	)
+        		(defun my-open-calfw ()
+      				(interactive)
+      				(cfw:open-calendar-buffer
+      				 :contents-sources
+      				 (list 
+    						(cfw:org-create-source "Orangered1")  ; orgmode source
+    						;; (cfw:cal-create-source "Orange") ; diary source
+    						(cfw:ical-create-source "verena" gcal-verena.ics "DarkOliveGreen") ; google calendar ICS
+    						(cfw:ical-create-source "emmy" gcal-emmy.ics "CornflowerBlue") ; google calendar ICS
+    						(cfw:ical-create-source "clcoll" gcal-clcoll.ics "CornflowerBlue") ; google calendar ICS
+    						)))
+      			)
+
+ 	(global-set-key (kbd "<f7> c") 'my-open-calfw)
+ 	(define-key cfw:calendar-mode-map (kbd "u") 
+ 		'(lambda () (interactive)
+ 			 (when (fboundp 'tl/update-my-calendars) ; tl/update-my-calendars is defined in  privat-calendar-settings.el
+ 				 (tl/update-my-calendars))
+ 			 (my-open-calfw)
+ 			 ))
 
 #+END_SRC
 
