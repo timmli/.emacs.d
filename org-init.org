@@ -516,32 +516,36 @@ http://doc.norang.ca/org-mode.html#Setup
 *** Files
 
 #+BEGIN_SRC emacs-lisp
-(defvar org-directory)
-(setq org-directory (concat notes-dir "/org"))
-(global-set-key (kbd "<f9> u")
-								'(lambda ()
-									 (interactive)
-									 (setq org-agenda-files
-												 (append
-													(list org-directory)
-													(file-expand-wildcards (concat org-directory "/*/*.org"))))
-									 (message "org-agenda-files updated")
-									 ))
-;; (if (eq org-agenda-files nil)						; FIXME
-;; 		()
-;; 	())
+	(defvar org-directory)
+	(setq org-directory (concat notes-dir "/org"))
+	(global-set-key (kbd "<f9> u") 'tl/update-org-agenda-files)
 
-;; ;; Doing this at every start-up is maybe not a good idea:
-;; (setq org-agenda-files
-;; 			(append
-;; 			 (list org-directory)
-;; 			 (file-expand-wildcards (concat org-directory "/*/*.org"))))
+	(defun tl/update-org-agenda-files ()
+		(interactive)
+		(setq org-agenda-files
+					(append
+					 (list org-directory)
+					 (file-expand-wildcards (concat org-directory "/*/*.org"))))
+		(add-links-to-org-agenda-files) ; of the current buffer
+		(customize-save-variable 'org-agenda-files org-agenda-files)
+		(message "org-agenda-files updated")
+		)
 
-;; set refile targets to move entries inside org-agenda 
-(setq org-refile-targets '(
-													 (nil :maxlevel . 2)             ; refile to headings in the current buffer
-													 (org-agenda-files :maxlevel . 2) ; refile to any of these files
-													 ))
+	;; (if (eq org-agenda-files nil)						; FIXME
+	;; 		()
+	;; 	())
+
+	;; ;; Doing this at every start-up is maybe not a good idea:
+	;; (setq org-agenda-files
+	;; 			(append
+	;; 			 (list org-directory)
+	;; 			 (file-expand-wildcards (concat org-directory "/*/*.org"))))
+
+	;; set refile targets to move entries inside org-agenda 
+	(setq org-refile-targets '(
+														 (nil :maxlevel . 2)             ; refile to headings in the current buffer
+														 (org-agenda-files :maxlevel . 2) ; refile to any of these files
+														 ))
 #+END_SRC
 
 *** General keys
