@@ -996,17 +996,19 @@ http://emacs.stackexchange.com/a/28298/12336
 *** Capture templates
 
 #+BEGIN_SRC emacs-lisp
-(setq org-capture-templates
-      '(("t" "Todo" entry (file (concat org-directory "/todo.org"))
-         "* TODO %?\t%^g\n CREATED: %U\n About region:%i\n %a")
-        ("n" "Note" entry (file+datetree (concat org-directory "/notes.org"))
-				 "* %?\t%^g\n CREATED: %U\n About region:%i\n %a")
-				("c" "Code" entry (file (concat org-directory "/code.org"))
-         "* %?\t%^g\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a")
-				))
+	(setq org-capture-templates
+				'(("a" "Appointment" entry (file (concat org-directory "/gcal.org"))
+					 "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
+					("t" "Todo" entry (file (concat org-directory "/todo.org"))
+					 "* TODO %?\t%^g\n CREATED: %U\n About region:%i\n %a")
+					("n" "Note" entry (file+datetree (concat org-directory "/notes.org"))
+					 "* %?\t%^g\n CREATED: %U\n About region:%i\n %a")
+					("c" "Code" entry (file (concat org-directory "/code.org"))
+					 "* %?\t%^g\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a")
+					))
 
-(global-set-key (kbd "<f9> <f9>") 'org-capture)
-;; (global-set-key (kbd "<f9> <f9> t") (lambda () (interactive) (org-capture nil "t")))
+	(global-set-key (kbd "<f9> <f9>") 'org-capture)
+	;; (global-set-key (kbd "<f9> <f9> t") (lambda () (interactive) (org-capture nil "t")))
 #+END_SRC
 
 *** Todo keywords
@@ -1066,28 +1068,29 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
  	(defvar privat-calendar-settings.el "~/Dropbox/emacs/calendar-calfw-settings.el")
 
  	(use-package calfw
-      			:ensure t
-      			:config
-      			(require 'calfw-org)
-      			(require 'calfw-ical)
-      			(setq cfw:render-line-breaker 'cfw:render-line-breaker-simple)
+ 		:ensure ;TODO: 
+ 		:config
+ 		(require 'calfw-org)
+ 		(require 'calfw-ical)
+ 		(setq cfw:render-line-breaker 'cfw:render-line-breaker-simple)
 
-    				(if (file-exists-p privat-calendar-settings.el)
-    						(load-file privat-calendar-settings.el)
-    					(display-warning "calfw" (concat "Could not load " privat-calendar-settings.el)))
+ 		(if (file-exists-p privat-calendar-settings.el)
+ 				(load-file privat-calendar-settings.el)
+ 			(display-warning "calfw" (concat "Could not load " privat-calendar-settings.el)))
 
-        		(defun my-open-calfw ()
-      				(interactive)
-      				(cfw:open-calendar-buffer
-      				 :contents-sources
-      				 (list 
-    						(cfw:org-create-source "Orangered1")  ; orgmode source
-    						;; (cfw:cal-create-source "Orange") ; diary source
-    						(cfw:ical-create-source "verena" gcal-verena.ics "DarkOliveGreen") ; google calendar ICS
-    						(cfw:ical-create-source "emmy" gcal-emmy.ics "CornflowerBlue") ; google calendar ICS
-    						(cfw:ical-create-source "clcoll" gcal-clcoll.ics "CornflowerBlue") ; google calendar ICS
-    						)))
-      			)
+ 		(defun my-open-calfw ()
+ 			(interactive)
+ 			(cfw:open-calendar-buffer
+ 			 :contents-sources
+ 			 (list 
+ 				(cfw:org-create-source "Orangered1")  ; orgmode source
+ 				;; (cfw:cal-create-source "Orange") ; diary source
+ 				(cfw:ical-create-source "timm" gcal-timm.ics "Orangered1") ; google calendar ICS
+ 				(cfw:ical-create-source "verena" gcal-verena.ics "DarkOliveGreen") ; google calendar ICS
+ 				(cfw:ical-create-source "emmy" gcal-emmy.ics "CornflowerBlue") ; google calendar ICS
+ 				(cfw:ical-create-source "clcoll" gcal-clcoll.ics "CornflowerBlue") ; google calendar ICS
+ 				)))
+ 		)
 
  	(global-set-key (kbd "<f7> c") 'my-open-calfw)
  	(define-key cfw:calendar-mode-map (kbd "u") 
