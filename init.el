@@ -44,7 +44,7 @@
 	(message "HOME variable was set to: %s (only for this session)" path)
 	)
 ;; 3: set default-directory
-(setq default-directory (concat (getenv "HOME") "/"))
+(setq default-directory (expand-file-name (concat (getenv "HOME") "/")))
 (defvar home-directory)
 (setq home-directory default-directory)
 
