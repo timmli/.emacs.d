@@ -429,6 +429,26 @@ Smex helps to remember often used commands; used by ido and counsel
   :bind ("C-c /" . helm-swoop))
 #+END_SRC
 
+*** helm-dash
+
+=helm-dash= depends on =sqlite3= which you probably have to install manually:
+http://sqlite.org/download.html
+
+#+BEGIN_SRC emacs-lisp
+	(use-package helm-dash
+		:ensure t
+		:init
+		(setq helm-dash-common-docsets			; active in all buffers
+					'())
+		(setq helm-dash-browser-func 'eww)		; use internal web browser
+		(setq helm-dash-docsets-path (expand-file-name (concat home-directory "/.docsets"))) ; FIXME: under windows, helm-dash does not install docsets here but in ~/AppData/... Because of missing tar command?
+		:config
+		(add-hook 'latex-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
+		(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("EmacsLisp"))))
+		(add-hook 'org-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Org_Mode"))))
+		)
+#+END_SRC
+
 ** Keys
 
 #+BEGIN_SRC emacs-lisp
@@ -765,7 +785,7 @@ Support for inline tasks
 	(setq reftex-default-bibliography '((concat home-directory "/Dropbox/Forschung/timm-bib.bib"))) ; FIXME
 	(setq org-ref-default-bibliography (concat home-directory "/Dropbox/Forschung/timm-bib.bib")
 			;; org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org"
-				org-ref-pdf-directory (concat home-directory "/owncloud/Bib")
+				org-ref-pdf-directory (concat home-directory "/ownCloud/Bib")
 				)
 	:config
 	:bind (:map org-mode-map
