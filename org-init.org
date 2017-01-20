@@ -442,10 +442,11 @@ http://sqlite.org/download.html
 					'())
 		(setq helm-dash-browser-func 'eww)		; use internal web browser
 		(setq helm-dash-docsets-path (expand-file-name (concat home-directory "/.docsets"))) ; FIXME: under windows, helm-dash does not install docsets here but in ~/AppData/... Because of missing tar command?
-		:config
 		(add-hook 'latex-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
 		(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("EmacsLisp"))))
 		(add-hook 'org-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Org_Mode"))))
+		:bind
+		(("C-h d" . helm-dash))
 		)
 #+END_SRC
 
