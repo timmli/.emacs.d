@@ -5,6 +5,8 @@
 #+STARTUP: hideblocks content
 #+TODO: TODO | DONE CANCELED
 
+http://emacs-bootstrap.com/
+
 * General appearence
 
 ** Toolbar
@@ -505,6 +507,49 @@ http://sqlite.org/download.html
 	("\\.css\\'" . web-mode)
 )
 #+END_SRC
+
+** Python
+
+
+*** elpy
+
+Prerequisites as for Python:
+#+BEGIN_SRC bash
+	sudo pip install jedi flake8 importmagic autopep8 # Elpy's recommendation
+	sudo pip install pylint virtualenv epc # Zamansky's recommendation
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+		(use-package elpy
+			:ensure t
+			:defer 2
+			:config
+			(progn
+				;; Use Flycheck instead of Flymake
+				(when (require 'flycheck nil t)
+					(remove-hook 'elpy-modules 'elpy-module-flymake)
+					(remove-hook 'elpy-modules 'elpy-module-yasnippet)
+					(remove-hook 'elpy-mode-hook 'elpy-module-highlight-indentation)
+					(add-hook 'elpy-mode-hook 'flycheck-mode))
+				(elpy-enable)
+				(define-key python-mode-map (kbd "C-h f") 'python-eldoc-at-point)
+				;; jedi is great
+				(setq elpy-rpc-backend "jedi")))
+#+END_SRC
+
+*** company-jedi
+
+#+BEGIN_SRC emacs-lisp
+;; Use Company for auto-completion interface.
+(defun my/python-mode-hook ()
+  (add-to-list 'company-backends 'company-jedi))
+
+(use-package company-jedi
+  :ensure t
+  :init
+  (add-hook 'python-mode-hook 'my/python-mode-hook))
+#+END_SRC
+
 
 ** js2-mode
 
