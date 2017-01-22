@@ -445,6 +445,7 @@ http://sqlite.org/download.html
 		(add-hook 'latex-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
 		(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("EmacsLisp"))))
 		(add-hook 'org-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Org_Mode"))))
+		(add-hook 'sh-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Bash"))))
 		:bind
 		(("C-h d" . helm-dash))
 		)
@@ -1679,64 +1680,65 @@ Sequence is important!
 *** smartparens
 
 #+begin_src emacs-lisp
-(use-package smartparens
-	:ensure t
-	:config
-	(use-package smartparens-config)
-	(setq sp-autoescape-string-quote nil)
-	(--each '(css-mode-hook
-						restclient-mode-hook
-						js-mode-hook
-						java-mode-hook
-						ruby-mode-hook
-						emacs-lisp-mode-hook
-						LaTeX-mode-hook
-						bibtex-mode-hook
-						shell-mode-hook
-						TeX-mode-hook
-						markdown-mode-hook
-						org-mode-hook
-						groovy-mode-hook
-						scala-mode-hook)
-		(add-hook it #'smartparens-mode))
-	(require 'smartparens-latex)
-	;; org-mode
-	(sp-with-modes 'org-mode
-		(sp-local-pair "*" "*" :actions '(insert wrap) :unless '(sp-point-after-word-p sp-point-before-word-p sp-point-at-bol-p sp-in-math-p) )
-		(sp-local-pair "_" "_" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p) )
-		(sp-local-pair "/" "/" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p) )
-		(sp-local-pair "~" "~" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p) )
-		(sp-local-pair "=" "=" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p) )
-		(sp-local-pair "+" "+" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p tl/sp-point-after-hash-p) )
-		(sp-local-pair "$" "$" :unless '(sp-point-after-word-p sp-point-before-word-p) )
-		(sp-local-pair "«" "»"))
-	)
-(defun tl/sp-point-after-hash-p (id action context)
-  "Return t if point is after a hash, nil otherwise.
-This predicate is only tested on \"insert\" action.
-Its definition follows the one of sp-point-after-word-p."
-  (when (eq action 'insert)
-		(sp--looking-back-p (concat "\\(#\\)" (regexp-quote id)))))
+	(use-package smartparens
+		:ensure t
+		:config
+		(use-package smartparens-config)
+		(setq sp-autoescape-string-quote nil)
+		(--each '(css-mode-hook
+							restclient-mode-hook
+							js-mode-hook
+							java-mode-hook
+							ruby-mode-hook
+							emacs-lisp-mode-hook
+							LaTeX-mode-hook
+							bibtex-mode-hook
+							shell-mode-hook
+							sh-mode-hook
+							TeX-mode-hook
+							markdown-mode-hook
+							org-mode-hook
+							groovy-mode-hook
+							scala-mode-hook)
+			(add-hook it #'smartparens-mode))
+		(require 'smartparens-latex)
+		;; org-mode
+		(sp-with-modes 'org-mode
+			(sp-local-pair "*" "*" :actions '(insert wrap) :unless '(sp-point-after-word-p sp-point-before-word-p sp-point-at-bol-p sp-in-math-p) )
+			(sp-local-pair "_" "_" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p) )
+			(sp-local-pair "/" "/" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p) )
+			(sp-local-pair "~" "~" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p) )
+			(sp-local-pair "=" "=" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p) )
+			(sp-local-pair "+" "+" :unless '(sp-point-after-word-p sp-point-before-word-p sp-in-math-p tl/sp-point-after-hash-p) )
+			(sp-local-pair "$" "$" :unless '(sp-point-after-word-p sp-point-before-word-p) )
+			(sp-local-pair "«" "»"))
+		)
+	(defun tl/sp-point-after-hash-p (id action context)
+		"Return t if point is after a hash, nil otherwise.
+	This predicate is only tested on \"insert\" action.
+	Its definition follows the one of sp-point-after-word-p."
+		(when (eq action 'insert)
+			(sp--looking-back-p (concat "\\(#\\)" (regexp-quote id)))))
 
-;; jump to matching paren
-(defun goto-match-paren (arg)
-  "Go to the matching  if on (){}[], similar to vi style of % "
-  (interactive "p")
-  ;; first, check for "outside of bracket" positions expected by forward-sexp, etc.
-  (cond ((looking-at "[\[\(\{]") (forward-sexp))
-        ((looking-back "[\]\)\}]" 1) (backward-sexp))
-        ;; now, try to succeed from inside of a bracket
-        ((looking-at "[\]\)\}]") (forward-char) (backward-sexp))
-        ((looking-back "[\[\(\{]" 1) (backward-char) (forward-sexp))
-        (t nil)))
-(global-set-key (kbd "C-M-m") 'goto-match-paren)
-(global-set-key (kbd "M-(") 'sp-backward-sexp)
-(global-set-key (kbd "M-)") 'sp-forward-sexp)
-(global-set-key (kbd "M-m") 'goto-match-paren)
-(global-set-key (kbd "M-[") 'sp-beginning-of-sexp)
-(global-set-key (kbd "M-]") 'sp-end-of-sexp)
-(global-set-key (kbd "M-DEL") nil)
-(global-set-key (kbd "M-DEL M-[") 'sp-unwrap-sexp)
+	;; jump to matching paren
+	(defun goto-match-paren (arg)
+		"Go to the matching  if on (){}[], similar to vi style of % "
+		(interactive "p")
+		;; first, check for "outside of bracket" positions expected by forward-sexp, etc.
+		(cond ((looking-at "[\[\(\{]") (forward-sexp))
+					((looking-back "[\]\)\}]" 1) (backward-sexp))
+					;; now, try to succeed from inside of a bracket
+					((looking-at "[\]\)\}]") (forward-char) (backward-sexp))
+					((looking-back "[\[\(\{]" 1) (backward-char) (forward-sexp))
+					(t nil)))
+	(global-set-key (kbd "C-M-m") 'goto-match-paren)
+	(global-set-key (kbd "M-(") 'sp-backward-sexp)
+	(global-set-key (kbd "M-)") 'sp-forward-sexp)
+	(global-set-key (kbd "M-m") 'goto-match-paren)
+	(global-set-key (kbd "M-[") 'sp-beginning-of-sexp)
+	(global-set-key (kbd "M-]") 'sp-end-of-sexp)
+	(global-set-key (kbd "M-DEL") nil)
+	(global-set-key (kbd "M-DEL M-[") 'sp-unwrap-sexp)
 #+end_src
 
 *** emacs-pairs
