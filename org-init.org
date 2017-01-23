@@ -522,21 +522,23 @@ Prerequisites as for Python:
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-		(use-package elpy
-			:ensure t
-			:defer 2
-			:config
-			(progn
-				;; Use Flycheck instead of Flymake
-				(when (require 'flycheck nil t)
-					(remove-hook 'elpy-modules 'elpy-module-flymake)
-					(remove-hook 'elpy-modules 'elpy-module-yasnippet)
-					(remove-hook 'elpy-mode-hook 'elpy-module-highlight-indentation)
-					(add-hook 'elpy-mode-hook 'flycheck-mode))
-				(elpy-enable)
-				(define-key python-mode-map (kbd "C-h f") 'python-eldoc-at-point)
-				;; jedi is great
-				(setq elpy-rpc-backend "jedi")))
+	(use-package elpy
+		:ensure t
+		:defer 2
+		:config
+		(progn
+			;; Use Flycheck instead of Flymake
+			(when (require 'flycheck nil t)
+				(remove-hook 'elpy-modules 'elpy-module-flymake)
+				(remove-hook 'elpy-modules 'elpy-module-yasnippet)
+				(remove-hook 'elpy-mode-hook 'elpy-module-highlight-indentation)
+				(add-hook 'elpy-mode-hook 'flycheck-mode))
+			(elpy-enable)
+			(define-key python-mode-map (kbd "C-h f") 'python-eldoc-at-point)
+			;; highlight-indentation is ugly
+			(add-hook 'elpy-mode-hook '(lambda () (highlight-indentation-mode -1)))
+			;; jedi is great
+			(setq elpy-rpc-backend "jedi")))
 #+END_SRC
 
 *** company-jedi
