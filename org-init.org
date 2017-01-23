@@ -448,6 +448,7 @@ http://sqlite.org/download.html
 		(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("EmacsLisp"))))
 		(add-hook 'org-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Org_Mode"))))
 		(add-hook 'sh-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Bash"))))
+		(add-hook 'python-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Python 3" "SciPy" "NumPy"))))
 		:bind
 		(("C-h d" . helm-dash))
 		)
@@ -920,6 +921,13 @@ Integrate Google Calendar with org-gcal:
 						org-gcal-client-secret my-org-gcal-client-secret
 						org-gcal-file-alist '((my-gmail-address .  "~/Dropbox/Notizen/org/gcal.org")))
 	))
+#+END_SRC
+
+*** Links
+
+Links to files are opened in the same window, i.e. the window does not get split:
+#+BEGIN_SRC emacs-lisp
+(setq org-link-frame-setup '((file . find-file)))
 #+END_SRC
 
 *** Tags
@@ -1731,10 +1739,9 @@ Sequence is important!
 		(use-package smartparens-config)
 		(setq sp-autoescape-string-quote nil)
 		(--each '(css-mode-hook
-							restclient-mode-hook
 							js-mode-hook
 							java-mode-hook
-							ruby-mode-hook
+							python-mode-hook
 							emacs-lisp-mode-hook
 							LaTeX-mode-hook
 							bibtex-mode-hook
@@ -1742,9 +1749,7 @@ Sequence is important!
 							sh-mode-hook
 							TeX-mode-hook
 							markdown-mode-hook
-							org-mode-hook
-							groovy-mode-hook
-							scala-mode-hook)
+							org-mode-hook)
 			(add-hook it #'smartparens-mode))
 		(require 'smartparens-latex)
 		;; org-mode
