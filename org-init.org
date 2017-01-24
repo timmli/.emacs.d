@@ -443,7 +443,7 @@ http://sqlite.org/download.html
 		(setq helm-dash-common-docsets			; active in all buffers
 					'())
 		(setq helm-dash-browser-func 'eww)		; use internal web browser
-		(setq helm-dash-docsets-path (expand-file-name (concat home-directory "/.docsets"))) ; FIXME: under windows, helm-dash does not install docsets here but in ~/AppData/... Because of missing tar command?
+		(setq helm-dash-docsets-path (expand-file-name (concat home-directory "/ownCloud/.docsets"))) ; FIXME: under windows, helm-dash does not install docsets here but in ~/AppData/... Because of missing tar command?
 		(add-hook 'latex-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
 		(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("EmacsLisp"))))
 		(add-hook 'org-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Org_Mode"))))
@@ -617,6 +617,8 @@ http://doc.norang.ca/org-mode.html#Setup
 														 (org-agenda-files :maxlevel . 2) ; refile to any of these files
 														 ))
 #+END_SRC
+
+*** babel
 
 *** General keys
 
@@ -2313,141 +2315,146 @@ Key bindings for more ergonomic cursor movement: the cursor movement keys are un
 Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 
 #+BEGIN_SRC emacs-lisp
-(define-minor-mode underi-mode
-	"Key bindings for more ergonomic cursor movement: the cursor movement keys are under the <i> key and get activated with the Meta/Alt key. 
-Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
-	:lighter " ui"
-	;; :global "t"
-	:init-value t
-	:keymap (let ((map (make-keymap)))
+	(define-minor-mode underi-mode
+		"Key bindings for more ergonomic cursor movement: the cursor movement keys are under the <i> key and get activated with the Meta/Alt key. 
+	Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
+		:lighter " ui"
+		;; :global "t"
+		:init-value t
+		:keymap (let ((map (make-keymap)))
 
-						(define-key input-decode-map (kbd "C-i") (kbd "H-i")) ; to disentangle <tab> and C-i
+							(define-key input-decode-map (kbd "C-i") (kbd "H-i")) ; to disentangle <tab> and C-i
 
-						;; cursor keys
-						(define-key key-translation-map (kbd "M-i") (kbd "<up>"))
-						(define-key key-translation-map (kbd "M-k") (kbd "<down>"))
-						(define-key key-translation-map (kbd "M-j") (kbd "<left>"))		
-						(define-key key-translation-map (kbd "M-l") (kbd "<right>"))
-						(define-key key-translation-map (kbd "M-I") (kbd "S-<up>"))
-						(define-key key-translation-map (kbd "M-K") (kbd "S-<down>"))
-						(define-key key-translation-map (kbd "M-J") (kbd "S-<left>"))		
-						(define-key key-translation-map (kbd "M-L") (kbd "S-<right>"))
+							;; cursor keys
+							(define-key key-translation-map (kbd "M-i") (kbd "<up>"))
+							(define-key key-translation-map (kbd "M-k") (kbd "<down>"))
+							(define-key key-translation-map (kbd "M-j") (kbd "<left>"))		
+							(define-key key-translation-map (kbd "M-l") (kbd "<right>"))
+							(define-key key-translation-map (kbd "M-I") (kbd "S-<up>"))
+							(define-key key-translation-map (kbd "M-K") (kbd "S-<down>"))
+							(define-key key-translation-map (kbd "M-J") (kbd "S-<left>"))		
+							(define-key key-translation-map (kbd "M-L") (kbd "S-<right>"))
 
-						;; more cursor keys
-						(define-key map (kbd "M-n") 'scroll-up-command)
-						(define-key map (kbd "M-p") 'scroll-down-command)
-						(define-key map (kbd "M-o") 'point-redo)
-						(define-key map (kbd "M-u") 'point-undo)
-						(define-key map (kbd "M-z") 'goto-last-change)
-						(define-key map (kbd "C-M-i") 'backward-paragraph)
-						(define-key map (kbd "C-M-k") 'forward-paragraph)
-						(define-key map (kbd "C-M-j") 'left-word)
-						(define-key map (kbd "C-M-l") 'right-word)
+							;; more cursor keys
+							(define-key map (kbd "M-n") 'scroll-up-command)
+							(define-key map (kbd "M-p") 'scroll-down-command)
+							(define-key map (kbd "M-o") 'point-redo)
+							(define-key map (kbd "M-u") 'point-undo)
+							(define-key map (kbd "M-z") 'goto-last-change)
+							(define-key map (kbd "C-M-i") 'backward-paragraph)
+							(define-key map (kbd "C-M-k") 'forward-paragraph)
+							(define-key map (kbd "C-M-j") 'left-word)
+							(define-key map (kbd "C-M-l") 'right-word)
 
-						(define-key map (kbd "M-s-j")  'windmove-left)
-						(define-key map (kbd "M-s-l") 'windmove-right)
-						(define-key map (kbd "M-s-i")   'windmove-up)
-						(define-key map (kbd "M-s-k")  'windmove-down)
+							(define-key map (kbd "M-s-j")  'windmove-left)
+							(define-key map (kbd "M-s-l") 'windmove-right)
+							(define-key map (kbd "M-s-i")   'windmove-up)
+							(define-key map (kbd "M-s-k")  'windmove-down)
 
-						(define-key key-translation-map (kbd "C-n") (kbd "C-c C-n"))
-						(define-key key-translation-map (kbd "C-p") (kbd "C-c C-p"))
+							(define-key key-translation-map (kbd "C-n") (kbd "C-c C-n"))
+							(define-key key-translation-map (kbd "C-p") (kbd "C-c C-p"))
 
-						;; delete 
-						(define-key map (kbd "C-d") nil)
-						(define-key map (kbd "C-d C-k") 'kill-line)
-						(define-key map (kbd "C-d <up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
-						(define-key map (kbd "C-d <left>") 'delete-backward-char)
-						(define-key map (kbd "C-d <right>") 'delete-forward-char)
-						(define-key map (kbd "C-d <down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
-						(define-key map (kbd "C-d C-<up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
-						(define-key map (kbd "C-d C-<left>") 'delete-backward-char)
-						(define-key map (kbd "C-d C-<right>") 'delete-forward-char)
-						(define-key map (kbd "C-d C-<down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
-						(define-key map (kbd "C-d C-o") 'delete-blank-lines)
-						(define-key map (kbd "C-d C-m") 'remove-newlines-or-blank-lines-dwim)
-						(define-key map (kbd "C-d C-<return>") 'remove-newlines-or-blank-lines-dwim)
-						(define-key map (kbd "C-d C-a") '(lambda () (interactive) (kill-line 0)))
-						(define-key map (kbd "C-d C-e") 'kill-line)
-						(define-key map (kbd "C-S-d") 'kill-whole-line)
-						(define-key map (kbd "C-d SPC") 'tl/remove-extra-spaces-dwim)
-						(define-key map (kbd "C-d C-SPC") 'tl/remove-extra-spaces-dwim)
-						(define-key map (kbd "C-d [") 'sp-unwrap-sexp)
-						(define-key map (kbd "C-d ]") 'sp-unwrap-sexp)
-						(define-key map (kbd "C-d {") 'sp-unwrap-sexp)
-						(define-key map (kbd "C-d }") 'sp-unwrap-sexp)
-						(define-key map (kbd "C-d (") 'sp-unwrap-sexp)
-						(define-key map (kbd "C-d )") 'sp-unwrap-sexp)
+							;; delete 
+							(define-key map (kbd "C-d") nil)
+							(define-key map (kbd "C-d C-k") 'kill-line)
+							(define-key map (kbd "C-d <up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
+							(define-key map (kbd "C-d <left>") 'delete-backward-char)
+							(define-key map (kbd "C-d <right>") 'delete-forward-char)
+							(define-key map (kbd "C-d <down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
+							(define-key map (kbd "C-d C-<up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
+							(define-key map (kbd "C-d C-<left>") 'delete-backward-char)
+							(define-key map (kbd "C-d C-<right>") 'delete-forward-char)
+							(define-key map (kbd "C-d C-<down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
+							(define-key map (kbd "C-d C-o") 'delete-blank-lines)
+							(define-key map (kbd "C-d C-m") 'remove-newlines-or-blank-lines-dwim)
+							(define-key map (kbd "C-d C-<return>") 'remove-newlines-or-blank-lines-dwim)
+							(define-key map (kbd "C-d C-a") '(lambda () (interactive) (kill-line 0)))
+							(define-key map (kbd "C-d C-e") 'kill-line)
+							(define-key map (kbd "C-S-d") 'kill-whole-line)
+							(define-key map (kbd "C-d SPC") 'tl/remove-extra-spaces-dwim)
+							(define-key map (kbd "C-d C-SPC") 'tl/remove-extra-spaces-dwim)
+							(define-key map (kbd "C-d [") 'sp-unwrap-sexp)
+							(define-key map (kbd "C-d ]") 'sp-unwrap-sexp)
+							(define-key map (kbd "C-d {") 'sp-unwrap-sexp)
+							(define-key map (kbd "C-d }") 'sp-unwrap-sexp)
+							(define-key map (kbd "C-d (") 'sp-unwrap-sexp)
+							(define-key map (kbd "C-d )") 'sp-unwrap-sexp)
 
+							;; return
+							(define-key input-decode-map (kbd "C-m") (kbd "H-o")) ; to disentangle <return> and C-m
+							(define-key key-translation-map (kbd "H-o") (kbd "RET"))
+							(define-key map (kbd "C-S-m") 'smart-open-line)
 
-						;; return
-						(define-key input-decode-map (kbd "C-m") (kbd "H-o")) ; to disentangle <return> and C-m
-						(define-key key-translation-map (kbd "H-o") (kbd "RET"))
-						(define-key map (kbd "C-S-m") 'smart-open-line)
-						
-						;; miscellaneous actions
-						(define-key map (kbd "C-j") 'ace-jump-mode)
-						(define-key map (kbd "H-i") 'helm-imenu)
-						(define-key map (kbd "C-S-i") 'imenu-list)
-						
-						map
-						)
-	(add-hook 'minibuffer-setup-hook 'underi-minibuffer)
-	(with-eval-after-load 'org
-    (define-key org-mode-map (kbd "C-d c") 'org-table-delete-column )
-    (define-key org-mode-map (kbd "C-d C-c") 'org-table-delete-column )
-		)																	
+ 							;; org-babel
+							(define-key org-mode-map (kbd "C-d r") 'org-babel-remove-result)
 
-)	
-;; TODO: make C-d switch to delete-mode?
-;; http://stackoverflow.com/a/12010437/6452961
+							;; miscellaneous actions
+							(define-key map (kbd "C-j") 'ace-jump-mode)
+							(define-key map (kbd "H-i") 'helm-imenu)
+							(define-key map (kbd "C-S-i") 'imenu-list)
 
-(defun tl/kill-forward-line (N)
-	(interactive)
-	(save-excursion
-		(when (= (forward-line N) 0)
-			(kill-whole-line))))
+							map
+							)
+		(add-hook 'minibuffer-setup-hook 'underi-minibuffer)
+		(with-eval-after-load 'org
+			(define-key org-mode-map (kbd "C-d c") 'org-table-delete-column )
+			(define-key org-mode-map (kbd "C-d C-c") 'org-table-delete-column )
+			)																	
 
-(defun underi-minibuffer ()
-	"Keymap for the minibuffer."
-	(let ((map minibuffer-local-map))
+	)	
+	;; TODO: make C-d switch to delete-mode?
+	;; http://stackoverflow.com/a/12010437/6452961
 
-		;; move cursor
-		(define-key map (kbd "M-n") 'scroll-up-command)
-		(define-key map (kbd "M-p") 'scroll-down-command)
-		(define-key map (kbd "M-o") 'point-redo)
-		(define-key map (kbd "M-u") 'point-undo)
-		(define-key map (kbd "M-z") 'goto-last-change)
-		(define-key map (kbd "C-M-i") 'backward-paragraph)
-		(define-key map (kbd "C-M-k") 'forward-paragraph)
-		(define-key map (kbd "C-M-j") 'left-word)
-		(define-key map (kbd "C-M-l") 'right-word)
-		
-		;; delete 
-		(define-key map (kbd "C-d") nil)
-		(define-key map (kbd "C-d C-k") 'kill-line)
-		(define-key map (kbd "C-d <up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
-		(define-key map (kbd "C-d <left>") 'delete-backward-char)
-		(define-key map (kbd "C-d <right>") 'delete-forward-char)
-		(define-key map (kbd "C-d <down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
-		(define-key map (kbd "C-d C-<up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
-		(define-key map (kbd "C-d C-<left>") 'delete-backward-char)
-		(define-key map (kbd "C-d C-<right>") 'delete-forward-char)
-		(define-key map (kbd "C-d C-<down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
-		(define-key map (kbd "C-d C-a") '(lambda () (interactive) (kill-line 0)))
-		(define-key map (kbd "C-S-d") 'kill-whole-line)
-		(define-key map (kbd "C-d [") 'sp-unwrap-sexp)
-		(define-key map (kbd "C-d ]") 'sp-unwrap-sexp)
-		(define-key map (kbd "C-d {") 'sp-unwrap-sexp)
-		(define-key map (kbd "C-d }") 'sp-unwrap-sexp)
-		(define-key map (kbd "C-d (") 'sp-unwrap-sexp)
-		(define-key map (kbd "C-d )") 'sp-unwrap-sexp)
-		))
+	(defun tl/kill-forward-line (N)
+		(interactive)
+		(save-excursion
+			(when (= (forward-line N) 0)
+				(kill-whole-line))))
 
-(define-key helm-map (kbd "H-i") 'helm-select-action) ; show actions (default is <tab>)
+	(defun underi-minibuffer ()
+		"Keymap for the minibuffer."
+		(let ((map minibuffer-local-map))
 
-;; (add-hook 'text-mode-hook 'underi-mode) ; superseded by :init-value t
-;; (add-hook 'prog-mode-hook 'underi-mode) ; superseded by :init-value t
+			;; move cursor
+			(define-key map (kbd "M-n") 'scroll-up-command)
+			(define-key map (kbd "M-p") 'scroll-down-command)
+			(define-key map (kbd "M-o") 'point-redo)
+			(define-key map (kbd "M-u") 'point-undo)
+			(define-key map (kbd "M-z") 'goto-last-change)
+			(define-key map (kbd "C-M-i") 'backward-paragraph)
+			(define-key map (kbd "C-M-k") 'forward-paragraph)
+			(define-key map (kbd "C-M-j") 'left-word)
+			(define-key map (kbd "C-M-l") 'right-word)
+
+			;; delete 
+			(define-key map (kbd "C-d") nil)
+			(define-key map (kbd "C-d C-k") 'kill-line)
+			(define-key map (kbd "C-d <up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
+			(define-key map (kbd "C-d <left>") 'delete-backward-char)
+			(define-key map (kbd "C-d <right>") 'delete-forward-char)
+			(define-key map (kbd "C-d <down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
+			(define-key map (kbd "C-d C-<up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
+			(define-key map (kbd "C-d C-<left>") 'delete-backward-char)
+			(define-key map (kbd "C-d C-<right>") 'delete-forward-char)
+			(define-key map (kbd "C-d C-<down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
+			(define-key map (kbd "C-d C-a") '(lambda () (interactive) (kill-line 0)))
+			(define-key map (kbd "C-S-d") 'kill-whole-line)
+			(define-key map (kbd "C-d [") 'sp-unwrap-sexp)
+			(define-key map (kbd "C-d ]") 'sp-unwrap-sexp)
+			(define-key map (kbd "C-d {") 'sp-unwrap-sexp)
+			(define-key map (kbd "C-d }") 'sp-unwrap-sexp)
+			(define-key map (kbd "C-d (") 'sp-unwrap-sexp)
+			(define-key map (kbd "C-d )") 'sp-unwrap-sexp)
+			))
+
+	(define-key helm-map (kbd "H-i") 'helm-select-action) ; show actions (default is <tab>)
+
+	;; (add-hook 'text-mode-hook 'underi-mode) ; superseded by :init-value t
+	;; (add-hook 'prog-mode-hook 'underi-mode) ; superseded by :init-value t
 #+END_SRC
+
+#+RESULTS:
+: helm-select-action
 
 * winkeys-mode
 
