@@ -2555,34 +2555,34 @@ Key bindings roughly following the conventions of the Windows habitat.
 
 Better keys for switching between windows:
 #+BEGIN_SRC emacs-lisp
-;; (when (fboundp 'windmove-default-keybindings)
-;; (windmove-default-keybindings))
-(global-set-key (kbd "M-s-<left>")  'windmove-left)
-(global-set-key (kbd "M-s-<right>") 'windmove-right)
-(global-set-key (kbd "M-s-<up>")   'windmove-up)
-(global-set-key (kbd "M-s-<down>")  'windmove-down)
+	;; (when (fboundp 'windmove-default-keybindings)
+	;; (windmove-default-keybindings))
+	(global-set-key (kbd "M-s-<left>")  'windmove-left)
+	(global-set-key (kbd "M-s-<right>") 'windmove-right)
+	(global-set-key (kbd "M-s-<up>")   'windmove-up)
+	(global-set-key (kbd "M-s-<down>")  'windmove-down)
 
-(global-set-key (kbd "<f2> <left>")  'windmove-left)
-(global-set-key (kbd "<f2> <right>") 'windmove-right)
-(global-set-key (kbd "<f2> <up>")   'windmove-up)
-(global-set-key (kbd "<f2> <down>")  'windmove-down)
+	;; (global-set-key (kbd "<f2> <left>")  'windmove-left)
+	;; (global-set-key (kbd "<f2> <right>") 'windmove-right)
+	;; (global-set-key (kbd "<f2> <up>")   'windmove-up)
+	;; (global-set-key (kbd "<f2> <down>")  'windmove-down)
 
-;; clone frame
-(global-set-key (kbd "<f2> <f2>") 'make-frame)
+	;; clone frame
+	;; (global-set-key (kbd "<f2> <f2>") 'make-frame)
 
-;; split window
-(global-set-key (kbd "<f2> v") 'split-window-vertically)
-(global-set-key (kbd "<f2> h") 'split-window-horizontally)
-(global-set-key (kbd "<f2> b") 'split-window-below)
-(global-set-key (kbd "<f2> r") 'split-window-right)
+	;; split window
+	;; (global-set-key (kbd "<f2> v") 'split-window-vertically)
+	;; (global-set-key (kbd "<f2> h") 'split-window-horizontally)
+	;; (global-set-key (kbd "<f2> b") 'split-window-below)
+	;; (global-set-key (kbd "<f2> r") 'split-window-right)
 
-;; close window
-(global-set-key (kbd "M-<f2>") 'delete-window)
+	;; close window
+	(global-set-key (kbd "M-<f2>") 'delete-window)
 
-;; winner mode:
-(winner-mode 1)
-(global-set-key (kbd "<f2> z") 'winner-undo) ; undo pane configuration
-(global-set-key (kbd "<f2> Z") 'winner-redo) ; redo pane configuration
+	;; winner mode:
+	(winner-mode 1)
+	;; (global-set-key (kbd "<f2> z") 'winner-undo) ; undo pane configuration
+	;; (global-set-key (kbd "<f2> Z") 'winner-redo) ; redo pane configuration
 #+END_SRC
 
 ** golden-ratio
@@ -2795,7 +2795,7 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
 #+BEGIN_SRC emacs-lisp
 		;; inspired by https://github.com/abo-abo/hydra/wiki/multiple-cursors
-		(defhydra hydra-multiple-cursors (:hint nil)
+		(defhydra hydra-multiple-cursors (:hint nil :idle 0.5)
 			"
 			 ^Up^            ^Down^        ^Other^
 	----------------------------------------------
@@ -2816,14 +2816,61 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 		("q" nil))
 		(global-set-key (kbd "C-<") 'hydra-multiple-cursors/body)
   #+END_SRC
-
+  
 ** TODO hydra-highlight-changes
+
+#+BEGIN_SRC emacs-lisp
+		(defhydra hydra-highlight-changes
+			(:body-pre (highlight-changes-visible-mode +1)
+      :hint nil
+      :idle 0.5)
+			"
+	Highlight changes:
+	  _<up>_: next change       _q_uit
+	_<down>_: previous change   _Q_uit and turn off highlighting 
+	"
+			("<down>" highlight-changes-next-change)
+			("<up>" highlight-changes-previous-change)
+			("<right>" highlight-changes-next-change)
+			("<left>" highlight-changes-previous-change)
+			("j" highlight-changes-next-change)
+			("k" highlight-changes-previous-change)
+			("n" highlight-changes-next-change)
+			("p" highlight-changes-previous-change)
+			("Q" (highlight-changes-visible-mode -1) :color blue)
+			("q" nil :color blue))
+		(global-set-key (kbd "<f8> c") 'hydra-highlight-changes/body)
+#+END_SRC
 
 ** TODO hydra-window
 
-** TODO hydra-highlight-symbol
-** hydra: end
+#+BEGIN_SRC emacs-lisp
+	(defhydra hydra-window
+		(:hint nil
+					 :idle 0.5)
+	"
+		Window actions:
+						 ^_<up>_^                 |                           _z_: window undo
+							^^↑^^                   |split _h_orizontally         _Z_: window redo
+		 _<left>_ ←   → _<right>_         |                        _<f2>_: new frame
+							^^↓^^                  ──────────────────               _q_uit
+						^_<down>_^               split _v_ertically                  
+	"
+	("<down>" windmove-down :exit t)
+	("<up>" windmove-up :exit t)
+	("<right>" windmove-right :exit t)
+	("<left>" windmove-left :exit t)
+	("<f2>" make-frame :exit t)
+	("v" split-window-vertically :exit t)
+	("h" split-window-horizontally :exit t)
+	("z" winner-undo)
+	("Z" winner-redo)
+	("q" nil :color blue))
+	(global-set-key (kbd "<f2>") 'hydra-window/body)
+#+END_SRC
 
+** TODO hydra-highlight-symbol
+** hydra: end           
   #+BEGIN_SRC emacs-lisp
-		)
+		)                   
 #+END_SRC
