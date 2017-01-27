@@ -459,6 +459,7 @@ http://sqlite.org/download.html
 		(add-hook 'latex-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
 		(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("EmacsLisp"))))
 		(add-hook 'org-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Org_Mode"))))
+		(add-hook 'plantuml-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("PlantUML"))))
 		(add-hook 'sh-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Bash"))))
 		(add-hook 'python-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Python 3" "SciPy" "NumPy"))))
 		:bind
@@ -566,6 +567,18 @@ Prerequisites as for Python:
   (add-hook 'python-mode-hook 'my/python-mode-hook))
 #+END_SRC
 
+** PlantUML
+
+Depends on plantuml.jar and Gaphviz (http://www.graphviz.org).
+
+#+BEGIN_SRC emacs-lisp
+(use-package plantuml-mode
+  :ensure t
+  :mode "\\.plu\\'"
+  :init
+	(setq org-plantuml-jar-path
+      (expand-file-name "plantuml.jar" org-directory)))
+#+END_SRC
 
 ** js2-mode
 
@@ -869,8 +882,6 @@ Support for inline tasks
 http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
 
  #+BEGIN_SRC emacs-lisp
-(setq org-plantuml-jar-path
-      (expand-file-name "plantuml.jar" org-directory))
 (org-babel-do-load-languages  'org-babel-load-languages '((plantuml . t)))
 #+END_SRC
 
@@ -1653,6 +1664,15 @@ Sequence is important!
 	(add-hook 'text-mode-hook '(lambda ()(flycheck-mode 0)))
 	)
 #+end_src
+
+*** flycheck-plantuml
+
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck-plantuml
+  :ensure t
+  :after flycheck
+  :config (flycheck-plantuml-setup))
+#+END_SRC
 
 ** Spell checking
 
