@@ -36,6 +36,18 @@ Apply syntax highlighting to all buffers:
 (global-font-lock-mode t)
 #+END_SRC
 
+*** highlight-symbol
+
+#+BEGIN_SRC emacs-lisp
+(use-package highlight-symbol
+  :ensure t
+  :config
+  (setq highlight-symbol-idle-delay 0.2)
+  (add-hook 'highlight-symbol-mode-hook
+            (function
+             (lambda () (highlight-symbol-nav-mode +1)))))
+#+END_SRC
+
 ** Lines
 
 Highlight line of cursor:
@@ -2870,6 +2882,32 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 #+END_SRC
 
 ** TODO hydra-highlight-symbol
+
+#+BEGIN_SRC emacs-lisp
+		(defhydra hydra-highlight-symbol
+			(:pre (highlight-symbol-at-point) 
+      :hint nil
+			 :idle 0.5)
+			"
+	Highlight symbol:
+		_<up>_: previous occurrence    _r_: replace occurrences     _q_uit 
+	_<down>_: next occurrence        
+	"
+			("<down>" highlight-symbol-next)
+			("<up>" highlight-symbol-prev)
+			("<right>" highlight-symbol-next)
+			("<left>" highlight-symbol-prev)
+			("j" highlight-symbol-next)
+			("k" highlight-symbol-prev)
+			("n" highlight-symbol-next)
+			("p" highlight-symbol-prev)
+			("c" highlight-symbol-count)
+			("r" highlight-symbol-query-replace)
+			("l" highlight-symbol-list-all)
+			("q" highlight-symbol-remove-all :color blue))
+		(global-set-key (kbd "<f8> s") 'hydra-highlight-symbol/body)
+#+END_SRC
+
 ** hydra: end           
   #+BEGIN_SRC emacs-lisp
 		)                   
