@@ -674,9 +674,13 @@ Version 2016-10-15"
 #+BEGIN_SRC emacs-lisp
 (use-package dired-k
 	:ensure t
+	:bind (:map dired-mode-map ("K" . dired-k))
 	:config
   (progn
-    (add-hook 'dired-initial-position-hook 'dired-k)))
+		;; FIXME: Tramp prompts for the password in every new dired buffer!
+		;; (add-hook 'dired-initial-position-hook 'dired-k)
+		;; (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
+))
 #+END_SRC
 
 *** TODO COMMENT dired-quick-sort
