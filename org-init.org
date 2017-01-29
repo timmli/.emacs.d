@@ -584,18 +584,37 @@ Depends on plantuml.jar and Gaphviz (http://www.graphviz.org).
 
 ** dired
 
+*** General behaviour
+
 Tips:  http://ergoemacs.org/emacs/emacs_dired_tips.html
 
 Do not open new buffer when opening a file/directory: 
 #+BEGIN_SRC emacs-lisp
-(define-key dired-mode-map (kbd "RET") 'dired-find-alternate-file) ; was dired-advertised-find-file
-(define-key dired-mode-map (kbd "^") (lambda () (interactive) (find-alternate-file "..")))  ; was dired-up-directory
+(define-key dired-mode-map (kbd "<return>") 'dired-find-alternate-file) ; was dired-advertised-find-file
+(define-key dired-mode-map (kbd "<tab>") 'dired-find-alternate-file) ; was dired-advertised-find-file
+(define-key dired-mode-map (kbd "<backspace>") (lambda () (interactive) (find-alternate-file "..")))  ; was dired-up-directory
 #+END_SRC
 
 Copy/move into other dired buffer:
 #+BEGIN_SRC emacs-lisp
 (setq dired-dwim-target t)
 #+END_SRC
+
+*** dired-narrow
+
+Filter dired list on the fly:
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-narrow
+  :ensure t
+  :bind (:map dired-mode-map
+              ("/" . dired-narrow))
+	:config
+	(setq dired-narrow-exit-action 'dired-narrow-find-file)
+)
+#+END_SRC
+
+*** TODO dired-ranger
 
 ** js2-mode
 
@@ -2931,12 +2950,13 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
      Help^^   Window^^   Config^^   Check^^   Refresh^^   New^^   │Open│  Highlight^^  Org^^
    ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^──╯    └───────────^^────────╯
  
-         ^^         ^^    [_a_] adress book       [_e_] emacs shell
-         ^^         ^^    [_c_] calendar          [_s_] system shell
-         ^^         ^^    [_b_] new buffer                               [_q_]uit
+         ^^         ^^    [_a_] adress book       [_d_] dired
+         ^^         ^^    [_b_] new buffer        [_e_] emacs shell 
+         ^^         ^^    [_c_] calendar          [_s_] system shell                [_q_]uit
 	" 
 	("a" helm-bbdb :exit t)
 	("c" my-open-calfw :exit t)
+	("d" dired-jump :exit t)
 	("s" shell :exit t)
 	("b" xah-new-empty-buffer :exit t)
 	("e" tl/eshell :exit t)
