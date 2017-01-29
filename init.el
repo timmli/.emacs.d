@@ -159,3 +159,4 @@
  (expand-file-name "org-init.org"
                    user-emacs-directory))
 
+(put 'dired-find-alternate-file 'disabled nil)
