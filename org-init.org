@@ -621,9 +621,17 @@ Don't break lines (FIXME):
 ;; (add-hook 'dired-mode-hook (lambda () (setq truncate-lines t)))
 #+END_SRC
 
-*** Open in external programm
+*** TODO COMMENT Open binary files in external programm
 
-See http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html:
+#+BEGIN_SRC
+advice(dired-find-file :before)
+if (dired-get-file-for-visit ~= /^.*\.(pdf|wav|mp3|flac|...)/ ) {
+  xah-open-in-external-app(dired-get-file-for-visit)
+  return t
+} 
+#+END_SRC
+
+*** Open in external programm
 
 #+BEGIN_SRC emacs-lisp
 (defun xah-open-in-external-app ()
@@ -657,6 +665,29 @@ Version 2016-10-15"
                             (start-process "" nil "xdg-open" -fpath))) -file-list))))))
 
 (define-key dired-mode-map (kbd "C-<return>") 'xah-open-in-external-app)
+#+END_SRC
+
+*** Open in external file browser
+
+#+BEGIN_SRC emacs-lisp
+(defun xah-open-in-desktop ()
+  "Show current file in desktop (OS's file manager).
+URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
+Version 2015-11-30"
+  (interactive)
+  (cond
+   ((string-equal system-type "windows-nt")
+    (w32-shell-execute "explore" (replace-regexp-in-string "/" "\\" default-directory t t)))
+   ((string-equal system-type "darwin") (shell-command "open ."))
+   ((string-equal system-type "gnu/linux")
+    (let (
+          (process-connection-type nil)
+          (openFileProgram (if (file-exists-p "/usr/bin/gvfs-open")
+                               "/usr/bin/gvfs-open"
+                             "/usr/bin/xdg-open")))
+      (start-process "" nil openFileProgram "."))
+    ;; (shell-command "xdg-open .") ;; 2013-02-10 this sometimes froze emacs till the folder is closed. For example: with nautilus
+    )))
 #+END_SRC
 
 *** dired-imenu
@@ -2809,7 +2840,7 @@ Better keys for switching between windows:
 	;; (global-set-key (kbd "<f2> Z") 'winner-redo) ; redo pane configuration
 #+END_SRC
 
-** golden-ratio
+** COMMENT golden-ratio
 
 #+BEGIN_SRC emacs-lisp
 (use-package golden-ratio
@@ -3210,13 +3241,89 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
 #+END_SRC
 
-** hydra-dired
+** TODO COMMENT hydra-dired
 
 https://gitlab.com/xuhdev/dired-quick-sort
 
 #+BEGIN_SRC emacs-lisp
+(defhydra hydra-dired-main (:hint nil)
+"
+ ^Navigation^      ^Mark^          ^Actions^          ^View^
+-^----------^------^----^----------^-------^----------^----^-------
+                                   _+_: new
+   _<up>_:   ʌ     _m_: mark       _C_: copy to       _g_: refresh
+    _RET_: visit   _u_: unmark     _D_: delete          _s_: sort
+                   _U_: unmark all _P_: change property
+                   _t_: toggle mark                        
+ _<down>_:   v     _*_: specific   _R_: move to         _/_: filter
+                                   _Z_: compress
+                                   _=_: diff         _q_: quit dired
+                                                     _Q_: quit hydra
+-^----------^---^----^----------^-------^----------^----^----------
+"
 
+("+" hydra-dired-new/body)
+("*" hydra-dired-mark/body)
+("P" hydra-dired-new/body)
+("O" dired-do-chown)
+("M" dired-do-chmod)
+("G" dired-do-chgrp)
+("C" dired-do-copy)
+("D" dired-do-delete)
+("R" dired-do-rename)
+("S" dired-do-symlink)
+("Z" dired-do-compress)
+("=" diredp-ediff)
+("g" revert-buffer)
+("j" dired-goto-file)
+("f" dired-narrow)
+("m" dired-mark)
+("u" dired-unmark)
+("U" dired-unmark-all-marks)
+("t" dired-toggle-marks)
+("v" dired-view-file)
+("q" quit-window :color blue)
+("Q" nil :color blue)
+
+)
+
+
+(defhydra hydra-dired-new (:hint nil :after-exit (hydra-dired-main/body))
+
+	("d" dired-do-create-directory)
+	("s" dired-do-symlink)
+	("h" dired-do-hardlink)
+	("f" find-file)
+	("q" nil :color blue)
+	)
+
+(defhydra hydra-dired-mark (:hint nil :after-exit (hydra-dired-main/body))
+
+	("d" dired-mark-directories)
+	("s" dired-mark-symlinks)
+	("a" tl/dired-mark-all)
+	("r" dired-mark-files-regexp)
+	("." dired-mark/unmark-extension)
+	("/" dired-mark-sexp)
+	("q" nil :color blue)
+	
+	)
+
+
+(defhydra hydra-dired-properties (:hint nil :after-exit (hydra-dired-main/body))
+	("o" dired-do-chown)
+	("m" dired-do-chmod)
+	("g" dired-do-chgrp)
+	("q" nil :color blue)
+	)
+
+(defun tl/dired-mark-all ()
+	(interactive)
+	)
 #+END_SRC
+
+#+RESULTS:
+: tl/dired-mark-all
 
 ** hydra-git-gutter
 
