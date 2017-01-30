@@ -3075,7 +3075,7 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
          ^^         ^^         ^^   [_s_] spell checking                      [_q_]uit
 
 	"
-	("e" hydra-next-error/body :exit t)
+	("e" hydra-compilation-error/body :exit t)
 	("c" hydra-flycheck/body :exit t)
 	("s" hydra-flyspell/body :exit t)
 	("q" nil :color blue)
@@ -3490,32 +3490,57 @@ Automatically open the hydra with ibuffer:
 			("q"  nil))
 #+END_SRC
 
-** hydra-next-error
+** hydra-compilation-error
 
 #+BEGIN_SRC emacs-lisp
-		;; inspired by https://github.com/abo-abo/hydra/wiki/Compilation
-		(defhydra hydra-next-error
-			(global-map "C-x")
+;; inspired by https://github.com/abo-abo/hydra/wiki/Compilation
+(defhydra hydra-compilation-error (:hint nil :body-pre (hydra-compilation-error-body-pre))
 	"
 	    Compilation errors
     ╭────────────────────╯
-	    [_j_] next error        [_h_] first error    [_q_]uit
-	    [_k_] previous error    [_l_] last error
+	      [_<up>_] previous error   [_l_] list errors    [_q_]uit
+	    [_<down>_] next error       
 	"
-			("`" next-error     nil)
-			("j" next-error     nil :bind nil)
-			("k" previous-error nil :bind nil)
-			("h" first-error    nil :bind nil)
-			("l" (condition-case err
-							 (while t
-								 (next-error))
-						 (user-error nil))
-			 nil :bind nil)
-			("q" nil            nil :color blue))
-#+END_SRC
+	("`" hydra-compilation-error-next)
+	("j" hydra-compilation-error-next)
+	("<down>" hydra-compilation-error-next)
+	("k" hydra-compilation-error-previous)
+	("<up>" hydra-compilation-error-previous)
+	("l" hydra-compilation-error-list :exit t)
+	("o" hydra-compilation-error-list :exit t)
+	("q" hydra-compilation-error-quit nil :color blue))
 
-#+RESULTS:
-: hydra-next-error/body
+(defun hydra-compilation-error-next ()
+	(interactive)
+  (when (string-equal (buffer-mode) "latex-mode")
+		(TeX-next-error 1)))
+
+(defun hydra-compilation-error-previous ()
+	(interactive)
+  (when (string-equal (buffer-mode) "latex-mode")
+		(TeX-previous-error 1)))
+
+(defun hydra-compilation-error-list ()
+	(interactive)
+  (when (string-equal (buffer-mode) "latex-mode")
+		(TeX-error-overview)))
+
+(defun hydra-compilation-error-quit ()
+	(interactive)
+  (when (string-equal (buffer-mode) "latex-mode")
+		(delete-other-windows)))
+
+(defun hydra-compilation-error-body-pre ()
+	(interactive)
+  (when (string-equal (buffer-mode) "latex-mode")
+		(TeX-next-error 1)))
+
+(defun buffer-mode (&optional buffer-or-name)
+  "Returns the major mode associated with a buffer.
+If buffer-or-name is nil return current buffer's mode."
+  (buffer-local-value 'major-mode
+											(if buffer-or-name (get-buffer buffer-or-name) (current-buffer))))
+#+END_SRC
 
 ** hydra-multiple-cursors
 
