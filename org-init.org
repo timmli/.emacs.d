@@ -457,7 +457,7 @@ http://sqlite.org/download.html
 		(setq helm-dash-browser-func 'eww)		; use internal web browser
 		(setq helm-dash-docsets-path (expand-file-name (concat home-directory "/ownCloud/.docsets"))) ; FIXME: under windows, helm-dash does not install docsets here but in ~/AppData/... Because of missing tar command?
 		(add-hook 'latex-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
-		(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("EmacsLisp"))))
+		(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Emacs Lisp"))))
 		(add-hook 'org-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Org_Mode"))))
 		(add-hook 'plantuml-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("PlantUML"))))
 		(add-hook 'sh-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Bash"))))
@@ -3056,9 +3056,6 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 	("<f9>" hydra-f9/body :exit t))
 	(global-set-key (kbd "<f3>") 'hydra-f3/body)
 #+END_SRC
-
-#+RESULTS:
-: hydra-f3/body
 
 ** hydra-f4
 
