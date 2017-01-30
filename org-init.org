@@ -2992,7 +2992,7 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
          ^^  ╭──────┐       
      _<f1>_  │<f2>  │  _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_   _<f8>_        _<f9>_ 
-     Help^^  │Window│  Config^^   Check^^   Refresh^^   New^^    Open^^   Highlight^^   Org^^
+     Help^^  │Window│  Config^^   Check^^   Refresh^^   Mode^^   Open^^   Highlight^^   Org^^
    ╭─────^^──╯      └────────^^────────^^──────────^^───^^───────^^───────^^────────────^^─────╯
  
           ^^  _<up>_                 │      ^^                     [_z_] window undo
@@ -3032,11 +3032,19 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
          ^^   ^^         ╭──────┐       
      _<f1>_    _<f2>_    │<f3>  │  _<f4>_    _<f5>_      _<f6>_   _<f7>_   _<f8>_        _<f9>_ 
-     Help^^    Window^^  │Config│  Check^^   Refresh^^   New^^    Open^^   Highlight^^   Org^^
+     Help^^    Window^^  │Config│  Check^^   Refresh^^   Mode^^   Open^^   Highlight^^   Org^^
    ╭─────^^─────────^^───╯      └───────^^──────────^^───^^───────^^───────^^────────────^^─────╯
  
-          ^^        ^^                  ^^          ^^   ^^       ^^       ^^  [_q_]uit    
+         [_i_] init file           [_p_] package manager      [_m_] macros
+         [_d_] .emacs.d            [_u_] upgrade packages
+         [_c_] customize emacs                                [_q_]uit
 	"
+	("i" find-fil :exit t)
+	("d" find-file :exit t)
+	("c" customize :exit t)
+	("p" paradox-list-packages :exit t)
+	("u" paradox-upgrade-packages :exit t)
+	("m" hydra-macro/body :exit t)
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
 	("<f2>" hydra-f2/body :exit t)
@@ -3059,7 +3067,7 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
          ^^         ^^         ^^  ╭─────┐       
      _<f1>_   _<f2>_     _<f3>_    │<f4> │  _<f5>_      _<f6>_   _<f7>_   _<f8>_        _<f9>_ 
-     Help^^   Window^^   Config^^  │Check│  Refresh^^   New^^    Open^^   Highlight^^   Org^^
+     Help^^   Window^^   Config^^  │Check│  Refresh^^   Mode^^   Open^^   Highlight^^   Org^^
    ╭─────^^─────────^^─────────^^──╯     └─────────^^───^^───────^^───────^^────────────^^─────╯
  
          ^^         ^^         ^^   [_e_] compilation errors 
@@ -3095,7 +3103,7 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
          ^^         ^^         ^^       ^^        ^^     ╭────┐       
      _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_     │<f6>│  _<f7>_   _<f8>_        _<f9>_ 
-     Help^^   Window^^   Config^^   Check^^   Refresh^^  │New │  Open^^   Highlight^^   Org^^
+     Help^^   Window^^   Config^^   Check^^   Refresh^^  │Mode│  Open^^   Highlight^^   Org^^
    ╭─────^^─────────^^─────────^^────────^^──────────^^──╯    └────^^──────────────^^──────^^─╯
  
          ^^         ^^         ^^        ^^          ^^       ^^       ^^       [_q_]uit
@@ -3115,9 +3123,6 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
 #+END_SRC
 
-#+RESULTS:
-: hydra-f6/body
-
 ** hydra-f7
 
 #+BEGIN_SRC emacs-lisp
@@ -3128,7 +3133,7 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
          ^^         ^^         ^^       ^^        ^^      ^^      ╭────┐       
      _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_      _<f6>_  │<f7>│  _<f8>_       _<f9>_ 
-     Help^^   Window^^   Config^^   Check^^   Refresh^^   New^^   │Open│  Highlight^^  Org^^
+     Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^  │Open│  Highlight^^  Org^^
    ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^──╯    └───────────^^────────╯
  
          ^^         ^^    [_a_] adress book       [_d_] dired/file browser
@@ -3168,7 +3173,7 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
          ^^         ^^         ^^       ^^        ^^      ^^       ^^      ╭─────────┐       
      _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_  │<f8>     │  _<f9>_ 
-     Help^^   Window^^   Config^^   Check^^   Refresh^^   New^^    Open^^  │Highlight│  Org^^
+     Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^  │Highlight│  Org^^
    ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^───────^^──╯         └─────^^─╯
  
         [_c_] highlight changes        [_w_] show/hide whitespaces
@@ -3204,7 +3209,7 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
          ^^         ^^         ^^       ^^        ^^      ^^       ^^       ^^           ╭────┐       
      _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_   _<f8>_       │<f9>│ 
-     Help^^   Window^^   Config^^   Check^^   Refresh^^   New^^    Open^^   Highlight^^  │Org │
+     Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^   Highlight^^  │Org │
    ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^───────^^────────────^^──╯    ╵
  
      ^^  [_a_] agenda  ^^    [_n_] notes   ^^  ^^   ^^  ^^  ^^      [_r_] reload org       	
