@@ -155,8 +155,9 @@
 
 ;; the remaining settings are in org-init.org
 (require 'org)
+(defvar org-init-file "org-init.org")
 (org-babel-load-file
- (expand-file-name "org-init.org"
+ (expand-file-name org-init-file
                    user-emacs-directory))
 
 (put 'dired-find-alternate-file 'disabled nil)

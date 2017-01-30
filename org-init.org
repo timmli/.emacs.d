@@ -3039,8 +3039,8 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
          [_d_] .emacs.d            [_u_] upgrade packages
          [_c_] customize emacs                                [_q_]uit
 	"
-	("i" find-fil :exit t)
-	("d" find-file :exit t)
+	("i" (find-file (expand-file-name org-init-file user-emacs-directory)) :exit t)
+	("d" (find-file user-emacs-directory) :exit t)
 	("c" customize :exit t)
 	("p" paradox-list-packages :exit t)
 	("u" paradox-upgrade-packages :exit t)
@@ -3056,6 +3056,9 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 	("<f9>" hydra-f9/body :exit t))
 	(global-set-key (kbd "<f3>") 'hydra-f3/body)
 #+END_SRC
+
+#+RESULTS:
+: hydra-f3/body
 
 ** hydra-f4
 
