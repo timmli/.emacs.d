@@ -618,6 +618,7 @@ Show details of files and directories:
 
 Don't break lines (FIXME):
 #+BEGIN_SRC emacs-lisp
+(add-hook 'dired-initial-position-hook '(lambda () (setq truncate-lines t)))
 ;; (add-hook 'dired-mode-hook (lambda () (setq truncate-lines t)))
 #+END_SRC
 
@@ -2975,6 +2976,7 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 * hydra
 
 ** hydra: begin
+
 #+BEGIN_SRC emacs-lisp
 	(use-package hydra
 		:ensure t
@@ -3106,7 +3108,7 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
      Help^^   Window^^   Config^^   Check^^   Refresh^^  │Mode│  Open^^   Highlight^^   Org^^
    ╭─────^^─────────^^─────────^^────────^^──────────^^──╯    └────^^──────────────^^──────^^─╯
  
-         ^^         ^^         ^^        ^^          ^^       ^^       ^^       [_q_]uit
+    ^^ _<f6>_: hydra for major mode ^^ ^^ ^^ ^^ ^^ ^^                         [_q_]uit
 	" 
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
@@ -3114,14 +3116,29 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 	("<f3>" hydra-f3/body :exit t)
 	("<f4>" hydra-f4/body :exit t)
 	("<f5>" revert-buffer :exit t)
+	("<f6>" hydra-for-major-mode :exit t)
 	("<f7>" hydra-f7/body :exit t)
 	("<f8>" hydra-f8/body :exit t)
 	("<f9>" hydra-f9/body :exit t)
-
 )
-	(global-set-key (kbd "<f6>") 'hydra-f6/body)
+(global-set-key (kbd "<f6>") 'hydra-f6/body)
+
+(defun hydra-for-major-mode ()
+	(interactive)
+  (when (string-equal (buffer-mode) "dired-mode")
+		(hydra-dired-main/body)))
 
 #+END_SRC
+
+Function to look up the major mode of a buffer:
+#+BEGIN_SRC emacs-lisp
+(defun buffer-mode (&optional buffer-or-name)
+  "Returns the major mode associated with a buffer.
+If buffer-or-name is nil return current buffer's mode."
+  (buffer-local-value 'major-mode
+											(if buffer-or-name (get-buffer buffer-or-name) (current-buffer))))
+#+END_SRC
+
 
 ** hydra-f7
 
@@ -3246,30 +3263,38 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
 #+END_SRC
 
-** TODO COMMENT hydra-dired
+** hydra-dired
 
 https://gitlab.com/xuhdev/dired-quick-sort
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-dired-main (:hint nil)
 "
- ^Navigation^      ^Mark^          ^Actions^          ^View^
--^----------^------^----^----------^-------^----------^----^-------
-                                   _+_: new
-   _<up>_:   ʌ     _m_: mark       _C_: copy to       _g_: refresh
-    _RET_: visit   _u_: unmark     _D_: delete          _s_: sort
-                   _U_: unmark all _P_: change property
-                   _t_: toggle mark                        
- _<down>_:   v     _*_: specific   _R_: move to         _/_: filter
-                                   _Z_: compress
-                                   _=_: diff         _q_: quit dired
-                                                     _Q_: quit hydra
--^----------^---^----^----------^-------^----------^----^----------
+ ^Navigation^            ^^            ^Mark^              ^Actions^             ^View^
+-^----------^------------^^------------^----^--------------^-------^-------------^----^------------
+
+             _<up>_      ^^             _m_: mark           _+_: new						  _g_: refresh              
+  ^^            ʌ        ^^             _u_: unmark         _C_: copy to          _/_: filter 
+  ^^                     ^^             _U_: unmark all     _D_: delete           _s_: sort		 
+  _<left>_  ..     view  _<right>_      _t_: toggle mark    _R_: move to          _(_: details
+  ^^               enter _RET_          _*_: specific       ^^                    
+  ^^                     ^^             ^^                  _P_: change property
+  ^^            v        ^^             ^^                  _Z_: compress				
+            _<down>_     ^^             ^^                  _=_: diff             
+  ^^                     ^^             ^^                  ^^                    _q_: quit dired     
+   _._: home  _j_: jump  _f_: find                          ^^                    _Q_: quit hydra                                     
+                                                    
+-^----------^------------------------^----^---------------^-------^-------------^----^-----------
 "
 
-("+" hydra-dired-new/body)
-("*" hydra-dired-mark/body)
-("P" hydra-dired-new/body)
+("<left>" (lambda () (interactive) (find-alternate-file "..")))
+("<up>" diredp-previous-line)
+("<down>" diredp-next-line)
+("RET" dired-find-file)
+("<right>" dired-view-file)
+("+" hydra-dired-new/body :color blue)
+("*" hydra-dired-mark/body :color blue)
+("P" hydra-dired-new/body :color blue)
 ("O" dired-do-chown)
 ("M" dired-do-chmod)
 ("G" dired-do-chgrp)
@@ -3278,10 +3303,15 @@ https://gitlab.com/xuhdev/dired-quick-sort
 ("R" dired-do-rename)
 ("S" dired-do-symlink)
 ("Z" dired-do-compress)
+("/" dired-narrow)
+("(" dired-hide-details-mode)
+("f" helm-swoop)
+("." (find-file home-directory))
 ("=" diredp-ediff)
 ("g" revert-buffer)
 ("j" dired-goto-file)
 ("f" dired-narrow)
+("s" dired-sort-toggle-or-edit)
 ("m" dired-mark)
 ("u" dired-unmark)
 ("U" dired-unmark-all-marks)
@@ -3289,37 +3319,34 @@ https://gitlab.com/xuhdev/dired-quick-sort
 ("v" dired-view-file)
 ("q" quit-window :color blue)
 ("Q" nil :color blue)
-
 )
 
-
 (defhydra hydra-dired-new (:hint nil :after-exit (hydra-dired-main/body))
-
-	("d" dired-do-create-directory)
-	("s" dired-do-symlink)
-	("h" dired-do-hardlink)
-	("f" find-file)
-	("q" nil :color blue)
+"New"
+	("d" dired-do-create-directory "directory" )
+	("f" find-file "file")
+	("s" dired-do-symlink "symbolic link")
+	("h" dired-do-hardlink "hard link")
+	("q" hydra-dired-main/body "quit" :color blue)
 	)
 
 (defhydra hydra-dired-mark (:hint nil :after-exit (hydra-dired-main/body))
-
-	("d" dired-mark-directories)
-	("s" dired-mark-symlinks)
-	("a" tl/dired-mark-all)
-	("r" dired-mark-files-regexp)
-	("." dired-mark/unmark-extension)
-	("/" dired-mark-sexp)
-	("q" nil :color blue)
-	
+"Mark"
+	("a" tl/dired-mark-all "all")
+	("d" dired-mark-directories "directories")
+	("." dired-mark/unmark-extension "by extension")
+	("s" dired-mark-symlinks "symbolic links")
+	("r" dired-mark-files-regexp "by regexp")
+	("/" dired-mark-sexp "by search term" )
+	("q" hydra-dired-main/body "quit" :color blue)
 	)
 
-
 (defhydra hydra-dired-properties (:hint nil :after-exit (hydra-dired-main/body))
-	("o" dired-do-chown)
-	("m" dired-do-chmod)
-	("g" dired-do-chgrp)
-	("q" nil :color blue)
+"Change"
+	("o" dired-do-chown "owner")
+	("r" dired-do-chmod "rights")
+	("g" dired-do-chgrp "group")
+	("q" hydra-dired-main/body "quit" :color blue)
 	)
 
 (defun tl/dired-mark-all ()
@@ -3534,12 +3561,6 @@ Automatically open the hydra with ibuffer:
 	(interactive)
   (when (string-equal (buffer-mode) "latex-mode")
 		(TeX-next-error 1)))
-
-(defun buffer-mode (&optional buffer-or-name)
-  "Returns the major mode associated with a buffer.
-If buffer-or-name is nil return current buffer's mode."
-  (buffer-local-value 'major-mode
-											(if buffer-or-name (get-buffer buffer-or-name) (current-buffer))))
 #+END_SRC
 
 ** hydra-multiple-cursors
