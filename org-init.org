@@ -3139,7 +3139,6 @@ If buffer-or-name is nil return current buffer's mode."
 											(if buffer-or-name (get-buffer buffer-or-name) (current-buffer))))
 #+END_SRC
 
-
 ** hydra-f7
 
 #+BEGIN_SRC emacs-lisp
@@ -3282,7 +3281,7 @@ https://gitlab.com/xuhdev/dired-quick-sort
   ^^            v        ^^             ^^                  _Z_: compress				
             _<down>_     ^^             ^^                  _=_: diff             
   ^^                     ^^             ^^                  ^^                    _q_: quit dired     
-   _._: home  _j_: jump  _f_: find                          ^^                    _Q_: quit hydra                                     
+   _._: home  _j_: jump  _f_: find                          ^^                    _Q_: quit hydra
                                                     
 -^----------^------------------------^----^---------------^-------^-------------^----^-----------
 "
@@ -3294,7 +3293,7 @@ https://gitlab.com/xuhdev/dired-quick-sort
 ("<right>" dired-view-file)
 ("+" hydra-dired-new/body :color blue)
 ("*" hydra-dired-mark/body :color blue)
-("P" hydra-dired-new/body :color blue)
+("P" hydra-dired-properties/body :color blue)
 ("O" dired-do-chown)
 ("M" dired-do-chmod)
 ("G" dired-do-chgrp)
@@ -3322,23 +3321,23 @@ https://gitlab.com/xuhdev/dired-quick-sort
 )
 
 (defhydra hydra-dired-new (:hint nil :after-exit (hydra-dired-main/body))
-"New"
-	("d" dired-do-create-directory "directory" )
-	("f" find-file "file")
-	("s" dired-do-symlink "symbolic link")
-	("h" dired-do-hardlink "hard link")
+	"New"
+	("d" dired-create-directory "directory" :exit t)
+	("f" find-file "file" :exit t)
+	("s" dired-do-symlink "symbolic link" :exit t)
+	("h" dired-do-hardlink "hard link" :exit t)
 	("q" hydra-dired-main/body "quit" :color blue)
 	)
 
 (defhydra hydra-dired-mark (:hint nil :after-exit (hydra-dired-main/body))
 "Mark"
-	("a" tl/dired-mark-all "all")
-	("d" dired-mark-directories "directories")
-	("." dired-mark/unmark-extension "by extension")
-	("s" dired-mark-symlinks "symbolic links")
-	("r" dired-mark-files-regexp "by regexp")
-	("/" dired-mark-sexp "by search term" )
-	("q" hydra-dired-main/body "quit" :color blue)
+	("a" (dired-mark-files-regexp ".*") "all" :exit t)
+	("d" dired-mark-directories "directories" :exit t)
+	("." diredp-mark/unmark-extension "by extension" :exit t)
+	("s" dired-mark-symlinks "symbolic links" :exit t)
+	("r" dired-mark-files-regexp "by regexp" :exit t)
+	("/" dired-mark-sexp "by search term" :exit t)
+	("q" hydra-dired-main/body "quit" :exit t)
 	)
 
 (defhydra hydra-dired-properties (:hint nil :after-exit (hydra-dired-main/body))
@@ -3348,14 +3347,7 @@ https://gitlab.com/xuhdev/dired-quick-sort
 	("g" dired-do-chgrp "group")
 	("q" hydra-dired-main/body "quit" :color blue)
 	)
-
-(defun tl/dired-mark-all ()
-	(interactive)
-	)
 #+END_SRC
-
-#+RESULTS:
-: tl/dired-mark-all
 
 ** hydra-git-gutter
 
