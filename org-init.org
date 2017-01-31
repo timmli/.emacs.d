@@ -520,6 +520,9 @@ http://sqlite.org/download.html
 	("\\.html?\\'" . web-mode)
 	("\\.xml\\'" . web-mode)
 	("\\.css\\'" . web-mode)
+	:config
+	;; highlight enclosing tags of the element under cursor
+  (setq web-mode-enable-current-element-highlight t)
 )
 #+END_SRC
 
@@ -1794,10 +1797,12 @@ Sequence is important!
 (use-package company
 	:ensure t
 	:config
+
 	(use-package company-auctex
 		:ensure t
 		:config (company-auctex-init))
 	(add-hook 'after-init-hook 'global-company-mode)
+
 	;; yasnippet integration
 	(defvar company-mode/enable-yas t
 		"Enable yasnippet for all backends.")
@@ -1808,6 +1813,8 @@ Sequence is important!
 			(append (if (consp backend) backend (list backend))
 							'(:with company-yasnippet))))
 	(setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+
+	
 	;; some general variables
 	(setq company-idle-delay 0.3
 				company-minimum-prefix-length 1
@@ -3126,8 +3133,9 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 (defun hydra-for-major-mode ()
 	(interactive)
   (when (string-equal (buffer-mode) "dired-mode")
-		(hydra-dired-main/body)))
-
+		(hydra-dired-main/body))
+	(when (string-equal (buffer-mode) "org-mode")
+		(hydra-org-main/body)))
 #+END_SRC
 
 Function to look up the major mode of a buffer:
@@ -3354,8 +3362,39 @@ https://gitlab.com/xuhdev/dired-quick-sort
 	)
 #+END_SRC
 
-#+RESULTS:
-: tl/dired-mark-all
+** hydra-org
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-org-main (:hint nil)
+"Org-mode"
+("c" hydra-org-columns/body "columns" :exit t)
+("q" nil :color blue)
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-org-columns (:hint nil :color pink :body-pre (org-columns))
+"Org-mode columns"
+(">" org-columns-widen "widen")
+("<" org-columns-narrow "narrow")
+("a" org-columns-edit-allowed "allowed values" :exit t)
+("c" org-columns-content "content" :exit t)
+("e" org-columns-edit-value "edit" :exit t)
+("n" org-columns-next-allowed-value "next allowed value")
+("p" org-columns-previous-allowed-value "previous allowed value")
+("r" org-columns-redo "refresh")
+("s" org-columns-edit-attributes "select attribute")
+("t" org-columns-todo "todo")
+("M-S-<left>" org-columns-delete "delete")
+("M-S-<right>" org-columns-new "new")
+("M-<right>" org-columns-move-right "move right")
+("M-<left>" org-columns-move-left "move left")
+("<delete>" org-columns-delete)
+("v" org-columns-show-value "show value")
+("q" org-columns-quit :color blue)
+)
+#+END_SRC
+
 
 ** hydra-git-gutter
 
