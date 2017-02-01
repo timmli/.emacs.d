@@ -1100,6 +1100,11 @@ http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
 
 *** Agenda
 
+Don't split window when opening agenda:
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-window-setup "only-window")
+#+END_SRC
+
 Show notifications of agenda events:
 #+BEGIN_SRC emacs-lisp
 (use-package org-alert
