@@ -619,10 +619,21 @@ Show details of files and directories:
           (lambda () (dired-hide-details-mode -1)))
 #+END_SRC
 
-Don't break lines (FIXME):
+Don't break lines:
 #+BEGIN_SRC emacs-lisp
 (add-hook 'dired-initial-position-hook '(lambda () (setq truncate-lines t)))
 ;; (add-hook 'dired-mode-hook (lambda () (setq truncate-lines t)))
+#+END_SRC
+
+Order directories first (only windows?):
+#+BEGIN_SRC emacs-lisp
+(setq ls-lisp-dirs-first t)
+#+END_SRC
+
+Other settings: http://oremacs.com/2015/01/13/dired-options/
+
+#+BEGIN_SRC emacs-lisp
+(setq dired-listing-switches "-laGh1v")
 #+END_SRC
 
 *** TODO COMMENT Open binary files in external programm
