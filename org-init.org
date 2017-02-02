@@ -576,12 +576,12 @@ Depends on plantuml.jar and Gaphviz (http://www.graphviz.org).
 #+BEGIN_SRC emacs-lisp
 (use-package plantuml-mode
   :ensure t
-  :mode "\\.plu\\'"
+  :mode ("\\.plu\\'" "\\.puml\\'") 
   :init
 	(setq org-plantuml-jar-path
-				(expand-file-name "plantuml.jar" org-directory))
+				(expand-file-name "plantuml.jar" wemacs-dir))
 	(setq plantuml-jar-path
-				(expand-file-name "plantuml.jar" org-directory)))
+				(expand-file-name "plantuml.jar" wemacs-dir)))
 #+END_SRC
 
 ** dired

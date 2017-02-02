@@ -60,6 +60,12 @@
       (expand-file-name "lisp" user-emacs-directory))
 (add-to-list 'load-path lisp-dir)
 
+;; set path to wemacs folder with additional third-party software
+(defvar wemacs-dir)
+(setq wemacs-dir
+      (expand-file-name "ownCloud/wemacs" home-directory))
+
+
 ;; set path to notes directory
 (defvar notes-dir)
 (setq notes-dir
