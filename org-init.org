@@ -455,7 +455,7 @@ http://sqlite.org/download.html
 		(setq helm-dash-common-docsets			; active in all buffers
 					'())
 		(setq helm-dash-browser-func 'eww)		; use internal web browser
-		(setq helm-dash-docsets-path (expand-file-name (concat home-directory "/ownCloud/.docsets"))) ; FIXME: under windows, helm-dash does not install docsets here but in ~/AppData/... Because of missing tar command?
+		(setq helm-dash-docsets-path (expand-file-name (concat wemacs-dir "/docsets"))) ; FIXME: under windows, helm-dash does not install docsets here but in ~/AppData/... Because of missing tar command?
 		(add-hook 'latex-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
 		(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Emacs Lisp"))))
 		(add-hook 'org-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Org_Mode"))))
@@ -809,21 +809,46 @@ http://doc.norang.ca/org-mode.html#Setup
 
 *** Files
 
-#+BEGIN_SRC emacs-lisp
-	(defvar org-directory)
-	(setq org-directory (concat notes-dir "/org"))
-	(global-set-key (kbd "<f9> u") 'tl/update-org-agenda-files)
+*************** TODO update of org-agenda-files does not look arbitrarily deep in the org folder
+*************** END
 
-	(defun tl/update-org-agenda-files ()
-		(interactive)
-		(setq org-agenda-files
-					(append
-					 (list org-directory)
-					 (file-expand-wildcards (concat org-directory "/*/*.org"))))
-		(add-links-to-org-agenda-files) ; of the current buffer
-		(customize-save-variable 'org-agenda-files org-agenda-files)
-		(message "org-agenda-files updated")
-		)
+#+BEGIN_SRC emacs-lisp
+(defvar org-directory)
+(setq org-directory (concat notes-dir "/org"))
+(global-set-key (kbd "<f9> u") 'tl/update-org-agenda-files)
+
+(defun tl/update-org-agenda-files ()
+	(interactive)
+  (setq org-agenda-files ())
+  (load-org-agenda-files-recursively (expand-file-name (concat org-directory "/"))) ; trailing slash required
+
+	;; ;; The following code does not search the org directory recursively:
+  ;; (setq org-agenda-files
+	;; 			(append
+	;; 			 (list org-directory)
+	;; 			 (file-expand-wildcards (concat org-directory "/*/*.org"))))
+
+	(add-links-to-org-agenda-files) ; of the current buffer
+	(customize-save-variable 'org-agenda-files org-agenda-files)
+	(message "org-agenda-files updated")
+	)
+
+;; Copied from http://stackoverflow.com/a/26548971/6452961
+(defun load-org-agenda-files-recursively (dir) "Find all directories in DIR."
+			 (unless (file-directory-p dir) (error "Not a directory `%s'" dir))
+			 (unless (equal (directory-files dir nil org-agenda-file-regexp t) nil)
+				 (add-to-list 'org-agenda-files dir)
+				 )
+			 (dolist (file (directory-files dir nil nil t))
+				 (unless (member file '("." ".."))
+					 (let ((file (concat dir file "/")))
+						 (when (file-directory-p file)
+							 (load-org-agenda-files-recursively file)
+							 )
+						 )
+					 )
+				 )
+			 )
 
 	;; (if (eq org-agenda-files nil)						; FIXME
 	;; 		()
@@ -1124,6 +1149,7 @@ Show notifications of agenda events:
 #+END_SRC
 
 Add linked org-mode files to =org-agenda-files=:
+(FIXME: Does it capture links inside properties?)
 #+BEGIN_SRC emacs-lisp 
 	(defun add-links-to-org-agenda-files ()
 		"Inspired by: http://stackoverflow.com/questions/38061773/add-linked-org-files-to-org-agenda-files"
@@ -3344,12 +3370,12 @@ https://gitlab.com/xuhdev/dired-quick-sort
 ("Q" nil :color blue)
 )
 
-(defhydra hydra-dired-new (:hint nil :after-exit (hydra-dired-main/body))
+(defhydra hydra-dired-new (:hint nil )
 	"New"
-	("d" dired-create-directory "directory" :exit t)
+	("d" dired-create-directory "directory"  :exit t :after-exit (hydra-dired-main/body))
 	("f" find-file "file" :exit t)
-	("s" dired-do-symlink "symbolic link" :exit t)
-	("h" dired-do-hardlink "hard link" :exit t)
+	("s" dired-do-symlink "symbolic link" :exit t :after-exit (hydra-dired-main/body))
+	("h" dired-do-hardlink "hard link" :exit t :after-exit (hydra-dired-main/body))
 	("q" hydra-dired-main/body "quit" :color blue)
 	)
 
