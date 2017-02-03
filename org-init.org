@@ -2254,17 +2254,6 @@ point reaches the beginning or end of the buffer, stop there."
 	(eval-after-load 'image '(require 'image+))
 	:config
 	(setq imagex-convert-command "magick")  ; "convert" does not work on Windows machines 
-	(eval-after-load 'image+
-		`(when (require 'hydra nil t)
-			 (defhydra imagex-sticky-binding (global-map "C-x C-l")
-				 "Manipulating Image"
-				 ("+" imagex-sticky-zoom-in "zoom in")
-				 ("-" imagex-sticky-zoom-out "zoom out")
-				 ("M" imagex-sticky-maximize "maximize")
-				 ("O" imagex-sticky-restore-original "restore original")
-				 ("S" imagex-sticky-save-image "save file")
-				 ("r" imagex-sticky-rotate-right "rotate right")
-				 ("l" imagex-sticky-rotate-left "rotate left"))))
 	)
 #+END_SRC
 
@@ -3199,6 +3188,8 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 	(interactive)
   (when (string-equal (buffer-mode) "dired-mode")
 		(hydra-dired-main/body))
+  (when (string-equal (buffer-mode) "image-mode")
+		(hydra-image/body))
 	(when (string-equal (buffer-mode) "org-mode")
 		(hydra-org-main/body)))
 #+END_SRC
@@ -3593,6 +3584,24 @@ Automatically open the hydra with ibuffer:
 #+BEGIN_SRC emacs-lisp
 (add-hook 'ibuffer-hook #'hydra-ibuffer-main/body)
 #+END_SRC
+
+** hydra-image
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-image ()
+	"Manipulate image"
+	("+" imagex-sticky-zoom-in "zoom in")
+	("-" imagex-sticky-zoom-out "zoom out")
+	("m" imagex-sticky-maximize "maximize")
+	("o" imagex-sticky-restore-original "original")
+	;; ("S" imagex-sticky-save-image "save")
+	("r" imagex-sticky-rotate-right "rotate right")
+	("l" imagex-sticky-rotate-left "rotate left"))
+
+#+END_SRC
+
+#+RESULTS:
+: hydra-image/body
 
 ** hydra-flycheck
 
