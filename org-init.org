@@ -470,6 +470,15 @@ http://sqlite.org/download.html
 		)
 #+END_SRC
 
+*** COMMENT helm-tramp
+
+Does not work under windows so far. Therefore I commented this out:
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-tramp
+	:ensure t)
+#+END_SRC
+
 ** Keys
 
 #+BEGIN_SRC emacs-lisp
