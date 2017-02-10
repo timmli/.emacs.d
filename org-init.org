@@ -3079,9 +3079,9 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 	"
 
          ^^  ╭──────┐       
-     _<f1>_  │<f2>  │  _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_   _<f8>_        _<f9>_ 
-     Help^^  │Window│  Config^^   Check^^   Refresh^^   Mode^^   Open^^   Highlight^^   Org^^
-   ╭─────^^──╯      └────────^^────────^^──────────^^───^^───────^^───────^^────────────^^─────╯
+     _<f1>_  │<f2>  │  _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_   _<f8>_   _<f9>_ 
+     Help^^  │Window│  Config^^   Check^^   Refresh^^   Mode^^   Open^^   Mark^^   Org^^
+   ╭─────^^──╯      └────────^^────────^^──────────^^───^^───────^^───────^^───────^^────╯
  
           ^^  _<up>_                 │      ^^                     [_z_] window undo
           ^^   ↑   ^^                │split [_h_]orizontally       [_Z_] window redo
@@ -3119,9 +3119,9 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 	"
 
          ^^   ^^         ╭──────┐       
-     _<f1>_    _<f2>_    │<f3>  │  _<f4>_    _<f5>_      _<f6>_   _<f7>_   _<f8>_        _<f9>_ 
-     Help^^    Window^^  │Config│  Check^^   Refresh^^   Mode^^   Open^^   Highlight^^   Org^^
-   ╭─────^^─────────^^───╯      └───────^^──────────^^───^^───────^^───────^^────────────^^─────╯
+     _<f1>_    _<f2>_    │<f3>  │  _<f4>_    _<f5>_      _<f6>_   _<f7>_   _<f8>_   _<f9>_ 
+     Help^^    Window^^  │Config│  Check^^   Refresh^^   Mode^^   Open^^   Mark^^   Org^^
+   ╭─────^^─────────^^───╯      └───────^^──────────^^───^^───────^^───────^^───────^^────╯
  
          [_i_] init file           [_p_] package manager      [_m_] macros
          [_d_] .emacs.d            [_u_] upgrade packages
@@ -3154,9 +3154,9 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 	"
 
          ^^         ^^         ^^  ╭─────┐       
-     _<f1>_   _<f2>_     _<f3>_    │<f4> │  _<f5>_      _<f6>_   _<f7>_   _<f8>_        _<f9>_ 
-     Help^^   Window^^   Config^^  │Check│  Refresh^^   Mode^^   Open^^   Highlight^^   Org^^
-   ╭─────^^─────────^^─────────^^──╯     └─────────^^───^^───────^^───────^^────────────^^─────╯
+     _<f1>_   _<f2>_     _<f3>_    │<f4> │  _<f5>_      _<f6>_   _<f7>_   _<f8>_   _<f9>_ 
+     Help^^   Window^^   Config^^  │Check│  Refresh^^   Mode^^   Open^^   Mark^^   Org^^
+   ╭─────^^─────────^^─────────^^──╯     └─────────^^───^^───────^^───────^^───────^^─────╯
  
          ^^         ^^         ^^   [_e_] compilation errors 
          ^^         ^^         ^^   [_c_] code checking
@@ -3190,9 +3190,9 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 	"
 
          ^^         ^^         ^^       ^^        ^^     ╭────┐       
-     _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_     │<f6>│  _<f7>_   _<f8>_        _<f9>_ 
-     Help^^   Window^^   Config^^   Check^^   Refresh^^  │Mode│  Open^^   Highlight^^   Org^^
-   ╭─────^^─────────^^─────────^^────────^^──────────^^──╯    └────^^──────────────^^──────^^─╯
+     _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_     │<f6>│  _<f7>_   _<f8>_   _<f9>_ 
+     Help^^   Window^^   Config^^   Check^^   Refresh^^  │Mode│  Open^^   Mark^^   Org^^
+   ╭─────^^─────────^^─────────^^────────^^──────────^^──╯    └────^^─────────^^──────^^─╯
  
     ^^ _<f6>_: hydra for major mode ^^ ^^ ^^ ^^ ^^ ^^                         [_q_]uit
 	" 
@@ -3237,14 +3237,14 @@ If buffer-or-name is nil return current buffer's mode."
 	"
 
          ^^         ^^         ^^       ^^        ^^      ^^      ╭────┐       
-     _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_      _<f6>_  │<f7>│  _<f8>_       _<f9>_ 
-     Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^  │Open│  Highlight^^  Org^^
-   ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^──╯    └───────────^^────────╯
+     _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_      _<f6>_  │<f7>│  _<f8>_  _<f9>_ 
+     Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^  │Open│  Mark^^  Org^^
+   ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^──╯    └──────^^────────╯
  
          ^^         ^^  [_a_] adress book        [_d_] dired/file browser
          ^^         ^^  [_b_] new buffer         [_e_] emacs shell  
          ^^         ^^  [_i_] buffer overview    [_s_] system shell
-         ^^         ^^  [_c_] calendar           [_m_] magit status                 [_q_]uit
+         ^^         ^^  [_c_] calendar           [_m_] magit status             [_q_]uit
 	" 
 	("a" helm-bbdb :exit t)
 	("c" my-open-calfw :exit t)
@@ -3276,14 +3276,14 @@ If buffer-or-name is nil return current buffer's mode."
 					 :idle 0.2)
 	"
 
-         ^^         ^^         ^^       ^^        ^^      ^^       ^^      ╭─────────┐       
-     _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_  │<f8>     │  _<f9>_ 
-     Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^  │Highlight│  Org^^
-   ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^───────^^──╯         └─────^^─╯
+         ^^         ^^         ^^       ^^        ^^      ^^       ^^      ╭─────┐       
+     _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_  │<f8> │  _<f9>_ 
+     Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^  │Mark │  Org^^
+   ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^───────^^──╯     └─────^^─╯
  
         [_c_] highlight changes        [_w_] show/hide whitespaces
         [_g_] git gutter  
-        [_s_] highlight same symbols   [_r_] mark rectangular                      [_q_]uit
+        [_s_] highlight same symbols   [_r_] mark rectangular                    [_q_]uit
 	"
 	("g" hydra-git-gutter/body :exit t)
 	("c" hydra-highlight-changes/body :exit t)
@@ -3313,13 +3313,13 @@ If buffer-or-name is nil return current buffer's mode."
 					 :idle 0.2)
 	"
 
-         ^^         ^^         ^^       ^^        ^^      ^^       ^^       ^^           ╭────┐       
-     _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_   _<f8>_       │<f9>│ 
-     Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^   Highlight^^  │Org │
-   ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^───────^^────────────^^──╯    ╵
+         ^^         ^^         ^^       ^^        ^^      ^^       ^^       ^^      ╭────┐       
+     _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_   _<f8>_  │<f9>│ 
+     Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^   Mark^^  │Org │
+   ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^───────^^───────^^──╯    ╵
  
-     ^^  [_a_] agenda  ^^    [_n_] notes   ^^  ^^   ^^  ^^  ^^      [_r_] reload org       	
-     ^^  [_d_] deft    ^^    [_t_] todos   ^^  ^^   ^^  ^^  ^^      [_u_] update agenda files
+     ^^  [_a_] agenda  ^^    [_n_] notes   ^^  ^^   ^^  ^^  ^^   [_r_] reload org       	
+     ^^  [_d_] deft    ^^    [_t_] todos   ^^  ^^   ^^  ^^  ^^   [_u_] update agenda files
      ^^  [_c_] capture ^^    [_w_] work in progress ^^  ^^  ^^  ^^ ^^        
      ^^  [_f_] search  ^^                ^^  ^^  ^^  ^^  ^^                      [_q_]uit
 
