@@ -3444,6 +3444,8 @@ https://gitlab.com/xuhdev/dired-quick-sort
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-main (:hint nil)
 "Org-mode"
+("a" org-toggle-archive-tag "archive here" :exit t)
+("A" org-archive-subtree-default "archive outside" :exit t)
 ("c" hydra-org-columns/body "columns" :exit t)
 ("q" nil :color blue)
 )
