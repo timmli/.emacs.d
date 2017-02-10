@@ -879,6 +879,22 @@ http://doc.norang.ca/org-mode.html#Setup
 														 ))
 #+END_SRC
 
+*** Archive
+
+Preserves the first heading of the org-mode file (found in http://orgmode.org/worg/org-hacks.html#orgheadline59):
+
+#+BEGIN_SRC emacs-lisp
+(defadvice org-archive-subtree (around my-org-archive-subtree activate)
+  (let ((org-archive-location
+         (if (save-excursion (org-back-to-heading)
+                             (> (org-outline-level) 1))
+             (concat (car (split-string org-archive-location "::"))
+                     "::* "
+                     (car (org-get-outline-path)))
+           org-archive-location)))
+    ad-do-it))
+#+END_SRC
+
 *** babel
 
 Preserve indentation in source blocks:
