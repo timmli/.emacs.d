@@ -109,6 +109,12 @@
   (message "Warning: custom.el not found.")
 )
 
+;; use ported gnu find command under windows
+;; findutils seems to be faster than gnuwin32
+(when (eq system-type 'windows-nt)
+	(setq find-program
+				(expand-file-name
+				 (concat home-directory "/ownCloud/wemacs/findutils/bin/find"))))
 
 ;;==========================================================
 ;;      PACKAGE MANAGEMENT
