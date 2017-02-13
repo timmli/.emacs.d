@@ -27,7 +27,7 @@
 ;; set home directory
 ;; 1: check HOME variable
 (when (or
-			 (string-equal (getenv "HOME") nil)
+			 (not (getenv "HOME"))
 			 (string-equal (getenv "HOME") "")
 			 )
 	(if (y-or-n-p  "Environment variable HOME not set! Do this now?")
@@ -48,11 +48,7 @@
 (defvar home-directory)
 (setq home-directory default-directory)
 
-(if (or
-		 (string-equal (getenv "EMACS_USER_DIRECTORY") nil)
-		 (string-equal (getenv "EMACS_USER_DIRECTORY") "")
-		 )
-		()
+(when (getenv "EMACS_USER_DIRECTORY")
 	(setq user-emacs-directory
 				(expand-file-name (concat (getenv "EMACS_USER_DIRECTORY") "/"))))
 
@@ -89,7 +85,8 @@
 ;;=========================================================
 
 (when (eq system-type 'windows-nt)
-	
+
+	(defvar wemacs-dir "") 
 	(when (getenv "WEMACS_HOME")
 		 ;; set path to wemacs folder with additional third-party software
 		 (setq wemacs-dir
