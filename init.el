@@ -48,6 +48,14 @@
 (defvar home-directory)
 (setq home-directory default-directory)
 
+(if (or
+		 (string-equal (getenv "EMACS_USER_DIRECTORY") nil)
+		 (string-equal (getenv "EMACS_USER_DIRECTORY") "")
+		 )
+		()
+	(setq user-emacs-directory
+				(expand-file-name (concat (getenv "EMACS_USER_DIRECTORY") "/"))))
+
 ;; set path to settings
 (defvar settings-dir)
 (setq settings-dir
@@ -59,12 +67,6 @@
 (setq lisp-dir
       (expand-file-name "lisp" user-emacs-directory))
 (add-to-list 'load-path lisp-dir)
-
-;; set path to wemacs folder with additional third-party software
-(defvar wemacs-dir)
-(setq wemacs-dir
-      (expand-file-name "ownCloud/wemacs" home-directory))
-
 
 ;; set path to notes directory
 (defvar notes-dir)
@@ -81,12 +83,36 @@
 (setq-default save-place t)
 (setq save-place-file (expand-file-name ".places" user-emacs-directory))
 
-(if (eq system-type 'windows-nt)
-		;; make PC keyboard's Win key to type Super or Hyper, for emacs running on Windows.
-		(progn
-			(setq w32-pass-lwindow-to-system nil)
-			(setq w32-lwindow-modifier 'super) ; Left Windows key
-			))
+
+;;==========================================================
+;;      WEMACS
+;;=========================================================
+
+(when (eq system-type 'windows-nt)
+
+	;; set path to wemacs folder with additional third-party software
+	(defvar wemacs-dir)
+	(setq wemacs-dir
+				(expand-file-name (getenv "WEMACS_HOME")))
+
+	;; (setq exec-path (expand-file-name (concat (getenv "WEMACS_PATH") ";" (getenv "PATH"))))
+	(setenv "PATH" (expand-file-name (concat (getenv "WEMACS_PATH") ";" (getenv "PATH"))))
+	
+	;; use ported gnu find command under windows
+	;; findutils seems to be faster than gnuwin32
+	(setq find-program
+				(expand-file-name
+				 (concat wemacs-dir "/findutils/bin/find")))
+
+	;; make PC keyboard's Win key to type Super or Hyper, for emacs running on Windows.
+	(progn
+		(setq w32-pass-lwindow-to-system nil)
+		(setq w32-lwindow-modifier 'super) ; Left Windows key
+		)	
+
+
+
+	)
 
 ;;==========================================================
 ;;      CUSTOM.EL
@@ -108,13 +134,6 @@
     (load custom-file)
   (message "Warning: custom.el not found.")
 )
-
-;; use ported gnu find command under windows
-;; findutils seems to be faster than gnuwin32
-(when (eq system-type 'windows-nt)
-	(setq find-program
-				(expand-file-name
-				 (concat home-directory "/ownCloud/wemacs/findutils/bin/find"))))
 
 ;;==========================================================
 ;;      PACKAGE MANAGEMENT
