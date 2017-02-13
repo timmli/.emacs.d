@@ -95,14 +95,16 @@
 	(setq wemacs-dir
 				(expand-file-name (getenv "WEMACS_HOME")))
 
+	;; using setenv will make available the PATH variable also to the emacs shells
 	;; (setq exec-path (expand-file-name (concat (getenv "WEMACS_PATH") ";" (getenv "PATH"))))
 	(setenv "PATH" (expand-file-name (concat (getenv "WEMACS_PATH") ";" (getenv "PATH"))))
-	
-	;; use ported gnu find command under windows
-	;; findutils seems to be faster than gnuwin32
-	(setq find-program
-				(expand-file-name
-				 (concat wemacs-dir "/findutils/bin/find")))
+
+  ;; this can be left implicit
+	;; ;; use ported gnu find command under windows
+	;; ;; findutils seems to be faster than gnuwin32
+	;; (setq find-program
+	;; 			(expand-file-name
+	;; 			 (concat wemacs-dir "/findutils/bin/find")))
 
 	;; make PC keyboard's Win key to type Super or Hyper, for emacs running on Windows.
 	(progn
