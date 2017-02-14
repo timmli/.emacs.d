@@ -1,0 +1,39 @@
+# -*- mode: snippet -*-
+# name: header for org-reveal
+# key: reveal
+# condition: (eq 1 (line-number-at-pos))
+# --
+#+TITLE: ${1:Title of slidedeck}
+#+AUTHOR: `user-full-name`
+#+EMAIL: `user-mail-address`
+
+#+REVEAL_DEFAULT_FRAG_STYLE: `(or org-reveal-default-frag-style "nil")`
+#+REVEAL_EXTRA_CSS: `(or (< 0 (length org-reveal-extra-css)) "nil")`
+#+REVEAL_EXTRA_JS: `(or (< 0 (length org-reveal-extra-js)) "nil")`
+#+REVEAL_HLEVEL: `org-reveal-hlevel`
+#+REVEAL_MARGIN: `org-reveal-margin`
+#+REVEAL_MATHJAX_URL: `org-reveal-mathjax`
+#+REVEAL_MAX_SCALE: `org-reveal-max-scale`
+#+REVEAL_MIN_SCALE: `org-reveal-min-scale`
+#+REVEAL_PLUGINS: `org-reveal-plugins`
+#+REVEAL_ROOT: `org-reveal-root`
+#+REVEAL_SLIDE_NUMBER: `org-reveal-slide-number`
+#+REVEAL_SPEED: `org-reveal-transition-speed`
+#+REVEAL_THEME: ${2:beige|black|blood|league|moon|night|serif|simple|sky|solarized|white}
+#+REVEAL_TITLE_SLIDE: `org-reveal-title-slide`
+#+REVEAL_TITLE_SLIDE_BACKGROUND: nil
+#+REVEAL_TRANS: ${3:none|cube|fade|concave|convex|page|slide|zoom}
+
+#+OPTIONS: num:`(or org-export-with-section-numbers "nil")`
+#+OPTIONS: toc:`(or org-export-with-toc "nil")`
+#+OPTIONS: mathjax:`(or org-reveal-mathjax "nil")`
+#+OPTIONS: reveal_single_file:`(or org-reveal-single-file "nil")`
+#+OPTIONS: reveal_control:`(or org-reveal-control "nil")`
+#+OPTIONS: reveal-progress:`(or org-reveal-progress "nil")`
+#+OPTIONS: reveal_history:`(or org-reveal-history "nil")`
+#+OPTIONS: reveal_center:`(or org-reveal-center "nil")`
+#+OPTIONS: reveal_rolling_links:`(or org-reveal-rolling-links "nil")`
+#+OPTIONS: reveal_keyboard:`(or org-reveal-keyboard "nil")`
+#+OPTIONS: reveal_overview:`(or org-reveal-overview "nil")`
+
+$0
