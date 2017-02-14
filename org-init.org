@@ -1886,7 +1886,6 @@ Sequence is important!
 							'(:with company-yasnippet))))
 	(setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
 
-	
 	;; some general variables
 	(setq company-idle-delay 0.3
 				company-minimum-prefix-length 1
@@ -1904,10 +1903,12 @@ Sequence is important!
 	     ;; (define-key company-active-map (kbd "<tab>") 'company-complete-common)  ; Insert the common part of all candidates.  
 	     ;; (define-key company-active-map (kbd "<tab>") 'company-select-next))
 		))
+
 	(use-package company-flx
 		:ensure t
 		:config
 		(company-flx-mode +1))
+
 	;; add company to org-mode
  	(add-to-list 'company-backends 'company-capf)
 	(defun add-pcomplete-to-capf ()
@@ -3095,17 +3096,15 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 		(:hint nil
 					 :idle 0.2)
 	"
-
          ^^  ╭──────┐       
      _<f1>_  │<f2>  │  _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_   _<f8>_   _<f9>_ 
      Help^^  │Window│  Config^^   Check^^   Refresh^^   Mode^^   Open^^   Mark^^   Org^^
    ╭─────^^──╯      └────────^^────────^^──────────^^───^^───────^^───────^^───────^^────╯
- 
-          ^^  _<up>_                 │      ^^                     [_z_] window undo
-          ^^   ↑   ^^                │split [_h_]orizontally       [_Z_] window redo
-    _<left>_ ←   → _<right>_         │      ^^                     [_n_] new frame
-          ^^   ↓   ^^               ────────^^─────────────               
-          ^^ _<down>_                split [_v_]ertically              [_q_]uit    
+          ^^  _<up>_               │      ^^                    [_z_] window undo
+          ^^   ↑   ^^              │split [_h_]orizontally      [_Z_] window redo
+    _<left>_ ←   → _<right>_       │      ^^                    [_n_] new frame
+          ^^   ↓   ^^             ────────^^─────────────              
+          ^^ _<down>_              split [_v_]ertically             [_q_]uit    
 	"
 	("<down>" windmove-down :exit t)
 	("<up>" windmove-up :exit t)
@@ -3170,16 +3169,13 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 		(:hint nil
 					 :idle 0.2)
 	"
-
          ^^         ^^         ^^  ╭─────┐       
      _<f1>_   _<f2>_     _<f3>_    │<f4> │  _<f5>_      _<f6>_   _<f7>_   _<f8>_   _<f9>_ 
      Help^^   Window^^   Config^^  │Check│  Refresh^^   Mode^^   Open^^   Mark^^   Org^^
    ╭─────^^─────────^^─────────^^──╯     └─────────^^───^^───────^^───────^^───────^^─────╯
  
-         ^^         ^^         ^^   [_e_] compilation errors 
-         ^^         ^^         ^^   [_c_] code checking
-         ^^         ^^         ^^   [_s_] spell checking                      [_q_]uit
-
+      [_e_] compilation errors      [_c_] code checking     [_s_] spell checking 
+         ^^         ^^         ^^                  ^^   ^^       ^^       ^^    [_q_]uit
 	"
 	("e" hydra-compilation-error/body :exit t)
 	("c" hydra-flycheck/body :exit t)
@@ -3201,19 +3197,22 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
 ** hydra-f6
 
-#+BEGIN_SRC emacs-lisp
-	(defhydra hydra-f6
-		(:hint nil
-					 :idle 0.2)
+#+BEGIN_SRC 
+(defvar hydra-f6-menu
 	"
-
          ^^         ^^         ^^       ^^        ^^     ╭────┐       
      _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_     │<f6>│  _<f7>_   _<f8>_   _<f9>_ 
      Help^^   Window^^   Config^^   Check^^   Refresh^^  │Mode│  Open^^   Mark^^   Org^^
    ╭─────^^─────────^^─────────^^────────^^──────────^^──╯    └────^^─────────^^──────^^─╯
  
     ^^ _<f6>_: hydra for major mode ^^ ^^ ^^ ^^ ^^ ^^                         [_q_]uit
-	" 
+	"
+)
+
+	(defhydra hydra-f6-old
+		(:hint nil
+					 :idle 0.2)
+(concat hydra-f6-menu) 
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
 	("<f2>" hydra-f2/body :exit t)
@@ -3225,16 +3224,21 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 	("<f8>" hydra-f8/body :exit t)
 	("<f9>" hydra-f9/body :exit t)
 )
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "<f6>") 'hydra-f6/body)
 
-(defun hydra-for-major-mode ()
+(defun hydra-f6/body () ;hydra-for-major-mode ()
 	(interactive)
-  (when (string-equal (buffer-mode) "dired-mode")
-		(hydra-dired-main/body))
-  (when (string-equal (buffer-mode) "image-mode")
-		(hydra-image/body))
-	(when (string-equal (buffer-mode) "org-mode")
-		(hydra-org-main/body)))
+  (if (string-equal (buffer-mode) "dired-mode")
+		(hydra-dired-main/body)
+    (if (string-equal (buffer-mode) "image-mode")
+				(hydra-image/body)
+			(if (string-equal (buffer-mode) "org-mode")
+					(hydra-org-main/body)
+				(message (concat "no hydra defined for major mode")))))
+)
 #+END_SRC
 
 Function to look up the major mode of a buffer:
@@ -3253,7 +3257,6 @@ If buffer-or-name is nil return current buffer's mode."
 	(:hint nil
 				 :idle 0.2)
 	"
-
          ^^         ^^         ^^       ^^        ^^      ^^      ╭────┐       
      _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_      _<f6>_  │<f7>│  _<f8>_  _<f9>_ 
      Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^  │Open│  Mark^^  Org^^
@@ -3293,7 +3296,6 @@ If buffer-or-name is nil return current buffer's mode."
 		(:hint nil
 					 :idle 0.2)
 	"
-
          ^^         ^^         ^^       ^^        ^^      ^^       ^^      ╭─────┐       
      _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_  │<f8> │  _<f9>_ 
      Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^  │Mark │  Org^^
@@ -3330,7 +3332,6 @@ If buffer-or-name is nil return current buffer's mode."
 		(:hint nil
 					 :idle 0.2)
 	"
-
          ^^         ^^         ^^       ^^        ^^      ^^       ^^       ^^      ╭────┐       
      _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_   _<f8>_  │<f9>│ 
      Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^   Mark^^  │Org │
@@ -3852,6 +3853,25 @@ Taken from https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_
 			("r" highlight-symbol-query-replace)
 			("l" highlight-symbol-list-all)
 			("q" highlight-symbol-remove-all :color blue))
+#+END_SRC
+
+** COMMENT hydra-transpose
+
+Copied from https://github.com/abo-abo/hydra/wiki/Emacs
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-c m")
+    (defhydra hydra-transpose (:color red)
+    "Transpose"
+     ("c" transpose-chars "characters")
+     ("w" transpose-words "words")
+     ("o" org-transpose-words "Org mode words")
+     ("l" transpose-lines "lines")
+     ("s" transpose-sentences "sentences")
+     ("e" org-transpose-elements "Org mode elements")
+     ("p" transpose-paragraphs "paragraphs")
+     ("t" org-table-transpose-table-at-point "Org mode table")
+     ("q" nil "cancel" :color blue)))
 #+END_SRC
 
 ** TODO hydra-macro
