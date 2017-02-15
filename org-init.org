@@ -201,6 +201,13 @@ Inspired by https://ogbe.net/blog/toggle-serif.html
                (message "Restored default fonts."))))))
 #+END_SRC
 
+** Overlays
+
+#+BEGIN_SRC emacs-lisp
+(use-package ov
+  :ensure t)
+#+END_SRC
+
 * Minibuffer
 
 Shorten yes/no answers to y/n:
@@ -948,7 +955,7 @@ Preserve indentation in source blocks:
 **** Color text
 
 #+BEGIN_SRC emacs-lisp
-(load-file "org-colored-text.el")
+(require 'org-colored-text)
 #+END_SRC
 
 **** Fonts
@@ -3109,6 +3116,69 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
 #+END_SRC
 
+** TODO hydra-f1
+
+See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_real_cool_hydras_to_share/cspqaly/
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-f1 (:exit t :hint nil)
+
+    "
+    ╭────┐      
+    │<f1>│  _<f2>_     _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_   _<f8>_   _<f9>_ 
+    │Help│  Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^   Mark^^   Org^^
+   ╭╯    └──^^─────────^^─────────^^────────^^──────────^^───────^^───────^^───────^^────╯
+
+    Describe      ^^Keys                     ^^Elisp           ^^Documentation
+    --------------^^-------------------------^^----------------^^---------------
+    _m_ode          single _k_eybinding        _a_propros        _i_nfo
+    _p_ackage       available _b_indings       _f_unction        _d_ocsets
+    _c_ursor        _w_here is key             _v_ariable        _n_: man
+
+  "
+    ;; Boring help commands...
+    ("e" view-echo-area-messages "messages")
+    ("l" view-lossage "lossage")
+    ("C" describe-coding-system "coding system")
+    ("I" describe-input-method "input method")
+
+    ;; Documentation
+    ("i" info nil)
+    ("n" helm-man-woman nil)
+    ("d" helm-dash nil)
+
+    ;; Keybinds
+    ("b" describe-bindings nil)
+    ("c" describe-key-briefly nil)
+    ("k" describe-key nil)
+    ("w" where-is nil)
+
+    ;; Elisp
+    ("a" apropos-command nil)
+    ("s" info-lookup-symbol nil)
+    ("v" describe-variable nil)
+    ("f" describe-function nil)
+    ("y" describe-syntax nil)
+
+    ;; Describe
+    ("p" describe-package nil)
+    ("m" describe-mode nil)
+		("c" (what-cursor-position t) nil)
+
+		("<f2>" hydra-f2/body :exit t)
+		("<f3>" hydra-f3/body :exit t)
+		("<f4>" hydra-f4/body :exit t)
+		("<f5>" revert-buffer :exit t)
+		("<f6>" hydra-f6/body :exit t)
+		("<f7>" hydra-f7/body :exit t)
+		("<f8>" hydra-f8/body :exit t)
+		("<f9>" hydra-f9/body :exit t)
+    ;; quit
+    ("q" help-quit "quit"))
+
+(global-set-key (kbd "<f1>") #'hydra-f1/body)
+#+END_SRC
+
 ** hydra-f2
 
 #+BEGIN_SRC emacs-lisp
@@ -3120,6 +3190,7 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
      _<f1>_  │<f2>  │  _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_   _<f8>_   _<f9>_ 
      Help^^  │Window│  Config^^   Check^^   Refresh^^   Mode^^   Open^^   Mark^^   Org^^
    ╭─────^^──╯      └────────^^────────^^──────────^^───^^───────^^───────^^───────^^────╯
+
           ^^  _<up>_               │      ^^                    [_z_] window undo
           ^^   ↑   ^^              │split [_h_]orizontally      [_Z_] window redo
     _<left>_ ←   → _<right>_       │      ^^                    [_n_] new frame
@@ -3770,58 +3841,6 @@ Automatically open the hydra with ibuffer:
 		("q" nil))
 		(global-set-key (kbd "C-<") 'hydra-multiple-cursors/body)
   #+END_SRC
-
-** TODO hydra-help
-
-Taken from https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_real_cool_hydras_to_share/cspqaly/
-
-#+BEGIN_SRC emacs-lisp
-(defhydra hydra-help (:exit t)
-    ;; Better to exit after any command because otherwise helm gets in a
-    ;; mess, set hint to nil: written out manually.
-
-    "
-  Describe        ^^Keys                    ^^Search                    ^^Documentation
-  ---------------------------------------------------------------------------------------
-  _f_unction        _k_eybinding              _a_propros                  _i_nfo
-  _p_ackage         _w_here-is                _d_oc strings               _n_: man
-  _m_ode            _b_: show all bindings    _s_: info by symbol         _h_elm-dash
-  _v_ariable
-
-  "
-    ;; Boring help commands...
-    ("e" view-echo-area-messages "messages")
-    ("l" view-lossage "lossage")
-    ("C" describe-coding-system "coding-system")
-    ("I" describe-input-method "input-method")
-
-    ;; Documentation
-    ("i" info nil)
-    ("n" helm-man-woman nil)
-    ("h" helm-dash)
-
-    ;; Keybinds
-    ("b" describe-bindings nil)
-    ("c" describe-key-briefly nil)
-    ("k" describe-key nil)
-    ("w" where-is nil)
-
-    ;; Search
-    ("a" apropos-command nil)
-    ("d" apropos-documentation nil)
-    ("s" info-lookup-symbol nil)
-
-    ;; Describe
-    ("f" describe-function nil)
-    ("p" describe-package nil)
-    ("m" describe-mode nil)
-    ("v" describe-variable nil)
-    ("y" describe-syntax nil)
-
-    ;; quit
-    ("q" help-quit "quit"))
-  ;; (global-set-key (kbd "<f1>") #'hydra-help/body)
-#+END_SRC
 
 ** hydra-highlight-changes
 
