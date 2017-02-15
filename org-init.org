@@ -3116,7 +3116,7 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
 #+END_SRC
 
-** TODO hydra-f1
+** hydra-f1
 
 See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_real_cool_hydras_to_share/cspqaly/
 
@@ -3894,22 +3894,22 @@ Automatically open the hydra with ibuffer:
 			("q" highlight-symbol-remove-all :color blue))
 #+END_SRC
 
-** COMMENT hydra-transpose
+** hydra-transpose
 
-Copied from https://github.com/abo-abo/hydra/wiki/Emacs
+Taken from https://github.com/abo-abo/hydra/wiki/Emacs
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-c m")
     (defhydra hydra-transpose (:color red)
     "Transpose"
      ("c" transpose-chars "characters")
      ("w" transpose-words "words")
-     ("o" org-transpose-words "Org mode words")
+     ("o" org-transpose-words "Org-words")
      ("l" transpose-lines "lines")
      ("s" transpose-sentences "sentences")
-     ("e" org-transpose-elements "Org mode elements")
+     ("e" org-transpose-element "Org-elements")
      ("p" transpose-paragraphs "paragraphs")
-     ("t" org-table-transpose-table-at-point "Org mode table")
+     ("t" org-table-transpose-table-at-point "Org-table")
+     ("C-t" nil nil :color blue)
      ("q" nil "cancel" :color blue)))
 #+END_SRC
 
