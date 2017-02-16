@@ -2982,6 +2982,9 @@ Better keys for switching between windows:
 	:bind
 	("C-x g" . magit-status)
 	;; ("C-x C-g" . magit-status)
+	:config
+	;; show magit full screen
+	(setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
 	)
 #+end_src
 
