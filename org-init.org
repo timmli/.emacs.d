@@ -3912,6 +3912,7 @@ Taken from https://github.com/abo-abo/hydra/wiki/Emacs
 	("t" org-table-transpose-table-at-point "Org-table")
 	("C-t" nil nil :color blue)
 	("q" nil "cancel" :color blue))
+(global-set-key (kbd "C-t") 'hydra-transpose/body)
 #+END_SRC
 
 ** TODO hydra-macro
