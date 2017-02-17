@@ -821,14 +821,12 @@ http://doc.norang.ca/org-mode.html#Setup
 
 #+BEGIN_SRC emacs-lisp
 (use-package org
-:ensure t
-:config
-(progn
-	;; config stuff
+	:ensure t
+	:config
+	(progn
+		;; config stuff
+		)
 	)
-:bind
-;; ("C-c C-b" . org-mark-ring-goto)
-)
 #+END_SRC
 
 *** Files
