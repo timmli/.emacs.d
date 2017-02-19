@@ -1,3 +1,6 @@
 [submodule "Reveal.js-Title-Footer"]
 	path = Reveal.js-Title-Footer
 	url = https://github.com/e-gor/Reveal.js-Title-Footer.git
+[submodule "templates/reveal/Reveal.js-Title-Footer"]
+	path = templates/reveal/Reveal.js-Title-Footer
+	url = https://github.com/e-gor/Reveal.js-Title-Footer.git
