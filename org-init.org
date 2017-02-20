@@ -661,11 +661,10 @@ Use shift-up and shift-down in the usual way.
 See http://emacs.stackexchange.com/a/30890/12336
 #+BEGIN_SRC emacs-lisp
 (defun my-dired-toggle (arg)
-  (save-excursion
+  (save-restriction
     (narrow-to-region (point-at-bol) (point-at-eol))
-    (dired-toggle-marks)
-    (widen))
-  (dired-previous-line arg))
+    (dired-toggle-marks))
+	(dired-previous-line arg))
 
 (defun my-dired-mark-up ()
   (interactive)
