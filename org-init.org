@@ -655,6 +655,30 @@ Other settings: http://oremacs.com/2015/01/13/dired-options/
 (setq dired-listing-switches "-laGh1v")
 #+END_SRC
 
+*** Mark/Unmark 
+
+Use shift-up and shift-down in the usual way.
+See http://emacs.stackexchange.com/a/30890/12336
+#+BEGIN_SRC emacs-lisp
+(defun my-dired-toggle (arg)
+  (save-excursion
+    (narrow-to-region (point-at-bol) (point-at-eol))
+    (dired-toggle-marks)
+    (widen))
+  (dired-previous-line arg))
+
+(defun my-dired-mark-up ()
+  (interactive)
+  (my-dired-toggle 1))
+
+(defun my-dired-mark-down ()
+  (interactive)
+  (my-dired-toggle -1))
+
+(define-key dired-mode-map (kbd "<S-up>") 'my-dired-mark-up)
+(define-key dired-mode-map (kbd "<S-down>") 'my-dired-mark-down)
+#+END_SRC
+
 *** TODO COMMENT Open binary files in external programm
 
 #+BEGIN_SRC
