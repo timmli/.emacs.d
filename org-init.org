@@ -842,16 +842,6 @@ Must appear before LaTeX stuff!
 http://pages.sachachua.com/.emacs.d/Sacha.html#orgfe5d909
 http://doc.norang.ca/org-mode.html#Setup
 
-#+BEGIN_SRC emacs-lisp
-(use-package org
-	:ensure t
-	:config
-	(progn
-		;; config stuff
-		)
-	)
-#+END_SRC
-
 *** Files
 
 #+BEGIN_SRC emacs-lisp
@@ -1022,14 +1012,14 @@ Preserve indentation in source blocks:
 
 #+begin_src emacs-lisp
 ;; nicer bullets
-(use-package org-bullets
-	:ensure t
-	:init
-	(setq org-bullets-bullet-list
-				'("◉" "◎" "○" "●" "►" "♦" "◇"))
-	:config 
-	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
-	)
+;; (use-package org-bullets
+;; 	:ensure t
+;; 	:init
+;; 	(setq org-bullets-bullet-list
+;; 				'("◉" "◎" "○" "●" "►" "♦" "◇"))
+;; 	:config 
+;; 	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
+;; 	)
 
 ;; folding symbol
 (setq org-ellipsis " ▼")
