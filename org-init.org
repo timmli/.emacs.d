@@ -823,8 +823,6 @@ Filter dired list on the fly:
 
 *** TODO dired-ranger
 
-*** TODO dired-find
-
 *** TODO peep-dired
 ** js2-mode
 
@@ -2536,7 +2534,9 @@ Use deer instead plain directory listing:
     (next-line)))
 #+end_src
 
-*** Critical markup
+*** TODO Critical markup
+
+TODO: set cm-author indirectly
 
 #+begin_src emacs-lisp
 (use-package cm-mode
@@ -3416,7 +3416,7 @@ If buffer-or-name is nil return current buffer's mode."
 	("r" rectangle-mark-mode :exit t)
 	("s" hydra-highlight-symbol/body :exit t)
 	("w" whitespace-mode :exit t)
-  ("*" cm-mode :exit t )
+  ("*" hydra-cm-mode/body :exit t )
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
 	("<f2>" hydra-f2/body :exit t)
@@ -3429,7 +3429,6 @@ If buffer-or-name is nil return current buffer's mode."
 
 )
 	(global-set-key (kbd "<f8>") 'hydra-f8/body)
-
 #+END_SRC
 
 ** hydra-f9
@@ -3478,6 +3477,38 @@ If buffer-or-name is nil return current buffer's mode."
 
 #+END_SRC
 
+** hydra-cm-mode
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-cm-mode
+	(:body-pre (when (not (string-equal cm-mode "t"))
+							 (font-lock-mode -1)
+							 (font-lock-mode 1)
+							 (cm-mode 1))
+						 :hint nil)
+			"
+     CriticMarkup
+   ╭──────────────╯
+      [_<up>_] previous      [_a_] addition         [_i_] accept/reject
+    [_<down>_] next          [_d_] deletion         [_I_] accept/reject all
+     ^^                      [_s_] substitution
+     [_F_] follow changes    [_c_] comment          [_q_]uit													
+		 ^^											 ^^							  			[_Q_]uit and deactivate cm-mode
+"
+			("<up>" #'cm-backward-change)
+			("<down>" #'cm-forward-change)
+			("a" #'cm-addition)
+			("d" #'cm-deletion)
+			("s" #'cm-substitution)
+			("c"#'cm-comment)
+			("i" #'cm-accept/reject-change-at-point)
+			("I" #'cm-accept/reject-all-changes)
+			("t" #'cm-set-author)
+			("F" #'cm-follow-changes)
+			("q" nil :color blue)
+			("Q" (cm-mode -1) :color blue))
+#+END_SRC
+
 ** hydra-dired
 
 https://gitlab.com/xuhdev/dired-quick-sort
@@ -3522,7 +3553,8 @@ https://gitlab.com/xuhdev/dired-quick-sort
 ("(" dired-hide-details-mode)
 ("f" my-find-name-dired)
 ("." (find-file home-directory))
-("=" diredp-ediff)
+;; ("=" diredp-ediff)  ; FIXME: does not work under windows; does not find diff 
+("=" dired-diff)
 ("g" revert-buffer)
 ("j" dired-goto-file)
 ("s" dired-sort-toggle-or-edit)
