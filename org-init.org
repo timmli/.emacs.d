@@ -1829,6 +1829,15 @@ Make square brackets indent correctly (testing):
 								deft-use-filter-string-for-filename t))
 #+END_SRC
 
+** Pomodoro technique
+
+Tomatinho brings the promodoro technique to Emacs:
+#+BEGIN_SRC emacs-lisp
+(use-package tomatinho
+	:ensure t
+	)
+#+END_SRC
+
 * Buffer
 
 ** General configuration
@@ -3368,10 +3377,10 @@ If buffer-or-name is nil return current buffer's mode."
      Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^  │Open│  Mark^^  Org^^
    ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^──╯    └──────^^────────╯
  
-         ^^         ^^  [_a_] adress book        [_d_] dired/file browser
-         ^^         ^^  [_b_] new buffer         [_e_] emacs shell  
-         ^^         ^^  [_i_] buffer overview    [_s_] system shell
-         ^^         ^^  [_c_] calendar           [_m_] magit status             [_q_]uit
+       [_a_] adress book        [_d_] dired/file browser     [_t_] pomodoro timer
+       [_b_] new buffer         [_e_] emacs shell  
+       [_i_] buffer overview    [_s_] system shell
+       [_c_] calendar           [_m_] magit status           [_q_]uit
 	" 
 	("a" helm-bbdb :exit t)
 	("c" my-open-calfw :exit t)
@@ -3381,6 +3390,7 @@ If buffer-or-name is nil return current buffer's mode."
 	("i" ibuffer :exit t)
 	("m" magit-status :exit t)
 	("e" tl/eshell :exit t)
+	("t" tomatinho :exit t)
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
 	("<f2>" hydra-f2/body :exit t)
