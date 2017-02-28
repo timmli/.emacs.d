@@ -1128,7 +1128,20 @@ Support for inline tasks
 (setq org-highlight-latex-and-related '(latex script entities)) ; inline sytax highlighting
 ;; (add-to-list 'org-latex-packages-alist '("" "tikz" t))					; unfortunately this breaks the color of fonts in inline previews
 ;; (add-to-list 'org-latex-packages-alist '("" "forest" t))
-(plist-put org-format-latex-options :scale 1.3) ; scale inline PNGs
+#+END_SRC
+
+
+Scale LaTeX previews:
+#+BEGIN_SRC emacs-lisp
+;; static
+;; (plist-put org-format-latex-options :scale 2) ; scale inline PNGs
+
+;; dynamic (http://emacs.stackexchange.com/a/13032/12336)
+(defun update-org-latex-fragment-scale ()
+  (let ((text-scale-factor (expt text-scale-mode-step text-scale-mode-amount)))
+    (plist-put org-format-latex-options :scale (* 2.3 text-scale-factor)))
+)
+(add-hook 'text-scale-mode-hook 'update-org-latex-fragment-scale)
 #+END_SRC
 
 *** org-ref
