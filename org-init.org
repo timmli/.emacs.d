@@ -1480,7 +1480,8 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 
  #+BEGIN_SRC emacs-lisp
 
- 	(defvar private-calendar-settings-file (expand-file-name "calendar-calfw-settings.el" private-emacs-settings-dir))
+(defvar private-calendar-settings-file
+	(expand-file-name "calendar-calfw-settings.el" private-emacs-settings-dir))
 
  	(use-package calfw
  		:ensure ;TODO: 
@@ -3971,11 +3972,12 @@ Taken from https://github.com/abo-abo/hydra/wiki/Emacs
 	"Transpose"
 	("c" transpose-chars "characters")
 	("w" transpose-words "words")
-	("o" org-transpose-words "Org-words")
+	("x" transpose-sexp "expressions")
 	("l" transpose-lines "lines")
 	("s" transpose-sentences "sentences")
-	("e" org-transpose-element "Org-elements")
 	("p" transpose-paragraphs "paragraphs")
+	("o" org-transpose-words "Org-words")
+	("e" org-transpose-element "Org-elements")
 	("t" org-table-transpose-table-at-point "Org-table")
 	("C-t" nil nil :color blue)
 	("q" nil "cancel" :color blue))
