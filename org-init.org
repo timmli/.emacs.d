@@ -845,14 +845,10 @@ http://doc.norang.ca/org-mode.html#Setup
 *** Files
 
 #+BEGIN_SRC emacs-lisp
-(defvar org-directory)
-(setq org-directory (concat notes-dir "/org"))
-(global-set-key (kbd "<f9> u") 'tl/update-org-agenda-files)
-
 (defun tl/update-org-agenda-files ()
 	(interactive)
   (setq org-agenda-files ())
-  (load-org-agenda-files-recursively (expand-file-name (concat org-directory "/"))) ; trailing slash required
+  (load-org-agenda-files-recursively (expand-file-name (concat org-notes-dir "/"))) ; trailing slash required
 
 	;; ;; The following code does not search the org directory recursively:
   ;; (setq org-agenda-files
@@ -890,7 +886,7 @@ http://doc.norang.ca/org-mode.html#Setup
 	;; (setq org-agenda-files
 	;; 			(append
 	;; 			 (list org-directory)
-	;; 			 (file-expand-wildcards (concat org-directory "/*/*.org"))))
+	;; 			 (file-expand-wildcards (concat org-notes-dir "/*/*.org"))))
 
 	;; set refile targets to move entries inside org-agenda 
 	(setq org-refile-targets '(
@@ -934,9 +930,9 @@ Preserve indentation in source blocks:
   (global-set-key (kbd "<f9> l") 'org-tags-view)
   (global-set-key (kbd "<f9> r") 'org-reload)
   (global-set-key (kbd "<f9> w")
-                  (lambda() (interactive)(find-file (concat org-directory "/forschung/wip.org"))))
+                  (lambda() (interactive)(find-file (concat org-notes-dir "/forschung/wip.org"))))
   (global-set-key (kbd "<f9> n")
-                  (lambda() (interactive)(find-file (concat org-directory "/notes.org"))))
+                  (lambda() (interactive)(find-file (concat org-notes-dir "/notes.org"))))
   (global-set-key (kbd "C-c a") 'org-agenda)
   (global-set-key (kbd "C-c l") 'org-store-link)
 
@@ -1259,7 +1255,7 @@ Integrate Google Calendar with org-gcal:
 	(use-package org-gcal
 		:ensure t
 		:config
-		(when (load-file "~/Dropbox/emacs/gcal-credentials.el")
+		(when (load-file (expand-file-name "gcal-credentials.el" private-emacs-settings-dir))
 			(setq org-gcal-client-id my-org-gcal-client-id
 						org-gcal-client-secret my-org-gcal-client-secret
 						org-gcal-file-alist '((my-gmail-address .  "~/Dropbox/Notizen/org/gcal.org")))
@@ -1416,13 +1412,13 @@ http://emacs.stackexchange.com/a/28298/12336
 
 #+BEGIN_SRC emacs-lisp
 	(setq org-capture-templates
-				'(("a" "Appointment" entry (file (concat org-directory "/gcal.org"))
+				'(("a" "Appointment" entry (file (concat org-notes-dir "/gcal.org"))
 					 "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
-					("t" "Todo" entry (file (concat org-directory "/todo.org"))
+					("t" "Todo" entry (file (concat org-notes-dir "/todo.org"))
 					 "* TODO %?\t%^g\n CREATED: %U\n About region:%i\n %a")
-					("n" "Note" entry (file+datetree (concat org-directory "/notes.org"))
+					("n" "Note" entry (file+datetree (concat org-notes-dir "/notes.org"))
 					 "* %?\t%^g\n CREATED: %U\n About region:%i\n %a")
-					("c" "Code" entry (file (concat org-directory "/code.org"))
+					("c" "Code" entry (file (concat org-notes-dir "/code.org"))
 					 "* %?\t%^g\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a")
 					))
 
@@ -1484,7 +1480,7 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 
  #+BEGIN_SRC emacs-lisp
 
- 	(defvar privat-calendar-settings.el "~/Dropbox/emacs/calendar-calfw-settings.el")
+ 	(defvar private-calendar-settings-file (expand-file-name "calendar-calfw-settings.el" private-emacs-settings-dir))
 
  	(use-package calfw
  		:ensure ;TODO: 
@@ -1493,9 +1489,9 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
  		(require 'calfw-ical)
  		(setq cfw:render-line-breaker 'cfw:render-line-breaker-simple)
 
- 		(if (file-exists-p privat-calendar-settings.el)
- 				(load-file privat-calendar-settings.el)
- 			(display-warning "calfw" (concat "Could not load " privat-calendar-settings.el)))
+ 		(if (file-exists-p private-calendar-settings-file)
+ 				(load-file private-calendar-settings-file)
+ 			(display-warning "calfw" (concat "Could not load " private-calendar-settings-file)))
 
  		(defun my-open-calfw ()
  			(interactive)
@@ -1511,10 +1507,9 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
  				)))
  		)
 
- 	(global-set-key (kbd "<f7> c") 'my-open-calfw)
  	(define-key cfw:calendar-mode-map (kbd "u") 
  		'(lambda () (interactive)
- 			 (when (fboundp 'tl/update-my-calendars) ; tl/update-my-calendars is defined in  privat-calendar-settings.el
+ 			 (when (fboundp 'tl/update-my-calendars) ; tl/update-my-calendars is defined in  private-calendar-settings-file
  				 (tl/update-my-calendars))
  			 (my-open-calfw)
  			 ))
@@ -1835,7 +1830,7 @@ Make square brackets indent correctly (testing):
 	("<f9> o" . deft)
 	("<f9> d" . deft)
   :commands (deft)
-  :config (setq deft-directory notes-dir
+  :config (setq deft-directory org-notes-dir
                 deft-extensions '("md" "org")
 								deft-recursive t
 								deft-use-filename-as-title t
@@ -3477,12 +3472,12 @@ If buffer-or-name is nil return current buffer's mode."
 	("a" org-agenda-list :exit t)
 	("d" deft :exit t)
 	("n" (lambda nil (interactive)
-				 (find-file (concat org-directory "/notes.org"))) :exit t)
+				 (find-file (concat org-notes-dir "/notes.org"))) :exit t)
 	("o" deft :exit t)
 	("c" org-capture :exit t)
 	("t" org-todo-list :exit t)
 	("w" (lambda nil (interactive)
-				 (find-file (concat org-directory "/forschung/wip.org"))) :exit t)
+				 (find-file (concat org-notes-dir "/forschung/wip.org"))) :exit t)
 	("r" org-reload :exit t)
 	("f" org-search-view :exit t)
 	("s" org-search-view :exit t)

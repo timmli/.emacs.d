@@ -64,11 +64,6 @@
       (expand-file-name "lisp" user-emacs-directory))
 (add-to-list 'load-path lisp-dir)
 
-;; set path to notes directory
-(defvar notes-dir)
-(setq notes-dir
-      (expand-file-name "Dropbox/Notizen" default-directory))
-
 ;; write backup files to own directory
 (setq backup-directory-alist
       `(("." . ,(expand-file-name
@@ -78,6 +73,28 @@
 (require 'saveplace)
 (setq-default save-place t)
 (setq save-place-file (expand-file-name ".places" user-emacs-directory))
+
+
+;;==========================================================
+;;      PRIVATE DIRECTORIES SETUP (outside .emacs.d)
+;;==========================================================
+
+;; set path to private org notes
+(defvar org-notes-dir
+	(expand-file-name "org/" home-directory)) ;; default value; may be overwritten by private directory settings
+
+;; set path to private emacs settings
+(defvar private-emacs-settings-dir
+	(expand-file-name "Dropbox/emacs-settings/" home-directory))
+;; if system variable exists, use it
+(when (getenv "PRIVATE_EMACS_SETTINGS")
+	(setq private-emacs-settings-dir
+				(expand-file-name (concat (getenv "PRIVATE_EMACS_SETTINGS") "/"))))
+
+;; load private directory settings file
+(let ((dir-settings-file (expand-file-name "directory-settings.el" private-emacs-settings-dir)))
+	(when (file-exists-p dir-settings-file)
+			(load-file dir-settings-file)))
 
 
 ;;==========================================================
