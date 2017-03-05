@@ -2554,15 +2554,13 @@ Use deer instead plain directory listing:
     (next-line)))
 #+end_src
 
-*** TODO Critical markup
-
-TODO: set cm-author indirectly
+*** Critical markup
 
 #+begin_src emacs-lisp
 (use-package cm-mode
 	:ensure t
 	:config
-	(setq-default cm-author "TL"))
+	(setq-default cm-author user-acronym))
 #+end_src
 
 ** Line actions

@@ -94,7 +94,19 @@
 ;; load private directory settings file
 (let ((dir-settings-file (expand-file-name "directory-settings.el" private-emacs-settings-dir)))
 	(when (file-exists-p dir-settings-file)
-			(load-file dir-settings-file)))
+		(load-file dir-settings-file)))
+
+
+;;==========================================================
+;;      PRIVATE USER INFOS (outside .emacs.d)
+;;==========================================================
+
+(defvar user-acronym "user-acronym")
+
+;; load private user info file
+(let ((user-info-file (expand-file-name "user-info.el" private-emacs-settings-dir)))
+	(when (file-exists-p user-info-file)
+		(load-file user-info-file)))
 
 
 ;;==========================================================
