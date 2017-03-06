@@ -3904,27 +3904,36 @@ Automatically open the hydra with ibuffer:
 ** hydra-multiple-cursors
 
 #+BEGIN_SRC emacs-lisp
-		;; inspired by https://github.com/abo-abo/hydra/wiki/multiple-cursors
-		(defhydra hydra-multiple-cursors (:hint nil :idle 0.5)
-			"
-    			 ^Up^            ^Down^        ^Other^
-   ╭────────────────────────────────────────────────────╯
-    [_p_]   Next    [_n_]   Next    [_l_] Edit lines
-    [_P_]   Skip    [_N_]   Skip    [_a_] Mark all
-    [_M-p_] Unmark  [_M-n_] Unmark  [_r_] Mark by regexp
-    ^ ^             ^ ^             [_q_] Quit
+;; inspired by https://github.com/abo-abo/hydra/wiki/multiple-cursors
+(defhydra hydra-multiple-cursors (:hint nil :idle 0.2)
 	"
-		("l" mc/edit-lines :exit t)
-		("a" mc/mark-all-like-this :exit t)
-		("n" mc/mark-next-like-this)
-		("N" mc/skip-to-next-like-this)
-		("M-n" mc/unmark-next-like-this)
-		("p" mc/mark-previous-like-this)
-		("P" mc/skip-to-previous-like-this)
-		("M-p" mc/unmark-previous-like-this)
-		("r" mc/mark-all-in-region-regexp :exit t)
-		("q" nil))
-		(global-set-key (kbd "C-<") 'hydra-multiple-cursors/body)
+    			 ^Up^                   ^Down^            ^Other^
+   ╭───^^─────────────────────────^^────────────^^───────────────────╯
+    [_S-<up>_] Next      [_S-<down>_] Next       [_l_] Edit lines
+      [_<up>_] Skip        [_<down>_] Skip       [_a_] Mark all
+    [_M-<up>_] Unmark    [_M-<down>_] Unmark     [_r_] Mark by regexp
+    ^ ^                     [_q_] Quit hydra     [_Q_] Quit mc-mode
+	"
+	("l" mc/edit-lines :exit t)
+	("a" mc/mark-all-like-this :exit t)
+	("n" mc/mark-next-like-this)
+	("N" mc/skip-to-next-like-this)
+	("M-n" mc/unmark-next-like-this)
+	("S-<down>" mc/mark-next-like-this)
+	("<down>" mc/skip-to-next-like-this)
+	("M-<down>" mc/unmark-next-like-this)
+	("p" mc/mark-previous-like-this)
+	("P" mc/skip-to-previous-like-this)
+	("M-p" mc/unmark-previous-like-this)
+	("S-<up>" mc/mark-previous-like-this)
+	("<up>" mc/skip-to-previous-like-this)
+	("M-<up>" mc/unmark-previous-like-this)
+	("S-<down-mouse-1>" mc/add-cursor-on-click)
+	("r" mc/mark-all-in-region-regexp :exit t)
+  ("Q" (multiple-cursors-mode -1) :exit t)
+	("q" nil))
+(global-set-key (kbd "C-<") 'hydra-multiple-cursors/body)
+(global-set-key (kbd "M-+") 'hydra-multiple-cursors/body)
   #+END_SRC
 
 ** hydra-highlight-changes
