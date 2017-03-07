@@ -1079,7 +1079,6 @@ Selection
 (setq org-support-shift-select t)
 #+END_SRC
 
-
 Source blocks
 #+BEGIN_SRC emacs-lisp
 (setq org-src-fontify-natively t)
@@ -1109,6 +1108,11 @@ Support for inline tasks
 #+BEGIN_SRC emacs-lisp
 (load "org-inlinetask")
 (define-key org-mode-map (kbd "C-c C-x C-t") 'org-inlinetask-insert-task)
+#+END_SRC
+
+C-a and C-e behave org-sensitive
+#+BEGIN_SRC emacs-lisp
+(setq org-special-ctrl-a/e t)
 #+END_SRC
 
 *** Newline
