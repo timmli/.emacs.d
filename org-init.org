@@ -3498,7 +3498,7 @@ If buffer-or-name is nil return current buffer's mode."
 	("c" org-capture :exit t)
 	("t" org-todo-list :exit t)
 	("w" (lambda nil (interactive)
-				 (find-file (concat org-notes-dir "/forschung/wip.org"))) :exit t)
+				 (find-file (concat org-notes-dir "/work/wip.org"))) :exit t)
 	("r" org-reload :exit t)
 	("f" org-search-view :exit t)
 	("s" org-search-view :exit t)
