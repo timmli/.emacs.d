@@ -1499,7 +1499,7 @@ http://emacs.stackexchange.com/a/28298/12336
 http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 
  #+BEGIN_SRC emacs-lisp
-(defvar private-calendar-settings-file
+(defvar user-calendar-settings-file
 	(expand-file-name "calendar-calfw-settings.el" private-emacs-settings-dir))
 
 (use-package calfw
@@ -1509,15 +1509,15 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 	(require 'calfw-ical)
 	(setq cfw:render-line-breaker 'cfw:render-line-breaker-simple)
 
-	(if (file-exists-p private-calendar-settings-file)
-			(load-file private-calendar-settings-file)
-		(display-warning "calfw" (concat "Could not load " private-calendar-settings-file)))
+	(if (file-exists-p user-calendar-settings-file)
+			(load-file user-calendar-settings-file)
+		(display-warning "calfw" (concat "Could not load " user-calendar-settings-file)))
 
 	)
 
 (define-key cfw:calendar-mode-map (kbd "u") 
 	'(lambda () (interactive)
-		 (when (fboundp 'tl/update-my-calendars) ; tl/update-my-calendars is defined in  private-calendar-settings-file
+		 (when (fboundp 'tl/update-my-calendars) ; tl/update-my-calendars is defined in  user-calendar-settings-file
 			 (tl/update-my-calendars))
 		 (my-open-calfw)
 		 ))

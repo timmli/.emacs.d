@@ -85,7 +85,7 @@
 
 ;; set path to private emacs settings
 (defvar private-emacs-settings-dir
-	(expand-file-name "Dropbox/emacs-settings/" home-directory))
+	(expand-file-name "Dropbox/emacs-settings/" home-directory)) ;; FIXME: make this more generic, e.g. with using links in .emacs.d
 ;; if system variable exists, use it
 (when (getenv "PRIVATE_EMACS_SETTINGS")
 	(setq private-emacs-settings-dir
@@ -98,17 +98,28 @@
 
 
 ;;==========================================================
-;;      PRIVATE USER INFOS (outside .emacs.d)
+;;      USER INFOS (outside .emacs.d)
 ;;==========================================================
 
-(defvar user-acronym "user-acronym")
 
-;; load private user info file
+;; GENERAL USER INFO
+;; available variables 
+(defvar user-acronym "user-acronym"
+	"Contains the acronym of the user name. This is used, e.g. in cm-mode.")
+;; load user info file
 (let ((user-info-file (expand-file-name "user-info.el" private-emacs-settings-dir)))
 	(when (file-exists-p user-info-file)
 		(load-file user-info-file)))
 
-;; load miscellaneous private settings
+;; MISCELLANEOUS USER SETTINGS
+;; available variables
+(defvar user-bibliography-file
+	"/path/to/bibliography.bib"
+	"Path to the user bibliography file.")
+(defvar user-bibliography-pdf-dir
+	"/path/to/pdfs/"
+	"Path to the user directory of PDFs belonging to the bibliography.")
+;; load file with miscellaneous private settings
 (let ((misc-settings-file (expand-file-name "misc-settings.el" private-emacs-settings-dir)))
 	(when (file-exists-p misc-settings-file)
 		(load-file misc-settings-file)))
