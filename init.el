@@ -108,6 +108,10 @@
 	(when (file-exists-p user-info-file)
 		(load-file user-info-file)))
 
+;; load miscellaneous private settings
+(let ((misc-settings-file (expand-file-name "misc-settings.el" private-emacs-settings-dir)))
+	(when (file-exists-p misc-settings-file)
+		(load-file misc-settings-file)))
 
 ;;==========================================================
 ;;      WEMACS

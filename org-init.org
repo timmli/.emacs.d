@@ -344,9 +344,9 @@ Smex helps to remember often used commands; used by ido and counsel
 					helm-autoresize-mode 1 				; re-size the completion window based on number of candidates
 					helm-adaptive-mode t					; show commonly used commands first
 					)
-		(setq bibtex-completion-bibliography (concat home-directory "/Dropbox/Forschung/timm-bib.bib")
-					bibtex-completion-library-path (concat home-directory "/ownCloud/Bib") ; directory of PDFs
-					;; bibtex-completion-notes-path "~/Dropbox/bibliography/helm-bibtex-notes"
+		(setq bibtex-completion-bibliography user-bibliography-file
+					bibtex-completion-library-path user-bibliography-pdf-dir ; directory of PDFs
+					;; bibtex-completion-notes-path "~/bibliography/helm-bibtex-notes"
 					)
     (helm-mode)
 
@@ -1150,7 +1150,6 @@ C-a and C-e behave org-sensitive
 ;; (add-to-list 'org-latex-packages-alist '("" "forest" t))
 #+END_SRC
 
-
 Scale LaTeX previews:
 #+BEGIN_SRC emacs-lisp
 ;; static
@@ -1173,10 +1172,9 @@ Scale LaTeX previews:
 	:after org
 	:init
 	(require 'org-ref) 										; don't know why I need this
-	(setq reftex-default-bibliography '((concat home-directory "/Dropbox/Forschung/timm-bib.bib"))) ; FIXME
-	(setq org-ref-default-bibliography (concat home-directory "/Dropbox/Forschung/timm-bib.bib")
-			;; org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org"
-				org-ref-pdf-directory (concat home-directory "/ownCloud/Bib")
+	(setq org-ref-default-bibliography user-bibliography-file
+				;; org-ref-bibliography-notes "~/bibliography/notes.org"
+				org-ref-pdf-directory user-bibliography-pdf-dir
 				)
 	:config
 	:bind (:map org-mode-map
@@ -1501,41 +1499,28 @@ http://emacs.stackexchange.com/a/28298/12336
 http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 
  #+BEGIN_SRC emacs-lisp
-
 (defvar private-calendar-settings-file
 	(expand-file-name "calendar-calfw-settings.el" private-emacs-settings-dir))
 
- 	(use-package calfw
- 		:ensure ;TODO: 
- 		:config
- 		(require 'calfw-org)
- 		(require 'calfw-ical)
- 		(setq cfw:render-line-breaker 'cfw:render-line-breaker-simple)
+(use-package calfw
+	:ensure ;TODO: 
+	:init
+	(require 'calfw-org)
+	(require 'calfw-ical)
+	(setq cfw:render-line-breaker 'cfw:render-line-breaker-simple)
 
- 		(if (file-exists-p private-calendar-settings-file)
- 				(load-file private-calendar-settings-file)
- 			(display-warning "calfw" (concat "Could not load " private-calendar-settings-file)))
+	(if (file-exists-p private-calendar-settings-file)
+			(load-file private-calendar-settings-file)
+		(display-warning "calfw" (concat "Could not load " private-calendar-settings-file)))
 
- 		(defun my-open-calfw ()
- 			(interactive)
- 			(cfw:open-calendar-buffer
- 			 :contents-sources
- 			 (list 
- 				(cfw:org-create-source "Orangered1")  ; orgmode source
- 				;; (cfw:cal-create-source "Orange") ; diary source
- 				(cfw:ical-create-source "timm" gcal-timm.ics "Orangered1") ; google calendar ICS
- 				(cfw:ical-create-source "verena" gcal-verena.ics "DarkOliveGreen") ; google calendar ICS
- 				(cfw:ical-create-source "emmy" gcal-emmy.ics "CornflowerBlue") ; google calendar ICS
- 				(cfw:ical-create-source "clcoll" gcal-clcoll.ics "CornflowerBlue") ; google calendar ICS
- 				)))
- 		)
+	)
 
- 	(define-key cfw:calendar-mode-map (kbd "u") 
- 		'(lambda () (interactive)
- 			 (when (fboundp 'tl/update-my-calendars) ; tl/update-my-calendars is defined in  private-calendar-settings-file
- 				 (tl/update-my-calendars))
- 			 (my-open-calfw)
- 			 ))
+(define-key cfw:calendar-mode-map (kbd "u") 
+	'(lambda () (interactive)
+		 (when (fboundp 'tl/update-my-calendars) ; tl/update-my-calendars is defined in  private-calendar-settings-file
+			 (tl/update-my-calendars))
+		 (my-open-calfw)
+		 ))
 
 #+END_SRC
 
@@ -1580,7 +1565,7 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 			:config
 			(auctex-latexmk-setup)
 			(setq auctex-latexmk-inherit-TeX-PDF-mode t)
-			(setq TeX-command-force "LatexMk")  ;; remember to set path variable accordingly!
+			(setq TeX-command-force "LatexMk")  ; remember to set path variable accordingly!
 			)
 		
 		:config
@@ -1750,6 +1735,7 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 #+END_SRC
 
 *** reftex
+
 #+BEGIN_SRC emacs-lisp
 (use-package reftex
 	:diminish reftex-mode
@@ -1761,7 +1747,7 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 				;; reftex-toc-split-windows-horizontally t
 				reftex-ref-macro-prompt nil			; go straight to the labels when referencing
 				reftex-bibliography-commands '("bibliography" "nobibliography" "addbibresource")
-				;; reftex-default-bibliography '()
+				reftex-default-bibliography '(user-bibliography-file)
 				)
 
 	;; add frametitle to TOC
@@ -3837,6 +3823,15 @@ Automatically open the hydra with ibuffer:
 
 #+RESULTS:
 : hydra-image/body
+
+** TODO hydra-latex
+
+- fonts
+- jumping
+- reftex
+- deletion of temporary files
+- show log
+- show pdf
 
 ** hydra-flycheck
 
