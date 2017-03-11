@@ -2112,6 +2112,7 @@ Sequence is important!
 		(--each '(css-mode-hook
 							js-mode-hook
 							java-mode-hook
+							perl-mode-hook
               plantuml-mode-hook
 							python-mode-hook
 							emacs-lisp-mode-hook
