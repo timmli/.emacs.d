@@ -1502,17 +1502,16 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 (defvar user-calendar-settings-file
 	(expand-file-name "calendar-calfw-settings.el" private-emacs-settings-dir))
 
+(if (file-exists-p user-calendar-settings-file)
+		(load-file user-calendar-settings-file)
+	(display-warning "calfw" (concat "Could not load " user-calendar-settings-file)))
+
 (use-package calfw
 	:ensure ;TODO: 
 	:init
 	(require 'calfw-org)
 	(require 'calfw-ical)
 	(setq cfw:render-line-breaker 'cfw:render-line-breaker-simple)
-
-	(if (file-exists-p user-calendar-settings-file)
-			(load-file user-calendar-settings-file)
-		(display-warning "calfw" (concat "Could not load " user-calendar-settings-file)))
-
 	)
 
 (define-key cfw:calendar-mode-map (kbd "u") 

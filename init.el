@@ -170,6 +170,7 @@
  '(fixed-pitch ((t (:family "DejaVu Sans Mono" :foundry "outline" :slant normal :weight normal :height 113 :width normal))))
  '(variable-pitch ((t (:family "Segoe UI" :foundry "outline" :slant normal :weight normal :height 125 :width normal))))
  )
+
 ;; load custom file
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (if (file-exists-p custom-file)
