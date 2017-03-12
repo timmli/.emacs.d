@@ -1848,12 +1848,28 @@ Make square brackets indent correctly (testing):
 
 ** Pomodoro technique
 
+*** COMMENT tomatinho
+
 Tomatinho brings the promodoro technique to Emacs:
 #+BEGIN_SRC emacs-lisp
 (use-package tomatinho
 	:ensure t
 	)
 #+END_SRC
+
+*** pomidor
+
+Pomidor brings the promodoro technique to Emacs:
+#+BEGIN_SRC emacs-lisp
+(use-package pomidor
+	:ensure t
+	:init
+	(setq pomidor-sound-tick nil
+				pomidor-sound-tack nil
+				pomidor-sound-overwork t)
+	)
+#+END_SRC
+
 
 * Buffer
 
@@ -3408,7 +3424,7 @@ If buffer-or-name is nil return current buffer's mode."
 	("i" ibuffer :exit t)
 	("m" magit-status :exit t)
 	("e" tl/eshell :exit t)
-	("t" tomatinho :exit t)
+	("t" pomidor :exit t)
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
 	("<f2>" hydra-f2/body :exit t)
