@@ -4007,7 +4007,19 @@ Automatically open the hydra with ibuffer:
 			("q" highlight-symbol-remove-all :color blue))
 #+END_SRC
 
-** TODO hydra-pomidor
+** hydra-pomidor
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-pomidor (:color blue)
+	"Pomidor"
+	("<return>" pomidor-stop "next")
+	("<space>" pomidor-break "pause")
+	("R" pomidor-reset "reset")
+	("q" quit-window "quit window")
+	("Q" pomidor-quit "quit pomidor")
+)
+#+END_SRC
+
 ** hydra-transpose
 
 Taken from https://github.com/abo-abo/hydra/wiki/Emacs
