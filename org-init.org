@@ -3380,13 +3380,16 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 
 (defun hydra-f6/body () ;hydra-for-major-mode ()
 	(interactive)
-  (if (string-equal (buffer-mode) "dired-mode")
-		(hydra-dired-main/body)
-    (if (string-equal (buffer-mode) "image-mode")
-				(hydra-image/body)
-			(if (string-equal (buffer-mode) "org-mode")
-					(hydra-org-main/body)
-				(message (concat "no hydra defined for major mode")))))
+  (cond
+	 ((string-equal (buffer-mode) "dired-mode")
+		(hydra-dired-main/body))
+	 ((string-equal (buffer-mode) "image-mode")
+		(hydra-image/body))
+	 ((string-equal (buffer-mode) "org-mode")
+		(hydra-org-main/body))
+	 ((string-equal (buffer-mode) "pomidor")
+		(hydra-pomidor/body))
+	 ((or t) (message (concat "no hydra defined for major mode"))))
 )
 #+END_SRC
 
@@ -4004,6 +4007,7 @@ Automatically open the hydra with ibuffer:
 			("q" highlight-symbol-remove-all :color blue))
 #+END_SRC
 
+** TODO hydra-pomidor
 ** hydra-transpose
 
 Taken from https://github.com/abo-abo/hydra/wiki/Emacs
