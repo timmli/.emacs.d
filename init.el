@@ -91,6 +91,14 @@
 	(setq private-emacs-settings-dir
 				(expand-file-name (concat (getenv "PRIVATE_EMACS_SETTINGS") "/"))))
 
+(require 'subr-x)  ; string-remove-prefix needs this
+(defvar trimmed-private-emacs-settings-dir
+	(concat "~/" (string-remove-prefix home-directory private-emacs-settings-dir))
+	"This variable contains the trimmed version of the path in private-emacs-settings-dir starting with ~/.
+  Using trimmed paths is necessary with some packages, e.g. calfw. 
+  "	
+	)
+
 ;; load private directory settings file
 (let ((dir-settings-file (expand-file-name "directory-settings.el" private-emacs-settings-dir)))
 	(when (file-exists-p dir-settings-file)
@@ -100,7 +108,6 @@
 ;;==========================================================
 ;;      USER INFOS (outside .emacs.d)
 ;;==========================================================
-
 
 ;; GENERAL USER INFO
 ;; available variables 

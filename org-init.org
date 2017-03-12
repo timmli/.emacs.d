@@ -1499,19 +1499,19 @@ http://emacs.stackexchange.com/a/28298/12336
 http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 
  #+BEGIN_SRC emacs-lisp
-(defvar user-calendar-settings-file
-	(expand-file-name "calendar-calfw-settings.el" private-emacs-settings-dir))
-
-(if (file-exists-p user-calendar-settings-file)
-		(load-file user-calendar-settings-file)
-	(display-warning "calfw" (concat "Could not load " user-calendar-settings-file)))
-
 (use-package calfw
 	:ensure ;TODO: 
 	:init
 	(require 'calfw-org)
 	(require 'calfw-ical)
 	(setq cfw:render-line-breaker 'cfw:render-line-breaker-simple)
+
+	(defvar user-calendar-settings-file
+		(expand-file-name "calendar-calfw-settings.el" private-emacs-settings-dir))
+
+	(if (file-exists-p user-calendar-settings-file)
+			(load-file user-calendar-settings-file)
+		(display-warning "calfw" (concat "Could not load " user-calendar-settings-file)))
 	)
 
 (define-key cfw:calendar-mode-map (kbd "u") 
