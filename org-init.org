@@ -3387,7 +3387,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 		(hydra-image/body))
 	 ((string-equal (buffer-mode) "org-mode")
 		(hydra-org-main/body))
-	 ((string-equal (buffer-mode) "pomidor")
+	 ((string-equal (buffer-mode) "pomidor-mode")
 		(hydra-pomidor/body))
 	 ((or t) (message (concat "no hydra defined for major mode"))))
 )
