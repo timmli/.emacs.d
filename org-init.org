@@ -1870,7 +1870,6 @@ Pomidor brings the promodoro technique to Emacs:
 	)
 #+END_SRC
 
-
 * Buffer
 
 ** General configuration
@@ -2968,6 +2967,10 @@ Key bindings roughly following the conventions of the Windows habitat.
 		))
 #+END_SRC
 
+* TODO winkeys-starter-mode
+
+https://github.com/publicus/emacs-org-mode-for-the-laity
+
 * sr-speedbar
 
 #+BEGIN_SRC emacs-lisp
@@ -3544,14 +3547,14 @@ If buffer-or-name is nil return current buffer's mode."
 "
 			("<up>" #'cm-backward-change)
 			("<down>" #'cm-forward-change)
-			("a" #'cm-addition)
-			("d" #'cm-deletion)
-			("s" #'cm-substitution)
-			("c"#'cm-comment)
+			("a" #'cm-addition :color blue)
+			("d" #'cm-deletion :color blue)
+			("s" #'cm-substitution :color blue)
+			("c"#'cm-comment :color blue)
 			("i" #'cm-accept/reject-change-at-point)
 			("I" #'cm-accept/reject-all-changes)
 			("t" #'cm-set-author)
-			("F" #'cm-follow-changes)
+			("F" #'cm-follow-changes :color blue)
 			("q" nil :color blue)
 			("Q" (cm-mode -1) :color blue))
 #+END_SRC
