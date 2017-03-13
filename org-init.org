@@ -1945,6 +1945,7 @@ Sequence is important!
 #+end_src
 
 *** company
+
 #+begin_src emacs-lisp
 (use-package company
 	:ensure t
@@ -2928,8 +2929,11 @@ Key bindings roughly following the conventions of the Windows habitat.
 						map
 						)
 	(add-hook 'minibuffer-setup-hook 'winkeys-minibuffer)
+
+	;; FIME: This does not work, and I have no clue why.
 	(add-hook 'org-src-mode-hook
 						(lambda ()((define-key (kbd "C-s") 'org-edit-src-save))))
+
 	)
 
 (defun winkeys-minibuffer ()
@@ -2947,24 +2951,33 @@ Key bindings roughly following the conventions of the Windows habitat.
 ** TODO How to make this a proper part of the mode, i.e., how to disable this when disabeling the mode?
 
 #+BEGIN_SRC emacs-lisp
-(with-eval-after-load 'helm-swoop
-	(define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
-	(define-key helm-swoop-map (kbd "C-f") 'tl/helm-swoop-C-s) 
-	(define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
-	(define-key helm-multi-swoop-map (kbd "C-f") 'helm-next-line)
-	(define-key helm-swoop-map (kbd "C-S-f a") 'helm-multi-swoop-all-from-helm-swoop)
-	(define-key helm-swoop-map (kbd "C-S-f m") 'helm-multi-swoop-current-mode-from-helm-swoop)
-	(define-key helm-swoop-map (kbd "M-a") 'helm-multi-swoop-all-from-helm-swoop))
 
-;; Let helm-swoop behave more like isearch
-(defun tl/helm-swoop-C-s ()
-	(interactive)
-	(if (boundp 'helm-swoop-pattern)
-			(if (equal helm-swoop-pattern "")
-					(previous-history-element 1)
-				(helm-next-line))
-		(helm-next-line)
-		))
+(add-hook 'winkeys-mode-hook
+
+	(with-eval-after-load 'helm-swoop
+		(define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
+		(define-key helm-swoop-map (kbd "C-f") 'tl/helm-swoop-C-s) 
+		(define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
+		(define-key helm-multi-swoop-map (kbd "C-f") 'helm-next-line)
+		(define-key helm-swoop-map (kbd "C-S-f a") 'helm-multi-swoop-all-from-helm-swoop)
+		(define-key helm-swoop-map (kbd "C-S-f m") 'helm-multi-swoop-current-mode-from-helm-swoop)
+		(define-key helm-swoop-map (kbd "M-a") 'helm-multi-swoop-all-from-helm-swoop))
+
+	;; Let helm-swoop behave more like isearch
+	;; FIXME: does not follow search hits
+	(defun tl/helm-swoop-C-s ()
+		(interactive)
+		(if (boundp 'helm-swoop-pattern)
+				(if (equal helm-swoop-pattern "")
+						(previous-history-element 1)
+					(helm-next-line))
+			(helm-next-line)
+			))
+
+	(with-eval-after-load 'company
+		(define-key company-active-map (kbd "C-s") 'save-buffer))
+
+	)
 #+END_SRC
 
 * TODO winkeys-starter-mode
