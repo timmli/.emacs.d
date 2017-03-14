@@ -144,9 +144,13 @@
 					 (expand-file-name (getenv "WEMACS_HOME"))))
 
 	(when (getenv "WEMACS_PATH")
-		 ;; using setenv will make available the PATH variable also to the emacs shells
-		 ;; (setq exec-path (expand-file-name (concat (getenv "WEMACS_PATH") ";" (getenv "PATH"))))
-		 (setenv "PATH" (expand-file-name (concat (getenv "WEMACS_PATH") ";" (getenv "PATH")))))
+		;; using setenv makes available the PATH variable to the emacs shells
+		(setenv "PATH" (expand-file-name (concat (getenv "WEMACS_PATH") ";" (getenv "PATH"))))
+		;; using exec-path makes available the PATH variable to the rest of emacs
+		(setq exec-path
+					(append (split-string (expand-file-name (getenv "WEMACS_PATH")) ";") exec-path))
+		;; (setq exec-path (concat (getenv "PATH") ";" exec-path))  
+		)
 
 	;; the following can be left implicit
 	;; ;; use ported gnu find command under windows
