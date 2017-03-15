@@ -2055,13 +2055,6 @@ Sequence is important!
 
 #+begin_src emacs-lisp
 (setq ispell-program-name "aspell")
-(global-set-key (kbd "C-<f6>") 'flyspell-toggle)
-(global-set-key (kbd "<f6>") 'flyspell-toggle)
-(eval-after-load "flyspell"
-	'(dolist
-			 (define-key flyspell-mode-map (kbd "M-<f6>") 'ispell-word)
-		 (define-key flyspell-mode-map (kbd "<f6>") 'flyspell-next-and-ispell-word)
-		 (define-key flyspell-mode-map (kbd "S-<f6>") 'flyspell-previous-and-ispell-word)))
 
 ;; remove keybindings for autocorrect 
 (eval-after-load "flyspell"
@@ -3210,6 +3203,9 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 
 * hydra
 
+Nice examples:
+https://github.com/rubensts/.emacs.d#hydra
+
 ** hydra: begin
 
 #+BEGIN_SRC emacs-lisp
@@ -3617,7 +3613,7 @@ https://gitlab.com/xuhdev/dired-quick-sort
   ^^            ʌ        ^^             _u_: unmark         _C_: copy to          _/_: filter 
   ^^                     ^^             _U_: unmark all     _D_: delete           _s_: sort		 
   _<left>_  ..     view  _<right>_      _t_: toggle mark    _R_: move to          _(_: details
-  ^^               enter _RET_          _*_: specific       ^^                    
+  ^^               enter _RET_          _*_: specific       ^^                    _z_: size
   ^^                     ^^             ^^                  _P_: change property
   ^^            v        ^^             ^^                  _Z_: compress				
             _<down>_     ^^             ^^                  _=_: diff             
@@ -3657,6 +3653,7 @@ https://gitlab.com/xuhdev/dired-quick-sort
 ("U" dired-unmark-all-marks)
 ("t" dired-toggle-marks)
 ("v" dired-view-file)
+("z" dired-get-size)
 ("q" quit-window :color blue)
 ("Q" nil :color blue)
 )
@@ -3922,6 +3919,36 @@ Automatically open the hydra with ibuffer:
 #+END_SRC
 
 ** TODO hydra-flyspell
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-flyspell (:pre (flyspell-mode +1)
+															 :color blue
+															 :hint nil
+															 :idle 0.2)
+    "
+   ^^                            ^^                             ╭──────────┐
+   ^^Flyspell                    ^^Ispell                       │ Flyspell │
+╭──^^────────────────────────────^^─────────────────────────────┴──────────╯
+    [_<up>_] previous error       [_b_] check buffer
+       [_c_] correct word         [_w_] check word           
+  [_<down>_] next error           [_d_] change dictionary   
+       [_f_] toggle flyspell                             [_q_] quit window 
+       [_p_] toggle prog mode                            [_Q_] quit flyspell
+      "
+    ("w" ispell-word)
+    ("i" ispell)
+		("b" ispell-buffer)
+    ("d" ispell-change-dictionary)
+    ("f" flyspell-mode)
+    ("p" flyspell-prog-mode)
+    ("c" flyspell-auto-correct-word)
+    ("<up>" flyspell-goto-next-error :color red)
+		("<down>" flyspell-goto-previous-error :color red)
+    ("q" nil)
+    ("Q" (flycheck-mode -1)))
+
+#+END_SRC
+
 ** hydra-compilation-error
 
 #+BEGIN_SRC emacs-lisp
