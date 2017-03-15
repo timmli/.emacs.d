@@ -316,7 +316,7 @@ Smex helps to remember often used commands; used by ido and counsel
 ;; (use-package smex
 ;; 	:ensure t)
 #+END_SRC
-
+<
 ** helm
 
 #+BEGIN_SRC emacs-lisp
@@ -488,6 +488,14 @@ Does not work under windows so far. Therefore I commented this out:
 #+BEGIN_SRC emacs-lisp
 (use-package helm-tramp
 	:ensure t)
+#+END_SRC
+
+*** dictcc
+
+#+BEGIN_SRC emacs-lisp
+(use-package dictcc
+	:ensure t
+)
 #+END_SRC
 
 ** Keys
@@ -3432,7 +3440,7 @@ If buffer-or-name is nil return current buffer's mode."
    ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^──╯    └──────^^────────╯
  
        [_a_] adress book        [_d_] dired/file browser     [_t_] pomodoro timer
-       [_b_] new buffer         [_e_] emacs shell  
+       [_b_] new buffer         [_e_] emacs shell            [_l_] dictionary
        [_i_] buffer overview    [_s_] system shell
        [_c_] calendar           [_m_] magit status           [_q_]uit
 	" 
@@ -3442,6 +3450,7 @@ If buffer-or-name is nil return current buffer's mode."
 	("s" shell :exit t)
 	("b" xah-new-empty-buffer :exit t)
 	("i" ibuffer :exit t)
+	("l" dictcc :exit t)
 	("m" magit-status :exit t)
 	("e" tl/eshell :exit t)
 	("t" pomidor :exit t)
