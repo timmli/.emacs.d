@@ -2596,9 +2596,7 @@ Use deer instead plain directory listing:
 (use-package cm-mode
 	:ensure t
 	:config
-	(setq-default cm-author user-acronym)
-  (global-set-key (kbd "C-*") 'hydra-cm-mode/body)
-	)
+	(setq-default cm-author user-acronym))
 #+end_src
 
 ** Line actions
@@ -3584,6 +3582,7 @@ If buffer-or-name is nil return current buffer's mode."
 			("F" #'cm-follow-changes :color blue)
 			("q" nil :color blue)
 			("Q" (cm-mode -1) :color blue))
+(global-set-key (kbd "C-*") 'hydra-cm-mode/body)
 #+END_SRC
 
 ** hydra-dired
