@@ -495,6 +495,8 @@ Does not work under windows so far. Therefore I commented this out:
 #+BEGIN_SRC emacs-lisp
 (use-package dictcc
 	:ensure t
+	:bind
+	(("C-0" . dictcc))
 )
 #+END_SRC
 
@@ -2594,7 +2596,9 @@ Use deer instead plain directory listing:
 (use-package cm-mode
 	:ensure t
 	:config
-	(setq-default cm-author user-acronym))
+	(setq-default cm-author user-acronym)
+  (global-set-key (kbd "C-*") 'hydra-cm-mode/body)
+	)
 #+end_src
 
 ** Line actions
