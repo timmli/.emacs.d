@@ -2036,7 +2036,7 @@ Sequence is important!
 *** flyspell
 
 #+begin_src emacs-lisp
-(setq ispell-program-name "C:\\Program Files (x86)\\Aspell\\bin\\aspell.exe")
+(setq ispell-program-name "aspell")
 (global-set-key (kbd "C-<f6>") 'flyspell-toggle)
 (global-set-key (kbd "<f6>") 'flyspell-toggle)
 (eval-after-load "flyspell"
@@ -3903,6 +3903,7 @@ Automatically open the hydra with ibuffer:
 			("q"  nil))
 #+END_SRC
 
+** TODO hydra-flyspell
 ** hydra-compilation-error
 
 #+BEGIN_SRC emacs-lisp
