@@ -52,12 +52,6 @@
 	(setq user-emacs-directory
 				(expand-file-name (concat (getenv "EMACS_USER_DIRECTORY") "/"))))
 
-;; set path to settings
-(defvar settings-dir)
-(setq settings-dir
-      (expand-file-name "settings" user-emacs-directory))
-(add-to-list 'load-path settings-dir)
-
 ;; set path to local lisp libaries
 (defvar lisp-dir)
 (setq lisp-dir

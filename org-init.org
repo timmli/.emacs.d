@@ -3910,10 +3910,12 @@ Automatically open the hydra with ibuffer:
 ╭────────╯
 "
 			("f"  flycheck-error-list-set-filter                            "Filter")
-			("j"  flycheck-next-error                                       "Next")
-			("k"  flycheck-previous-error                                   "Previous")
-			("gg" flycheck-first-error                                      "First")
-			("G"  (progn (goto-char (point-max)) (flycheck-previous-error)) "Last")
+			("j"  flycheck-next-error                                       nil)
+			("<down>"  flycheck-next-error                                       "Next")
+			("k"  flycheck-previous-error                                   nil)
+			("<up>"  flycheck-previous-error                                   "Previous")
+			("[" flycheck-first-error                                      "First")
+			("]"  (progn (goto-char (point-max)) (flycheck-previous-error)) "Last")
 			("Q"  (flycheck-mode -1) "Quit flycheck-mode") 
 			("q"  nil))
 #+END_SRC
