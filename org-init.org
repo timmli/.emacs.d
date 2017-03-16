@@ -3332,7 +3332,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
  
          [_i_] init file           [_p_] package manager      [_m_] macros
          [_d_] .emacs.d            [_u_] upgrade packages
-         [_c_] customize emacs                                [_q_]uit
+         [_c_] customize emacs     [_t_] load theme           [_q_]uit
 	"
 	("i" (find-file (expand-file-name org-init-file user-emacs-directory)) :exit t)
 	("d" (find-file user-emacs-directory) :exit t)
@@ -4095,6 +4095,42 @@ Automatically open the hydra with ibuffer:
 	("q" quit-window "quit window")
 	("Q" pomidor-quit "quit pomidor")
 )
+#+END_SRC
+
+** hydra-load-theme
+
+Copied from http://www.superloopy.io/articles/2017/hydra-theme-switcher.html:
+
+#+BEGIN_SRC emacs-lisp
+(defun sb/disable-all-themes ()
+  (interactive)
+  (mapc #'disable-theme custom-enabled-themes))
+
+(defun sb/load-theme (theme)
+  "Enhance `load-theme' by first disabling enabled themes."
+  (sb/disable-all-themes)
+  (load-theme theme))
+
+(setq sb/hydra-selectors
+      "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ")
+
+(defun sb/sort-themes (themes)
+  (sort themes (lambda (a b) (string< (symbol-name a) (symbol-name b)))))
+
+(defun sb/hydra-load-theme-heads (themes)
+  (mapcar* (lambda (a b)
+             (list (char-to-string a) `(sb/load-theme ',b) (symbol-name b)))
+           sb/hydra-selectors themes))
+
+(bind-keys ("C-c w t" .
+            (lambda ()
+              (interactive)
+              (call-interactively
+               (eval `(defhydra sb/hydra-select-themes (:hint nil :color pink)
+                        "Select Theme"
+                        ,@(sb/hydra-load-theme-heads (sb/sort-themes (custom-available-themes)))
+                        ("DEL" (sb/disable-all-themes))
+                        ("RET" nil "done" :color blue)))))))
 #+END_SRC
 
 ** hydra-transpose
