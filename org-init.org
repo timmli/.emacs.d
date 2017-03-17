@@ -3340,6 +3340,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 	("p" paradox-list-packages :exit t)
 	("u" paradox-upgrade-packages :exit t)
 	("m" hydra-macro/body :exit t)
+	("t" hydra-load-theme/body :exit t)
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
 	("<f2>" hydra-f2/body :exit t)
@@ -3704,6 +3705,8 @@ Don't ask for the path when searching for files:
 ("a" org-toggle-archive-tag "archive here" :exit t)
 ("A" org-archive-subtree-default "archive outside" :exit t)
 ("c" hydra-org-columns/body "columns" :exit t)
+("s" org-sort "sort" :exit t)
+("^" org-sort nil :exit t)
 ("q" nil :color blue)
 )
 #+END_SRC
@@ -3920,7 +3923,7 @@ Automatically open the hydra with ibuffer:
 			("q"  nil))
 #+END_SRC
 
-** TODO hydra-flyspell
+** hydra-flyspell
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-flyspell (:pre (flyspell-mode +1)
@@ -3937,15 +3940,17 @@ Automatically open the hydra with ibuffer:
        [_f_] toggle flyspell                             [_q_] quit window 
        [_p_] toggle prog mode                            [_Q_] quit flyspell
       "
-    ("w" ispell-word)
+    ("w" ispell-word :color red)
     ("i" ispell)
 		("b" ispell-buffer)
     ("d" ispell-change-dictionary)
     ("f" flyspell-mode)
     ("p" flyspell-prog-mode)
     ("c" flyspell-auto-correct-word)
-    ("<up>" flyspell-goto-next-error :color red)
-		("<down>" flyspell-goto-previous-error :color red)
+    ("<up>"  flyspell-previous-and-ispell-word :color red)
+		("<down>" flyspell-next-and-ispell-word :color red)
+    ("k"  flyspell-previous-and-ispell-word :color red)
+		("j" flyspell-next-and-ispell-word :color red)
     ("q" nil)
     ("Q" (flycheck-mode -1)))
 
