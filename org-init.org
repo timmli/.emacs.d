@@ -16,6 +16,28 @@ Don't show toolbar:
 (tool-bar-mode 0)
 #+END_SRC
 
+** Start-up
+
+Dashboard:
+#+BEGIN_SRC emacs-lisp
+(use-package dashboard
+	:ensure t
+	:diminish dashboard-mode
+	:config
+	(setq
+	 dashboard-banner-logo-title "Welcome to Emacs"
+	 dashboard-startup-banner 'logo
+	 dashboard-items '((recents  . 10)
+										 (bookmarks . 10)
+										 ;; (projects . 5)
+										 )
+	 )
+	(define-key dashboard-mode-map (kbd "<up>") (lambda () (interactive)(widget-forward -1)))
+	(define-key dashboard-mode-map (kbd "<down>") (lambda () (interactive)(widget-forward 1)))
+	(dashboard-setup-startup-hook)
+	)
+#+END_SRC
+
 ** Signals
 
 No beep:
@@ -338,6 +360,7 @@ Smex helps to remember often used commands; used by ido and counsel
 					helm-buffers-fuzzy-matching t
 					helm-recentf-fuzzy-match t
 					helm-M-x-fuzzy-match t
+          helm-follow-mode-persistent t	; follow candidate in buffer (with C-up/C-down)
 					helm-imenu-fuzzy-match t
 					helm-completion-in-region-fuzzy-match t
 					helm-apropos-fuzzy-match t
@@ -348,6 +371,14 @@ Smex helps to remember often used commands; used by ido and counsel
 					bibtex-completion-library-path user-bibliography-pdf-dir ; directory of PDFs
 					;; bibtex-completion-notes-path "~/bibliography/helm-bibtex-notes"
 					)
+		
+		;; helm-mini
+		(setq helm-mini-default-sources
+					'(helm-source-buffers-list
+						helm-source-bookmarks
+						helm-source-recentf
+						helm-source-buffer-not-found)) 
+
     (helm-mode)
 
 		;; ;; http://emacs.stackexchange.com/a/7896/12336
@@ -2986,7 +3017,7 @@ Key bindings roughly following the conventions of the Windows habitat.
 		(define-key helm-swoop-map (kbd "M-a") 'helm-multi-swoop-all-from-helm-swoop))
 
 	;; Let helm-swoop behave more like isearch
-	;; FIXME: does not follow search hits
+	;; FIXME: does not follow search hits; helm-action-follow-forward does not work here
 	(defun tl/helm-swoop-C-s ()
 		(interactive)
 		(if (boundp 'helm-swoop-pattern)
@@ -3006,7 +3037,7 @@ Key bindings roughly following the conventions of the Windows habitat.
 
 https://github.com/publicus/emacs-org-mode-for-the-laity
 
-* sr-speedbar
+* COMMENT sr-speedbar
 
 #+BEGIN_SRC emacs-lisp
 (use-package sr-speedbar
@@ -3063,6 +3094,14 @@ Better keys for switching between windows:
   :diminish golden-ratio-mode
   :init
   (golden-ratio-mode 1))
+#+END_SRC
+
+* Bookmarks
+
+#+BEGIN_SRC emacs-lisp
+(setq bookmark-default-file (concat user-emacs-directory "bookmarks")) ; default bookmark file
+(setq bookmark-save-flag 1) ; everytime bookmark is changed, automatically save it
+(global-set-key (kbd "C-x C-r") 'helm-bookmarks)
 #+END_SRC
 
 * Git
@@ -3331,7 +3370,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
    ╭─────^^─────────^^───╯      └───────^^──────────^^───^^───────^^───────^^───────^^────╯
  
          [_i_] init file           [_p_] package manager      [_m_] macros
-         [_d_] .emacs.d            [_u_] upgrade packages
+         [_d_] .emacs.d            [_u_] upgrade packages    
          [_c_] customize emacs     [_t_] load theme           [_q_]uit
 	"
 	("i" (find-file (expand-file-name org-init-file user-emacs-directory)) :exit t)
@@ -3458,7 +3497,7 @@ If buffer-or-name is nil return current buffer's mode."
  
        [_a_] adress book        [_d_] dired/file browser     [_t_] pomodoro timer
        [_b_] new buffer         [_e_] emacs shell            [_l_] dictionary
-       [_i_] buffer overview    [_s_] system shell
+       [_i_] buffer overview    [_s_] system shell           [_r_] bookmarks
        [_c_] calendar           [_m_] magit status           [_q_]uit
 	" 
 	("a" helm-bbdb :exit t)
@@ -3470,6 +3509,7 @@ If buffer-or-name is nil return current buffer's mode."
 	("l" dictcc :exit t)
 	("m" magit-status :exit t)
 	("e" tl/eshell :exit t)
+	("r" bookmark-bmenu-list :exit t)
 	("t" pomidor :exit t)
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
@@ -3497,13 +3537,14 @@ If buffer-or-name is nil return current buffer's mode."
      Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^  │Mark │  Org^^
    ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^───────^^──╯     └─────^^─╯
  
-        [_c_] highlight changes        [_w_] show/hide whitespaces
-        [_g_] git gutter               [_*_] critic markup          
-        [_s_] highlight same symbols   [_r_] mark rectangular                    [_q_]uit
+      [_c_] highlight changes        [_w_] show/hide whitespaces   [_b_] add bookmark
+      [_g_] git gutter               [_*_] critic markup          
+      [_s_] highlight same symbols   [_r_] mark rectangular                    [_q_]uit
 	"
 	("g" hydra-git-gutter/body :exit t)
 	("c" hydra-highlight-changes/body :exit t)
 	("r" rectangle-mark-mode :exit t)
+	("b" bookmark-set :exit t) 
 	("s" hydra-highlight-symbol/body :exit t)
 	("w" whitespace-mode :exit t)
   ("*" hydra-cm-mode/body :exit t )
