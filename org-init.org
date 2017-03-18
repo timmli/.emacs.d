@@ -533,13 +533,14 @@ Does not work under windows so far. Therefore I commented this out:
 
 Call dictcc with word under cursor or mark region:
 #+BEGIN_SRC emacs-lisp
-(defun dictcc-at-point (start end)
-  (interactive "r")
+(defun dictcc-at-point ()
+  (interactive)
 	(if (use-region-p)
-			(dictcc (concat "\"" (filter-buffer-substring start end) "\""))
-		(dictcc (word-at-point))
-	))
-(global-set-key (kbd "C-0") 'dictcc-at-point)
+			(dictcc (concat "\"" (filter-buffer-substring (region-beginning) (region-end)) "\""))
+		(if (word-at-point)
+				(dictcc (word-at-point))
+      (call-interactively 'dictcc))
+		))
 #+END_SRC
 
 ** Keys
