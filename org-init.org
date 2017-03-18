@@ -531,6 +531,17 @@ Does not work under windows so far. Therefore I commented this out:
 )
 #+END_SRC
 
+Call dictcc with word under cursor or mark region:
+#+BEGIN_SRC emacs-lisp
+(defun dictcc-at-point (start end)
+  (interactive "r")
+	(if (use-region-p)
+			(dictcc (concat "\"" (filter-buffer-substring start end) "\""))
+		(dictcc (word-at-point))
+	))
+(global-set-key (kbd "C-0") 'dictcc-at-point)
+#+END_SRC
+
 ** Keys
 
 #+BEGIN_SRC emacs-lisp
