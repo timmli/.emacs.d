@@ -907,6 +907,19 @@ Filter dired list on the fly:
 )
 #+END_SRC
 
+*** dired-efap
+
+Rename file name at point.
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-efap
+	:ensure t
+	:config
+	(setq dired-efap-initial-filename-selection t)
+	(define-key dired-mode-map (kbd "r") 'dired-efap)
+	)
+#+END_SRC
+
 *** ediff 
 
 Quick ediff on marked files.
@@ -1844,10 +1857,12 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 								 )
 		)
 
-	;; unset key for preview 
+	;; FIXME: unset key for preview 
 	(add-hook 'LaTeX-mode-hook
 						'(define-key LaTeX-mode-map (kbd "C-c C-p") nil))
 
+  ;; FIXME: <tab> always inserts a tab (instead of indentation)
+	(add-hook 'latex-mode-hook '(setq tab-always-indent nil))
 #+END_SRC
 
 *** reftex
@@ -3711,12 +3726,12 @@ https://gitlab.com/xuhdev/dired-quick-sort
   ^^            ʌ        ^^             _u_: unmark         _C_: copy to          _/_: filter 
   ^^                     ^^             _U_: unmark all     _D_: delete           _s_: sort		 
   _<left>_  ..     view  _<right>_      _t_: toggle mark    _R_: move to          _(_: details
-  ^^               enter _RET_          _*_: specific       ^^                    _z_: size
-  ^^                     ^^             ^^                  _P_: change property
-  ^^            v        ^^             ^^                  _Z_: compress				
-            _<down>_     ^^             ^^                  _=_: diff             
-  ^^                     ^^             ^^                  _e_: diff on marked   _q_: quit dired     
-   _._: home  _j_: jump  _f_: find                          ^^                    _Q_: quit hydra
+  ^^               enter _RET_          _*_: specific       _r_: rename           _z_: size
+  ^^                     ^^             ^^                  ^^
+  ^^            v        ^^             ^^                  _P_: change property
+            _<down>_     ^^             ^^                  _Z_: compress				  
+  ^^                     ^^             ^^                  _=_: diff             _q_: quit dired     
+   _._: home  _j_: jump  _f_: find                          _e_: diff on marked   _Q_: quit hydra
                                                     
 -^----------^------------------------^----^---------------^-------^-------------^----^-----------
 "
@@ -3746,6 +3761,7 @@ https://gitlab.com/xuhdev/dired-quick-sort
 ("e" ora-ediff-files)
 ("g" revert-buffer)
 ("j" dired-goto-file)
+("r" dired-efap)
 ("s" dired-sort-toggle-or-edit)
 ("m" dired-mark)
 ("u" dired-unmark)
