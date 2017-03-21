@@ -152,6 +152,10 @@
 	;; (setq find-program
 	;; 			(expand-file-name
 	;; 			 (concat wemacs-dir "/findutils/bin/find")))
+
+	;; ;; use external ls instead of ls-lisp
+	;; ;; (caveat: grouping of directories might not work out of the box any more.)
+	;; (setq ls-lisp-use-insert-directory-program t)
 	
 	;; make PC keyboard's Win key to type Super or Hyper, for emacs running on Windows.
 	(progn

@@ -613,6 +613,8 @@ Call dictcc with word under cursor or marked region:
 
 ** TODO Gnuplot
 
+- [ ] compiling Gnuplot crashes Emacs
+
 #+BEGIN_SRC emacs-lisp
 (use-package gnuplot
 	:ensure t)
@@ -846,7 +848,9 @@ Version 2015-11-30"
 
 *** TODO COMMENT dired-quick-sort
 
-Depends on ls
+- [ ] Grouping (=--group-directories-first=) does not work under windows.
+
+Depends on =ls=.
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired-quick-sort
@@ -1335,7 +1339,9 @@ Scale LaTeX previews:
 (org-babel-do-load-languages  'org-babel-load-languages '((dot . t)))
 #+END_SRC
 
-*** Gnuplot
+*** TODO Gnuplot
+
+- [ ] compiling Gnuplot source blocks crashes Emacs
 
 #+BEGIN_SRC emacs-lisp
 (org-babel-do-load-languages
@@ -1695,14 +1701,29 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 		(setq TeX-PDF-mode t)
 		(setq TeX-source-correlate-mode t)
 		(setq TeX-source-correlate-method 'synctex)
-		(setq TeX-view-program-list
-					'(("Sumatra PDF" ("\"SumatraPDF.exe\" -reuse-instance"
-														(mode-io-correlate " -forward-search %b %n ") " %o"))))
-		(eval-after-load 'tex
-			'(progn
-				 (assq-delete-all 'output-pdf TeX-view-program-selection)
-				 (add-to-list 'TeX-view-program-selection '(output-pdf "Sumatra PDF"))))
+
+		(when (eq system-type 'windows-nt) 
+			(setq TeX-view-program-list
+						'(("Sumatra PDF" ("\"SumatraPDF.exe\" -reuse-instance"
+															(mode-io-correlate " -forward-search %b %n ") " %o"))))
+			(eval-after-load 'tex
+				'(progn
+					 (assq-delete-all 'output-pdf TeX-view-program-selection)
+					 (add-to-list 'TeX-view-program-selection '(output-pdf "Sumatra PDF"))))
+			)
 		
+		;; set up engines
+		(setq TeX-engine-alist 
+					'(
+						(xetex "XeTeX" 
+									 "xetex --file-line-error" 
+									 "xelatex --file-line-error" 
+									 "xetex")
+						(xetex_sh "XeTeX shell escape" 
+											"xetex --file-line-error --shell-escape" 
+											"xelatex --file-line-error --shell-escape" 
+											"xetex")))
+
 		;; make LaTeXmk default
 		(use-package auctex-latexmk
 			:ensure t
