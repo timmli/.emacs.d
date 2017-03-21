@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
-# name: dep
+# name: dep-src
 # key: dep
 # --
 #+NAME: ${1:tikz`(format-time-string "%y%m%d%H%M")`}
