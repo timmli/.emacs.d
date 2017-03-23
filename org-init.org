@@ -680,7 +680,9 @@ Depends on plantuml.jar and Gaphviz (http://www.graphviz.org).
 
 ** dired
 
-*** General settings
+*** TODO General settings
+
+- [ ] improve =grep= integration
 
 Tips:  http://ergoemacs.org/emacs/emacs_dired_tips.html
 
@@ -1676,7 +1678,7 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 
 ** LaTeX
 
-*** AUCTeX 
+*** TODO AUCTeX 
 
 #+BEGIN_SRC emacs-lisp
 	(use-package tex
@@ -1890,6 +1892,7 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 								 ;; goto keys
 								 ("C-c {" . LaTeX-find-matching-begin)
 								 ("C-c }" . LaTeX-find-matching-end)
+								 ;; ("C-c C-l" . (lambda () (interactive) ()))  ;FIXME
 								 )
 		)
 
@@ -1901,7 +1904,9 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 	(add-hook 'latex-mode-hook '(setq tab-always-indent nil))
 #+END_SRC
 
-*** reftex
+*** TODO reftex
+
+- [ ] =\section=, =\frametitle= etc. are not shown in TOC when not being line-inital.
 
 #+BEGIN_SRC emacs-lisp
 (use-package reftex
