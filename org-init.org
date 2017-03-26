@@ -4322,7 +4322,7 @@ Taken from https://github.com/abo-abo/hydra/wiki/Emacs
 	"Transpose"
 	("c" transpose-chars "characters")
 	("w" transpose-words "words")
-	("x" transpose-sexp "expressions")
+	("x" transpose-sexps "expressions")
 	("l" transpose-lines "lines")
 	("s" transpose-sentences "sentences")
 	("p" transpose-paragraphs "paragraphs")
