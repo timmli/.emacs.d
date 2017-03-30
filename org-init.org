@@ -732,6 +732,13 @@ Other settings: http://oremacs.com/2015/01/13/dired-options/
 (setq dired-listing-switches "-laGh1v")
 #+END_SRC
 
+Chose Windows drives:
+
+#+BEGIN_SRC emacs-lisp
+(when (eq system-type 'windows-nt)
+	(define-key dired-mode-map (kbd "\\") 'diredp-w32-drives))
+#+END_SRC
+
 *** Mark/Unmark 
 
 Use shift-up and shift-down in the usual way.
@@ -1693,7 +1700,10 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 		(setq TeX-parse-self t)
 		(setq-default TeX-master nil)
 		(setq TeX-save-query nil) ; autosave before compiling 
-		;; (setq TeX-show-compilation t) ; always show and follow TeX output
+
+		;; Show copilation log
+		(setq TeX-show-compilation t) ; always show and follow TeX output
+    ;; FIXME: Make C-c C-l behave like this
 
 		;; don't indent
 		(setq LaTeX-indent-level 0)
