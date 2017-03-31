@@ -1467,6 +1467,21 @@ Integrate Google Calendar with org-gcal:
 	))
 #+END_SRC
 
+Customize agenda view:
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-custom-commands
+			'(("w" "Agenda and work-related tasks"
+				 ((agenda "")
+					(tags-todo "@work")
+					))
+				))
+
+(defun org-agenda-list-work ()
+	(interactive)
+	(org-agenda nil "w"))
+
+#+END_SRC
+
 *** Links
 
 Links to files are opened in the same window, i.e. the window does not get split:
@@ -3429,7 +3444,7 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
   (if (eq system-type 'windows-nt) 
       (setq tramp-default-method "plink")
     (setq tramp-default-method "ssh"))
-  (setq tramp-default-user "lichte")
+  ;; (setq tramp-default-user "")
 #+END_SRC
 
 * hydra
@@ -3773,7 +3788,7 @@ If buffer-or-name is nil return current buffer's mode."
      ^^  [_f_] search  ^^                ^^  ^^  ^^  ^^  ^^                      [_q_]uit
 
 	"
-	("a" org-agenda-list :exit t)
+	("a" org-agenda-list-work :exit t)
 	("d" deft :exit t)
 	("n" (lambda nil (interactive)
 				 (find-file (concat org-notes-dir "/notes.org"))) :exit t)
