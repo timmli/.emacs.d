@@ -516,7 +516,7 @@ http://sqlite.org/download.html
 		)
 #+END_SRC
 
-*** COMMENT helm-gtags
+*** TODO helm-gtags
 
 - [ ]  [[*GLOBAL][GLOBAL]] has to be properly installed first. 
 
@@ -3375,10 +3375,11 @@ Enhancement of magit to make available a more comprehensive access to Github rep
 
 =etags= is part of Emacs.
 
-** TODO COMMENT GLOBAL
+** TODO GLOBAL
 
-- [ ] install =mkid= (from =idutils=) >= v4.5)
-
+- [X] install =mkid= (from =idutils=) >= v4.5)
+- [ ] Still it does not work for ever language, e.g. elisp and latex.
+  
 [[http://savannah.gnu.org/projects/global/][GNU GLOBAL]] is a source code tagging system.
 
 #+BEGIN_SRC emacs-lisp
@@ -3388,8 +3389,8 @@ Enhancement of magit to make available a more comprehensive access to Github rep
   ;; :bind (("M-m T"   . ggtags-find-tag-regexp)
   ;;         ("M-m g t" . ggtags-create-tags)
   ;;         ("M-m g T" . ggtags-update-tags))
-  :init
-  (setq-local imenu-create-index-function #'ggtags-build-imenu-index)
+  ;; :init
+  ;; (setq-local imenu-create-index-function #'ggtags-build-imenu-index)
   :config
   (add-hook 'prog-mode-hook 'ggtags-mode))
 #+END_SRC
