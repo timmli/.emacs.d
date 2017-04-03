@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
-# name: header
+# name: header for org file
 # key: header
 # --
 #+TITLE: ${1:Notes on research literature}
@@ -9,6 +9,5 @@
 #+STARTUP: indent
 #+STARTUP: hideblocks content
 #+TODO: TODO | DONE CANCELED
-#+bibliography: C:/Users/timm/Dropbox/Forschung/timm-bib.bib
 
 $0
