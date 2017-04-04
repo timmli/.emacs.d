@@ -2976,6 +2976,15 @@ Revert buffer:
 (global-set-key (kbd "<f5>") 'revert-buffer)
  #+END_SRC
 
+** Charmap
+
+For showing the character map and letting one select a special symbol:
+
+#+BEGIN_SRC emacs-lisp
+(use-package charmap
+	:ensure t)
+#+END_SRC 
+
 * underi-mode
 
 Key bindings for more ergonomic cursor movement: the cursor movement keys are under the <i> key and get activated with the Meta/Alt key. 
@@ -3957,6 +3966,7 @@ Don't ask for the path when searching for files:
 ("a" org-toggle-archive-tag "archive here" :exit t)
 ("A" org-archive-subtree-default "archive outside" :exit t)
 ("c" hydra-org-columns/body "columns" :exit t)
+("\\" org-toggle-pretty-entities "toggle utf8 chars" :exit t)
 ("s" org-sort "sort" :exit t)
 ("^" org-sort nil :exit t)
 ("q" nil :color blue)
