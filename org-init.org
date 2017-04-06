@@ -569,6 +569,16 @@ Call dictcc with word under cursor or marked region:
 (global-set-key (kbd "C-0") 'tl/dictcc-at-point)
 #+END_SRC
 
+*** helm-org-rifle 
+
+Quick, comprehensive search on org-mode files.
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-org-rifle
+	:after org
+	:ensure t)
+#+END_SRC
+
 ** Keys
 
 #+BEGIN_SRC emacs-lisp
@@ -1742,7 +1752,7 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 		(setq TeX-save-query nil) ; autosave before compiling 
 
 		;; Show copilation log
-		(setq TeX-show-compilation t) ; always show and follow TeX output
+		(setq TeX-show-compilation nil) ; always show and follow TeX output
     ;; FIXME: Make C-c C-l behave like this
 
 		;; don't indent
@@ -2073,11 +2083,10 @@ Make square brackets indent correctly (testing):
 (use-package deft												; for displaying list of note files
 	:ensure t
   :bind
-	("<f9> f" . deft)
 	("<f9> o" . deft)
 	("<f9> d" . deft)
   :commands (deft)
-  :config (setq deft-directory org-notes-dir
+  :config (setq deft-directory my-deft-dir
                 deft-extensions '("md" "org")
 								deft-recursive t
 								deft-use-filename-as-title t
@@ -3808,7 +3817,8 @@ If buffer-or-name is nil return current buffer's mode."
 	("w" (lambda nil (interactive)
 				 (find-file (concat org-notes-dir "/work/wip.org"))) :exit t)
 	("r" org-reload :exit t)
-	("f" org-search-view :exit t)
+	("f" helm-org-agenda-files-headings :exit t)
+	;; ("f" org-search-view :exit t)
 	("s" org-search-view :exit t)
 	("u" tl/update-org-agenda-files :exit t)
 	("q" nil :color blue)

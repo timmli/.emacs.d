@@ -77,6 +77,10 @@
 (defvar org-notes-dir
 	(expand-file-name "org/" home-directory)) ;; default value; may be overwritten by private directory settings
 
+;; set path to the directory that deft observes
+(defvar my-deft-dir 
+	(expand-file-name "org/" home-directory)) ;; default value; may be overwritten by private directory settings
+
 ;; set path to private emacs settings
 (defvar private-emacs-settings-dir
 	(expand-file-name "Dropbox/emacs-settings/" home-directory)) ;; FIXME: make this more generic, e.g. with using links in .emacs.d
