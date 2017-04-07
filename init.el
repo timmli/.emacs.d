@@ -73,6 +73,7 @@
 ;;      PRIVATE DIRECTORIES SETUP (outside .emacs.d)
 ;;==========================================================
 
+;; FIXME: use org-directory instead
 ;; set path to private org notes
 (defvar org-notes-dir
 	(expand-file-name "org/" home-directory)) ;; default value; may be overwritten by private directory settings

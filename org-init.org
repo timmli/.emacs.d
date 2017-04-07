@@ -1056,38 +1056,26 @@ http://doc.norang.ca/org-mode.html#Setup
 	(message "org-agenda-files updated")
 	)
 
-;; Copied from http://stackoverflow.com/a/26548971/6452961
+;; Modified http://stackoverflow.com/a/26548971/6452961
 (defun load-org-agenda-files-recursively (dir) "Find all directories in DIR."
 			 (unless (file-directory-p dir) (error "Not a directory `%s'" dir))
 			 (unless (equal (directory-files dir nil org-agenda-file-regexp t) nil)
-				 (add-to-list 'org-agenda-files dir)
-				 )
+				 (setq org-agenda-files 
+							 (append
+								org-agenda-files
+								(file-expand-wildcards (concat dir "*.org")))))
 			 (dolist (file (directory-files dir nil nil t))
 				 (unless (member file '("." ".."))
 					 (let ((file (concat dir file "/")))
 						 (when (file-directory-p file)
-							 (load-org-agenda-files-recursively file)
-							 )
-						 )
-					 )
-				 )
-			 )
+							 (load-org-agenda-files-recursively file)))))
+)
 
-	;; (if (eq org-agenda-files nil)						; FIXME
-	;; 		()
-	;; 	())
-
-	;; ;; Doing this at every start-up is maybe not a good idea:
-	;; (setq org-agenda-files
-	;; 			(append
-	;; 			 (list org-directory)
-	;; 			 (file-expand-wildcards (concat org-notes-dir "/*/*.org"))))
-
-	;; set refile targets to move entries inside org-agenda 
-	(setq org-refile-targets '(
-														 (nil :maxlevel . 2)             ; refile to headings in the current buffer
-														 (org-agenda-files :maxlevel . 2) ; refile to any of these files
-														 ))
+;; set refile targets to move entries inside org-agenda 
+(setq org-refile-targets '(
+													 (nil :maxlevel . 2)             ; refile to headings in the current buffer
+													 (org-agenda-files :maxlevel . 2) ; refile to any of these files
+													 ))
 #+END_SRC
 
 *** Archive
@@ -1425,7 +1413,7 @@ http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
     (setq ad-return-value rlt)))
 #+END_SRC
 
-*** Agenda
+*** TODO Agenda
 
 Don't split window when opening agenda:
 #+BEGIN_SRC emacs-lisp
@@ -1440,7 +1428,7 @@ Show notifications of agenda events:
 #+END_SRC
 
 Add linked org-mode files to =org-agenda-files=:
-(FIXME: Does it capture links inside properties?)
+- [ ] Does not capture links inside properties
 #+BEGIN_SRC emacs-lisp 
 	(defun add-links-to-org-agenda-files ()
 		"Inspired by: http://stackoverflow.com/questions/38061773/add-linked-org-files-to-org-agenda-files"
@@ -1472,7 +1460,7 @@ Integrate Google Calendar with org-gcal:
 		(when (load-file (expand-file-name "gcal-credentials.el" private-emacs-settings-dir))
 			(setq org-gcal-client-id my-org-gcal-client-id
 						org-gcal-client-secret my-org-gcal-client-secret
-						org-gcal-file-alist '((my-gmail-address .  "~/Dropbox/Notizen/org/gcal.org")))
+						org-gcal-file-alist '((my-gmail-address .  (concat org-notes-dir "gcal.org"))))
 	))
 #+END_SRC
 
@@ -3816,7 +3804,7 @@ If buffer-or-name is nil return current buffer's mode."
 	("w" (lambda nil (interactive)
 				 (find-file (concat org-notes-dir "/work/wip.org"))) :exit t)
 	("r" org-reload :exit t)
-	("f" helm-org-agenda-files-headings :exit t)
+	("f" helm-org-rifle-agenda-files :exit t)
 	;; ("f" org-search-view :exit t)
 	("s" org-search-view :exit t)
 	("u" tl/update-org-agenda-files :exit t)
