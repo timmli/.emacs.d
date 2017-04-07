@@ -575,7 +575,6 @@ Quick, comprehensive search on org-mode files.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-org-rifle
-	:after org
 	:ensure t)
 #+END_SRC
 
@@ -3976,8 +3975,10 @@ Don't ask for the path when searching for files:
 ("a" org-toggle-archive-tag "archive here" :exit t)
 ("A" org-archive-subtree-default "archive outside" :exit t)
 ("c" hydra-org-columns/body "columns" :exit t)
-("\\" org-toggle-pretty-entities "toggle utf8 chars" :exit t)
+("P" org-set-property-and-value "add property-value pair" :exit t)
 ("s" org-sort "sort" :exit t)
+("t" org-attach "attachments" :exit t)
+("\\" org-toggle-pretty-entities "toggle utf8 chars" :exit t)
 ("^" org-sort nil :exit t)
 ("q" nil :color blue)
 )
