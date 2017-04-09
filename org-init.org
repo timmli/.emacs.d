@@ -1280,7 +1280,9 @@ C-a and C-e behave org-sensitive
 (setq org-special-ctrl-a/e t)
 #+END_SRC
 
-*** Newline
+*** TODO Newline
+
+- [ ] =tl/org-return= and =tl/org-shift-return= show a strange behaviour when being right of the rightmost vertical bar. 
 
 #+BEGIN_SRC emacs-lisp
   (defun tl/org-return ()
