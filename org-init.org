@@ -338,7 +338,7 @@ Smex helps to remember often used commands; used by ido and counsel
 ;; (use-package smex
 ;; 	:ensure t)
 #+END_SRC
-<
+
 ** helm
 
 #+BEGIN_SRC emacs-lisp
@@ -1285,27 +1285,41 @@ C-a and C-e behave org-sensitive
 - [ ] =tl/org-return= and =tl/org-shift-return= show a strange behaviour when being right of the rightmost vertical bar. 
 
 #+BEGIN_SRC emacs-lisp
-  (defun tl/org-return ()
-    (interactive)
-    (if (not (org-table-p))
-        (org-return)
-      (let ((home (point)))
-        (org-table-insert-row t)
-        (goto-char home))
-      (org-table-wrap-region nil))
+(defun tl/org-return ()
+	(interactive)
+	(cond
+	 ;; in org-table
+	 ((org-table-p)
+		(when (not (looking-at ".*\|")) ; right of the rightmost vertical bar?
+			(save-excursion
+				(end-of-line)
+				(insert "\|")))
+		(let ((home (point)))
+			(org-table-insert-row t)
+			(goto-char home))
+		(org-table-wrap-region nil))
+	 ;; else
+	 (t (org-return))
+	 )
   )
 
-  (defun tl/org-shift-return ()
-    (interactive)
-    (let ((home (point)))
-      (org-table-insert-row t)
-      (goto-char home))
-    (org-table-next-row)
+(defun tl/org-shift-return ()
+	(interactive)
+  (cond
+	 ;; in org-table
+	 ((org-table-p)
+		(let ((home (point)))
+			(org-table-insert-row t)
+			(goto-char home))
+		(org-table-next-row))
+	 ;; else
+	 (t (smart-open-line))
+	 )
   )
 
-  (with-eval-after-load 'org
-    (define-key org-mode-map (kbd "<return>") 'tl/org-return) ; not org-table-next-row
-    (define-key org-mode-map (kbd "S-<return>") 'tl/org-shift-return )) ; not org-table-copy-down
+(with-eval-after-load 'org
+	(define-key org-mode-map (kbd "<return>") 'tl/org-return) ; not org-table-next-row
+	(define-key org-mode-map (kbd "S-<return>") 'tl/org-shift-return )) ; not org-table-copy-down
 #+END_SRC
 
 *** LaTeX support
