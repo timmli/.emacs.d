@@ -1290,14 +1290,18 @@ C-a and C-e behave org-sensitive
 	(cond
 	 ;; in org-table
 	 ((org-table-p)
-		(when (not (looking-at ".*\|")) ; right of the rightmost vertical bar?
-			(save-excursion
-				(end-of-line)
-				(insert "\|")))
 		(let ((home (point)))
-			(org-table-insert-row t)
-			(goto-char home))
-		(org-table-wrap-region nil))
+			(when (not (looking-at ".*\|")) ; right of the rightmost vertical bar?
+				(if (and (looking-at "[[:space:]]*$")	; empty cell?
+								 (looking-back "\|[[:space:]]*"))
+						(progn											; true: use org-return
+							(org-return)
+							(t))
+					(end-of-line)									; false: insert new table row
+					(insert "\|")
+					(org-table-insert-row t)
+					(goto-char home)))
+		(org-table-wrap-region nil)))
 	 ;; else
 	 (t (org-return))
 	 )
