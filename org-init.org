@@ -1280,9 +1280,8 @@ C-a and C-e behave org-sensitive
 (setq org-special-ctrl-a/e t)
 #+END_SRC
 
-*** TODO Newline
 
-- [ ] =tl/org-return= and =tl/org-shift-return= show a strange behaviour when being right of the rightmost vertical bar. 
+*** Newline
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/org-return ()
@@ -1301,7 +1300,7 @@ C-a and C-e behave org-sensitive
 					(insert "\|")
 					(org-table-insert-row t)
 					(goto-char home)))
-		(org-table-wrap-region nil)))
+			(org-table-wrap-region nil)))
 	 ;; else
 	 (t (org-return))
 	 )
@@ -1313,9 +1312,17 @@ C-a and C-e behave org-sensitive
 	 ;; in org-table
 	 ((org-table-p)
 		(let ((home (point)))
-			(org-table-insert-row t)
-			(goto-char home))
-		(org-table-next-row))
+			(when (not (looking-at ".*\|")) ; right of the rightmost vertical bar?
+				(if (and (looking-at "[[:space:]]*$")	; empty cell?
+								 (looking-back "\|[[:space:]]*"))
+						(progn											; true: use org-return
+							(org-return)
+							(t))
+					(end-of-line)									; false: insert new table row
+					(insert "\|")
+					(org-table-insert-row t)
+					(goto-char home)))
+			(org-table-next-row)))
 	 ;; else
 	 (t (smart-open-line))
 	 )
