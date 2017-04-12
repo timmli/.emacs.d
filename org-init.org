@@ -1281,9 +1281,10 @@ C-a and C-e behave org-sensitive
 #+END_SRC
 
 
-*** Newline
+*** TODO Newline
 
 The following is taken from http://kitchingroup.cheme.cmu.edu/blog/2017/04/09/A-better-return-in-org-mode/:
+- [ ] Where to include =org-table-wrap-region=?
 
 #+BEGIN_SRC emacs-lisp
 (defun scimax/org-return (&optional ignore)
@@ -1812,7 +1813,7 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 		(setq-default TeX-master nil)
 		(setq TeX-save-query nil) ; autosave before compiling 
 
-		;; Show copilation log
+		;; Show compilation log
 		(setq TeX-show-compilation nil) ; always show and follow TeX output
     ;; FIXME: Make C-c C-l behave like this
 
@@ -1857,86 +1858,6 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 			)
 		
 		:config
-	
-		;; ;; ivy-bibtex
-		;; (use-package ivy-bibtex
-		;; 	:ensure t
-		;; 	:config
-		;; 	;; (setq bibtex-completion-bibliography '("./references.bib"))
-		;; 	(setq bibtex-completion-additional-search-fields '(bibtexkey))
-		;; 	;; (define-key LaTeX-mode-map (kbd "C-l C-r") 'ivy-bibtex)
-		;; 	;; The standard function with modified default action  
-		;; 	(defun ivy-bibtex (&optional arg)
-		;; 		"Search BibTeX entries using ivy. With a prefix ARG the cache is invalidated and the bibliography reread."
-		;; 		(interactive "P")
-		;; 		(when arg
-		;; 			(setq bibtex-completion-bibliography-hash ""))
-		;; 		(bibtex-completion-init)
-		;; 		(ivy-read "BibTeX Items: "
-		;; 							(bibtex-completion-candidates 'ivy-bibtex-candidates-formatter)
-		;; 							:caller 'ivy-bibtex
-		;; 							:action 'bibtex-completion-insert-key))
-		;; 	;; look for local bibliographies
-		;; 	;; (require 'ebib)
-		;; 	(defun ivy-bibtex-with-local-bibliography ()
-		;;     (interactive)
-		;;     (let ((bibtex-completion-bibliography
-		;; 					 (if (eq major-mode 'latex-mode)
-		;; 							 ;; (ebib--get-local-databases)
-		;; 							 (bibtex-completion--get-local-databases)
-		;; 						 bibtex-completion-bibliography)))
-		;; 			(ivy-bibtex)))
-		;; 	;; proposal by jagrg: https://github.com/tmalsburg/helm-bibtex/issues/112 
-		;; 	(defun bibtex-completion--get-local-databases ()
-		;; 		"Return a list of .bib files associated with the current file."
-		;; 		(let ((texfile nil)
-		;; 					(cb (current-buffer)))
-		;; 			(when (and (boundp 'TeX-master)
-		;; 								 (stringp TeX-master))
-		;; 				(setq texfile (if (file-name-extension TeX-master)
-		;; 													TeX-master
-		;; 												(concat TeX-master ".tex"))))
-		;; 			(with-temp-buffer
-		;; 				(if (and texfile (file-readable-p texfile))
-		;; 						(insert-file-contents texfile)
-		;; 					(insert-buffer-substring cb))
-		;; 				(save-match-data
-		;; 					(goto-char (point-min))
-		;; 					(cond
-		;; 					 ;; bibtex
-		;; 					 ((re-search-forward "\\\\\\(?:no\\)*bibliography{\\(.*?\\)}" nil t)
-		;; 						(mapcar (lambda (fname)
-		;; 											(if (file-name-extension fname)
-		;; 													fname
-		;; 												(concat fname ".bib")))
-		;; 										(split-string (match-string-no-properties 1) ",[ ]*")))
-		;; 					 ;; biblatex
-		;; 					 ((re-search-forward "\\\\addbibresource\\(\\[.*?\\]\\)?{\\(.*?\\)}" nil t)
-		;; 						(mapcar (lambda (fname)
-		;; 											(if (file-name-extension fname)
-		;; 													fname
-		;; 												(concat fname ".bib")))
-		;; 										(let ((option (match-string 1))
-		;; 													(file (match-string-no-properties 2)))
-		;; 											(unless (and option (string-match-p "location=remote" option))
-		;; 												(split-string file ",[ ]*")))))
-		;; 					 (t
-		;; 						bibtex-completion-bibliography))))))
-		;; 	:bind (:map LaTeX-mode-map 
-		;; 							("C-l C-r" . ivy-bibtex-with-local-bibliography))
-		;; 	)
-
-		;; see  pull request: https://github.com/tmalsburg/helm-bibtex/pull/113
-		;; ;; helm-bibtex FIXME: 
-		;; (use-package helm-bibtex
-		;; 	:ensure t
-		;; 	:config
-		;; 	;; (setq bibtex-completion-bibliography '("./references.bib"))
-		;; 	(setq bibtex-completion-additional-search-fields '(bibtexkey))
-		;; 	;; The standard function with modified default action  
-		;; 	;; :bind (:map LaTeX-mode-map ("C-l C-r" . helm-bibtex-with-local-bibliography))
-		;; 	)
-
 		;; font keys
 		(defun TeX-italic()
 			(interactive)
@@ -2104,6 +2025,96 @@ return `nil'."
 							("C-c ]" . reftex-citation); same as in org-mode
 						  ) 
 	)
+#+END_SRC
+
+*** TODO COMMENT helm-bibtex
+
+On the long run, this is supposed to help to replace JabRef.
+See also https://nickhigham.wordpress.com/2016/01/06/managing-bibtex-files-with-emacs/
+
+- [ ] see  pull request: https://github.com/tmalsburg/helm-bibtex/pull/113
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-bibtex
+	:ensure t
+	:config
+	;; (setq bibtex-completion-bibliography '("./references.bib"))
+	(setq bibtex-completion-additional-search-fields '(bibtexkey))
+	;; The standard function with modified default action  
+	;; :bind (:map LaTeX-mode-map ("C-l C-r" . helm-bibtex-with-local-bibliography))
+	)
+#+END_SRC
+
+*** COMMENT ivy-bibtex
+
+#+BEGIN_SRC emacs-lisp
+		;; ;; ivy-bibtex
+		;; (use-package ivy-bibtex
+		;; 	:ensure t
+		;; 	:config
+		;; 	;; (setq bibtex-completion-bibliography '("./references.bib"))
+		;; 	(setq bibtex-completion-additional-search-fields '(bibtexkey))
+		;; 	;; (define-key LaTeX-mode-map (kbd "C-l C-r") 'ivy-bibtex)
+		;; 	;; The standard function with modified default action  
+		;; 	(defun ivy-bibtex (&optional arg)
+		;; 		"Search BibTeX entries using ivy. With a prefix ARG the cache is invalidated and the bibliography reread."
+		;; 		(interactive "P")
+		;; 		(when arg
+		;; 			(setq bibtex-completion-bibliography-hash ""))
+		;; 		(bibtex-completion-init)
+		;; 		(ivy-read "BibTeX Items: "
+		;; 							(bibtex-completion-candidates 'ivy-bibtex-candidates-formatter)
+		;; 							:caller 'ivy-bibtex
+		;; 							:action 'bibtex-completion-insert-key))
+		;; 	;; look for local bibliographies
+		;; 	;; (require 'ebib)
+		;; 	(defun ivy-bibtex-with-local-bibliography ()
+		;;     (interactive)
+		;;     (let ((bibtex-completion-bibliography
+		;; 					 (if (eq major-mode 'latex-mode)
+		;; 							 ;; (ebib--get-local-databases)
+		;; 							 (bibtex-completion--get-local-databases)
+		;; 						 bibtex-completion-bibliography)))
+		;; 			(ivy-bibtex)))
+		;; 	;; proposal by jagrg: https://github.com/tmalsburg/helm-bibtex/issues/112 
+		;; 	(defun bibtex-completion--get-local-databases ()
+		;; 		"Return a list of .bib files associated with the current file."
+		;; 		(let ((texfile nil)
+		;; 					(cb (current-buffer)))
+		;; 			(when (and (boundp 'TeX-master)
+		;; 								 (stringp TeX-master))
+		;; 				(setq texfile (if (file-name-extension TeX-master)
+		;; 													TeX-master
+		;; 												(concat TeX-master ".tex"))))
+		;; 			(with-temp-buffer
+		;; 				(if (and texfile (file-readable-p texfile))
+		;; 						(insert-file-contents texfile)
+		;; 					(insert-buffer-substring cb))
+		;; 				(save-match-data
+		;; 					(goto-char (point-min))
+		;; 					(cond
+		;; 					 ;; bibtex
+		;; 					 ((re-search-forward "\\\\\\(?:no\\)*bibliography{\\(.*?\\)}" nil t)
+		;; 						(mapcar (lambda (fname)
+		;; 											(if (file-name-extension fname)
+		;; 													fname
+		;; 												(concat fname ".bib")))
+		;; 										(split-string (match-string-no-properties 1) ",[ ]*")))
+		;; 					 ;; biblatex
+		;; 					 ((re-search-forward "\\\\addbibresource\\(\\[.*?\\]\\)?{\\(.*?\\)}" nil t)
+		;; 						(mapcar (lambda (fname)
+		;; 											(if (file-name-extension fname)
+		;; 													fname
+		;; 												(concat fname ".bib")))
+		;; 										(let ((option (match-string 1))
+		;; 													(file (match-string-no-properties 2)))
+		;; 											(unless (and option (string-match-p "location=remote" option))
+		;; 												(split-string file ",[ ]*")))))
+		;; 					 (t
+		;; 						bibtex-completion-bibliography))))))
+		;; 	:bind (:map LaTeX-mode-map 
+		;; 							("C-l C-r" . ivy-bibtex-with-local-bibliography))
+		;; 	)
 #+END_SRC
 
 *** Beamer
