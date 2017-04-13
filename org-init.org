@@ -1665,7 +1665,7 @@ Links to files are opened in the same window, i.e. the window does not get split
 
 *** Tables
 
-http://emacs.stackexchange.com/a/28298/12336
+Some functions to select and copy columns (http://emacs.stackexchange.com/a/28298/12336)
 #+BEGIN_SRC emacs-lisp
 (defun org-table-goto-col-beginning ()
   "Go to beginning of current column and return `point'."
@@ -1710,6 +1710,11 @@ http://emacs.stackexchange.com/a/28298/12336
   (save-excursion
     (org-table-copy-region (org-table-goto-col-beginning)
 													 (org-table-goto-col-end))))
+#+END_SRC
+
+Functions to move around single cells:
+#+BEGIN_SRC emacs-lisp
+(require 'org-table-move-single-cell)
 #+END_SRC
 
 *** Capture templates
@@ -4517,9 +4522,7 @@ Copied from http://www.superloopy.io/articles/2017/hydra-theme-switcher.html:
 	("q" nil "cancel" :color blue))
 #+END_SRC
 
-** TODO hydra-transpose
-
-- [ ] org-table: move cells
+** hydra-transpose
 
 Taken from https://github.com/abo-abo/hydra/wiki/Emacs
 
@@ -4534,12 +4537,33 @@ Taken from https://github.com/abo-abo/hydra/wiki/Emacs
 	("p" transpose-paragraphs "paragraphs")
 	("o" org-transpose-words "Org-words")
 	("e" org-transpose-element "Org-elements")
-	("tp" org-table-transpose-table-at-point "Org-table")
-	;; ("tc" hydra-org-table-move-cell/body "Org-table cell")
+	("tp" org-table-transpose-table-at-point "Org-table at point")
+	("tc" hydra-org-table-move-cell/body "Org-table cell")
 	("C-t" nil nil :color blue)
 	("q" nil "cancel" :color blue))
 (global-set-key (kbd "C-t") 'hydra-transpose/body)
 #+END_SRC
+
+** hydra-org-table-move-cell
+
+Uses [[*Tables][org-table-move-single-cell]]:
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-org-table-move-cell (:hint nil
+																					 :idle 0.5)
+	"
+   Move org-table cell
+ ╭─────────────────────╯
+    _<up>_: move up       _<left>_: move left    
+  _<down>_: move down    _<right>_: move left     _q_uit
+	"
+	("<up>" org-table-move-single-cell-up)
+	("<down>" org-table-move-single-cell-down)
+	("<right>" org-table-move-single-cell-right)
+	("<left>" org-table-move-single-cell-left)
+	("q" nil :color blue))
+#+END_SRC
+
 
 ** TODO hydra-macro
 
