@@ -426,11 +426,6 @@ Smex helps to remember often used commands; used by ido and counsel
 				 ("C-ß" . helm-imenu)
 				 ("C-S-?" . helm-imenu-anywhere)
 				 )
-	:config
-	(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; complete with <tab> (default is <ret>)
-	(define-key helm-map (kbd "C-z") 'helm-select-action) ; show actions (default is <tab>)
-	(define-key helm-map (kbd "<left>") 'backward-char) ; instead of C-f
-	(define-key helm-map (kbd "<right>") 'forward-char) ; instead of C-b
 )
 (ido-mode -1)														; turn off ido mode, just in case
 
@@ -575,7 +570,22 @@ Quick, comprehensive search on org-mode files.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-org-rifle
-	:ensure t)
+	:ensure t
+  :config
+	(define-key helm-org-rifle-map (kbd "<left>") 'backward-char) ; instead of helm-previous-source
+	(define-key helm-org-rifle-map (kbd "<right>") 'forward-char) ; instead of helm-next-source 
+)
+#+END_SRC
+
+*** Key bindings
+
+#+BEGIN_SRC emacs-lisp
+(define-key helm-map (kbd "C-c C-n") 'helm-next-source)
+(define-key helm-map (kbd "C-c C-p") 'helm-previous-source)
+(define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; complete with <tab> (default is <ret>)
+(define-key helm-map (kbd "C-z") 'helm-select-action) ; show actions (default is <tab>)
+(define-key helm-map (kbd "<left>") 'backward-char) ; instead of C-f
+(define-key helm-map (kbd "<right>") 'forward-char) ; instead of C-b 
 #+END_SRC
 
 ** Keys
