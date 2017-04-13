@@ -585,7 +585,9 @@ Quick, comprehensive search on org-mode files.
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; complete with <tab> (default is <ret>)
 (define-key helm-map (kbd "C-z") 'helm-select-action) ; show actions (default is <tab>)
 (define-key helm-map (kbd "<left>") 'backward-char) ; instead of C-f
-(define-key helm-map (kbd "<right>") 'forward-char) ; instead of C-b 
+(define-key helm-map (kbd "<right>") 'forward-char) ; instead of C-b
+(define-key helm-map (kbd "M-<left>") 'previous-history-element)
+(define-key helm-map (kbd "M-<right>") 'next-history-element)
 #+END_SRC
 
 ** Keys
