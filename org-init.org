@@ -3050,7 +3050,19 @@ For showing the character map and letting one select a special symbol:
 #+BEGIN_SRC emacs-lisp
 (use-package charmap
 	:ensure t)
-#+END_SRC 
+#+END_SRC
+
+** Thesauri
+*** TODO COMMENT synosaurus
+
+#+BEGIN_SRC emacs-lisp
+(use-package synosaurus
+	:ensure t
+	:config
+	(setq synosaurus-choose-method "default"
+				synosaurus-backend 'synosaurus-backend-openthesaurus)
+	)
+#+END_SRC
 
 * underi-mode
 
