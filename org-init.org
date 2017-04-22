@@ -1125,7 +1125,7 @@ Preserve indentation in source blocks:
   (global-set-key (kbd "<f9> l") 'org-tags-view)
   (global-set-key (kbd "<f9> r") 'org-reload)
   (global-set-key (kbd "<f9> w")
-                  (lambda() (interactive)(find-file (concat org-notes-dir "/forschung/wip.org"))))
+                  (lambda() (interactive)(find-file (concat org-notes-dir "/work/work.org"))))
   (global-set-key (kbd "<f9> n")
                   (lambda() (interactive)(find-file (concat org-notes-dir "/notes.org"))))
   (global-set-key (kbd "C-c a") 'org-agenda)
@@ -1580,15 +1580,15 @@ Links to files are opened in the same window, i.e. the window does not get split
 			'((:startgroup . nil)
 				("@work" . ?w)
 				(:grouptags . nil)
-				("admin" . ?a)
+				("management" . ?m)
 				("teaching" . ?t)
 				("research" . ?r)
+				("event" . ?e)
 				(:endgroup . nil)
 
 				(:startgroup . nil)
 				("research" . ?r)
 				(:grouptags . nil)
-				("mwe" . nil)									
 				("parsing" . nil)
 				("linguistics" . nil)
 				("formalisms" . nil)
@@ -1596,18 +1596,23 @@ Links to files are opened in the same window, i.e. the window does not get split
 				("logic" . nil)
 				("maths" . nil)
 				("computerScience" . nil)
-				("xmg" . nil)											
+				("computationalLinguistics" . nil)
 				(:endgroup . nil)
 
 				(:startgroup . nil)
-				("science" . ?h)
+				("event" . ?e)
 				(:grouptags . nil)
-				("linguistics" . nil)
-				("computationalLinguistics" . nil)
-				("philosophy" . nil)
-				("logic" . nil)
-				("maths" . nil)
-				("computerScience" . nil)
+				("talk" . nil)									
+				("workshop" . nil)
+				("publication" . nil)
+				("conference" . nil)
+				(:endgroup . nil)
+
+				(:startgroup . nil)
+				("management" . ?m)
+				(:grouptags . nil)
+				("proposal" . nil)									
+				("project" . nil)
 				(:endgroup . nil)
 
 				(:startgroup . nil)
@@ -1632,7 +1637,6 @@ Links to files are opened in the same window, i.e. the window does not get split
 				("machineLearning" . nil)
 				(:endgroup . nil)
 
-				
 				(:startgroup . nil)
 				("@home" . ?h)
 				(:grouptags . nil)
@@ -3904,7 +3908,7 @@ If buffer-or-name is nil return current buffer's mode."
  
      ^^  [_a_] agenda  ^^    [_n_] notes   ^^  ^^   ^^  ^^  ^^   [_r_] reload org       	
      ^^  [_d_] deft    ^^    [_t_] todos   ^^  ^^   ^^  ^^  ^^   [_u_] update agenda files
-     ^^  [_c_] capture ^^    [_w_] work in progress ^^  ^^  ^^  ^^ ^^        
+     ^^  [_c_] capture ^^    [_w_] work ^^  ^^  ^^  ^^ ^^        
      ^^  [_f_] search  ^^                ^^  ^^  ^^  ^^  ^^                      [_q_]uit
 
 	"
@@ -3916,7 +3920,7 @@ If buffer-or-name is nil return current buffer's mode."
 	("c" org-capture :exit t)
 	("t" org-todo-list :exit t)
 	("w" (lambda nil (interactive)
-				 (find-file (concat org-notes-dir "/work/wip.org"))) :exit t)
+				 (find-file (concat org-notes-dir "/work/work.org"))) :exit t)
 	("r" org-reload :exit t)
 	("f" helm-org-rifle-agenda-files :exit t)
 	;; ("f" org-search-view :exit t)
