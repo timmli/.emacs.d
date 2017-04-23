@@ -3793,6 +3793,8 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 (defun hydra-f6/body () ;hydra-for-major-mode ()
 	(interactive)
   (cond
+	 ((string-equal (buffer-mode) "deft-mode")
+		(hydra-deft/body))
 	 ((string-equal (buffer-mode) "dired-mode")
 		(hydra-dired-main/body))
 	 ((string-equal (buffer-mode) "image-mode")
@@ -4112,6 +4114,26 @@ Don't ask for the path when searching for files:
 ("q" org-columns-quit :color blue)
 )
 #+END_SRC
+
+** hydra-deft
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-deft (:hint nil)
+"Deft"
+("a" deft-archive-file "archive" :exit t)
+("d" deft-delete-file "delete" :exit t)
+("k" deft-delete-file nil :exit t)
+("f" deft-find-file "find" :exit t)
+("g" deft-refresh "refresh" :exit t)
+("n" deft-new-file "new" :exit t)
+("r" deft-rename-file "rename" :exit t)
+("l" deft-filter "filter" :exit t)
+("/" deft-filter nil :exit t)
+("Q" quit-window "quit" :exit t)
+("q" nil :color blue)
+)
+#+END_SRC
+
 
 ** hydra-git-gutter
 
