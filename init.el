@@ -45,8 +45,7 @@
 	)
 ;; 3: set default-directory
 (setq default-directory (expand-file-name (concat (getenv "HOME") "/")))
-(defvar home-directory)
-(setq home-directory default-directory)
+(defvar home-directory default-directory)
 
 (when (getenv "EMACS_USER_DIRECTORY")
 	(setq user-emacs-directory
@@ -73,14 +72,12 @@
 ;;      PRIVATE DIRECTORIES SETUP (outside .emacs.d)
 ;;==========================================================
 
-;; FIXME: use org-directory instead
 ;; set path to private org notes
-(defvar org-notes-dir
+(defvar org-directory
 	(expand-file-name "org/" home-directory)) ;; default value; may be overwritten by private directory settings
 
 ;; set path to the directory that deft observes
-(defvar my-deft-dir 
-	(expand-file-name "org/" home-directory)) ;; default value; may be overwritten by private directory settings
+(defvar my-deft-dir org-directory) ;; default value; may be overwritten by private directory settings
 
 ;; set path to private emacs settings
 (defvar private-emacs-settings-dir

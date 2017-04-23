@@ -1725,13 +1725,13 @@ Functions to move around single cells:
 
 #+BEGIN_SRC emacs-lisp
 	(setq org-capture-templates
-				'(("a" "Appointment" entry (file (concat org-notes-dir "/gcal.org"))
+				'(("a" "Appointment" entry (file (concat org-directory "/gcal.org"))
 					 "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
-					("t" "Todo" entry (file (concat org-notes-dir "/todo.org"))
+					("t" "Todo" entry (file (concat org-directory "/todo.org"))
 					 "* TODO %?\t%^g\n CREATED: %U\n About region:%i\n %a")
-					("n" "Note" entry (file+datetree (concat org-notes-dir "/notes.org"))
+					("n" "Note" entry (file+datetree (concat org-directory "/notes.org"))
 					 "* %?\t%^g\n CREATED: %U\n About region:%i\n %a")
-					("c" "Code" entry (file (concat org-notes-dir "/code.org"))
+					("c" "Code" entry (file (concat org-directory "/code.org"))
 					 "* %?\t%^g\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a")
 					))
 
@@ -3915,12 +3915,12 @@ If buffer-or-name is nil return current buffer's mode."
 	("a" org-agenda-list-work :exit t)
 	("d" deft :exit t)
 	("n" (lambda nil (interactive)
-				 (find-file (concat org-notes-dir "/notes.org"))) :exit t)
+				 (find-file (concat org-directory "/notes.org"))) :exit t)
 	("o" deft :exit t)
 	("c" org-capture :exit t)
 	("t" org-todo-list :exit t)
 	("w" (lambda nil (interactive)
-				 (find-file (concat org-notes-dir "/work/work.org"))) :exit t)
+				 (find-file (concat org-directory "/work/work.org"))) :exit t)
 	("r" org-reload :exit t)
 	("f" helm-org-rifle-agenda-files :exit t)
 	;; ("f" org-search-view :exit t)
