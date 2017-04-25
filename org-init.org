@@ -1225,8 +1225,9 @@ Preserve indentation in source blocks:
 
 **** Bullets, folding symbols, HTML and LaTeX symbols
 
+Nicer bullets:
+
 #+begin_src emacs-lisp
-;; nicer bullets
 ;; (use-package org-bullets
 ;; 	:ensure t
 ;; 	:init
@@ -1235,13 +1236,26 @@ Preserve indentation in source blocks:
 ;; 	:config 
 ;; 	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 ;; 	)
+#+end_src
 
-;; folding symbol
+Folding symbol:
+
+#+begin_src emacs-lisp
 (setq org-ellipsis " ▼")
+#+end_src
 
-;; replace HTML/LaTeX code by UTF-8 characters (see org-pretty-entities for an enumeration)
+Replace HTML/LaTeX code by UTF-8 characters (see org-pretty-entities for an enumeration):
+
+#+begin_src emacs-lisp
 (setq org-pretty-entities t)
+#+END_SRC
 
+**** Editing
+
+Do not edit in invisible areas of the buffer:
+
+#+BEGIN_SRC emacs-lisp
+(setq-default org-catch-invisible-edits 'smart)
 #+END_SRC
 
 *** Modules
@@ -1524,7 +1538,7 @@ http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
     (setq ad-return-value rlt)))
 #+END_SRC
 
-*** TODO Agenda
+*** Agenda
 
 Don't split window when opening agenda:
 #+BEGIN_SRC emacs-lisp
@@ -1539,7 +1553,6 @@ Show notifications of agenda events:
 #+END_SRC
 
 Add linked org-mode files to =org-agenda-files=:
-- [ ] Does not capture links inside properties
 #+BEGIN_SRC emacs-lisp 
 	(defun add-links-to-org-agenda-files ()
 		"Inspired by: http://stackoverflow.com/questions/38061773/add-linked-org-files-to-org-agenda-files"
