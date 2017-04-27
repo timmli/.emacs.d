@@ -2615,7 +2615,10 @@ Shift indentation at cursor position or region:
 
 (defun tl/delete-indentation ()
   (interactive)
-  (shift-region -999))
+  (if (use-region-p)
+			(shift-region -999)
+		(indent-rigidly (line-beginning-position) (line-end-position) -999)
+		))
 #+END_SRC
 
 ** Selection
@@ -3221,6 +3224,8 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 							(define-key map (kbd "C-S-d") 'kill-whole-line)
 							(define-key map (kbd "C-d SPC") 'tl/remove-extra-spaces-dwim)
 							(define-key map (kbd "C-d C-SPC") 'tl/remove-extra-spaces-dwim)
+							(define-key map (kbd "C-d TAB") 'tl/delete-indentation)
+							(define-key map (kbd "C-d C-TAB") 'tl/delete-indentation)
 							(define-key map (kbd "C-d [") 'sp-unwrap-sexp)
 							(define-key map (kbd "C-d ]") 'sp-unwrap-sexp)
 							(define-key map (kbd "C-d {") 'sp-unwrap-sexp)
