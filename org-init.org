@@ -2576,9 +2576,7 @@ Sequence is important!
 ;; (global-set-key (kbd "C-{") 'wrap-with-braces)
 #+end_src
 
-** TODO Indentation
-
-- [ ] add key (C-d <tab>) to delete indentation of line at cursor or marked region.
+** Indentation
 
 Auto-indent when yanking
 https://www.emacswiki.org/emacs/AutoIndentation
@@ -2598,9 +2596,7 @@ https://www.emacswiki.org/emacs/AutoIndentation
 									(indent-region (region-beginning) (region-end) nil))))))
 #+end_src
 
-Shift indentation at cursor position or region:
-- [ ] "at  cursor position" is still missing
-
+Shift/delete indentation at cursor position or region:
 #+BEGIN_SRC emacs-lisp
 ;; shift-region is taken from http://stackoverflow.com/a/6918574/6452961
 (defun shift-region (distance)
