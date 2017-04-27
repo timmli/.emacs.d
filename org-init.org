@@ -3926,11 +3926,13 @@ If buffer-or-name is nil return current buffer's mode."
      _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_  │<f8> │  _<f9>_ 
      Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^  │Mark │  Org^^
    ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^───────^^──╯     └─────^^─╯
- 
+
+      [_a_] mark all
       [_c_] highlight changes        [_w_] show/hide whitespaces   [_b_] add bookmark
       [_g_] git gutter               [_*_] critic markup           [_t_] tags
-      [_s_] highlight same symbols   [_r_] mark rectangular                    [_q_]uit
+      [_s_] highlight same symbols   [_r_] mark rectangular               [_q_]uit
 	"
+	("a" mark-whole-buffer :exit t)
 	("g" hydra-git-gutter/body :exit t)
 	("c" hydra-highlight-changes/body :exit t)
 	("r" rectangle-mark-mode :exit t)
