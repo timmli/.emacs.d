@@ -1460,7 +1460,7 @@ Scale LaTeX previews:
 	:after org
 	:init
 	(require 'org-ref) 										; don't know why I need this
-	(setq org-ref-default-bibliography user-bibliography-file
+	(setq org-ref-default-bibliography (list user-bibliography-file)
 				;; org-ref-bibliography-notes "~/bibliography/notes.org"
 				org-ref-pdf-directory user-bibliography-pdf-dir
 				)
@@ -2034,7 +2034,7 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 				;; reftex-toc-split-windows-horizontally t
 				reftex-ref-macro-prompt nil			; go straight to the labels when referencing
 				reftex-bibliography-commands '("bibliography" "nobibliography" "addbibresource")
-				reftex-default-bibliography '(user-bibliography-file)
+				reftex-default-bibliography (list user-bibliography-file)
 				)
 
 	;; add frametitle to TOC
@@ -2084,7 +2084,7 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 	)
 #+END_SRC
 
-*** TODO COMMENT helm-bibtex
+*** TODO helm-bibtex
 
 On the long run, this is supposed to help to replace JabRef.
 See also https://nickhigham.wordpress.com/2016/01/06/managing-bibtex-files-with-emacs/
@@ -2095,7 +2095,7 @@ See also https://nickhigham.wordpress.com/2016/01/06/managing-bibtex-files-with-
 (use-package helm-bibtex
 	:ensure t
 	:config
-	;; (setq bibtex-completion-bibliography '("./references.bib"))
+	(setq bibtex-completion-bibliography (list user-bibliography-file))
 	(setq bibtex-completion-additional-search-fields '(bibtexkey))
 	;; The standard function with modified default action  
 	;; :bind (:map LaTeX-mode-map ("C-l C-r" . helm-bibtex-with-local-bibliography))
