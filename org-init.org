@@ -1451,6 +1451,11 @@ Scale LaTeX previews:
 (add-hook 'text-scale-mode-hook 'update-org-latex-fragment-scale)
 #+END_SRC
 
+Use LaTeXmk:
+#+BEGIN_SRC emacs-lisp
+(setq org-latex-to-pdf-process (list "latexmk -f -pdf %s"))
+#+END_SRC
+
 *** org-ref
 
 #+BEGIN_SRC emacs-lisp
@@ -1487,6 +1492,10 @@ Scale LaTeX previews:
 #+END_SRC
 
 *** org-beamer
+
+Documentation:
+- https://github.com/fniessen/refcard-org-beamer
+- http://orgmode.org/tmp/worg/org-tutorials/org-latex-export.html
 
 Load support for exporting LaTeX beamer presentations:
 
@@ -4159,17 +4168,18 @@ Don't ask for the path when searching for files:
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-main (:hint nil)
-"Org-mode"
-("a" org-toggle-archive-tag "archive here" :exit t)
-("A" org-archive-subtree-default "archive outside" :exit t)
-("c" hydra-org-columns/body "columns" :exit t)
-("P" org-set-property-and-value "add property-value pair" :exit t)
-("s" org-sort "sort" :exit t)
-("t" org-attach "attachments" :exit t)
-("\\" org-toggle-pretty-entities "toggle utf8 chars" :exit t)
-("^" org-sort nil :exit t)
-("q" nil :color blue)
-)
+	"Org-mode"
+	("a" org-toggle-archive-tag "archive here" :exit t)
+	("A" org-archive-subtree-default "archive outside" :exit t)
+	("c" hydra-org-columns/body "columns" :exit t)
+	("P" org-set-property-and-value "add property-value pair" :exit t)
+	("r" org-ref "org-ref" :exit t)
+	("s" org-sort "sort" :exit t)
+	("t" org-attach "attachments" :exit t)
+	("\\" org-toggle-pretty-entities "toggle utf8 chars" :exit t)
+	("^" org-sort nil :exit t)
+	("q" nil :color blue)
+	)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
