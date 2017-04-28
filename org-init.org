@@ -2207,7 +2207,7 @@ return `nil'."
 
 <tab> should always insert a tab (instead of indentation):
 #+BEGIN_SRC emacs-lisp
-	(add-hook 'LaTeX-mode-hook '(lambda () (setq tab-always-indent nil)))
+	(add-hook 'LaTeX-mode-hook '(lambda () (setq-local tab-always-indent nil)))
 #+END_SRC
 
 ** Markdown
