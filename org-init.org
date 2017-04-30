@@ -2675,6 +2675,24 @@ Copy mouse selection to kill-ring:
 	("C-c SPC" . ace-jump-mode))
 #+end_src
 
+*** TODO dump-jump
+
+- [ ] adjust key bindings
+- [ ] add LaTeX support
+
+Jump to definition without using tags.
+
+#+BEGIN_SRC emacs-lisp
+(use-package dumb-jump
+  :ensure t
+  :bind (("M-g o" . dumb-jump-go-other-window)
+         ("M-g j" . dumb-jump-go)
+         ("M-g x" . dumb-jump-go-prefer-external)
+         ("M-g z" . dumb-jump-go-prefer-external-other-window))
+  :config (setq dumb-jump-selector 'helm)
+)
+#+END_SRC
+
 *** multiple-cursors
 
 #+begin_src emacs-lisp
