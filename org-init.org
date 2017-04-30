@@ -1477,6 +1477,12 @@ Use LaTeXmk:
 )
 #+END_SRC
 
+Add \citeauthoryear to org-ref:
+#+BEGIN_SRC emacs-lisp
+(org-ref-define-citation-link "citeauthoryear")
+(add-to-list 'org-ref-cite-types "citeauthoryear")
+#+END_SRC
+
 *** org-reveal
 
 #+BEGIN_SRC emacs-lisp
@@ -1498,13 +1504,11 @@ Documentation:
 - http://orgmode.org/tmp/worg/org-tutorials/org-latex-export.html
 
 Load support for exporting LaTeX beamer presentations:
-
 #+BEGIN_SRC emacs-lisp
 (require 'ox-beamer)
 #+END_SRC
 
 Add my beamer class (tl-beamer) to the known LaTeX classes:
-
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-latex-classes
          '("tl-beamer" 
@@ -1515,6 +1519,15 @@ Add my beamer class (tl-beamer) to the known LaTeX classes:
             ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
             ("\\paragraph{%s}" . "\\paragraph*{%s}")
             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+#+END_SRC
+
+Change export of bold font:
+#+BEGIN_SRC emacs-lisp
+(defun my-beamer-bold (contents backend info)
+  (when (eq backend 'beamer)
+    (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textbf" contents)))
+
+(add-to-list 'org-export-filter-bold-functions 'my-beamer-bold)
 #+END_SRC
 
 *** Graphviz/dot
@@ -3204,7 +3217,7 @@ For showing the character map and letting one select a special symbol:
 
 * Project management
 
-** TODO projectile
+** TODO COMMENT projectile
 
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
