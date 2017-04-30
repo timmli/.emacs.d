@@ -3202,6 +3202,25 @@ For showing the character map and letting one select a special symbol:
 	)
 #+END_SRC
 
+* Project management
+
+** TODO projectile
+
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :ensure t
+  :commands (projectile-find-file projectile-switch-project)
+  :diminish projectile-mode
+  :init
+  (use-package helm-projectile
+    :ensure t
+    ;; :bind (("s-p" . helm-projectile-find-file)
+    ;;        ("s-P" . helm-projectile-switch-project))
+		)
+  :config
+  (projectile-global-mode))
+#+END_SRC
+
 * underi-mode
 
 Key bindings for more ergonomic cursor movement: the cursor movement keys are under the <i> key and get activated with the Meta/Alt key. 
