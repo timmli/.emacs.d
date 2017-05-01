@@ -363,7 +363,9 @@ Smex helps to remember often used commands; used by ido and counsel
 ;; 	:ensure t)
 #+END_SRC
 
-** helm
+** TODO helm
+
+- [ ] does not compleste org-set-tags
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm
@@ -472,8 +474,6 @@ Smex helps to remember often used commands; used by ido and counsel
   :bind ("C-h b" . helm-descbinds))
 #+end_src
 
-#+RESULTS:
-
 *** helm-swoop
 
 #+begin_src emacs-lisp
@@ -535,7 +535,7 @@ http://sqlite.org/download.html
 		)
 #+END_SRC
 
-*** TODO helm-gtags
+*** TODO COMMENT helm-gtags
 
 - [ ]  [[*GLOBAL][GLOBAL]] has to be properly installed first. 
 
@@ -1497,7 +1497,9 @@ Add \citeauthoryear to org-ref:
 	:ensure t)
 #+END_SRC
 
-*** org-beamer
+*** TODO org-beamer
+
+-[ ] add export of text colored with `color:` links (see [[*Color text][Color text]])
 
 Documentation:
 - https://github.com/fniessen/refcard-org-beamer
@@ -2363,7 +2365,10 @@ Sequence is important!
 ;; 																					(ac-source-yasnippet))))
 #+end_src
 
-*** company
+*** TODO company
+
+- [ ] completion of LaTeX code in AUCTex
+- [ ] completion in org-mode of LaTeX code
 
 #+begin_src emacs-lisp
 (use-package company
