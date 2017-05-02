@@ -2378,7 +2378,7 @@ Sequence is important!
 	:config
 
 	;; some general variables
-	(setq company-idle-delay 0
+	(setq company-idle-delay 0.2
 				company-minimum-prefix-length 1
 				company-selection-wrap-around t
 				company-tooltip-flip-when-above t
@@ -2411,13 +2411,7 @@ Sequence is important!
 		(company-flx-mode +1)))
 #+end_src
 
-**** LaTeX
-  
-  #+begin_src emacs-lisp
-(use-package company-auctex
-	:ensure t
-	:config (company-auctex-init))
-#+end_src
+**** Math symbols
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-math
@@ -2426,6 +2420,14 @@ Sequence is important!
 	(add-to-list 'company-backends 'company-math-symbols-unicode)
 	)
 #+END_SRC
+
+**** LaTeX
+  
+  #+begin_src emacs-lisp
+(use-package company-auctex
+	:ensure t
+	:config (company-auctex-init))
+#+end_src
 
 **** eshell
 
