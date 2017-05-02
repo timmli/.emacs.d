@@ -1920,6 +1920,7 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 		;; Show compilation log
 		(setq TeX-show-compilation nil) ; always show and follow TeX output
     ;; FIXME: Make C-c C-l behave like this
+    (setq compilation-scroll-output t)
 
 		;; don't indent
 		(setq LaTeX-indent-level 0)
@@ -2024,6 +2025,17 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 		(define-key LaTeX-mode-map (kbd "C-c f ! e") 'TeX-emphasis-replace)
 		(define-key LaTeX-mode-map (kbd "C-c f ! s") 'TeX-smallcaps-replace)
 		(define-key LaTeX-mode-map (kbd "C-c f ! c") 'TeX-smallcaps-replace)
+
+		;; activate folding
+		(add-hook 'LaTeX-mode-hook (lambda ()
+																 (TeX-fold-mode 1)
+																 (TeX-fold-buffer)))
+		;; folding behavior for environments
+		(custom-set-variables '(TeX-fold-env-spec-list
+														'(("[comment]" ("comment"))
+															("[figure]" ("figure"))
+															("[tikz]" ("tikzpicture")))))
+
 
 		:bind (:map  LaTeX-mode-map
 								 ;; ("C-l C-q" . align-current) ; useful command to align arrays
