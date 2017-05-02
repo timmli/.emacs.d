@@ -2370,36 +2370,25 @@ Sequence is important!
 - [ ] completion of LaTeX code in AUCTex
 - [ ] completion in org-mode of LaTeX code
 
+**** General settings
+
 #+begin_src emacs-lisp
 (use-package company
 	:ensure t
 	:config
 
-	(use-package company-auctex
-		:ensure t
-		:config (company-auctex-init))
-	(add-hook 'after-init-hook 'global-company-mode)
-
-	;; yasnippet integration
-	(defvar company-mode/enable-yas t
-		"Enable yasnippet for all backends.")
-	(defun company-mode/backend-with-yas (backend)
-		(if (or (not company-mode/enable-yas)
-						(and (listp backend) (member 'company-yasnippet backend)))
-				backend
-			(append (if (consp backend) backend (list backend))
-							'(:with company-yasnippet))))
-	(setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
-
 	;; some general variables
-	(setq company-idle-delay 0.3
+	(setq company-idle-delay 0
 				company-minimum-prefix-length 1
 				company-selection-wrap-around t
+				company-tooltip-flip-when-above t
 				;; company-show-numbers t
 				company-dabbrev-downcase nil
 				company-auto-complete nil
+				company-tooltip-align-annotations t
 				company-transformers '(company-sort-by-occurrence))
-	(add-hook 'eshell-mode-hook '(lambda () (setq company-idle-delay 0)))
+
+	;; keys
 	(eval-after-load 'company
 	  '(progn
 	     (define-key company-active-map (kbd "<tab>") 'company-complete-selection)
@@ -2407,20 +2396,67 @@ Sequence is important!
 			 (define-key company-active-map (kbd "RET") nil)
 	     ;; (define-key company-active-map (kbd "<tab>") 'company-complete-common)  ; Insert the common part of all candidates.  
 	     ;; (define-key company-active-map (kbd "<tab>") 'company-select-next))
-		))
-
-	(use-package company-flx
-		:ensure t
-		:config
-		(company-flx-mode +1))
-
-	;; add company to org-mode
- 	(add-to-list 'company-backends 'company-capf)
-	(defun add-pcomplete-to-capf ()
-		(add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
-	(add-hook 'org-mode-hook #'add-pcomplete-to-capf)
+			 ))
+	
+  ;; activate global-company-mode
+	(add-hook 'after-init-hook 'global-company-mode)
 	)
 #+end_src
+
+#+begin_src emacs-lisp
+(use-package company-flx
+	:ensure t
+	:config
+	(with-eval-after-load 'company
+		(company-flx-mode +1)))
+#+end_src
+
+**** LaTeX
+  
+  #+begin_src emacs-lisp
+(use-package company-auctex
+	:ensure t
+	:config (company-auctex-init))
+#+end_src
+
+#+BEGIN_SRC emacs-lisp
+(use-package company-math
+	:ensure t
+	:config
+	(add-to-list 'company-backends 'company-math-symbols-unicode)
+	)
+#+END_SRC
+
+**** eshell
+
+#+begin_src emacs-lisp
+(add-hook 'eshell-mode-hook '(lambda () (setq company-idle-delay 0)))
+#+end_src
+
+**** org-mode
+
+#+begin_src emacs-lisp
+(add-to-list 'company-backends 'company-capf)
+(defun add-pcomplete-to-capf ()
+	(add-hook 'completion-at-point-functions 'pcomplete-completions-at-point nil t))
+(add-hook 'org-mode-hook #'add-pcomplete-to-capf)
+#+end_src
+
+**** yasnippet
+
+Execute when all backends added to =company-backends=.
+
+#+begin_src emacs-lisp
+(defvar company-mode/enable-yas t
+	"Enable yasnippet for all backends.")
+(defun company-mode/backend-with-yas (backend)
+	(if (or (not company-mode/enable-yas)
+					(and (listp backend) (member 'company-yasnippet backend)))
+			backend
+		(append (if (consp backend) backend (list backend))
+						'(:with company-yasnippet))))
+(setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
+  #+end_src
 
 ** Syntax checking
 
