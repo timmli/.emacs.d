@@ -1295,7 +1295,8 @@ Selection
 
 Source blocks
 #+BEGIN_SRC emacs-lisp
-(setq org-src-fontify-natively t)
+(setq org-src-fontify-natively t
+			org-src-tab-acts-natively t)
 #+END_SRC
 
 Todo lists
