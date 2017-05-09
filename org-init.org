@@ -1114,6 +1114,16 @@ http://doc.norang.ca/org-mode.html#Setup
 													 ))
 #+END_SRC
 
+*** Export
+
+Use a less intrusive export interface:
+
+#+BEGIN_SRC emacs-lisp
+(setq org-export-dispatch-use-expert-ui t)
+#+END_SRC
+
+Note that the last export command on the current buffer can be reused with =C-u C-c C-e=. 
+
 *** Archive
 
 Preserves the first heading of the org-mode file (found in http://orgmode.org/worg/org-hacks.html#orgheadline59):
@@ -2430,7 +2440,8 @@ Sequence is important!
 (use-package company-math
 	:ensure t
 	:config
-	(add-to-list 'company-backends 'company-math-symbols-unicode)
+	;; (add-to-list 'company-backends 'company-math-symbols-unicode) ; insert unicode symbol
+	(add-to-list 'company-backends 'company-math-symbols-latex) ; insert LaTeX code
 	)
 #+END_SRC
 
