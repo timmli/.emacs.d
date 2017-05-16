@@ -1,0 +1,17 @@
+# -*- mode: snippet -*-
+# name: org-latex header
+# key: header
+# condition: (eq 1 (line-number-at-pos))
+# --
+#+TITLE: ${1:Title}
+#+SUBTITLE: ${2:Subtitle}
+#+AUTHOR: ${3:John Doe}
+#+FILETAGS: research
+#+DATE: 
+#+LANGUAGE:  en
+#+OPTIONS:   H:2 num:t toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t ':t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+LATEX_CLASS: ${4:article}
+#+LATEX_HEADER: %\input{myMacros}
+
+$0

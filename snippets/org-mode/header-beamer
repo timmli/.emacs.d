@@ -1,0 +1,21 @@
+# -*- mode: snippet -*-
+# name: org-beamer header 
+# key: header
+# condition: (eq 1 (line-number-at-pos))
+# --
+#+TITLE: ${1:Beamer slides}
+#+AUTHOR: ${2:John Doe}
+#+FILETAGS: ${3:research}
+# #+DATE: 
+#+BEAMER_HEADER: %\date[]{}
+#+BEAMER_HEADER: %\institute[]{}
+#+BEAMER_HEADER: %\titlegraphic{\includegraphics[height=1cm]{graphics/sfb-logo-quer} \hfil \includegraphics[height=1cm]{graphics/hhu-logo}}	% Logo on title slide
+#+LANGUAGE:  en
+#+OPTIONS:   H:2 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t ':t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+STARTUP: beamer
+#+LATEX_CLASS: beamer
+#+LATEX_HEADER: %\input{myMacros}
+#+COLUMNS: %40ITEM %10TAGS %9BEAMER_act(Overlays) %4BEAMER_col(Col) %20BEAMER_opt(Options)
+
+$0

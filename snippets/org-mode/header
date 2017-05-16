@@ -1,6 +1,7 @@
 # -*- mode: snippet -*-
-# name: header for org file
+# name: org header
 # key: header
+# condition: (eq 1 (line-number-at-pos))
 # --
 #+TITLE: ${1:Notes on research literature}
 #+AUTHOR: ${2:Timm Lichte}
