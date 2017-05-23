@@ -4342,6 +4342,7 @@ Don't ask for the path when searching for files:
 	("a" org-toggle-archive-tag "archive here" :exit t)
 	("A" org-archive-subtree-default "archive outside" :exit t)
 	("c" hydra-org-columns/body "columns" :exit t)
+	("p" org-set-property "add property" :exit t)
 	("P" org-set-property-and-value "add property-value pair" :exit t)
 	("r" org-ref "org-ref" :exit t)
 	("s" org-sort "sort" :exit t)
