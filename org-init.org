@@ -2954,6 +2954,8 @@ Visualize the undo history.
 
 *** Remove newlines
 
+- alternative: [[https://github.com/jcpetkovich/shrink-whitespace.el][shrink-whitespace]]
+
 http://stackoverflow.com/a/5194503
 #+begin_src emacs-lisp
 (defun remove-newlines-in-region ()
@@ -2991,6 +2993,8 @@ http://stackoverflow.com/a/5194503
 #+end_src
 
 *** Remove extra spaces
+
+- alternative: [[https://github.com/jcpetkovich/shrink-whitespace.el][shrink-whitespace]]
 
 Remove extra spaces from line or region (TODO):
 #+begin_src emacs-lisp
@@ -3676,7 +3680,7 @@ Better keys for switching between windows:
 	)
 #+end_src
 
-** TODO magithub
+** TODO COMMENT magithub
 
 - [ ] Has to be properly configured.
 
