@@ -3676,7 +3676,9 @@ Better keys for switching between windows:
 	)
 #+end_src
 
-** magithub
+** TODO magithub
+
+- [ ] Has to be properly configured.
 
 Enhancement of magit to make available a more comprehensive access to Github repositories, regrading issues etc.:
 
