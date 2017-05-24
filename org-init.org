@@ -1393,6 +1393,8 @@ The following is taken from http://kitchingroup.cheme.cmu.edu/blog/2017/04/09/A-
 - [ ] Where to include =org-table-wrap-region=?
 
 #+BEGIN_SRC emacs-lisp
+(require 'org-inlinetask)
+
 (defun scimax/org-return (&optional ignore)
   "Add new list item, heading or table row with RET.
 A double return on an empty element deletes it.
