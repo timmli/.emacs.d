@@ -2493,6 +2493,8 @@ Sequence is important!
 	)
 #+end_src
 
+Add fuzzy matching capabilities:
+
 #+begin_src emacs-lisp
 (use-package company-flx
 	:ensure t
@@ -2500,6 +2502,23 @@ Sequence is important!
 	(with-eval-after-load 'company
 		(company-flx-mode +1)))
 #+end_src
+
+When =company= is actively used by browsing completion candidates, =<return>= should execute the completion.
+
+#+BEGIN_SRC emacs-lisp
+;; Taken from https://github.com/company-mode/company-mode/issues/530.
+(defun my-company-active-return ()
+	(interactive)
+	(if (company-explicit-action-p)
+			(company-complete)
+		(call-interactively
+		 (or (key-binding (this-command-keys))
+				 (key-binding (kbd "RET")))
+		 )))
+
+(define-key company-active-map (kbd "<return>") #'my-company-active-return)
+(define-key company-active-map (kbd "RET") #'my-company-active-return)
+#+END_SRC
 
 **** Math symbols
 
