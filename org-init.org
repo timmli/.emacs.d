@@ -3953,10 +3953,12 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
  
          [_i_] init file           [_p_] package manager      [_m_] macros
          [_d_] .emacs.d            [_u_] upgrade packages    
-         [_c_] customize emacs     [_t_] load theme           [_q_]uit
+         [_c_] customize emacs     [_t_] load theme           
+          ^^                      [_fp_] proportional font    [_q_]uit
 	"
 	("i" (find-file (expand-file-name org-init-file user-emacs-directory)) :exit t)
 	("d" (find-file user-emacs-directory) :exit t)
+	("fp" toggle-proportional :exit t)
 	("c" customize :exit t)
 	("p" paradox-list-packages :exit t)
 	("u" paradox-upgrade-packages :exit t)
