@@ -2693,6 +2693,22 @@ Execute when all backends added to =company-backends=.
 
 #+end_src
 
+*** flyspell-popup
+
+#+BEGIN_SRC emacs-lisp
+(use-package flyspell-popup
+	:ensure t
+	:defer t
+	:init
+	(progn
+		(setq flyspell-popup-correct-delay 0.8)
+		(add-hook 'flyspell-mode-hook 'flyspell-popup-auto-correct-mode))
+	;; :config
+	;; (define-key flyspell-mode-map (kbd "<right>") 'popup-close)
+)
+
+#+END_SRC
+
 ** Paren handling
 
 *** smartparens
