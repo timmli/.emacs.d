@@ -1005,7 +1005,7 @@ Rename file name at point.
 (use-package dired-efap
 	:ensure t
 	:config
-	(setq dired-efap-initial-filename-selection t)
+	(setq dired-efap-initial-filename-selection nil)
 	(define-key dired-mode-map (kbd "r") 'dired-efap)
 	)
 #+END_SRC
@@ -2119,7 +2119,8 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 		;; activate folding
 		(add-hook 'LaTeX-mode-hook (lambda ()
 																 (TeX-fold-mode 1)
-																 (TeX-fold-buffer)))
+																 ;; (TeX-fold-buffer)
+																 ))
 		;; folding behavior for environments
 		(custom-set-variables '(TeX-fold-env-spec-list
 														'(("[comment]" ("comment"))
@@ -4055,6 +4056,40 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 
 ** hydra-f6
 
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "<f6>") 'hydra-f6/body)
+
+(defun hydra-f6/body () ;hydra-for-major-mode ()
+	(interactive)
+  (cond
+	 ((string-equal (buffer-mode) "deft-mode")
+		(hydra-deft/body))
+	 ((string-equal (buffer-mode) "dired-mode")
+		(hydra-dired-main/body))
+	 ((string-equal (buffer-mode) "image-mode")
+		(hydra-image/body))
+	 ((string-equal (buffer-mode) "latex-mode")
+		(hydra-latex-main/body))
+	 ((string-equal (buffer-mode) "org-mode")
+		(hydra-org-main/body))
+	 ((string-equal (buffer-mode) "pomidor-mode")
+		(hydra-pomidor/body))
+	 ((or t) (message (concat "no hydra defined for major mode"))))
+)
+#+END_SRC
+
+Function to look up the major mode of a buffer:
+#+BEGIN_SRC emacs-lisp
+(defun buffer-mode (&optional buffer-or-name)
+  "Returns the major mode associated with a buffer.
+If buffer-or-name is nil return current buffer's mode."
+  (buffer-local-value 'major-mode
+											(if buffer-or-name (get-buffer buffer-or-name) (current-buffer))))
+#+END_SRC
+
+Deprecated:
+
 #+BEGIN_SRC 
 (defvar hydra-f6-menu
 	"
@@ -4084,34 +4119,6 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 )
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "<f6>") 'hydra-f6/body)
-
-(defun hydra-f6/body () ;hydra-for-major-mode ()
-	(interactive)
-  (cond
-	 ((string-equal (buffer-mode) "deft-mode")
-		(hydra-deft/body))
-	 ((string-equal (buffer-mode) "dired-mode")
-		(hydra-dired-main/body))
-	 ((string-equal (buffer-mode) "image-mode")
-		(hydra-image/body))
-	 ((string-equal (buffer-mode) "org-mode")
-		(hydra-org-main/body))
-	 ((string-equal (buffer-mode) "pomidor-mode")
-		(hydra-pomidor/body))
-	 ((or t) (message (concat "no hydra defined for major mode"))))
-)
-#+END_SRC
-
-Function to look up the major mode of a buffer:
-#+BEGIN_SRC emacs-lisp
-(defun buffer-mode (&optional buffer-or-name)
-  "Returns the major mode associated with a buffer.
-If buffer-or-name is nil return current buffer's mode."
-  (buffer-local-value 'major-mode
-											(if buffer-or-name (get-buffer buffer-or-name) (current-buffer))))
-#+END_SRC
 
 ** hydra-f7
 
@@ -4381,7 +4388,7 @@ Don't ask for the path when searching for files:
 	"Org-mode"
 	("a" org-toggle-archive-tag "archive here" :exit t)
 	("A" org-archive-subtree-default "archive outside" :exit t)
-	("c" hydra-org-columns/body "columns" :exit t)
+	("c" hydra-org-columns/body "columns..." :exit t)
 	("p" org-set-property "add property" :exit t)
 	("P" org-set-property-and-value "add property-value pair" :exit t)
 	("r" org-ref "org-ref" :exit t)
@@ -4392,6 +4399,8 @@ Don't ask for the path when searching for files:
 	("q" nil :color blue)
 	)
 #+END_SRC
+
+A hydra for org-columns:
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-columns (:hint nil :color pink :body-pre (org-columns))
@@ -4600,6 +4609,36 @@ Automatically open the hydra with ibuffer:
 - deletion of temporary files
 - show log
 - show pdf
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-latex-main (:hint nil)
+	"LaTeX"
+	("<up>" tl/reftex-previous "previous heading" :exit nil)
+	("<down>" tl/reftex-next "next heading" :exit nil)
+	("=" reftex-toc "table of contents" :exit t)
+	("d" hydra-latex-delete "delete..." :exit t)
+	("f" hydra-latex-fonts/body "font..." :exit t)
+	("c" TeX-command-master "compile" :exit t)
+	("l" TeX-recenter-output-buffer "show log" :exit t)
+	("o" hydra-latex-folding/body "folding..." :exit t)
+	("v" TeX-view "view output" :exit t)
+	("q" nil :color blue)
+	)
+#+END_SRC
+
+A hydra for code folding with AUCTeX:
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-latex-folding (:hint nil :body-pre (TeX-fold-mode 1))
+	"LaTeX: folding"
+	("b" TeX-clearout-buffer "remove folding in buffer" :exit t)
+	("B" TeX-fold-buffer "activate folding in buffer" :exit t)
+	("o" TeX-fold-dwim "fold dwim" :exit t)
+	("Q" TeX-fold-mode "quit TeX-fold-mode" :exit t)
+	("q" nil :color blue)
+	)
+#+END_SRC
+ 
 
 ** hydra-flycheck
 
