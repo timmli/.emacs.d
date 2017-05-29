@@ -5,8 +5,6 @@
 #+STARTUP: hideblocks content
 #+TODO: TODO | DONE CANCELED
 
-http://emacs-bootstrap.com/
-
 * General appearence
 
 ** Toolbar
@@ -3814,6 +3812,25 @@ Enhancement of magit to make available a more comprehensive access to Github rep
   (eshell t))
 (global-set-key (kbd "<f7> e") 'tl/eshell)
  #+END_SRC
+
+* Process monitor
+
+** proced
+
+The built-in top-like process viewer in Emacs.
+
+See https://www.masteringemacs.org/article/displaying-interacting-processes-proced or http://emacsredux.com/blog/2013/05/02/manage-processes-with-proced/
+
+#+BEGIN_SRC emacs-lisp
+(require 'proced)
+(setq proced-auto-update-interval 1)
+
+(defun proced-settings ()
+  (proced-toggle-auto-update))
+(add-hook 'proced-mode-hook 'proced-settings)
+
+(global-set-key (kbd "C-x p") 'proced)
+#+END_SRC
 
 * Tags
 
