@@ -1744,6 +1744,14 @@ Links to files are opened in the same window, i.e. the window does not get split
 (setq org-link-frame-setup '((file . find-file)))
 #+END_SRC
 
+Show whether links to files are valid:
+#+BEGIN_SRC emacs-lisp
+;; taken from https://emacs.stackexchange.com/a/33078/12336
+(org-link-set-parameters
+ "file"
+ :face (lambda (path) (if (file-exists-p path) 'org-link 'org-warning)))
+#+END_SRC
+
 *** Tags
 
 #+BEGIN_SRC emacs-lisp
