@@ -2715,6 +2715,7 @@ Execute when all backends added to =company-backends=.
 	;; unset keys in popup-menu, so that flyspell-popup will close the popup when using them. 
 	(define-key popup-menu-keymap (kbd "<right>") nil)
 	(define-key popup-menu-keymap (kbd "<left>") nil)
+	(define-key popup-menu-keymap (kbd "TAB") 'popup-select)
 )
 
 #+END_SRC
@@ -4011,6 +4012,8 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 
 ** hydra-f3
 
+- [ ] add =finder-commentary=
+
 #+BEGIN_SRC emacs-lisp
 	(defhydra hydra-f3
 		(:hint nil
@@ -4082,7 +4085,6 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 
 ** hydra-f6
 
-
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "<f6>") 'hydra-f6/body)
 
@@ -4144,7 +4146,6 @@ Deprecated:
 	("<f9>" hydra-f9/body :exit t)
 )
 #+END_SRC
-
 
 ** hydra-f7
 
@@ -4665,7 +4666,6 @@ A hydra for code folding with AUCTeX:
 	)
 #+END_SRC
  
-
 ** hydra-flycheck
 
 #+BEGIN_SRC emacs-lisp
