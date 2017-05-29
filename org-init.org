@@ -2703,8 +2703,10 @@ Execute when all backends added to =company-backends=.
 	(progn
 		(setq flyspell-popup-correct-delay 0.8)
 		(add-hook 'flyspell-mode-hook 'flyspell-popup-auto-correct-mode))
-	;; :config
-	;; (define-key flyspell-mode-map (kbd "<right>") 'popup-close)
+	:config
+	;; unset keys in popup-menu, so that flyspell-popup will close the popup when using them. 
+	(define-key popup-menu-keymap (kbd "<right>") nil)
+	(define-key popup-menu-keymap (kbd "<left>") nil)
 )
 
 #+END_SRC
