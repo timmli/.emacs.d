@@ -1401,7 +1401,9 @@ C-a and C-e behave org-sensitive
 
 *** TODO Newline
 
-The following is taken from http://kitchingroup.cheme.cmu.edu/blog/2017/04/09/A-better-return-in-org-mode/:
+The following is taken from [[http://github.com/jkitchin/scimax/blob/master/scimax-org.el]] . 
+See also http://kitchingroup.cheme.cmu.edu/blog/2017/04/09/A-better-return-in-org-mode/ .
+
 - [ ] Where to include =org-table-wrap-region=?
 
 #+BEGIN_SRC emacs-lisp
@@ -1422,7 +1424,7 @@ Use a prefix arg to get regular RET. "
      ;; Open links like usual, unless point is at the end of a line.
      ;; and if at beginning of line, just press enter.
      ((or (and (eq 'link (car (org-element-context))) (not (eolp)))
-          (bolp))
+					(bolp))
       (org-return))
 
      ;; It doesn't make sense to add headings in inline tasks. Thanks Anders
@@ -1439,34 +1441,34 @@ Use a prefix arg to get regular RET. "
      ;; created with only one blank line.
      ((org-in-item-p)
       (if (save-excursion (beginning-of-line) (org-element-property :contents-begin (org-element-context)))
-          (org-insert-heading)
-        (beginning-of-line)
-        (delete-region (line-beginning-position) (line-end-position))
-        (org-return)))
+					(org-insert-heading)
+				(beginning-of-line)
+				(delete-region (line-beginning-position) (line-end-position))
+				(org-return)))
 
      ;; org-heading
      ((org-at-heading-p)
       (if (not (string= "" (org-element-property :title (org-element-context))))
-          (progn (org-end-of-meta-data)
-                 (org-insert-heading-respect-content)
-                 (outline-show-entry))
-        (beginning-of-line)
-        (setf (buffer-substring
-               (line-beginning-position) (line-end-position)) "")))
+					(progn (org-end-of-meta-data)
+								 (org-insert-heading-respect-content)
+								 (outline-show-entry))
+				(beginning-of-line)
+				(setf (buffer-substring
+							 (line-beginning-position) (line-end-position)) "")))
 
      ;; tables
      ((org-at-table-p)
       (if (-any?
-           (lambda (x) (not (string= "" x)))
-           (nth
-            (- (org-table-current-dline) 1)
-            (org-table-to-lisp)))
-          (org-return)
-        ;; empty row
-        (beginning-of-line)
-        (setf (buffer-substring
-               (line-beginning-position) (line-end-position)) "")
-        (org-return)))
+					 (lambda (x) (not (string= "" x)))
+					 (nth
+						(- (org-table-current-dline) 1)
+						(remove 'hline (org-table-to-lisp))))
+					(org-return)
+				;; empty row
+				(beginning-of-line)
+				(setf (buffer-substring
+							 (line-beginning-position) (line-end-position)) "")
+				(org-return)))
 
      ;; fall-through case
      (t
