@@ -5,7 +5,10 @@
 #+STARTUP: hideblocks content
 #+TODO: TODO | DONE CANCELED
 
+* Good examples
+
 http://ivanmalison.github.io/dotfiles/
+
 
 * General appearence
 
@@ -2004,156 +2007,156 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 - [ ] How to do completion of custom macros?
 
 #+BEGIN_SRC emacs-lisp
-	(use-package tex
-		:ensure auctex												; because auctex overwrites tex
+(use-package tex
+	:ensure auctex												; because auctex overwrites tex
 
-		:init
+	:init
 
-		;; to activate auctex
-		(setq TeX-auto-save t)  
-		(setq TeX-auto-local
-					(expand-file-name "temp" user-emacs-directory))
-		(setq TeX-parse-self t)
-		(setq-default TeX-master nil)
-		(setq TeX-save-query nil) ; autosave before compiling 
+	;; to activate auctex
+	(setq TeX-auto-save t)  
+	(setq TeX-auto-local
+				(expand-file-name "temp" user-emacs-directory))
+	(setq TeX-parse-self t)
+	(setq-default TeX-master nil)
+	(setq TeX-save-query nil) ; autosave before compiling 
 
-		;; Show compilation log
-		(setq TeX-show-compilation nil) ; always show and follow TeX output
-    ;; FIXME: Make C-c C-l behave like this
-    (setq compilation-scroll-output t)
+	;; Show compilation log
+	(setq TeX-show-compilation nil) ; always show and follow TeX output
+	;; FIXME: Make C-c C-l behave like this
+	(setq compilation-scroll-output t)
 
-		;; don't indent
-		(setq LaTeX-indent-level 0)
-		(setq LaTeX-item-indent 0)
+	;; don't indent
+	(setq LaTeX-indent-level 0)
+	(setq LaTeX-item-indent 0)
 
-		;; viewer
-		(setq TeX-PDF-mode t)
-		(setq TeX-source-correlate-mode t)
-		(setq TeX-source-correlate-method 'synctex)
+	;; viewer
+	(setq TeX-PDF-mode t)
+	(setq TeX-source-correlate-mode t)
+	(setq TeX-source-correlate-method 'synctex)
 
-		(when (eq system-type 'windows-nt) 
-			(setq TeX-view-program-list
-						'(("Sumatra PDF" ("\"SumatraPDF.exe\" -reuse-instance"
-															(mode-io-correlate " -forward-search %b %n ") " %o"))))
-			(eval-after-load 'tex
-				'(progn
-					 (assq-delete-all 'output-pdf TeX-view-program-selection)
-					 (add-to-list 'TeX-view-program-selection '(output-pdf "Sumatra PDF"))))
-			)
-		
-		;; set up engines
-		(setq TeX-engine-alist 
-					'(
-						(xetex "XeTeX" 
-									 "xetex --file-line-error" 
-									 "xelatex --file-line-error" 
-									 "xetex")
-						(xetex_sh "XeTeX shell escape" 
-											"xetex --file-line-error --shell-escape" 
-											"xelatex --file-line-error --shell-escape" 
-											"xetex")))
-
-		;; make LaTeXmk default
-		(use-package auctex-latexmk
-			:ensure t
-			:config
-			(auctex-latexmk-setup)
-			(setq auctex-latexmk-inherit-TeX-PDF-mode t)
-			(setq TeX-command-force "LatexMk")  ; remember to set path variable accordingly!
-			)
-		
-		:config
-		;; font keys
-		(defun TeX-italic()
-			(interactive)
-			(TeX-font nil ?\C-i))
-		(defun TeX-bold()
-			(interactive)
-			(TeX-font nil ?\C-b))
-		(defun TeX-typewriter()
-			(interactive)
-			(TeX-font nil ?\C-t))
-		(defun TeX-emphasis()
-			(interactive)
-			(TeX-font nil ?\C-e))
-		(defun TeX-smallcaps()
-			(interactive)
-			(TeX-font nil ?\C-c))
-		(defun TeX-italic-replace()
-			(interactive)
-			(TeX-font t ?\C-i))
-		(defun TeX-bold-replace()
-			(interactive)
-			(TeX-font t ?\C-b))
-		(defun TeX-typewriter-replace()
-			(interactive)
-			(TeX-font t ?\C-t))
-		(defun TeX-emphasis-replace()
-			(interactive)
-			(TeX-font t ?\C-e))
-		(defun TeX-smallcaps-replace()
-			(interactive)
-			(TeX-font t ?\C-c))
-		(defun TeX-deletefont()
-			(interactive)
-			(TeX-font nil ?\C-d))
-		(define-key LaTeX-mode-map (kbd "C-c C-f i") 'TeX-italic)
-		(define-key LaTeX-mode-map (kbd "C-c C-f b") 'TeX-bold)
-		(define-key LaTeX-mode-map (kbd "C-c C-f t") 'TeX-typewriter)
-		(define-key LaTeX-mode-map (kbd "C-c C-f e") 'TeX-emphasis)
-		(define-key LaTeX-mode-map (kbd "C-c C-f s") 'TeX-smallcaps)
-		(define-key LaTeX-mode-map (kbd "C-c C-f c") 'TeX-smallcaps)
-		(define-key LaTeX-mode-map (kbd "C-c C-f d") 'TeX-deletefont)	
-		(define-key LaTeX-mode-map (kbd "C-c C-f DEL") 'TeX-deletefont)
-		(define-key LaTeX-mode-map (kbd "C-c f i") 'TeX-italic)
-		(define-key LaTeX-mode-map (kbd "C-c f b") 'TeX-bold)
-		(define-key LaTeX-mode-map (kbd "C-c f t") 'TeX-typewriter)
-		(define-key LaTeX-mode-map (kbd "C-c f e") 'TeX-emphasis)
-		(define-key LaTeX-mode-map (kbd "C-c f s") 'TeX-smallcaps)
-		(define-key LaTeX-mode-map (kbd "C-c f c") 'TeX-smallcaps)
-		(define-key LaTeX-mode-map (kbd "C-c f d") 'TeX-deletefont)
-		(define-key LaTeX-mode-map (kbd "C-c f DEL") 'TeX-deletefont)
-		(define-key LaTeX-mode-map (kbd "C-c C-f ! i") 'TeX-italic-replace)
-		(define-key LaTeX-mode-map (kbd "C-c C-f ! b") 'TeX-bold-replace)
-		(define-key LaTeX-mode-map (kbd "C-c C-f ! t") 'TeX-typewriter-replace)
-		(define-key LaTeX-mode-map (kbd "C-c C-f ! e") 'TeX-emphasis-replace)
-		(define-key LaTeX-mode-map (kbd "C-c C-f ! s") 'TeX-smallcaps-replace)
-		(define-key LaTeX-mode-map (kbd "C-c C-f ! c") 'TeX-smallcaps-replace)
-		(define-key LaTeX-mode-map (kbd "C-c f ! i") 'TeX-italic-replace)
-		(define-key LaTeX-mode-map (kbd "C-c f ! b") 'TeX-bold-replace)
-		(define-key LaTeX-mode-map (kbd "C-c f ! t") 'TeX-typewriter-replace)
-		(define-key LaTeX-mode-map (kbd "C-c f ! e") 'TeX-emphasis-replace)
-		(define-key LaTeX-mode-map (kbd "C-c f ! s") 'TeX-smallcaps-replace)
-		(define-key LaTeX-mode-map (kbd "C-c f ! c") 'TeX-smallcaps-replace)
-
-		;; activate folding
-		(add-hook 'LaTeX-mode-hook (lambda ()
-																 (TeX-fold-mode 1)
-																 ;; (TeX-fold-buffer)
-																 ))
-		;; folding behavior for environments
-		(custom-set-variables '(TeX-fold-env-spec-list
-														'(("[comment]" ("comment"))
-															("[figure]" ("figure"))
-															("[tikz]" ("tikzpicture")))))
-
-
-		:bind (:map  LaTeX-mode-map
-								 ;; ("C-l C-q" . align-current) ; useful command to align arrays
-								 ;; ("C-l H-i" . align-current) ; useful command to align arrays							 
-								 ;; keys for error browsing (disabled; see hydra settings)
-								 ;; ("<f4>" . TeX-next-error)	 
-								 ;; ("S-<f4>" . TeX-previous-error)
-								 ;; ("C-<f4>" . TeX-error-overview)
-								 ;; miscellaneous keys
-								 ("C-c <backspace>" . TeX-clean)
-								 ("C-<return>" . LaTeX-close-environment)
-								 ;; goto keys
-								 ("C-c {" . LaTeX-find-matching-begin)
-								 ("C-c }" . LaTeX-find-matching-end)
-								 ;; ("C-c C-l" . (lambda () (interactive) ()))  ;FIXME
-								 )
+	(when (eq system-type 'windows-nt) 
+		(setq TeX-view-program-list
+					'(("Sumatra PDF" ("\"SumatraPDF.exe\" -reuse-instance"
+														(mode-io-correlate " -forward-search %b %n ") " %o"))))
+		(eval-after-load 'tex
+			'(progn
+				 (assq-delete-all 'output-pdf TeX-view-program-selection)
+				 (add-to-list 'TeX-view-program-selection '(output-pdf "Sumatra PDF"))))
 		)
+	
+	;; set up engines
+	(setq TeX-engine-alist 
+				'(
+					(xetex "XeTeX" 
+								 "xetex --file-line-error" 
+								 "xelatex --file-line-error" 
+								 "xetex")
+					(xetex_sh "XeTeX shell escape" 
+										"xetex --file-line-error --shell-escape" 
+										"xelatex --file-line-error --shell-escape" 
+										"xetex")))
+
+	;; make LaTeXmk default
+	(use-package auctex-latexmk
+		:ensure t
+		:config
+		(auctex-latexmk-setup)
+		(setq auctex-latexmk-inherit-TeX-PDF-mode t)
+		(setq TeX-command-force "LatexMk")  ; remember to set path variable accordingly!
+		)
+	
+	:config
+	;; font keys
+	(defun TeX-italic()
+		(interactive)
+		(TeX-font nil ?\C-i))
+	(defun TeX-bold()
+		(interactive)
+		(TeX-font nil ?\C-b))
+	(defun TeX-typewriter()
+		(interactive)
+		(TeX-font nil ?\C-t))
+	(defun TeX-emphasis()
+		(interactive)
+		(TeX-font nil ?\C-e))
+	(defun TeX-smallcaps()
+		(interactive)
+		(TeX-font nil ?\C-c))
+	(defun TeX-italic-replace()
+		(interactive)
+		(TeX-font t ?\C-i))
+	(defun TeX-bold-replace()
+		(interactive)
+		(TeX-font t ?\C-b))
+	(defun TeX-typewriter-replace()
+		(interactive)
+		(TeX-font t ?\C-t))
+	(defun TeX-emphasis-replace()
+		(interactive)
+		(TeX-font t ?\C-e))
+	(defun TeX-smallcaps-replace()
+		(interactive)
+		(TeX-font t ?\C-c))
+	(defun TeX-deletefont()
+		(interactive)
+		(TeX-font nil ?\C-d))
+	(define-key LaTeX-mode-map (kbd "C-c C-f i") 'TeX-italic)
+	(define-key LaTeX-mode-map (kbd "C-c C-f b") 'TeX-bold)
+	(define-key LaTeX-mode-map (kbd "C-c C-f t") 'TeX-typewriter)
+	(define-key LaTeX-mode-map (kbd "C-c C-f e") 'TeX-emphasis)
+	(define-key LaTeX-mode-map (kbd "C-c C-f s") 'TeX-smallcaps)
+	(define-key LaTeX-mode-map (kbd "C-c C-f c") 'TeX-smallcaps)
+	(define-key LaTeX-mode-map (kbd "C-c C-f d") 'TeX-deletefont)	
+	(define-key LaTeX-mode-map (kbd "C-c C-f DEL") 'TeX-deletefont)
+	(define-key LaTeX-mode-map (kbd "C-c f i") 'TeX-italic)
+	(define-key LaTeX-mode-map (kbd "C-c f b") 'TeX-bold)
+	(define-key LaTeX-mode-map (kbd "C-c f t") 'TeX-typewriter)
+	(define-key LaTeX-mode-map (kbd "C-c f e") 'TeX-emphasis)
+	(define-key LaTeX-mode-map (kbd "C-c f s") 'TeX-smallcaps)
+	(define-key LaTeX-mode-map (kbd "C-c f c") 'TeX-smallcaps)
+	(define-key LaTeX-mode-map (kbd "C-c f d") 'TeX-deletefont)
+	(define-key LaTeX-mode-map (kbd "C-c f DEL") 'TeX-deletefont)
+	(define-key LaTeX-mode-map (kbd "C-c C-f ! i") 'TeX-italic-replace)
+	(define-key LaTeX-mode-map (kbd "C-c C-f ! b") 'TeX-bold-replace)
+	(define-key LaTeX-mode-map (kbd "C-c C-f ! t") 'TeX-typewriter-replace)
+	(define-key LaTeX-mode-map (kbd "C-c C-f ! e") 'TeX-emphasis-replace)
+	(define-key LaTeX-mode-map (kbd "C-c C-f ! s") 'TeX-smallcaps-replace)
+	(define-key LaTeX-mode-map (kbd "C-c C-f ! c") 'TeX-smallcaps-replace)
+	(define-key LaTeX-mode-map (kbd "C-c f ! i") 'TeX-italic-replace)
+	(define-key LaTeX-mode-map (kbd "C-c f ! b") 'TeX-bold-replace)
+	(define-key LaTeX-mode-map (kbd "C-c f ! t") 'TeX-typewriter-replace)
+	(define-key LaTeX-mode-map (kbd "C-c f ! e") 'TeX-emphasis-replace)
+	(define-key LaTeX-mode-map (kbd "C-c f ! s") 'TeX-smallcaps-replace)
+	(define-key LaTeX-mode-map (kbd "C-c f ! c") 'TeX-smallcaps-replace)
+
+	;; activate folding
+	(add-hook 'LaTeX-mode-hook (lambda ()
+															 (TeX-fold-mode 1)
+															 ;; (TeX-fold-buffer)
+															 ))
+	;; folding behavior for environments
+	(custom-set-variables '(TeX-fold-env-spec-list
+													'(("[comment]" ("comment"))
+														("[figure]" ("figure"))
+														("[tikz]" ("tikzpicture")))))
+
+
+	:bind (:map  LaTeX-mode-map
+							 ;; ("C-l C-q" . align-current) ; useful command to align arrays
+							 ;; ("C-l H-i" . align-current) ; useful command to align arrays							 
+							 ;; keys for error browsing (disabled; see hydra settings)
+							 ;; ("<f4>" . TeX-next-error)	 
+							 ;; ("S-<f4>" . TeX-previous-error)
+							 ;; ("C-<f4>" . TeX-error-overview)
+							 ;; miscellaneous keys
+							 ("C-c <backspace>" . TeX-clean)
+							 ("C-<return>" . LaTeX-close-environment)
+							 ;; goto keys
+							 ("C-c {" . LaTeX-find-matching-begin)
+							 ("C-c }" . LaTeX-find-matching-end)
+							 ;; ("C-c C-l" . (lambda () (interactive) ()))  ;FIXME
+							 )
+	)
 #+END_SRC
 
 *** TODO reftex
@@ -3123,47 +3126,47 @@ Remove extra spaces from line or region (TODO):
 
 http://emacs-fu.blogspot.de/2009/05/tracking-changes.html
 #+begin_src emacs-lisp
-	;; higlight changes in documents
-	(global-highlight-changes-mode t)
-	(setq highlight-changes-visibility-initial-state nil); initially hide
-	;; toggle visibility
-	;; (global-set-key (kbd "<f8>") 'highlight-changes-visible-mode) ;; changes
-	;; remove the change-highlight in region
-	;; (global-set-key (kbd "S-<f8>") 'highlight-changes-remove-highlight)
-	;; if you're not already using it for something else...
-	(global-set-key (kbd "<M-prior>") 'highlight-changes-next-change)
-	(global-set-key (kbd "<M-next>")  'highlight-changes-previous-change)
-	;; faces
-	(set-face-foreground 'highlight-changes nil)
-	(set-face-background 'highlight-changes "#916868")
-	(set-face-foreground 'highlight-changes-delete nil)
-	(set-face-background 'highlight-changes-delete "#916868")
+;; higlight changes in documents
+(global-highlight-changes-mode t)
+(setq highlight-changes-visibility-initial-state nil); initially hide
+;; toggle visibility
+;; (global-set-key (kbd "<f8>") 'highlight-changes-visible-mode) ;; changes
+;; remove the change-highlight in region
+;; (global-set-key (kbd "S-<f8>") 'highlight-changes-remove-highlight)
+;; if you're not already using it for something else...
+(global-set-key (kbd "<M-prior>") 'highlight-changes-next-change)
+(global-set-key (kbd "<M-next>")  'highlight-changes-previous-change)
+;; faces
+(set-face-foreground 'highlight-changes nil)
+(set-face-background 'highlight-changes "#916868")
+(set-face-foreground 'highlight-changes-delete nil)
+(set-face-background 'highlight-changes-delete "#916868")
 
-	;; http://stackoverflow.com/a/21084181/6452961
-	;; show mark in fringe
-	(eval-after-load "hilit-chg"
-		'(progn
-			 (defvar highlight-fringe-mark 'filled-square
-				 "The fringe bitmap name marked at changed line.
+;; http://stackoverflow.com/a/21084181/6452961
+;; show mark in fringe
+(eval-after-load "hilit-chg"
+	'(progn
+		 (defvar highlight-fringe-mark 'filled-square
+			 "The fringe bitmap name marked at changed line.
 	Should be selected from `fringe-bitmaps'.")
 
-			 (defadvice hilit-chg-make-ov (after hilit-chg-add-fringe activate)
-				 (mapc (lambda (ov)
-								 (if (overlay-get ov 'hilit-chg)
-										 (let ((fringe-anchor (make-string 1 ?x)))
-											 (put-text-property 0 1 'display
-																					(list 'left-fringe highlight-fringe-mark)
-																					fringe-anchor)
-											 (overlay-put ov 'before-string fringe-anchor))
-									 ))
-							 (overlays-at (ad-get-arg 1))))))
-	;; remove highlights on save time
-	(add-hook 'after-save-hook
-						(lambda ()
-							(when highlight-changes-mode
-								(save-restriction
-									(widen)
-									(highlight-changes-remove-highlight (point-min) (point-max))))))
+		 (defadvice hilit-chg-make-ov (after hilit-chg-add-fringe activate)
+			 (mapc (lambda (ov)
+							 (if (overlay-get ov 'hilit-chg)
+									 (let ((fringe-anchor (make-string 1 ?x)))
+										 (put-text-property 0 1 'display
+																				(list 'left-fringe highlight-fringe-mark)
+																				fringe-anchor)
+										 (overlay-put ov 'before-string fringe-anchor))
+								 ))
+						 (overlays-at (ad-get-arg 1))))))
+;; remove highlights on save time
+(add-hook 'after-save-hook
+					(lambda ()
+						(when highlight-changes-mode
+							(save-restriction
+								(widen)
+								(highlight-changes-remove-highlight (point-min) (point-max))))))
 #+end_src
 
 ** Switch between buffers
