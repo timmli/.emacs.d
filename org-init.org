@@ -5,6 +5,8 @@
 #+STARTUP: hideblocks content
 #+TODO: TODO | DONE CANCELED
 
+http://ivanmalison.github.io/dotfiles/
+
 * General appearence
 
 ** Toolbar
@@ -363,7 +365,7 @@ Smex helps to remember often used commands; used by ido and counsel
 
 ** TODO helm
 
-- [ ] does not compleste org-set-tags
+- [ ] does not complete org-set-tags
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm
@@ -4920,6 +4922,21 @@ Copied from http://www.superloopy.io/articles/2017/hydra-theme-switcher.html:
                         ("DEL" (sb/disable-all-themes))
                         ("RET" nil "done" :color blue)))))))
 #+END_SRC
+
+I've added this to make it fit into [[*hydra-f3][hydra-f3]]:
+
+#+BEGIN_SRC emacs-lisp
+(defun hydra-load-theme/body ()
+	(interactive)
+	(call-interactively
+	 (eval `(defhydra sb/hydra-select-themes (:hint nil :color pink)
+						"Select Theme"
+						,@(sb/hydra-load-theme-heads (sb/sort-themes (custom-available-themes)))
+						("DEL" (sb/disable-all-themes))
+						("q" nil "quit" :color blue))))
+)
+#+END_SRC
+
 
 ** hydra-tags
 
