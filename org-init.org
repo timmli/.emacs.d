@@ -2324,9 +2324,9 @@ Make square brackets indent correctly (testing):
 (modify-syntax-entry ?\] ")[" LaTeX-mode-syntax-table)
 #+END_SRC
 
-Remove macro at point (http://emacs.stackexchange.com/a/7997/12336):
+Delete macro at point (http://emacs.stackexchange.com/a/7997/12336):
 #+BEGIN_SRC emacs-lisp
-(defun TeX-remove-macro ()
+(defun TeX-delete-macro ()
   "Remove current macro and return `t'.  If no macro at point,
 return `nil'."
   (interactive)
@@ -2338,6 +2338,30 @@ return `nil'."
       (delete-region (1- (cdr bounds)) (cdr bounds))
       (delete-region (car bounds) (1+ brace)))
     t))
+#+END_SRC
+
+Delete environment at point (https://www.reddit.com/r/emacs/comments/5f99nv/help_with_auctex_how_to_delete_an_environment/dailbtu/):
+#+BEGIN_SRC emacs-lisp
+(defun TeX-delete-environment ()
+  (interactive)
+  (when (LaTeX-current-environment)
+    (save-excursion
+      (let* ((begin-start (save-excursion
+                            (LaTeX-find-matching-begin)
+                            (point)))
+             (begin-end (save-excursion
+                          (goto-char begin-start)
+                          (search-forward-regexp "begin{.*?}")))
+             (end-end (save-excursion
+                        (LaTeX-find-matching-end)
+                        (point)))
+             (end-start (save-excursion
+                          (goto-char end-end)
+                          (1- (search-backward-regexp "\\end")))))
+        ;; delete end first since if we delete begin first it shifts the
+        ;; location of end
+        (delete-region end-start end-end)
+        (delete-region begin-start begin-end)))))
 #+END_SRC
 
 <tab> should always insert a tab (instead of indentation):
@@ -3505,7 +3529,9 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 							(define-key map (kbd "C-d (") 'sp-unwrap-sexp)
 							(define-key map (kbd "C-d )") 'sp-unwrap-sexp)
 
-							(define-key LaTeX-mode-map (kbd "C-d m") 'TeX-remove-macro)
+							(define-key LaTeX-mode-map (kbd "C-d m") 'TeX-delete-macro)
+							(define-key LaTeX-mode-map (kbd "C-d e") 'TeX-delete-environment)
+							(define-key LaTeX-mode-map (kbd "C-d t") 'TeX-clean)
 
 							;; return
 							(define-key input-decode-map (kbd "C-m") (kbd "H-o")) ; to disentangle <return> and C-m
@@ -4652,7 +4678,6 @@ Automatically open the hydra with ibuffer:
 - fonts
 - jumping
 - reftex
-- deletion of temporary files
 - show log
 - show pdf
 
@@ -4662,7 +4687,7 @@ Automatically open the hydra with ibuffer:
 	("<up>" tl/reftex-previous "previous heading" :exit nil)
 	("<down>" tl/reftex-next "next heading" :exit nil)
 	("=" reftex-toc "table of contents" :exit t)
-	("d" hydra-latex-delete "delete..." :exit t)
+	("d" hydra-latex-delete/body "delete..." :exit t)
 	("f" hydra-latex-fonts/body "font..." :exit t)
 	("c" TeX-command-master "compile" :exit t)
 	("l" TeX-recenter-output-buffer "show log" :exit t)
@@ -4681,6 +4706,19 @@ A hydra for code folding with AUCTeX:
 	("B" TeX-fold-buffer "activate folding in buffer" :exit t)
 	("o" TeX-fold-dwim "fold dwim" :exit t)
 	("Q" TeX-fold-mode "quit TeX-fold-mode" :exit t)
+	("q" nil :color blue)
+	)
+#+END_SRC
+
+A hydra for code deletion with AUCTeX:
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-latex-delete (:hint nil)
+	"LaTeX: delete"
+	("f" TeX-deletefont "font" :exit t)
+	("e" TeX-delete-environment "environment" :exit t)
+	("m" TeX-delete-macro "macro" :exit t)
+	("t" TeX-clean "temporary files" :exit t)
 	("q" nil :color blue)
 	)
 #+END_SRC
@@ -4888,6 +4926,8 @@ A hydra for code folding with AUCTeX:
 #+END_SRC
 
 ** hydra-load-theme
+
+Switch between installed themes.
 
 Copied from http://www.superloopy.io/articles/2017/hydra-theme-switcher.html:
 
