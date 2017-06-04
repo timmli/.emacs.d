@@ -433,6 +433,7 @@ Smex helps to remember often used commands; used by ido and counsel
 								:around (lambda (fcn file)
 													(unless (string-match "\\(?:/\\|\\`\\)\\.\\{1,2\\}\\'" file)
 														(funcall fcn file))))
+
 		)
   :bind (("M-y" . helm-mini)
 				 ("C-x C-r" . helm-recentf)
@@ -600,15 +601,17 @@ Quick, comprehensive search on org-mode files.
 	:ensure t
   :config
 	(define-key helm-org-rifle-map (kbd "<left>") 'backward-char) ; instead of helm-previous-source
-	(define-key helm-org-rifle-map (kbd "<right>") 'forward-char) ; instead of helm-next-source 
+	(define-key helm-org-rifle-map (kbd "<right>") 'forward-char) ; instead of helm-next-source
+	(define-key helm-org-rifle-map (kbd "C-n") 'helm-next-source)
+	(define-key helm-org-rifle-map (kbd "C-p") 'helm-previous-source)
 )
 #+END_SRC
 
 *** Key bindings
 
 #+BEGIN_SRC emacs-lisp
-(define-key helm-map (kbd "C-c C-n") 'helm-next-source)
-(define-key helm-map (kbd "C-c C-p") 'helm-previous-source)
+(define-key helm-map (kbd "C-n") 'helm-next-source)
+(define-key helm-map (kbd "C-p") 'helm-previous-source)
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; complete with <tab> (default is <ret>)
 (define-key helm-map (kbd "C-z") 'helm-select-action) ; show actions (default is <tab>)
 (define-key helm-map (kbd "<left>") 'backward-char) ; instead of C-f
@@ -1233,7 +1236,13 @@ Preserve indentation in source blocks:
                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 #+end_src
 
-**** Color text
+**** TODO Color text
+
+- [ ] add support for export to LaTeX
+
+Text can be colored using the link syntax, e.g. [[color:red][this is red]].
+Taken from https://github.com/jkitchin/jmax/blob/master/org-colored-text.el
+See also http://kitchingroup.cheme.cmu.edu/blog/2016/01/16/Colored-text-in-org-mode-with-export-to-HTML/
 
 #+BEGIN_SRC emacs-lisp
 (require 'org-colored-text)
@@ -2197,8 +2206,8 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 	
 	;; jumping around like in org-mode
 	(define-key LaTeX-mode-map (kbd "C-c C-j") 'tl/reftex-in-follow-mode)
-	(define-key LaTeX-mode-map (kbd "C-c C-n") 'tl/reftex-next)
-	(define-key LaTeX-mode-map (kbd "C-c C-p") 'tl/reftex-previous)
+	(define-key LaTeX-mode-map (kbd "C-n") 'tl/reftex-next)
+	(define-key LaTeX-mode-map (kbd "C-p") 'tl/reftex-previous)
 	(defun tl/reftex-in-follow-mode()
 		(interactive)
 		(setq reftex-toc-follow-mode t)
@@ -3503,8 +3512,9 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 							(define-key map (kbd "M-s-i")   'windmove-up)
 							(define-key map (kbd "M-s-k")  'windmove-down)
 
-							(define-key key-translation-map (kbd "C-n") (kbd "C-c C-n"))
-							(define-key key-translation-map (kbd "C-p") (kbd "C-c C-p"))
+							;; ;; Why would this be necessary?
+							;; (define-key key-translation-map (kbd "C-n") (kbd "C-c C-n"))
+							;; (define-key key-translation-map (kbd "C-p") (kbd "C-c C-p"))
 
 							;; delete 
 							(define-key map (kbd "C-d") nil)
@@ -3871,7 +3881,7 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
 
 =etags= is part of Emacs.
 
-** TODO GLOBAL
+** TODO COMMENT GLOBAL
 
 - [X] install =mkid= (from =idutils=) >= v4.5)
 - [ ] Still it does not work for ever language, e.g. elisp and latex.
