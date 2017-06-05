@@ -4790,7 +4790,7 @@ A hydra for code deletion with AUCTeX:
     ("k"  flyspell-previous-and-ispell-word :color red)
 		("j" flyspell-next-and-ispell-word :color red)
     ("q" nil)
-    ("Q" (flycheck-mode -1)))
+    ("Q" (flyspell-mode -1)))
 
 #+END_SRC
 
