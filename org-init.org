@@ -1078,9 +1078,12 @@ Copied from https://fuco1.github.io/2017-05-01-Support-for-imenu-in-dired.html
 (add-hook 'dired-mode-hook 'my-dired-imenu-init)
 #+END_SRC
 
-*** size info 
+*** TODO size info 
 
-Copied from https://oremacs.com/2015/01/12/dired-file-size/ and slightly adapted:
+- [ ] Does not work anymore?
+
+Calculates the size of marked directories using =du=.
+Copied from https://oremacs.com/2015/01/12/dired-file-size/ and slightly adapted.
 
 #+BEGIN_SRC emacs-lisp
 (defun dired-get-size ()
@@ -4343,7 +4346,7 @@ https://gitlab.com/xuhdev/dired-quick-sort
   ^^               enter _RET_          _*_: specific       _r_: rename           _z_: size
   ^^                     ^^             ^^                  ^^
   ^^            v        ^^             ^^                  _P_: change property
-            _<down>_     ^^             ^^                  _Z_: compress				  
+            _<down>_     ^^             ^^                  _c_: compress to				  
   ^^                     ^^             ^^                  _=_: diff             _q_: quit dired     
    _._: home  _j_: jump  _f_: find                          _e_: diff on marked   _Q_: quit hydra
                                                     
@@ -4366,6 +4369,7 @@ https://gitlab.com/xuhdev/dired-quick-sort
 ("R" dired-do-rename)
 ("S" dired-do-symlink)
 ("Z" dired-do-compress)
+("c" dired-do-compress-to)
 ("/" dired-narrow)
 ("(" dired-hide-details-mode)
 ("f" my-find-name-dired)
