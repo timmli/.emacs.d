@@ -1563,7 +1563,9 @@ Use LaTeXmk:
 (setq org-latex-to-pdf-process (list "latexmk -f -pdf %s"))
 #+END_SRC
 
-*** org-ref
+*** TODO org-ref
+
+- [ ] =org-ref-prefer-bracket-links= does not work?
 
 #+BEGIN_SRC emacs-lisp
 ;; (setq org-ref-completion-library 'org-ref-ivy-cite) ; must appear before org-ref
@@ -1575,6 +1577,7 @@ Use LaTeXmk:
 	(setq org-ref-default-bibliography (list user-bibliography-file)
 				;; org-ref-bibliography-notes "~/bibliography/notes.org"
 				org-ref-pdf-directory user-bibliography-pdf-dir
+				org-ref-prefer-bracket-links t
 				)
 	:config
 	:bind (:map org-mode-map
