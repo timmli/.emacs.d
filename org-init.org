@@ -1941,19 +1941,25 @@ Functions to move around single cells:
 *** Todo keywords
 
 #+BEGIN_SRC emacs-lisp
-;; (setq org-todo-keywords
-;;       (quote ((sequence "TODO(t)" "NEXT(n)" "|" "DONE(d)")
-;;               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)" "PHONE" "MEETING"))))
+(setq org-todo-keywords
+      (quote ((sequence "TODO(t)" "NEXT(n)" "APPT(a)" "|" "DONE(d)")
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
 
-;; (setq org-todo-keyword-faces
-;;       (quote (("TODO" :foreground "red" :weight bold)
-;;               ("NEXT" :foreground "blue" :weight bold)
-;;               ("DONE" :foreground "forest green" :weight bold)
-;;               ("WAITING" :foreground "orange" :weight bold)
-;;               ("HOLD" :foreground "magenta" :weight bold)
-;;               ("CANCELLED" :foreground "forest green" :weight bold)
-;;               ("MEETING" :foreground "forest green" :weight bold)
-;;               ("PHONE" :foreground "forest green" :weight bold))))
+(setq org-todo-keyword-faces
+      (quote (("TODO" :foreground "red" :weight bold)
+              ("NEXT" :foreground "blue" :weight bold)
+              ("DONE" :foreground "forest green" :weight bold)
+              ("WAITING" :foreground "orange" :weight bold)
+              ("HOLD" :foreground "magenta" :weight bold)
+              ("CANCELLED" :foreground "forest green" :weight bold)
+              ("APPT" :foreground "forest green" :weight bold)
+							)))
+
+;; fast TODO selection
+(setq org-use-fast-todo-selection t)
+
+;; insert timestamp when task is marked as DONE
+(setq org-log-done 'time)
 #+END_SRC
 
 ** Calendar
