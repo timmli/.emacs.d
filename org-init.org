@@ -5,6 +5,11 @@
 #+STARTUP: hideblocks content
 #+TODO: TODO | DONE CANCELED
 
+* Good examples
+
+http://ivanmalison.github.io/dotfiles/
+
+
 * General appearence
 
 ** Toolbar
@@ -363,7 +368,7 @@ Smex helps to remember often used commands; used by ido and counsel
 
 ** TODO helm
 
-- [ ] does not compleste org-set-tags
+- [ ] does not complete org-set-tags
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm
@@ -428,6 +433,7 @@ Smex helps to remember often used commands; used by ido and counsel
 								:around (lambda (fcn file)
 													(unless (string-match "\\(?:/\\|\\`\\)\\.\\{1,2\\}\\'" file)
 														(funcall fcn file))))
+
 		)
   :bind (("M-y" . helm-mini)
 				 ("C-x C-r" . helm-recentf)
@@ -595,15 +601,17 @@ Quick, comprehensive search on org-mode files.
 	:ensure t
   :config
 	(define-key helm-org-rifle-map (kbd "<left>") 'backward-char) ; instead of helm-previous-source
-	(define-key helm-org-rifle-map (kbd "<right>") 'forward-char) ; instead of helm-next-source 
+	(define-key helm-org-rifle-map (kbd "<right>") 'forward-char) ; instead of helm-next-source
+	(define-key helm-org-rifle-map (kbd "C-n") 'helm-next-source)
+	(define-key helm-org-rifle-map (kbd "C-p") 'helm-previous-source)
 )
 #+END_SRC
 
 *** Key bindings
 
 #+BEGIN_SRC emacs-lisp
-(define-key helm-map (kbd "C-c C-n") 'helm-next-source)
-(define-key helm-map (kbd "C-c C-p") 'helm-previous-source)
+(define-key helm-map (kbd "C-n") 'helm-next-source)
+(define-key helm-map (kbd "C-p") 'helm-previous-source)
 (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; complete with <tab> (default is <ret>)
 (define-key helm-map (kbd "C-z") 'helm-select-action) ; show actions (default is <tab>)
 (define-key helm-map (kbd "<left>") 'backward-char) ; instead of C-f
@@ -1231,7 +1239,13 @@ Preserve indentation in source blocks:
                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 #+end_src
 
-**** Color text
+**** TODO Color text
+
+- [ ] add support for export to LaTeX
+
+Text can be colored using the link syntax, e.g. [[color:red][this is red]].
+Taken from https://github.com/jkitchin/jmax/blob/master/org-colored-text.el
+See also http://kitchingroup.cheme.cmu.edu/blog/2016/01/16/Colored-text-in-org-mode-with-export-to-HTML/
 
 #+BEGIN_SRC emacs-lisp
 (require 'org-colored-text)
@@ -1402,7 +1416,9 @@ C-a and C-e behave org-sensitive
 
 *** TODO Newline
 
-The following is taken from http://kitchingroup.cheme.cmu.edu/blog/2017/04/09/A-better-return-in-org-mode/:
+The following is taken from [[http://github.com/jkitchin/scimax/blob/master/scimax-org.el]] . 
+See also http://kitchingroup.cheme.cmu.edu/blog/2017/04/09/A-better-return-in-org-mode/ .
+
 - [ ] Where to include =org-table-wrap-region=?
 
 #+BEGIN_SRC emacs-lisp
@@ -1423,7 +1439,7 @@ Use a prefix arg to get regular RET. "
      ;; Open links like usual, unless point is at the end of a line.
      ;; and if at beginning of line, just press enter.
      ((or (and (eq 'link (car (org-element-context))) (not (eolp)))
-          (bolp))
+					(bolp))
       (org-return))
 
      ;; It doesn't make sense to add headings in inline tasks. Thanks Anders
@@ -1440,34 +1456,34 @@ Use a prefix arg to get regular RET. "
      ;; created with only one blank line.
      ((org-in-item-p)
       (if (save-excursion (beginning-of-line) (org-element-property :contents-begin (org-element-context)))
-          (org-insert-heading)
-        (beginning-of-line)
-        (delete-region (line-beginning-position) (line-end-position))
-        (org-return)))
+					(org-insert-heading)
+				(beginning-of-line)
+				(delete-region (line-beginning-position) (line-end-position))
+				(org-return)))
 
      ;; org-heading
      ((org-at-heading-p)
       (if (not (string= "" (org-element-property :title (org-element-context))))
-          (progn (org-end-of-meta-data)
-                 (org-insert-heading-respect-content)
-                 (outline-show-entry))
-        (beginning-of-line)
-        (setf (buffer-substring
-               (line-beginning-position) (line-end-position)) "")))
+					(progn (org-end-of-meta-data)
+								 (org-insert-heading-respect-content)
+								 (outline-show-entry))
+				(beginning-of-line)
+				(setf (buffer-substring
+							 (line-beginning-position) (line-end-position)) "")))
 
      ;; tables
      ((org-at-table-p)
       (if (-any?
-           (lambda (x) (not (string= "" x)))
-           (nth
-            (- (org-table-current-dline) 1)
-            (org-table-to-lisp)))
-          (org-return)
-        ;; empty row
-        (beginning-of-line)
-        (setf (buffer-substring
-               (line-beginning-position) (line-end-position)) "")
-        (org-return)))
+					 (lambda (x) (not (string= "" x)))
+					 (nth
+						(- (org-table-current-dline) 1)
+						(remove 'hline (org-table-to-lisp))))
+					(org-return)
+				;; empty row
+				(beginning-of-line)
+				(setf (buffer-substring
+							 (line-beginning-position) (line-end-position)) "")
+				(org-return)))
 
      ;; fall-through case
      (t
@@ -2003,156 +2019,156 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 - [ ] How to do completion of custom macros?
 
 #+BEGIN_SRC emacs-lisp
-	(use-package tex
-		:ensure auctex												; because auctex overwrites tex
+(use-package tex
+	:ensure auctex												; because auctex overwrites tex
 
-		:init
+	:init
 
-		;; to activate auctex
-		(setq TeX-auto-save t)  
-		(setq TeX-auto-local
-					(expand-file-name "temp" user-emacs-directory))
-		(setq TeX-parse-self t)
-		(setq-default TeX-master nil)
-		(setq TeX-save-query nil) ; autosave before compiling 
+	;; to activate auctex
+	(setq TeX-auto-save t)  
+	(setq TeX-auto-local
+				(expand-file-name "temp" user-emacs-directory))
+	(setq TeX-parse-self t)
+	(setq-default TeX-master nil)
+	(setq TeX-save-query nil) ; autosave before compiling 
 
-		;; Show compilation log
-		(setq TeX-show-compilation nil) ; always show and follow TeX output
-    ;; FIXME: Make C-c C-l behave like this
-    (setq compilation-scroll-output t)
+	;; Show compilation log
+	(setq TeX-show-compilation nil) ; always show and follow TeX output
+	;; FIXME: Make C-c C-l behave like this
+	(setq compilation-scroll-output t)
 
-		;; don't indent
-		(setq LaTeX-indent-level 0)
-		(setq LaTeX-item-indent 0)
+	;; don't indent
+	(setq LaTeX-indent-level 0)
+	(setq LaTeX-item-indent 0)
 
-		;; viewer
-		(setq TeX-PDF-mode t)
-		(setq TeX-source-correlate-mode t)
-		(setq TeX-source-correlate-method 'synctex)
+	;; viewer
+	(setq TeX-PDF-mode t)
+	(setq TeX-source-correlate-mode t)
+	(setq TeX-source-correlate-method 'synctex)
 
-		(when (eq system-type 'windows-nt) 
-			(setq TeX-view-program-list
-						'(("Sumatra PDF" ("\"SumatraPDF.exe\" -reuse-instance"
-															(mode-io-correlate " -forward-search %b %n ") " %o"))))
-			(eval-after-load 'tex
-				'(progn
-					 (assq-delete-all 'output-pdf TeX-view-program-selection)
-					 (add-to-list 'TeX-view-program-selection '(output-pdf "Sumatra PDF"))))
-			)
-		
-		;; set up engines
-		(setq TeX-engine-alist 
-					'(
-						(xetex "XeTeX" 
-									 "xetex --file-line-error" 
-									 "xelatex --file-line-error" 
-									 "xetex")
-						(xetex_sh "XeTeX shell escape" 
-											"xetex --file-line-error --shell-escape" 
-											"xelatex --file-line-error --shell-escape" 
-											"xetex")))
-
-		;; make LaTeXmk default
-		(use-package auctex-latexmk
-			:ensure t
-			:config
-			(auctex-latexmk-setup)
-			(setq auctex-latexmk-inherit-TeX-PDF-mode t)
-			(setq TeX-command-force "LatexMk")  ; remember to set path variable accordingly!
-			)
-		
-		:config
-		;; font keys
-		(defun TeX-italic()
-			(interactive)
-			(TeX-font nil ?\C-i))
-		(defun TeX-bold()
-			(interactive)
-			(TeX-font nil ?\C-b))
-		(defun TeX-typewriter()
-			(interactive)
-			(TeX-font nil ?\C-t))
-		(defun TeX-emphasis()
-			(interactive)
-			(TeX-font nil ?\C-e))
-		(defun TeX-smallcaps()
-			(interactive)
-			(TeX-font nil ?\C-c))
-		(defun TeX-italic-replace()
-			(interactive)
-			(TeX-font t ?\C-i))
-		(defun TeX-bold-replace()
-			(interactive)
-			(TeX-font t ?\C-b))
-		(defun TeX-typewriter-replace()
-			(interactive)
-			(TeX-font t ?\C-t))
-		(defun TeX-emphasis-replace()
-			(interactive)
-			(TeX-font t ?\C-e))
-		(defun TeX-smallcaps-replace()
-			(interactive)
-			(TeX-font t ?\C-c))
-		(defun TeX-deletefont()
-			(interactive)
-			(TeX-font nil ?\C-d))
-		(define-key LaTeX-mode-map (kbd "C-c C-f i") 'TeX-italic)
-		(define-key LaTeX-mode-map (kbd "C-c C-f b") 'TeX-bold)
-		(define-key LaTeX-mode-map (kbd "C-c C-f t") 'TeX-typewriter)
-		(define-key LaTeX-mode-map (kbd "C-c C-f e") 'TeX-emphasis)
-		(define-key LaTeX-mode-map (kbd "C-c C-f s") 'TeX-smallcaps)
-		(define-key LaTeX-mode-map (kbd "C-c C-f c") 'TeX-smallcaps)
-		(define-key LaTeX-mode-map (kbd "C-c C-f d") 'TeX-deletefont)	
-		(define-key LaTeX-mode-map (kbd "C-c C-f DEL") 'TeX-deletefont)
-		(define-key LaTeX-mode-map (kbd "C-c f i") 'TeX-italic)
-		(define-key LaTeX-mode-map (kbd "C-c f b") 'TeX-bold)
-		(define-key LaTeX-mode-map (kbd "C-c f t") 'TeX-typewriter)
-		(define-key LaTeX-mode-map (kbd "C-c f e") 'TeX-emphasis)
-		(define-key LaTeX-mode-map (kbd "C-c f s") 'TeX-smallcaps)
-		(define-key LaTeX-mode-map (kbd "C-c f c") 'TeX-smallcaps)
-		(define-key LaTeX-mode-map (kbd "C-c f d") 'TeX-deletefont)
-		(define-key LaTeX-mode-map (kbd "C-c f DEL") 'TeX-deletefont)
-		(define-key LaTeX-mode-map (kbd "C-c C-f ! i") 'TeX-italic-replace)
-		(define-key LaTeX-mode-map (kbd "C-c C-f ! b") 'TeX-bold-replace)
-		(define-key LaTeX-mode-map (kbd "C-c C-f ! t") 'TeX-typewriter-replace)
-		(define-key LaTeX-mode-map (kbd "C-c C-f ! e") 'TeX-emphasis-replace)
-		(define-key LaTeX-mode-map (kbd "C-c C-f ! s") 'TeX-smallcaps-replace)
-		(define-key LaTeX-mode-map (kbd "C-c C-f ! c") 'TeX-smallcaps-replace)
-		(define-key LaTeX-mode-map (kbd "C-c f ! i") 'TeX-italic-replace)
-		(define-key LaTeX-mode-map (kbd "C-c f ! b") 'TeX-bold-replace)
-		(define-key LaTeX-mode-map (kbd "C-c f ! t") 'TeX-typewriter-replace)
-		(define-key LaTeX-mode-map (kbd "C-c f ! e") 'TeX-emphasis-replace)
-		(define-key LaTeX-mode-map (kbd "C-c f ! s") 'TeX-smallcaps-replace)
-		(define-key LaTeX-mode-map (kbd "C-c f ! c") 'TeX-smallcaps-replace)
-
-		;; activate folding
-		(add-hook 'LaTeX-mode-hook (lambda ()
-																 (TeX-fold-mode 1)
-																 ;; (TeX-fold-buffer)
-																 ))
-		;; folding behavior for environments
-		(custom-set-variables '(TeX-fold-env-spec-list
-														'(("[comment]" ("comment"))
-															("[figure]" ("figure"))
-															("[tikz]" ("tikzpicture")))))
-
-
-		:bind (:map  LaTeX-mode-map
-								 ;; ("C-l C-q" . align-current) ; useful command to align arrays
-								 ;; ("C-l H-i" . align-current) ; useful command to align arrays							 
-								 ;; keys for error browsing (disabled; see hydra settings)
-								 ;; ("<f4>" . TeX-next-error)	 
-								 ;; ("S-<f4>" . TeX-previous-error)
-								 ;; ("C-<f4>" . TeX-error-overview)
-								 ;; miscellaneous keys
-								 ("C-c <backspace>" . TeX-clean)
-								 ("C-<return>" . LaTeX-close-environment)
-								 ;; goto keys
-								 ("C-c {" . LaTeX-find-matching-begin)
-								 ("C-c }" . LaTeX-find-matching-end)
-								 ;; ("C-c C-l" . (lambda () (interactive) ()))  ;FIXME
-								 )
+	(when (eq system-type 'windows-nt) 
+		(setq TeX-view-program-list
+					'(("Sumatra PDF" ("\"SumatraPDF.exe\" -reuse-instance"
+														(mode-io-correlate " -forward-search %b %n ") " %o"))))
+		(eval-after-load 'tex
+			'(progn
+				 (assq-delete-all 'output-pdf TeX-view-program-selection)
+				 (add-to-list 'TeX-view-program-selection '(output-pdf "Sumatra PDF"))))
 		)
+	
+	;; set up engines
+	(setq TeX-engine-alist 
+				'(
+					(xetex "XeTeX" 
+								 "xetex --file-line-error" 
+								 "xelatex --file-line-error" 
+								 "xetex")
+					(xetex_sh "XeTeX shell escape" 
+										"xetex --file-line-error --shell-escape" 
+										"xelatex --file-line-error --shell-escape" 
+										"xetex")))
+
+	;; make LaTeXmk default
+	(use-package auctex-latexmk
+		:ensure t
+		:config
+		(auctex-latexmk-setup)
+		(setq auctex-latexmk-inherit-TeX-PDF-mode t)
+		(setq TeX-command-force "LatexMk")  ; remember to set path variable accordingly!
+		)
+	
+	:config
+	;; font keys
+	(defun TeX-italic()
+		(interactive)
+		(TeX-font nil ?\C-i))
+	(defun TeX-bold()
+		(interactive)
+		(TeX-font nil ?\C-b))
+	(defun TeX-typewriter()
+		(interactive)
+		(TeX-font nil ?\C-t))
+	(defun TeX-emphasis()
+		(interactive)
+		(TeX-font nil ?\C-e))
+	(defun TeX-smallcaps()
+		(interactive)
+		(TeX-font nil ?\C-c))
+	(defun TeX-italic-replace()
+		(interactive)
+		(TeX-font t ?\C-i))
+	(defun TeX-bold-replace()
+		(interactive)
+		(TeX-font t ?\C-b))
+	(defun TeX-typewriter-replace()
+		(interactive)
+		(TeX-font t ?\C-t))
+	(defun TeX-emphasis-replace()
+		(interactive)
+		(TeX-font t ?\C-e))
+	(defun TeX-smallcaps-replace()
+		(interactive)
+		(TeX-font t ?\C-c))
+	(defun TeX-deletefont()
+		(interactive)
+		(TeX-font nil ?\C-d))
+	(define-key LaTeX-mode-map (kbd "C-c C-f i") 'TeX-italic)
+	(define-key LaTeX-mode-map (kbd "C-c C-f b") 'TeX-bold)
+	(define-key LaTeX-mode-map (kbd "C-c C-f t") 'TeX-typewriter)
+	(define-key LaTeX-mode-map (kbd "C-c C-f e") 'TeX-emphasis)
+	(define-key LaTeX-mode-map (kbd "C-c C-f s") 'TeX-smallcaps)
+	(define-key LaTeX-mode-map (kbd "C-c C-f c") 'TeX-smallcaps)
+	(define-key LaTeX-mode-map (kbd "C-c C-f d") 'TeX-deletefont)	
+	(define-key LaTeX-mode-map (kbd "C-c C-f DEL") 'TeX-deletefont)
+	(define-key LaTeX-mode-map (kbd "C-c f i") 'TeX-italic)
+	(define-key LaTeX-mode-map (kbd "C-c f b") 'TeX-bold)
+	(define-key LaTeX-mode-map (kbd "C-c f t") 'TeX-typewriter)
+	(define-key LaTeX-mode-map (kbd "C-c f e") 'TeX-emphasis)
+	(define-key LaTeX-mode-map (kbd "C-c f s") 'TeX-smallcaps)
+	(define-key LaTeX-mode-map (kbd "C-c f c") 'TeX-smallcaps)
+	(define-key LaTeX-mode-map (kbd "C-c f d") 'TeX-deletefont)
+	(define-key LaTeX-mode-map (kbd "C-c f DEL") 'TeX-deletefont)
+	(define-key LaTeX-mode-map (kbd "C-c C-f ! i") 'TeX-italic-replace)
+	(define-key LaTeX-mode-map (kbd "C-c C-f ! b") 'TeX-bold-replace)
+	(define-key LaTeX-mode-map (kbd "C-c C-f ! t") 'TeX-typewriter-replace)
+	(define-key LaTeX-mode-map (kbd "C-c C-f ! e") 'TeX-emphasis-replace)
+	(define-key LaTeX-mode-map (kbd "C-c C-f ! s") 'TeX-smallcaps-replace)
+	(define-key LaTeX-mode-map (kbd "C-c C-f ! c") 'TeX-smallcaps-replace)
+	(define-key LaTeX-mode-map (kbd "C-c f ! i") 'TeX-italic-replace)
+	(define-key LaTeX-mode-map (kbd "C-c f ! b") 'TeX-bold-replace)
+	(define-key LaTeX-mode-map (kbd "C-c f ! t") 'TeX-typewriter-replace)
+	(define-key LaTeX-mode-map (kbd "C-c f ! e") 'TeX-emphasis-replace)
+	(define-key LaTeX-mode-map (kbd "C-c f ! s") 'TeX-smallcaps-replace)
+	(define-key LaTeX-mode-map (kbd "C-c f ! c") 'TeX-smallcaps-replace)
+
+	;; activate folding
+	(add-hook 'LaTeX-mode-hook (lambda ()
+															 (TeX-fold-mode 1)
+															 ;; (TeX-fold-buffer)
+															 ))
+	;; folding behavior for environments
+	(custom-set-variables '(TeX-fold-env-spec-list
+													'(("[comment]" ("comment"))
+														("[figure]" ("figure"))
+														("[tikz]" ("tikzpicture")))))
+
+
+	:bind (:map  LaTeX-mode-map
+							 ;; ("C-l C-q" . align-current) ; useful command to align arrays
+							 ;; ("C-l H-i" . align-current) ; useful command to align arrays							 
+							 ;; keys for error browsing (disabled; see hydra settings)
+							 ;; ("<f4>" . TeX-next-error)	 
+							 ;; ("S-<f4>" . TeX-previous-error)
+							 ;; ("C-<f4>" . TeX-error-overview)
+							 ;; miscellaneous keys
+							 ("C-c <backspace>" . TeX-clean)
+							 ("C-<return>" . LaTeX-close-environment)
+							 ;; goto keys
+							 ("C-c {" . LaTeX-find-matching-begin)
+							 ("C-c }" . LaTeX-find-matching-end)
+							 ;; ("C-c C-l" . (lambda () (interactive) ()))  ;FIXME
+							 )
+	)
 #+END_SRC
 
 *** TODO reftex
@@ -2193,8 +2209,8 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 	
 	;; jumping around like in org-mode
 	(define-key LaTeX-mode-map (kbd "C-c C-j") 'tl/reftex-in-follow-mode)
-	(define-key LaTeX-mode-map (kbd "C-c C-n") 'tl/reftex-next)
-	(define-key LaTeX-mode-map (kbd "C-c C-p") 'tl/reftex-previous)
+	(define-key LaTeX-mode-map (kbd "C-n") 'tl/reftex-next)
+	(define-key LaTeX-mode-map (kbd "C-p") 'tl/reftex-previous)
 	(defun tl/reftex-in-follow-mode()
 		(interactive)
 		(setq reftex-toc-follow-mode t)
@@ -2325,9 +2341,9 @@ Make square brackets indent correctly (testing):
 (modify-syntax-entry ?\] ")[" LaTeX-mode-syntax-table)
 #+END_SRC
 
-Remove macro at point (http://emacs.stackexchange.com/a/7997/12336):
+Delete macro at point (http://emacs.stackexchange.com/a/7997/12336):
 #+BEGIN_SRC emacs-lisp
-(defun TeX-remove-macro ()
+(defun TeX-delete-macro ()
   "Remove current macro and return `t'.  If no macro at point,
 return `nil'."
   (interactive)
@@ -2339,6 +2355,30 @@ return `nil'."
       (delete-region (1- (cdr bounds)) (cdr bounds))
       (delete-region (car bounds) (1+ brace)))
     t))
+#+END_SRC
+
+Delete environment at point (https://www.reddit.com/r/emacs/comments/5f99nv/help_with_auctex_how_to_delete_an_environment/dailbtu/):
+#+BEGIN_SRC emacs-lisp
+(defun TeX-delete-environment ()
+  (interactive)
+  (when (LaTeX-current-environment)
+    (save-excursion
+      (let* ((begin-start (save-excursion
+                            (LaTeX-find-matching-begin)
+                            (point)))
+             (begin-end (save-excursion
+                          (goto-char begin-start)
+                          (search-forward-regexp "begin{.*?}")))
+             (end-end (save-excursion
+                        (LaTeX-find-matching-end)
+                        (point)))
+             (end-start (save-excursion
+                          (goto-char end-end)
+                          (1- (search-backward-regexp "\\end")))))
+        ;; delete end first since if we delete begin first it shifts the
+        ;; location of end
+        (delete-region end-start end-end)
+        (delete-region begin-start begin-end)))))
 #+END_SRC
 
 <tab> should always insert a tab (instead of indentation):
@@ -3098,47 +3138,47 @@ Remove extra spaces from line or region (TODO):
 
 http://emacs-fu.blogspot.de/2009/05/tracking-changes.html
 #+begin_src emacs-lisp
-	;; higlight changes in documents
-	(global-highlight-changes-mode t)
-	(setq highlight-changes-visibility-initial-state nil); initially hide
-	;; toggle visibility
-	;; (global-set-key (kbd "<f8>") 'highlight-changes-visible-mode) ;; changes
-	;; remove the change-highlight in region
-	;; (global-set-key (kbd "S-<f8>") 'highlight-changes-remove-highlight)
-	;; if you're not already using it for something else...
-	(global-set-key (kbd "<M-prior>") 'highlight-changes-next-change)
-	(global-set-key (kbd "<M-next>")  'highlight-changes-previous-change)
-	;; faces
-	(set-face-foreground 'highlight-changes nil)
-	(set-face-background 'highlight-changes "#916868")
-	(set-face-foreground 'highlight-changes-delete nil)
-	(set-face-background 'highlight-changes-delete "#916868")
+;; higlight changes in documents
+(global-highlight-changes-mode t)
+(setq highlight-changes-visibility-initial-state nil); initially hide
+;; toggle visibility
+;; (global-set-key (kbd "<f8>") 'highlight-changes-visible-mode) ;; changes
+;; remove the change-highlight in region
+;; (global-set-key (kbd "S-<f8>") 'highlight-changes-remove-highlight)
+;; if you're not already using it for something else...
+(global-set-key (kbd "<M-prior>") 'highlight-changes-next-change)
+(global-set-key (kbd "<M-next>")  'highlight-changes-previous-change)
+;; faces
+(set-face-foreground 'highlight-changes nil)
+(set-face-background 'highlight-changes "#916868")
+(set-face-foreground 'highlight-changes-delete nil)
+(set-face-background 'highlight-changes-delete "#916868")
 
-	;; http://stackoverflow.com/a/21084181/6452961
-	;; show mark in fringe
-	(eval-after-load "hilit-chg"
-		'(progn
-			 (defvar highlight-fringe-mark 'filled-square
-				 "The fringe bitmap name marked at changed line.
+;; http://stackoverflow.com/a/21084181/6452961
+;; show mark in fringe
+(eval-after-load "hilit-chg"
+	'(progn
+		 (defvar highlight-fringe-mark 'filled-square
+			 "The fringe bitmap name marked at changed line.
 	Should be selected from `fringe-bitmaps'.")
 
-			 (defadvice hilit-chg-make-ov (after hilit-chg-add-fringe activate)
-				 (mapc (lambda (ov)
-								 (if (overlay-get ov 'hilit-chg)
-										 (let ((fringe-anchor (make-string 1 ?x)))
-											 (put-text-property 0 1 'display
-																					(list 'left-fringe highlight-fringe-mark)
-																					fringe-anchor)
-											 (overlay-put ov 'before-string fringe-anchor))
-									 ))
-							 (overlays-at (ad-get-arg 1))))))
-	;; remove highlights on save time
-	(add-hook 'after-save-hook
-						(lambda ()
-							(when highlight-changes-mode
-								(save-restriction
-									(widen)
-									(highlight-changes-remove-highlight (point-min) (point-max))))))
+		 (defadvice hilit-chg-make-ov (after hilit-chg-add-fringe activate)
+			 (mapc (lambda (ov)
+							 (if (overlay-get ov 'hilit-chg)
+									 (let ((fringe-anchor (make-string 1 ?x)))
+										 (put-text-property 0 1 'display
+																				(list 'left-fringe highlight-fringe-mark)
+																				fringe-anchor)
+										 (overlay-put ov 'before-string fringe-anchor))
+								 ))
+						 (overlays-at (ad-get-arg 1))))))
+;; remove highlights on save time
+(add-hook 'after-save-hook
+					(lambda ()
+						(when highlight-changes-mode
+							(save-restriction
+								(widen)
+								(highlight-changes-remove-highlight (point-min) (point-max))))))
 #+end_src
 
 ** Switch between buffers
@@ -3475,8 +3515,9 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 							(define-key map (kbd "M-s-i")   'windmove-up)
 							(define-key map (kbd "M-s-k")  'windmove-down)
 
-							(define-key key-translation-map (kbd "C-n") (kbd "C-c C-n"))
-							(define-key key-translation-map (kbd "C-p") (kbd "C-c C-p"))
+							;; ;; Why would this be necessary?
+							;; (define-key key-translation-map (kbd "C-n") (kbd "C-c C-n"))
+							;; (define-key key-translation-map (kbd "C-p") (kbd "C-c C-p"))
 
 							;; delete 
 							(define-key map (kbd "C-d") nil)
@@ -3506,7 +3547,9 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 							(define-key map (kbd "C-d (") 'sp-unwrap-sexp)
 							(define-key map (kbd "C-d )") 'sp-unwrap-sexp)
 
-							(define-key LaTeX-mode-map (kbd "C-d m") 'TeX-remove-macro)
+							(define-key LaTeX-mode-map (kbd "C-d m") 'TeX-delete-macro)
+							(define-key LaTeX-mode-map (kbd "C-d e") 'TeX-delete-environment)
+							(define-key LaTeX-mode-map (kbd "C-d t") 'TeX-clean)
 
 							;; return
 							(define-key input-decode-map (kbd "C-m") (kbd "H-o")) ; to disentangle <return> and C-m
@@ -3841,7 +3884,7 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
 
 =etags= is part of Emacs.
 
-** TODO GLOBAL
+** TODO COMMENT GLOBAL
 
 - [X] install =mkid= (from =idutils=) >= v4.5)
 - [ ] Still it does not work for ever language, e.g. elisp and latex.
@@ -4654,7 +4697,6 @@ Automatically open the hydra with ibuffer:
 - fonts
 - jumping
 - reftex
-- deletion of temporary files
 - show log
 - show pdf
 
@@ -4664,7 +4706,7 @@ Automatically open the hydra with ibuffer:
 	("<up>" tl/reftex-previous "previous heading" :exit nil)
 	("<down>" tl/reftex-next "next heading" :exit nil)
 	("=" reftex-toc "table of contents" :exit t)
-	("d" hydra-latex-delete "delete..." :exit t)
+	("d" hydra-latex-delete/body "delete..." :exit t)
 	("f" hydra-latex-fonts/body "font..." :exit t)
 	("c" TeX-command-master "compile" :exit t)
 	("l" TeX-recenter-output-buffer "show log" :exit t)
@@ -4683,6 +4725,19 @@ A hydra for code folding with AUCTeX:
 	("B" TeX-fold-buffer "activate folding in buffer" :exit t)
 	("o" TeX-fold-dwim "fold dwim" :exit t)
 	("Q" TeX-fold-mode "quit TeX-fold-mode" :exit t)
+	("q" nil :color blue)
+	)
+#+END_SRC
+
+A hydra for code deletion with AUCTeX:
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-latex-delete (:hint nil)
+	"LaTeX: delete"
+	("f" TeX-deletefont "font" :exit t)
+	("e" TeX-delete-environment "environment" :exit t)
+	("m" TeX-delete-macro "macro" :exit t)
+	("t" TeX-clean "temporary files" :exit t)
 	("q" nil :color blue)
 	)
 #+END_SRC
@@ -4739,7 +4794,7 @@ A hydra for code folding with AUCTeX:
     ("k"  flyspell-previous-and-ispell-word :color red)
 		("j" flyspell-next-and-ispell-word :color red)
     ("q" nil)
-    ("Q" (flycheck-mode -1)))
+    ("Q" (flyspell-mode -1)))
 
 #+END_SRC
 
@@ -4891,6 +4946,8 @@ A hydra for code folding with AUCTeX:
 
 ** hydra-load-theme
 
+Switch between installed themes.
+
 Copied from http://www.superloopy.io/articles/2017/hydra-theme-switcher.html:
 
 #+BEGIN_SRC emacs-lisp
@@ -4924,6 +4981,21 @@ Copied from http://www.superloopy.io/articles/2017/hydra-theme-switcher.html:
                         ("DEL" (sb/disable-all-themes))
                         ("RET" nil "done" :color blue)))))))
 #+END_SRC
+
+I've added this to make it fit into [[*hydra-f3][hydra-f3]]:
+
+#+BEGIN_SRC emacs-lisp
+(defun hydra-load-theme/body ()
+	(interactive)
+	(call-interactively
+	 (eval `(defhydra sb/hydra-select-themes (:hint nil :color pink)
+						"Select Theme"
+						,@(sb/hydra-load-theme-heads (sb/sort-themes (custom-available-themes)))
+						("DEL" (sb/disable-all-themes))
+						("q" nil "quit" :color blue))))
+)
+#+END_SRC
+
 
 ** hydra-tags
 
