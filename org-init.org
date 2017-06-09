@@ -809,10 +809,14 @@ Other settings: http://oremacs.com/2015/01/13/dired-options/
 #+END_SRC
 
 Chose Windows drives:
-
 #+BEGIN_SRC emacs-lisp
 (when (eq system-type 'windows-nt)
 	(define-key dired-mode-map (kbd "\\") 'diredp-w32-drives))
+#+END_SRC
+
+Move to trash can (recycle bin under windows) when deleting:
+#+BEGIN_SRC emacs-lisp
+(setq delete-by-moving-to-trash t)
 #+END_SRC
 
 *** Mark/Unmark 
