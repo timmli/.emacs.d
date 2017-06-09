@@ -8,7 +8,7 @@
 * Good examples
 
 http://ivanmalison.github.io/dotfiles/
-
+https://github.com/novoid/dot-emacs/blob/master/config.org
 
 * General appearence
 
@@ -1262,7 +1262,7 @@ See also http://kitchingroup.cheme.cmu.edu/blog/2016/01/16/Colored-text-in-org-m
 	;; (set-face-attribute 'org-block-background nil :inherit 'fixed-pitch)
 	(custom-set-variables
 	 '(org-ref-label-color "magenta")
-	 '(org-ref-ref-color "Deepskyblue1")
+	 '(org-ref-ref-color "LimeGreen") 
 	 )
 	(custom-set-faces
 	 '(org-done ((t (:overline t))))
@@ -1746,8 +1746,12 @@ Customize agenda view:
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-custom-commands
 			'(("w" "Agenda and work-related tasks"
-				 ((agenda "")
-					(tags-todo "@work")
+				 ((todo "NEXT" ;"PRIORITY=\"A\""
+								((org-agenda-overriding-header "High-priority unfinished tasks:")))
+					(agenda "")
+					(tags-todo "@work"
+										 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("NEXT")))
+											(org-agenda-overriding-header "Low-priority unfinished tasks:")))
 					))
 				))
 
@@ -1756,6 +1760,8 @@ Customize agenda view:
 	(org-agenda nil "w"))
 
 #+END_SRC
+
+Sort agenda TODOs with =org-agenda-sorting-strategy=.
 
 *** Links
 
@@ -1940,10 +1946,22 @@ Functions to move around single cells:
 
 *** Todo keywords
 
+From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywords):
+#+BEGIN_QUOTE
+"WAIT(w@/!)".  "@" means to add a note (with time), "!" means to record only the time of the state change.  With X and Y being either "@" or "!", "X/Y" means use X when entering the state, and use Y when leaving the state if and only if the *target* state does not define X.  You may omit any of the fast-selection key or X or /Y, so WAIT(w@), WAIT(w/@) and WAIT(@/@) are all valid.
+#+END_QUOTE
+
+- TODO: something that needs to be done, maybe now, maybe later. 
+- NEXT: something that can be done /now/. There's everything you need to start doing it.
+- APPT: appointment (meeting, phone call etc.) with a fixed date.
+- WAITING: something that cannot be done now, because some prerequisites are not yet met.
+- HOLD: something that cannot be done now, and the prerequisites are unlikely to be fullfilled in the future.
+- SOMEDAY: you are not yet sure whether this needs to be done.
+
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-keywords
       (quote ((sequence "TODO(t)" "NEXT(n)" "APPT(a)" "|" "DONE(d)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "|" "CANCELLED(c@/!)"))))
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "SOMEDAY(s)" "|" "CANCELLED(c@/!)"))))
 
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
@@ -1953,6 +1971,7 @@ Functions to move around single cells:
               ("HOLD" :foreground "magenta" :weight bold)
               ("CANCELLED" :foreground "forest green" :weight bold)
               ("APPT" :foreground "forest green" :weight bold)
+							("SOMEDAY" :foreground "forest green" :weight bold)
 							)))
 
 ;; fast TODO selection
