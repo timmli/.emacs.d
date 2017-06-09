@@ -7,8 +7,8 @@
 
 * Good examples
 
-http://ivanmalison.github.io/dotfiles/
-https://github.com/novoid/dot-emacs/blob/master/config.org
+- http://ivanmalison.github.io/dotfiles/
+- https://github.com/novoid/dot-emacs/blob/master/config.org
 
 * General appearence
 
@@ -1766,6 +1766,26 @@ Customize agenda view:
 #+END_SRC
 
 Sort agenda TODOs with =org-agenda-sorting-strategy=.
+
+Make the block agenda more compact:
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-compact-blocks nil)
+#+END_SRC
+
+Start the weekly agenda today:
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-start-on-weekday nil)
+#+END_SRC
+
+Agenda remains open in background. No need to recompile it every time you call it:
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-sticky t)
+#+END_SRC
+
+Show tags at the right edge of the screen:
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-tags-column (- (- (window-total-width) 3)))
+#+END_SRC
 
 *** Links
 
