@@ -1750,14 +1750,26 @@ Customize agenda view:
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-custom-commands
 			'(("w" "Agenda and work-related tasks"
-				 ((todo "NEXT" ;"PRIORITY=\"A\""
-								((org-agenda-overriding-header "High-priority unfinished tasks:")))
+				 ((tags "PRIORITY=\"A\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+								 (org-agenda-overriding-header "High-priority tasks:")))
 					(agenda "")
-					(tags-todo "@work"
-										 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("NEXT")))
-											(org-agenda-overriding-header "Low-priority unfinished tasks:")))
+					(todo "NEXT"
+								((org-agenda-overriding-header "Normal-priority tasks:")))
+					(todo "WAITING" ((org-agenda-overriding-header "")
+													 (org-agenda-block-separator nil)))
+					(todo "TODO" ((org-agenda-overriding-header "")
+												(org-agenda-block-separator nil)
+												)
+					(todo "SOMEDAY" ((org-agenda-overriding-header "")
+													 (org-agenda-block-separator nil)))
+					;; (tags-todo "@work"
+					;; 					 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("NEXT")))
+					;; 						(org-agenda-overriding-header "")
+					;; 						(org-agenda-block-separator nil)))
 					))
-				))
+				 ((org-agenda-tag-filter-preset '("+@work")))
+				)))
 
 (defun org-agenda-list-work ()
 	(interactive)
@@ -1770,6 +1782,11 @@ Sort agenda TODOs with =org-agenda-sorting-strategy=.
 Make the block agenda more compact:
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-compact-blocks nil)
+#+END_SRC
+
+Change the separator between blocks in agenda:
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-block-separator ?\-)
 #+END_SRC
 
 Start the weekly agenda today:
