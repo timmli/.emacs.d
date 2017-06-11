@@ -2001,7 +2001,7 @@ From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywo
 
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-keywords
-      (quote ((sequence "TODO(t)" "NEXT(n)" "APPT(a)" "|" "DONE(d)")
+      (quote ((sequence "TODO(t!)" "NEXT(n)" "APPT(a)" "|" "DONE(d)")
               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "SOMEDAY(s)" "|" "CANCELLED(c@/!)"))))
 
 (setq org-todo-keyword-faces
@@ -2014,12 +2014,26 @@ From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywo
               ("APPT" :foreground "forest green" :weight bold)
 							("SOMEDAY" :foreground "forest green" :weight bold)
 							)))
+#+END_SRC
 
-;; fast TODO selection
+Fast TODO selection:
+#+BEGIN_SRC emacs-lisp
 (setq org-use-fast-todo-selection t)
+#+END_SRC
 
-;; insert timestamp when task is marked as DONE
+Insert timestamp when task is marked as DONE:
+#+BEGIN_SRC emacs-lisp
 (setq org-log-done 'time)
+#+END_SRC
+
+Insert timestamp when changing deadline:
+#+BEGIN_SRC emacs-lisp
+(setq org-log-redeadline 'time)
+#+END_SRC
+
+Insert timestamp when changing schedule:
+#+BEGIN_SRC emacs-lisp
+(setq org-log-reschedule 'time)
 #+END_SRC
 
 ** Calendar
@@ -4585,6 +4599,7 @@ A hydra for org-columns:
 )
 #+END_SRC
 
+** TODO hydra-org-agenda
 ** hydra-deft
 
 #+BEGIN_SRC emacs-lisp
@@ -5064,7 +5079,6 @@ I've added this to make it fit into [[*hydra-f3][hydra-f3]]:
 						("q" nil "quit" :color blue))))
 )
 #+END_SRC
-
 
 ** hydra-tags
 
