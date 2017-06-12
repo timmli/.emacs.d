@@ -2702,6 +2702,30 @@ When =company= is actively used by browsing completion candidates, =<return>= sh
 (add-hook 'org-mode-hook #'add-pcomplete-to-capf)
 #+end_src
 
+Add easy templates to company (https://emacs.stackexchange.com/a/33487/12336):
+#+BEGIN_SRC emacs-lisp
+(defun org-easy-template--completion-table (str pred action)
+  (pcase action
+    (`nil (try-completion  str org-structure-template-alist pred))
+    (`t   (all-completions str org-structure-template-alist pred))))
+
+(defun org-easy-template--annotation-function (s)
+  (format " -> %s" (cadr (assoc s org-structure-template-alist))))
+
+(defun org-easy-template-completion-function ()
+  (when (looking-back "^[ \t]*<\\([^ \t]*\\)" (point-at-bol))
+    (list
+     (match-beginning 1) (point)
+     'org-easy-template--completion-table
+     :annotation-function 'org-easy-template--annotation-function
+     :exclusive 'no)))
+
+(defun add-easy-templates-to-capf ()
+	(add-hook 'completion-at-point-functions 'org-easy-template-completion-function nil t))
+(add-hook 'org-mode-hook #'add-easy-templates-to-capf)
+
+#+END_SRC
+
 **** yasnippet
 
 Execute when all backends added to =company-backends=.
