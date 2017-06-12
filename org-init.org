@@ -2287,6 +2287,9 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 	;; connect reftex to imenu
 	(add-hook 'reftex-load-hook 'imenu-add-menubar-index)
 	(add-hook 'reftex-mode-hook 'imenu-add-menubar-index)
+
+	;; isearch across files
+	(add-hook 'reftex-mode-hook  (lambda () (reftex-isearch-minor-mode)))
 	
 	:config
 	
@@ -3727,6 +3730,10 @@ Key bindings roughly following the conventions of the Windows habitat.
 						(define-key map (kbd "C-f") 'helm-swoop)
 						(define-key map (kbd "C-S-f a") 'helm-multi-swoop-all)
 						(define-key map (kbd "C-S-f m") 'helm-multi-swoop-current-mode)
+						(define-key map (kbd "C-S-f s") 'isearch-forward)
+						(define-key map (kbd "C-S-f C-s") 'isearch-forward)
+						(define-key map (kbd "C-S-f r") 'isearch-backward)
+						(define-key map (kbd "C-S-f C-r") 'isearch-backward)
 						;; (define-key map (kbd "C-f") 'isearch-search)
 						(define-key map (kbd "C-r") 'query-replace)
 						(define-key map (kbd "C-S-r") 'query-replace-regexp)
