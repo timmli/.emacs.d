@@ -1842,7 +1842,7 @@ Show whether links to files are valid:
 				("logic" . nil)
 				("maths" . nil)
 				("computerScience" . nil)
-				("computationalLinguistics" . nil)
+				("CL" . nil)
 				(:endgroup . nil)
 
 				(:startgroup . nil)

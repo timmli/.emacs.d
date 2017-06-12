@@ -1,8 +1,0 @@
-# -*- mode: snippet -*-
-# name: dot-src
-# key: dot
-# --
-#+NAME: ${1:dot`(format-time-string "%y%m%d%H%M")`}
-#+BEGIN_SRC dot :file $1.png :border 0em :noweb yes
-$0
-#+END_SRC
