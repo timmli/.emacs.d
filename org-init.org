@@ -1569,6 +1569,24 @@ Use LaTeXmk:
 (setq org-latex-to-pdf-process (list "latexmk -f -pdf %s"))
 #+END_SRC
 
+*** COMMENT org-gcal
+
+Integrate Google Calendar with =org-gcal=.
+I don't use =org-gcal= any more.
+
+#+BEGIN_SRC emacs-lisp
+	(setq package-check-signature nil)
+
+	(use-package org-gcal
+		:ensure t
+		:config
+		(when (load-file (expand-file-name "gcal-credentials.el" private-emacs-settings-dir))
+			(setq org-gcal-client-id my-org-gcal-client-id
+						org-gcal-client-secret my-org-gcal-client-secret
+						org-gcal-file-alist '((my-gmail-address .  (concat org-notes-dir "gcal.org"))))
+	))
+#+END_SRC
+
 *** TODO org-ref
 
 - [ ] =org-ref-prefer-bracket-links= does not work?
@@ -1732,20 +1750,6 @@ Add linked org-mode files to =org-agenda-files=:
 							 (princ (concat " " org-link-path))
 							 (add-to-list 'org-agenda-files (expand-file-name org-link-path))
 					 )))))
-#+END_SRC
-
-Integrate Google Calendar with org-gcal:
-#+BEGIN_SRC emacs-lisp
-	(setq package-check-signature nil)
-
-	(use-package org-gcal
-		:ensure t
-		:config
-		(when (load-file (expand-file-name "gcal-credentials.el" private-emacs-settings-dir))
-			(setq org-gcal-client-id my-org-gcal-client-id
-						org-gcal-client-secret my-org-gcal-client-secret
-						org-gcal-file-alist '((my-gmail-address .  (concat org-notes-dir "gcal.org"))))
-	))
 #+END_SRC
 
 Customize agenda view:
@@ -1971,19 +1975,25 @@ Functions to move around single cells:
 
 *** Capture templates
 
+- Template expansions: http://orgmode.org/manual/Template-expansion.html
+
 #+BEGIN_SRC emacs-lisp
 	(setq org-capture-templates
-				'(("a" "Appointment" entry (file (concat org-directory "/gcal.org"))
-					 "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
-					("t" "Todo" entry (file (concat org-directory "/todo.org"))
-					 "* TODO %?\t%^g\n CREATED: %U\n About region:%i\n %a")
+				'(
+					("a" "Appointment" entry (file (concat org-directory "/captures.org"))
+					 "* APPT %?\t%^G\n\n%^T\n\n")
+					;; ;; used for org-gcal
+					;; ("a" "Appointment" entry (file (concat org-directory "/gcal.org"))
+					;;  "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
+					("t" "Todo" entry (file (concat org-directory "/captures.org"))
+					 "* TODO %?\t%^G\n CREATED: %U\n About region:%i\n %a")
 					("n" "Note" entry (file+datetree (concat org-directory "/notes.org"))
-					 "* %?\t%^g\n CREATED: %U\n About region:%i\n %a")
+					 "* %?\t%^G\n CREATED: %U\n About region:%i\n %a")
 					("c" "Code" entry (file (concat org-directory "/code.org"))
-					 "* %?\t%^g\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a")
+					 "* %?\t%^G\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a")
 					))
 
-	(global-set-key (kbd "<f9> <f9>") 'org-capture)
+	;; (global-set-key (kbd "<f9> <f9>") 'org-capture)
 	;; (global-set-key (kbd "<f9> <f9> t") (lambda () (interactive) (org-capture nil "t")))
 #+END_SRC
 
