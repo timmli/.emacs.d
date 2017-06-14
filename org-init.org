@@ -4290,6 +4290,8 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 		(hydra-latex-main/body))
 	 ((string-equal (buffer-mode) "org-mode")
 		(hydra-org-main/body))
+	 ((string-equal (buffer-mode) "org-agenda-mode")
+		(hydra-org-agenda/body))
 	 ((string-equal (buffer-mode) "pomidor-mode")
 		(hydra-pomidor/body))
 	 ((or t) (message (concat "no hydra defined for major mode"))))
@@ -4643,6 +4645,24 @@ A hydra for org-columns:
 #+END_SRC
 
 ** TODO hydra-org-agenda
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-org-agenda (:hint nil :color pink)
+	"Org-agenda view"
+	("+" org-agenda-priority-up "priority up" :exit nil)
+	("-" org-agenda-priority-down "priority down" :exit nil)
+	("d" org-agenda-day-view "day view" :exit nil)
+	("h" org-agenda-holidays "holidays" :exit nil)
+	("j" org-agenda-goto-date "jump to date" :exit nil)
+	("k" org-agenda-kill "kill" :exit nil)
+	("t" org-agenda-todo "todo keyword" :exit nil)
+	("/" org-agenda-filter-by-tag "filter by tag" :exit nil)
+	(":" org-agenda-set-tags "set tags" :exit nil)
+	("r" org-agenda-redo "refresh" :exit nil)
+	("q" nil :color blue)
+	)
+#+END_SRC
+
 ** hydra-deft
 
 #+BEGIN_SRC emacs-lisp
