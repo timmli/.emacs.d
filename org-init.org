@@ -4850,13 +4850,7 @@ Automatically open the hydra with ibuffer:
 #+RESULTS:
 : hydra-image/body
 
-** TODO hydra-latex
-
-- fonts
-- jumping
-- reftex
-- show log
-- show pdf
+** hydra-latex
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-latex-main (:hint nil)
@@ -4865,12 +4859,12 @@ Automatically open the hydra with ibuffer:
 	("<down>" tl/reftex-next "next heading" :exit nil)
 	("p" tl/reftex-previous :exit nil)
 	("n" tl/reftex-next :exit nil)
-
 	("=" reftex-toc "table of contents" :exit t)
 	("d" hydra-latex-delete/body "delete..." :exit t)
 	("f" hydra-latex-fonts/body "font..." :exit t)
 	("c" TeX-command-master "compile" :exit t)
 	("l" TeX-recenter-output-buffer "show log" :exit t)
+	("s" isearch-forward "search" :exit t)
 	("o" hydra-latex-folding/body "folding..." :exit t)
 	("v" TeX-view "view output" :exit t)
 	("q" nil :color blue)
@@ -4899,6 +4893,26 @@ A hydra for code deletion with AUCTeX:
 	("e" TeX-delete-environment "environment" :exit t)
 	("m" TeX-delete-macro "macro" :exit t)
 	("t" TeX-clean "temporary files" :exit t)
+	("q" nil :color blue)
+	)
+#+END_SRC
+
+A hydra for font selection with AUCTeX:
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-latex-fonts (:hint nil)
+	"LaTeX: fonts"
+	("b" TeX-bold "bold" :exit t)
+	("i" TeX-italic "italic" :exit t)
+	("t" TeX-typewriter "typewriter" :exit t)
+	("s" TeX-smallcaps "smallcaps" :exit t)
+	("e" TeX-emphasis "emphasis" :exit t)
+	("d" TeX-deletefont "delete" :exit t)
+	("!b" TeX-bold-replace "replace with bold" :exit t)
+	("!i" TeX-italic-replace "replace with italic" :exit t)
+	("!t" TeX-typewriter-replace "replace with typewriter" :exit t)
+	("!s" TeX-smallcaps-replace "replace with smallcaps" :exit t)
+	("!e" TeX-emphasis-replace "replace with emphasis" :exit t)
 	("q" nil :color blue)
 	)
 #+END_SRC
