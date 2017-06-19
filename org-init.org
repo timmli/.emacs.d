@@ -909,6 +909,17 @@ Version 2015-11-30"
     )))
 #+END_SRC
 
+*** TODO Copy path
+
+Sometimes its useful to copy the path of a file or directory under cursor:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/dired-copy-path-at-point ()
+	(interactive)
+	(dired-copy-filename-as-kill)
+)
+#+END_SRC
+
 *** dired-imenu
 
 #+BEGIN_SRC emacs-lisp
