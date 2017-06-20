@@ -1618,10 +1618,12 @@ I don't use =org-gcal= any more.
 )
 #+END_SRC
 
-Add \citeauthoryear to org-ref:
+Add \citeauthoryear and  \citealtauthoryear to org-ref:
 #+BEGIN_SRC emacs-lisp
 (org-ref-define-citation-link "citeauthoryear")
 (add-to-list 'org-ref-cite-types "citeauthoryear")
+(org-ref-define-citation-link "citealtauthoryear")
+(add-to-list 'org-ref-cite-types "citealtauthoryear")
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
