@@ -3599,21 +3599,38 @@ Thesaurus fontend for Emacs with pluggable backends:
 
 * Project management
 
-** TODO COMMENT projectile
+** projectile
+
+Project management based on Git repositories.
 
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
   :ensure t
-  :commands (projectile-find-file projectile-switch-project)
+  :commands (projectile-find-file 
+						 projectile-switch-project) 
   :diminish projectile-mode
-  :init
-  (use-package helm-projectile
-    :ensure t
-    ;; :bind (("s-p" . helm-projectile-find-file)
-    ;;        ("s-P" . helm-projectile-switch-project))
-		)
   :config
+	(setq projectile-remember-window-configs t
+				projectile-enable-caching t			  ; speed up projectile by caching index
+				projectile-indexing-method 'alien ; use external commands like find, git etc. Maybe not supported in Windows.
+				projectile-require-project-root t ; only use projectile in git projects
+				projectile-keymap-prefix (kbd "C-x p") ; change keymap prefix
+				projectile-switch-project-action 'projectile-dired ; use dired when switching projects
+				)
   (projectile-global-mode))
+#+END_SRC
+
+Use helm for completions.
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-projectile
+	:ensure t
+	:bind (("C-x p o" . helm-projectile-find-file)
+				 ("C-x p p" . helm-projectile-switch-project)
+				 ("C-x p h" . helm-projectile)
+				 ("C-x p g" . helm-projectile-grep)
+				 ("C-x p s" . helm-projectile-grep))
+	)
 #+END_SRC
 
 * underi-mode
@@ -4023,7 +4040,7 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
   (proced-toggle-auto-update))
 (add-hook 'proced-mode-hook 'proced-settings)
 
-(global-set-key (kbd "C-x p") 'proced)
+(global-set-key (kbd "C-x P") 'proced)
 #+END_SRC
 
 * Tags
