@@ -3582,9 +3582,7 @@ For showing the character map and letting one select a special symbol:
 #+END_SRC
 
 ** Thesauri
-*** TODO COMMENT synosaurus
-
-- [ ] buggy
+*** synosaurus
 
 Thesaurus fontend for Emacs with pluggable backends:
 - OpenThesaurus for German (online)
@@ -3594,8 +3592,8 @@ Thesaurus fontend for Emacs with pluggable backends:
 (use-package synosaurus
 	:ensure t
 	:config
-	(setq synosaurus-choose-method "default"
-				synosaurus-backend 'synosaurus-backend-openthesaurus)
+	(setq-default synosaurus-choose-method "default"
+								synosaurus-backend 'synosaurus-backend-openthesaurus)
 	)
 #+END_SRC
 
