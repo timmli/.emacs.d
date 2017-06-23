@@ -3,6 +3,6 @@
 # key: tikz
 # --
 #+NAME: ${1:tikz`(format-time-string "%y%m%d%H%M")`}
-#+BEGIN_SRC latex :file $1.pdf :packages '(("" "tikz")("" "forest")("" "pgfplots")) :border 0em :noweb yes :tangle $1.tex
+#+BEGIN_SRC latex :file $1.pdf :packages '(("" "tikz")("" "forest")("" "pgfplots")) :border 0em :noweb yes :eval no-export :tangle $1.tex
 $0
 #+END_SRC

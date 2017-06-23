@@ -3,6 +3,6 @@
 # key: dot
 # --
 #+NAME: ${1:dot`(format-time-string "%y%m%d%H%M")`}
-#+BEGIN_SRC dot :file $1.png :border 0em :noweb yes
+#+BEGIN_SRC dot :file $1.png :border 0em :noweb yes :eval no-export 
 $0
 #+END_SRC
