@@ -33,7 +33,7 @@ Don't show toolbar:
 	 dashboard-startup-banner 'logo
 	 dashboard-items '((recents  . 10)
 										 (bookmarks . 10)
-										 ;; (projects . 5)
+										 (projects . 5)
 										 )
 	 )
 
@@ -1427,6 +1427,11 @@ C-a and C-e behave org-sensitive
 #+END_SRC
 
 *** TODO Newline
+
+Don't split the line with =M-<return>=:
+#+BEGIN_SRC emacs-lisp
+(setq org-M-RET-may-split-line '((default . nil)))
+#+END_SRC
 
 The following is taken from [[http://github.com/jkitchin/scimax/blob/master/scimax-org.el]] . 
 See also http://kitchingroup.cheme.cmu.edu/blog/2017/04/09/A-better-return-in-org-mode/ .
@@ -4292,11 +4297,12 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
    ╭─────^^─────────^^─────────^^──╯     └─────────^^───^^───────^^───────^^───────^^─────╯
  
       [_e_] compilation errors      [_c_] code checking     [_s_] spell checking 
-         ^^         ^^         ^^                  ^^   ^^       ^^       ^^    [_q_]uit
+      [_#_] count words              ^^                                 [_q_]uit
 	"
 	("e" hydra-compilation-error/body :exit t)
 	("c" hydra-flycheck/body :exit t)
 	("s" hydra-flyspell/body :exit t)
+	("#" count-words :exit t)
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
 	("<f2>" hydra-f2/body :exit t)
@@ -4309,7 +4315,6 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 
 )
 (global-set-key (kbd "<f4>") 'hydra-f4/body)
-
 #+END_SRC
 
 ** hydra-f6
