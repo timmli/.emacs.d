@@ -909,15 +909,17 @@ Version 2015-11-30"
     )))
 #+END_SRC
 
-*** TODO Copy path
+*** Copy path
 
 Sometimes its useful to copy the path of a file or directory under cursor:
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/dired-copy-path-at-point ()
 	(interactive)
-	(dired-copy-filename-as-kill)
+	(dired-copy-filename-as-kill 0)
 )
+
+(define-key dired-mode-map (kbd "W") 'tl/dired-copy-path-at-point)
 #+END_SRC
 
 *** dired-imenu
@@ -4561,8 +4563,8 @@ https://gitlab.com/xuhdev/dired-quick-sort
   _<left>_  ..     view  _<right>_      _t_: toggle mark    _R_: move to          _(_: details
   ^^               enter _RET_          _*_: specific       _r_: rename           _z_: size
   ^^                     ^^             ^^                  ^^
-  ^^            v        ^^             ^^                  _P_: change property
-            _<down>_     ^^             ^^                  _c_: compress to				  
+  ^^            v        ^^             _w_: copy file name _P_: change property
+            _<down>_     ^^             _W_: copy path      _c_: compress to				  
   ^^                     ^^             ^^                  _=_: diff             _q_: quit dired     
    _._: home  _j_: jump  _f_: find                          _e_: diff on marked   _Q_: quit hydra
                                                     
@@ -4602,6 +4604,8 @@ https://gitlab.com/xuhdev/dired-quick-sort
 ("U" dired-unmark-all-marks)
 ("t" dired-toggle-marks)
 ("v" dired-view-file)
+("w" dired-copy-filename-as-kill)
+("W" tl/dired-copy-path-at-point)
 ("z" dired-get-size)
 ("q" quit-window :color blue)
 ("Q" nil :color blue)
