@@ -1164,15 +1164,21 @@ http://doc.norang.ca/org-mode.html#Setup
 	(customize-save-variable 'org-agenda-files org-agenda-files)
 	(message "org-agenda-files updated")
 	)
+#+END_SRC
 
+Search for org-mode files recursively:
+#+BEGIN_SRC emacs-lisp
 ;; Modified http://stackoverflow.com/a/26548971/6452961
+(require 'dash)
 (defun load-org-agenda-files-recursively (dir) "Find all directories in DIR."
 			 (unless (file-directory-p dir) (error "Not a directory `%s'" dir))
 			 (unless (equal (directory-files dir nil org-agenda-file-regexp t) nil)
 				 (setq org-agenda-files 
 							 (append
 								org-agenda-files
-								(file-expand-wildcards (concat dir "*.org")))))
+								(-filter 								; filter files with org-extension
+								 (lambda (x) (not (string-match "#" x))) 
+								 (file-expand-wildcards (concat dir "*.org"))))))
 			 (dolist (file (directory-files dir nil nil t))
 				 (unless (member file '("." ".."))
 					 (let ((file (concat dir file "/")))
