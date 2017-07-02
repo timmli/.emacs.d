@@ -1141,6 +1141,8 @@ http://doc.norang.ca/org-mode.html#Setup
 
 *** Files
 
+Org-mode files are usually bundled within a single directory stored in the variable =org-directory=. But if there are links to org-mode files outside =org-directory=, they should be included to =org-agenda-files=, too.
+
 #+BEGIN_SRC emacs-lisp
 (defun tl/update-org-agenda-files ()
 	(interactive)
@@ -1157,9 +1159,9 @@ http://doc.norang.ca/org-mode.html#Setup
 	(save-current-buffer
 		(dolist (file org-agenda-files)
 			(find-file file)
-			(add-links-to-org-agenda-files) ; of the current buffer
+			(add-links-to-org-agenda-files)   ; within the buffer of file
 			))
-	(switch-to-buffer (current-buffer))
+	(switch-to-buffer (current-buffer))		; return to first buffer
 	
 	(customize-save-variable 'org-agenda-files org-agenda-files)
 	(message "org-agenda-files updated")
