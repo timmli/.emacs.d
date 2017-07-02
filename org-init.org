@@ -1153,7 +1153,13 @@ http://doc.norang.ca/org-mode.html#Setup
 	;; 			 (list org-directory)
 	;; 			 (file-expand-wildcards (concat org-directory "/*/*.org"))))
 
-	(add-links-to-org-agenda-files) ; of the current buffer
+	;; search for linked org-mode files within org-agenda-files and add them
+	(save-current-buffer
+		(dolist (file org-agenda-files)
+			(find-file file)
+			(add-links-to-org-agenda-files) ; of the current buffer
+			))
+	
 	(customize-save-variable 'org-agenda-files org-agenda-files)
 	(message "org-agenda-files updated")
 	)
@@ -1171,13 +1177,34 @@ http://doc.norang.ca/org-mode.html#Setup
 					 (let ((file (concat dir file "/")))
 						 (when (file-directory-p file)
 							 (load-org-agenda-files-recursively file)))))
-)
+			 )
 
 ;; set refile targets to move entries inside org-agenda 
 (setq org-refile-targets '(
 													 (nil :maxlevel . 2)             ; refile to headings in the current buffer
 													 (org-agenda-files :maxlevel . 2) ; refile to any of these files
 													 ))
+#+END_SRC
+
+Add linked org-mode files to =org-agenda-files=:
+#+BEGIN_SRC emacs-lisp 
+(defun add-links-to-org-agenda-files ()
+	"Inspired by: http://stackoverflow.com/questions/38061773/add-linked-org-files-to-org-agenda-files"
+	(interactive)
+	(org-element-map  
+			(org-element-parse-buffer)
+			'link
+		(lambda (x)
+			(let ((org-link-path (org-element-property :path x))
+						(org-link-type (org-element-property :type x)))
+				(when (and (equal org-link-type "file") ; only links to files
+									 (string-prefix-p "~/" org-link-path) ; relative paths are bad
+									 (equal "org" (file-name-extension org-link-path)) ;only org-mode files
+									 (file-exists-p org-link-path) ; only existing files
+									 )
+					(princ (concat " " org-link-path))
+					(add-to-list 'org-agenda-files (expand-file-name org-link-path))
+					)))))
 #+END_SRC
 
 *** Export
@@ -1752,28 +1779,6 @@ Show notifications of agenda events:
 (use-package org-alert
 	:ensure t
 	)
-#+END_SRC
-
-Add linked org-mode files to =org-agenda-files=:
-#+BEGIN_SRC emacs-lisp 
-	(defun add-links-to-org-agenda-files ()
-		"Inspired by: http://stackoverflow.com/questions/38061773/add-linked-org-files-to-org-agenda-files"
-		 (interactive)
-		 (princ "Added the following files to org-agenda-files:")
-		 (org-element-map  
-				 (org-element-parse-buffer)
-				 'link
-			 (lambda (x)
-				 (let ((org-link-path (org-element-property :path x))
-							 (org-link-type (org-element-property :type x)))
-					 (when (and (equal org-link-type "file") ; only links to files
-										(string-prefix-p "~/" org-link-path) ; relative paths are bad
-										(equal "org" (file-name-extension org-link-path)) ;only org-mode files
-										(file-exists-p org-link-path) ; only existing files
-										)
-							 (princ (concat " " org-link-path))
-							 (add-to-list 'org-agenda-files (expand-file-name org-link-path))
-					 )))))
 #+END_SRC
 
 Customize agenda view:
@@ -4468,6 +4473,8 @@ Deprecated:
 #+END_SRC
 
 ** hydra-f9
+
+Global org-mode keys:
 
 #+BEGIN_SRC emacs-lisp
 	(defhydra hydra-f9
