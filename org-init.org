@@ -1691,6 +1691,15 @@ Add \citeauthoryear and  \citealtauthoryear to org-ref:
 	:ensure t)
 #+END_SRC
 
+*** org-show
+
+Simple interactive presentations from within Emacs.
+See https://github.com/jkitchin/jmax/blob/master/org/org-show.org for more information.
+
+#+BEGIN_SRC emacs-lisp
+(require 'org-show) 
+#+END_SRC
+
 *** TODO org-beamer
 
 - [ ] add export of text colored with `color:` links (see [[*Color text][Color text]])
