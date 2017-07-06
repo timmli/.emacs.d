@@ -1519,9 +1519,11 @@ Use a prefix arg to get regular RET. "
      ;; org-heading
      ((org-at-heading-p)
       (if (not (string= "" (org-element-property :title (org-element-context))))
-					(progn (org-end-of-meta-data)
-								 (org-insert-heading-respect-content)
-								 (outline-show-entry))
+					(if (not (re-search-forward "[[:graph:]]" (line-end-position) t)) ; added by TL: use org-return when character follows in line
+							(progn (org-end-of-meta-data)
+										 (org-insert-heading-respect-content)
+										 (outline-show-entry))
+						(org-return))								; added by TL
 				(beginning-of-line)
 				(setf (buffer-substring
 							 (line-beginning-position) (line-end-position)) "")))
