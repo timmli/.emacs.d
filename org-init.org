@@ -1510,8 +1510,11 @@ Use a prefix arg to get regular RET. "
      ;; at the beginning of a line to avoid a loop where a new entry gets
      ;; created with only one blank line.
      ((org-in-item-p)
-      (if (save-excursion (beginning-of-line) (org-element-property :contents-begin (org-element-context)))
-					(org-insert-heading)
+      ;; (if (save-excursion (beginning-of-line) (org-element-property :contents-begin (org-element-context)))
+			(if (org-element-property :contents-end (org-element-context)) ; added by TL
+					(if (not (re-search-forward "[[:graph:]]" (line-end-position) t)) ; added by TL: use org-return when character follows in line
+							(org-insert-heading)
+						(org-return))								; added by TL
 				(beginning-of-line)
 				(delete-region (line-beginning-position) (line-end-position))
 				(org-return)))
