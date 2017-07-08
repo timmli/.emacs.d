@@ -1474,6 +1474,8 @@ Don't split the line with =M-<return>=:
 The following is taken from [[http://github.com/jkitchin/scimax/blob/master/scimax-org.el]] . 
 See also http://kitchingroup.cheme.cmu.edu/blog/2017/04/09/A-better-return-in-org-mode/ .
 
+I modified the code in some details.
+
 - [ ] Where to include =org-table-wrap-region=?
 
 #+BEGIN_SRC emacs-lisp
@@ -1550,7 +1552,7 @@ Use a prefix arg to get regular RET. "
       (org-return)))))
 #+END_SRC
 
-Here's my own version, which uses =org-table-wrap-region=.
+Here's my own version, which uses =org-table-wrap-region=. This was superseded by =scimax/org-return=.
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/org-return ()
@@ -1641,10 +1643,10 @@ I don't use =org-gcal= any more.
 	))
 #+END_SRC
 
-*** TODO org-ref
+*** org-ref
 
 - [X] =org-ref-prefer-bracket-links= does not work?
-- [ ] =org-ref-cite-color= is not used 
+- [X] =org-ref-cite-color= is not used 
 
 #+BEGIN_SRC emacs-lisp
 ;; (setq org-ref-completion-library 'org-ref-ivy-cite) ; must appear before org-ref
