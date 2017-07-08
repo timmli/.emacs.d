@@ -2699,6 +2699,8 @@ Sequence is important!
 			 (define-key company-active-map (kbd "RET") nil)
 	     ;; (define-key company-active-map (kbd "<tab>") 'company-complete-common)  ; Insert the common part of all candidates.  
 	     ;; (define-key company-active-map (kbd "<tab>") 'company-select-next))
+			 (define-key company-active-map (kbd "<up>") 'company-select-previous)
+			 (define-key company-active-map (kbd "<down>") 'company-select-next)
 			 ))
 	
   ;; activate global-company-mode
