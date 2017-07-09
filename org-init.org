@@ -1321,11 +1321,11 @@ See also http://kitchingroup.cheme.cmu.edu/blog/2016/01/16/Colored-text-in-org-m
 	 '(org-block-background ((t (:inherit fixed-pitch :background "#3E3D31"))))
 	 '(org-block-begin-line ((t (:underline t))))
 	 '(org-block-end-line  ((t (:overline t))))
-	 '(org-level-1 ((t (:inherit outline-1 :overline t :height 1.5))))
-	 '(org-level-2 ((t (:inherit outline-2 :overline t :height 1.25))))
-	 '(org-level-3 ((t (:inherit outline-3 :height 1.1))))
-	 '(org-level-4 ((t (:inherit outline-4 :height 1.0))))
-	 '(org-level-5 ((t (:inherit outline-5 :height 1.0))))
+	 '(org-level-1 ((t (:inherit outline-1 :overline t :weight semi-bold :height 1.5))))
+	 '(org-level-2 ((t (:inherit outline-2 :overline t :weight semi-bold :height 1.25))))
+	 '(org-level-3 ((t (:inherit outline-3 :weight semi-bold :height 1.1))))
+	 '(org-level-4 ((t (:inherit outline-4 :weight semi-bold :height 1.0))))
+	 '(org-level-5 ((t (:inherit outline-5 :weight semi-bold :height 1.0))))
 	 )
 
 	(with-eval-after-load 'org
@@ -1477,6 +1477,7 @@ See also http://kitchingroup.cheme.cmu.edu/blog/2017/04/09/A-better-return-in-or
 I modified the code in some details.
 
 - [ ] Where to include =org-table-wrap-region=?
+- [ ] Problem with list items: formulas are not recognized as content
 
 #+BEGIN_SRC emacs-lisp
 (require 'org-inlinetask)
