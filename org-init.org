@@ -1292,6 +1292,12 @@ Preserve indentation in source blocks:
                            (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 #+end_src
 
+Allow for alphabetical list item labels:
+
+#+BEGIN_SRC emacs-lisp
+(setq org-list-allow-alphabetical t)
+#+END_SRC
+
 **** TODO Color text
 
 - [ ] add support for export to LaTeX
