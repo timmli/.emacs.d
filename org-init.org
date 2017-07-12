@@ -1271,11 +1271,12 @@ Preserve indentation in source blocks:
     (define-key org-mode-map (kbd "C-<tab>") nil )
     (define-key org-mode-map (kbd "S-<up>") nil )
     (define-key org-mode-map (kbd "S-<down>") nil )
-    ;; (define-key org-mode-map (kbd "S-<left>") nil )
-    ;; (define-key org-mode-map (kbd "S-<right>") nil )
+    (define-key org-mode-map (kbd "S-<left>") nil )
+    (define-key org-mode-map (kbd "S-<right>") nil )
     (define-key org-mode-map (kbd "C-n") 'org-next-visible-heading )
 		(define-key org-mode-map (kbd "C-p") 'org-previous-visible-heading )
     (define-key org-mode-map (kbd "C-c C-f") 'org-footnote-action )
+		(define-key org-mode-map (kbd "C-c C-t") 'org-todo )
     (define-key org-mode-map (kbd "C-c C-x C-b") 'org-tree-to-indirect-buffer ))
 
   ;; (with-eval-after-load 'org-agenda
@@ -4701,21 +4702,35 @@ Don't ask for the path when searching for files:
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-main (:hint nil)
 	"Org-mode"
-	("a" org-toggle-archive-tag "archive here" :exit t)
-	("A" org-archive-subtree-default "archive outside" :exit t)
+	("a" org-attach "attachements..." :exit t)
+	("A" hydra-org-archive/body "archive..." :exit t)
 	("c" hydra-org-columns/body "columns..." :exit t)
 	("p" org-set-property "add property" :exit t)
 	("P" org-set-property-and-value "add property-value pair" :exit t)
 	("r" org-ref "org-ref" :exit t)
 	("s" org-sort "sort" :exit t)
-	("t" org-attach "attachments" :exit t)
+	("t" org-todo "todo" :exit t)
 	("\\" org-toggle-pretty-entities "toggle utf8 chars" :exit t)
 	("^" org-sort nil :exit t)
 	("q" nil :color blue)
 	)
 #+END_SRC
 
-A hydra for org-columns:
+*** hydra-org-archive
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-org-archive (:hint nil)
+	"Org-mode archive"
+	("t" org-toggle-archive-tag "set archive tag" :exit t)
+	("a" org-archive-to-archive-sibling "archive below" :exit t)
+	("A" org-archive-subtree-default "archive outside" :exit t)
+	("q" nil :color blue)
+	)
+#+END_SRC
+
+*** hydra-org-columns
+
+A hydra for org-columns.
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-columns (:hint nil :color pink :body-pre (org-columns))
@@ -4740,7 +4755,7 @@ A hydra for org-columns:
 )
 #+END_SRC
 
-** hydra-org-agenda
+*** hydra-org-agenda
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-agenda (:hint nil :color pink)
