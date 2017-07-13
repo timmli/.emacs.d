@@ -2180,7 +2180,7 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 *** TODO AUCTeX 
 
 - [ ] How to do completion of custom macros?
-
+  
 #+BEGIN_SRC emacs-lisp
 (use-package tex
 	:ensure auctex												; because auctex overwrites tex
@@ -2400,6 +2400,13 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 							("C-c ]" . reftex-citation); same as in org-mode
 						  ) 
 	)
+#+END_SRC
+
+*** bibtex
+
+Align at equal sign instead of field text:
+#+BEGIN_SRC emacs-lisp
+(setq bibtex-align-at-equal-sign t)
 #+END_SRC
 
 *** TODO helm-bibtex
