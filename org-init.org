@@ -1534,7 +1534,8 @@ Use a prefix arg to get regular RET. "
       (if (not (string= "" (org-element-property :title (org-element-context))))
 					(if (not (re-search-forward "[[:graph:]]" (line-end-position) t)) ; added by TL: use org-return when character follows in line
 							(progn (org-end-of-meta-data)
-										 (org-insert-heading-respect-content)
+										 ;; (org-insert-heading-respect-content) ; commented by TL: heading is sometimes added after *next* heading.
+										 (org-insert-heading) ; added by TL
 										 (outline-show-entry))
 						(org-return))								; added by TL
 				(beginning-of-line)
