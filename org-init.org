@@ -4624,7 +4624,7 @@ https://gitlab.com/xuhdev/dired-quick-sort
   ^^               enter _RET_          _*_: specific       _r_: rename           _z_: size
   ^^                     ^^             ^^                  ^^
   ^^            v        ^^             _w_: copy file name _P_: change property
-            _<down>_     ^^             _W_: copy path      _c_: compress to				  
+            _<down>_     ^^             _W_: copy path      _c_/_Z_: compress				  
   ^^                     ^^             ^^                  _=_: diff             _q_: quit dired     
    _._: home  _j_: jump  _f_: find                          _e_: diff on marked   _Q_: quit hydra
                                                     
