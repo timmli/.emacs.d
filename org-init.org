@@ -2155,8 +2155,12 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 (use-package calfw
 	:ensure ;TODO: 
 	:init
-	(require 'calfw-org)
-	(require 'calfw-ical)
+
+	(use-package calfw-org
+		:ensure t)
+	(use-package calfw-ical
+		:ensure t)
+
 	(setq cfw:render-line-breaker 'cfw:render-line-breaker-simple)
 
 	(defvar user-calendar-settings-file
