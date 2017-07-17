@@ -3,7 +3,6 @@
 #+FILETAGS: emacs
 #+STARTUP: indent
 #+STARTUP: hideblocks content
-#+TODO: TODO | DONE CANCELED
 
 * Good examples
 
@@ -961,24 +960,6 @@ Depends on =ls=.
 	)
 #+END_SRC
 
-*** dired-narrow
-
-Filter dired list on the fly:
-
-#+BEGIN_SRC emacs-lisp
-(use-package dired-narrow
-  :ensure t
-  :bind (:map dired-mode-map
-							("/" . dired-narrow)
-							:map dired-narrow-map
-              ("<tab>" . dired-narrow-enter-directory)
-              ("<right>" . dired-view-file)
-							("<return>" . exit-minibuffer))        
-	:config
-	(setq dired-narrow-exit-action 'dired-narrow-find-file)
-)
-#+END_SRC
-
 *** dired+
 
 #+BEGIN_SRC emacs-lisp
@@ -998,7 +979,95 @@ Filter dired list on the fly:
 (define-key dired-mode-map (kbd "<mouse-2>") 'diredp-mouse-find-file)
 #+END_SRC
 
-*** dired-ranger
+*** dired-hacks
+
+Several helper packages for dired.
+See documentation here: https://github.com/Fuco1/dired-hacks
+
+**** dired-narrow
+
+Filter dired list on the fly:
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-narrow
+  :ensure t
+  :bind (:map dired-mode-map
+							("/" . dired-narrow)
+							:map dired-narrow-map
+              ("<tab>" . dired-narrow-enter-directory)
+              ("<right>" . dired-view-file)
+							("<return>" . exit-minibuffer))        
+	:config
+	(setq dired-narrow-exit-action 'dired-narrow-find-file)
+)
+#+END_SRC
+
+**** COMMENT dired-subtree
+
+Taken from: https://github.com/Fuco1/.emacs.d/blob/master/files/dired-defs.el
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-subtree
+  :init
+  (bind-keys :map dired-mode-map
+             :prefix "C-,"
+             :prefix-map dired-subtree-map
+             :prefix-docstring "Dired subtree map."
+    ("<C-i-key>" . dired-subtree-insert)
+    ("C-/" . dired-subtree-apply-filter)
+    ("C-k" . dired-subtree-remove)
+    ("C-n" . dired-subtree-next-sibling)
+    ("C-p" . dired-subtree-previous-sibling)
+    ("C-u" . dired-subtree-up)
+    ("C-d" . dired-subtree-down)
+    ("C-a" . dired-subtree-beginning)
+    ("C-e" . dired-subtree-end)
+    ("C-c" . dired-subtree-cycle)
+    ("m" . dired-subtree-mark-subtree)
+    ("u" . dired-subtree-unmark-subtree)
+    ("C-o C-f" . dired-subtree-only-this-file)
+    ("C-o C-d" . dired-subtree-only-this-directory)))
+
+#+END_SRC
+
+**** TODO dired-rainbow
+
+More customizable highlightning in dired listings.
+Settings inspired by https://github.com/Fuco1/.emacs.d/blob/master/files/dired-defs.el
+
+- [ ] Does not seem to work.
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-rainbow
+  :config
+  (progn
+    (dired-rainbow-define html "#4e9a06" ("htm" "html" "xhtml"))
+    (dired-rainbow-define xml "#b4fa70" ("xml" "xsd" "xsl" "xslt" "wsdl"))
+
+    (dired-rainbow-define document "#fce94f" ("doc" "docx" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub"))
+    (dired-rainbow-define excel "#3465a4" ("xlsx"))
+    (dired-rainbow-define media "#ce5c00" my-dired-media-files-extensions)
+    (dired-rainbow-define image "#ff4b4b" ("jpg" "png" "jpeg" "gif"))
+
+    (dired-rainbow-define log "#c17d11" ("log"))
+    (dired-rainbow-define sourcefile "#fcaf3e" ("py" "c" "cc" "h" "java" "pl" "rb" "R" "php"))
+
+    (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
+    (dired-rainbow-define compressed "#ad7fa8" ("zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
+    (dired-rainbow-define packaged "#e6a8df" ("deb" "rpm"))
+    (dired-rainbow-define encrypted "LightBlue" ("gpg" "pgp"))
+
+    (dired-rainbow-define-chmod executable-unix "Green" "-.*x.*")
+    ))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defconst my-dired-media-files-extensions '("mp3" "mp4" "MP3" "MP4" "avi" "mpg" "flv" "ogg" "wmv" "mkv" "mov" "wma")
+  "Media file extensions that should launch in VLC.
+Also used for highlighting.")
+#+END_SRC
+
+**** dired-ranger
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired-ranger
@@ -1016,6 +1085,13 @@ Filter dired list on the fly:
 			(dired-ranger-copy nil)
 			(define-key dired-mode-map (kbd "C-y") 'dired-ranger-paste)))
 )
+#+END_SRC
+
+**** COMMENT dired-collapse
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-collapse
+	:ensure t)
 #+END_SRC
 
 *** dired-efap
@@ -2153,7 +2229,7 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 
  #+BEGIN_SRC emacs-lisp
 (use-package calfw
-	:ensure ;TODO: 
+	:ensure t 
 	:init
 
 	(use-package calfw-org
