@@ -1038,7 +1038,15 @@ Settings inspired by https://github.com/Fuco1/.emacs.d/blob/master/files/dired-d
 - [ ] Does not seem to work.
 
 #+BEGIN_SRC emacs-lisp
+(defconst my-dired-media-files-extensions '("mp3" "mp4" "MP3" "MP4" "avi" "mpg" "flv" "ogg" "wmv" "mkv" "mov" "wma")
+  "Media file extensions that should launch in VLC.
+Also used for highlighting.")
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
 (use-package dired-rainbow
+	:ensure t 
   :config
   (progn
     (dired-rainbow-define html "#4e9a06" ("htm" "html" "xhtml"))
@@ -1061,11 +1069,6 @@ Settings inspired by https://github.com/Fuco1/.emacs.d/blob/master/files/dired-d
     ))
 #+END_SRC
 
-#+BEGIN_SRC emacs-lisp
-(defconst my-dired-media-files-extensions '("mp3" "mp4" "MP3" "MP4" "avi" "mpg" "flv" "ogg" "wmv" "mkv" "mov" "wma")
-  "Media file extensions that should launch in VLC.
-Also used for highlighting.")
-#+END_SRC
 
 **** dired-ranger
 
