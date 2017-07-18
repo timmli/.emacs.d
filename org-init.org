@@ -908,7 +908,8 @@ Version 2015-11-30"
     )))
 #+END_SRC
 
-*** Copy path
+*** Special keys
+**** Copy path
 
 Sometimes its useful to copy the path of a file or directory under cursor:
 
@@ -919,6 +920,14 @@ Sometimes its useful to copy the path of a file or directory under cursor:
 )
 
 (define-key dired-mode-map (kbd "W") 'tl/dired-copy-path-at-point)
+#+END_SRC
+
+**** Delete 
+
+Delete with <delete> key.
+
+#+BEGIN_SRC emacs-lisp
+(define-key dired-mode-map (kbd "<delete>") 'dired-do-delete)
 #+END_SRC
 
 *** dired-imenu
@@ -1043,7 +1052,6 @@ Settings inspired by https://github.com/Fuco1/.emacs.d/blob/master/files/dired-d
 Also used for highlighting.")
 #+END_SRC
 
-
 #+BEGIN_SRC emacs-lisp
 (use-package dired-rainbow
 	:ensure t 
@@ -1068,7 +1076,6 @@ Also used for highlighting.")
     (dired-rainbow-define-chmod executable-unix "Green" "-.*x.*")
     ))
 #+END_SRC
-
 
 **** dired-ranger
 
