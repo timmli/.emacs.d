@@ -4082,6 +4082,15 @@ Better keys for closing and switching between windows. The rest is done in [[*hy
   (golden-ratio-mode 1))
 #+END_SRC
 
+** transpose-frame
+
+#+BEGIN_SRC emacs-lisp
+(use-package transpose-frame
+  :ensure t
+  ;; :bind ("H-t" . transpose-frame)
+)
+#+END_SRC
+
 * Bookmarks
 
 #+BEGIN_SRC emacs-lisp
@@ -5394,6 +5403,7 @@ Taken from https://github.com/abo-abo/hydra/wiki/Emacs
 	("l" transpose-lines "lines")
 	("s" transpose-sentences "sentences")
 	("p" transpose-paragraphs "paragraphs")
+	("f" transpose-frame "frame")
 	("o" org-transpose-words "Org-words")
 	("e" org-transpose-element "Org-elements")
 	("tp" org-table-transpose-table-at-point "Org-table at point")
