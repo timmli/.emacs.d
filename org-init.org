@@ -1844,14 +1844,14 @@ Change export of bold font:
 (add-to-list 'org-export-filter-bold-functions 'my-beamer-bold)
 #+END_SRC
 
-*** Graphviz/dot
+*** Graphviz/dot support
 
  #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
 (org-babel-do-load-languages  'org-babel-load-languages '((dot . t)))
 #+END_SRC
 
-*** TODO Gnuplot
+*** TODO Gnuplot support
 
 - [ ] compiling Gnuplot source blocks crashes Emacs
 
@@ -1859,6 +1859,13 @@ Change export of bold font:
 (org-babel-do-load-languages
  'org-babel-load-languages
  '((gnuplot . t)))
+#+END_SRC
+
+*** R support
+
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages 'org-babel-load-languages '((R . t)))
+(setq org-babel-R-command "R --slave --no-save")
 #+END_SRC
 
 *** Plantuml
@@ -2672,6 +2679,18 @@ Delete environment at point (https://www.reddit.com/r/emacs/comments/5f99nv/help
 	(add-hook 'markdown-mode 'my-markdown-mode-config)
 	(setq markdown-enable-math t)
 	)
+#+END_SRC
+
+** R
+
+*** ess
+
+=ess= (Emacs Speaks Statistics) is the package that integrates R into Emacs.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ess
+  :ensure t
+  :init (require 'ess-site))
 #+END_SRC
 
 ** Deft
