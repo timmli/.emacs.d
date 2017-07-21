@@ -19,6 +19,9 @@
 ;; MS Windows clipboard is UTF-16LE 
 (set-clipboard-coding-system 'utf-16le-dos)
 
+;; start emacs server
+;; (server-start)  ; uncomment this, if you want the server to start on every start-up
+
 
 ;;==========================================================
 ;;      DIRECTORIES SETUP
