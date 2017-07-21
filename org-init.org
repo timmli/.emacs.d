@@ -1557,6 +1557,13 @@ C-a and C-e behave org-sensitive
 (setq org-special-ctrl-a/e t)
 #+END_SRC
 
+*** Clocking and logging
+
+Collect log entries in drawer:
+#+BEGIN_SRC emacs-lisp
+(setq org-log-into-drawer t)
+#+END_SRC
+
 *** TODO Newline
 
 Don't split the line with =M-<return>=:
@@ -4813,6 +4820,7 @@ Don't ask for the path when searching for files:
 	("a" org-attach "attachements..." :exit t)
 	("A" hydra-org-archive/body "archive..." :exit t)
 	("c" hydra-org-columns/body "columns..." :exit t)
+	("n" org-add-note "add note" :exit t)
 	("p" org-set-property "add property" :exit t)
 	("P" org-set-property-and-value "add property-value pair" :exit t)
 	("r" org-ref "org-ref" :exit t)
