@@ -3228,6 +3228,27 @@ Copy mouse selection to kill-ring:
 ;; (setq mouse-drag-copy-region t)
 #+end_src
 
+** Context menu
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key [mouse-3] 'mouse-popup-menubar-stuff)
+#+END_SRC
+
+*** HOLD COMMENT ctxmenu
+
+Unfortunately, =ctxmenu= lets my Emacs crash.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ctxmenu
+	:ensure t
+	:config
+	(require 'ctxmenu-config)
+	(ctxmenu-config:setup ctxmenu-config:extra-features)
+	;; (setq ctxmenu-config:exclude-features '(window register))
+	(define-key global-map [mouse-3] 'ctxmenu:show)
+	)
+#+END_SRC
+
 ** Cursor actions
 
 *** ace-jump
