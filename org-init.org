@@ -3231,10 +3231,11 @@ Copy mouse selection to kill-ring:
 ** Context menu
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key [mouse-3] 'mouse-popup-menubar-stuff)
+(global-set-key (kbd "<mouse-3>") 'mouse-major-mode-menu)
+(global-set-key (kbd "<C-down-mouse-3>") 'mouse-popup-menubar)
 #+END_SRC
 
-*** HOLD COMMENT ctxmenu
+*** COMMENT ctxmenu
 
 Unfortunately, =ctxmenu= lets my Emacs crash.
 
