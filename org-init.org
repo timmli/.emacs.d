@@ -1484,6 +1484,103 @@ Fontify checked checkbox items.
  'append)
 #+END_SRC
 
+**** Math formulas
+
+Toggle LaTeX images of math formulas when cursor is at point.
+
+Taken from http://kitchingroup.cheme.cmu.edu/blog/2015/10/09/Automatic-latex-image-toggling-when-cursor-is-on-a-fragment/
+
+#+BEGIN_SRC emacs-lisp
+(defvar org-latex-fragment-last nil
+  "Holds last fragment/environment you were on.")
+
+(defun org-latex-fragment-toggle ()
+  "Toggle a latex fragment image "
+  (and (eq 'org-mode major-mode)
+       (let* ((el (org-element-context))
+              (el-type (car el)))
+         (cond
+          ;; were on a fragment and now on a new fragment
+          ((and
+            ;; fragment we were on
+            org-latex-fragment-last
+            ;; and are on a fragment now
+            (or
+             (eq 'latex-fragment el-type)
+             (eq 'latex-environment el-type))
+            ;; but not on the last one this is a little tricky. as you edit the
+            ;; fragment, it is not equal to the last one. We use the begin
+            ;; property which is less likely to change for the comparison.
+            (not (= (org-element-property :begin el)
+                    (org-element-property :begin org-latex-fragment-last))))
+           ;; go back to last one and put image back
+           (save-excursion
+             (goto-char (org-element-property :begin org-latex-fragment-last))
+             (org-preview-latex-fragment))
+           ;; now remove current image
+           (goto-char (org-element-property :begin el))
+           (let ((ov (loop for ov in (org--list-latex-overlays)
+                           if
+                           (and
+                            (<= (overlay-start ov) (point))
+                            (>= (overlay-end ov) (point)))
+                           return ov)))
+             (when ov
+               (delete-overlay ov)))
+           ;; and save new fragment
+           (setq org-latex-fragment-last el))
+
+          ;; were on a fragment and now are not on a fragment
+          ((and
+            ;; not on a fragment now
+            (not (or
+                  (eq 'latex-fragment el-type)
+                  (eq 'latex-environment el-type)))
+            ;; but we were on one
+            org-latex-fragment-last)
+           ;; put image back on
+           (save-excursion
+             (goto-char (org-element-property :begin org-latex-fragment-last))
+             (org-preview-latex-fragment))
+           ;; unset last fragment
+           (setq org-latex-fragment-last nil))
+
+          ;; were not on a fragment, and now are
+          ((and
+            ;; we were not one one
+            (not org-latex-fragment-last)
+            ;; but now we are
+            (or
+             (eq 'latex-fragment el-type)
+             (eq 'latex-environment el-type)))
+           (goto-char (org-element-property :begin el))
+           ;; remove image
+           (let ((ov (loop for ov in (org--list-latex-overlays)
+                           if
+                           (and
+                            (<= (overlay-start ov) (point))
+                            (>= (overlay-end ov) (point)))
+                           return ov)))
+             (when ov
+               (delete-overlay ov)))
+           (setq org-latex-fragment-last el))))))
+
+;; (add-hook 'post-command-hook 'org-latex-fragment-toggle)
+#+END_SRC
+
+Toggle =org-latex-fragment-toggle=:
+#+BEGIN_SRC emacs-lisp
+(defun org-latex-fragment-toggle-toggle ()
+	(interactive)
+	(if (memq 'org-latex-fragment-toggle (default-value 'post-command-hook))
+			(progn 
+				(remove-hook 'post-command-hook 'org-latex-fragment-toggle)
+				(org-remove-latex-fragment-image-overlays))
+		(add-hook 'post-command-hook 'org-latex-fragment-toggle)
+		(org-toggle-latex-fragment '(16))) 	; equivalent to: C-u C-u org-toggle-latex-fragment
+	)
+#+END_SRC
+
 *** Modules
 
 See http://orgmode.org/worg/org-contrib/
@@ -4877,6 +4974,7 @@ Don't ask for the path when searching for files:
 	("P" org-set-property-and-value "add property-value pair" :exit t)
 	("r" org-ref "org-ref" :exit t)
 	("s" org-sort "sort" :exit t)
+	("$" org-latex-fragment-toggle-toggle "show LaTeX" :exit t)
 	("t" org-todo "todo" :exit t)
 	("+" org-priority-up "priority up" :exit nil)
 	("-" org-priority-down "priority down" :exit nil)
@@ -5116,9 +5214,6 @@ Automatically open the hydra with ibuffer:
 	("l" imagex-sticky-rotate-left "rotate left"))
 
 #+END_SRC
-
-#+RESULTS:
-: hydra-image/body
 
 ** hydra-latex
 
