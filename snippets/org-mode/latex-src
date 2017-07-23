@@ -1,0 +1,8 @@
+# -*- mode: snippet -*-
+# name: latex-src
+# key: latex
+# --
+#+NAME: ${1:latex`(format-time-string "%y%m%d%H%M")`}
+#+BEGIN_SRC latex :results raw :file $1.${2:$$(yas-choose-value '("pdf" "png"))} :packages '(("" "tikz")) :border 0em :noweb yes :eval no-export :tangle $1.tex
+$0
+#+END_SRC
