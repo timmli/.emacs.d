@@ -3255,6 +3255,12 @@ Unfortunately, =ctxmenu= lets my Emacs crash.
 	)
 #+END_SRC
 
+*** discover
+
+Maybe an option in the future. 
+
+https://github.com/mickeynp/discover.el
+
 ** Cursor actions
 
 *** ace-jump
@@ -4863,7 +4869,7 @@ Don't ask for the path when searching for files:
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-main (:hint nil)
 	"Org-mode"
-	("a" org-attach "attachements..." :exit t)
+	("a" org-attach "attachments..." :exit t)
 	("A" hydra-org-archive/body "archive..." :exit t)
 	("c" hydra-org-columns/body "columns..." :exit t)
 	("n" org-add-note "add note" :exit t)
