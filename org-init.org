@@ -3235,6 +3235,11 @@ Copy mouse selection to kill-ring:
 (global-set-key (kbd "<C-down-mouse-3>") 'mouse-popup-menubar)
 #+END_SRC
 
+Org-mode has its own context menu:
+#+BEGIN_SRC emacs-lisp
+(require 'org-mouse)
+#+END_SRC
+
 *** COMMENT ctxmenu
 
 Unfortunately, =ctxmenu= lets my Emacs crash.
