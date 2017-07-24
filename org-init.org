@@ -1187,6 +1187,28 @@ Copied from https://fuco1.github.io/2017-05-01-Support-for-imenu-in-dired.html
 (add-hook 'dired-mode-hook 'my-dired-imenu-init)
 #+END_SRC
 
+*** TODO History
+
+- [ ] I would like to be able to browse the dired history. =helm-dired-history= could be useful for this, but I don't know how to use it to this end.
+
+**** COMMENT helm-dired-history
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-dired-history
+	:ensure t
+	:config
+	(require 'savehist)
+	(add-to-list 'savehist-additional-variables 'helm-dired-history-variable)
+	(savehist-mode 1)
+
+	(with-eval-after-load 'dired
+		(require 'helm-dired-history) 
+		;; if you are using ido,you'd better disable ido for dired
+		;; (define-key (cdr ido-minor-mode-map-entry) [remap dired] nil) ;in ido-setup-hook
+		)
+	)
+#+END_SRC
+
 *** TODO size info 
 
 - [ ] Does not work anymore?
@@ -1333,6 +1355,11 @@ Preserves the first heading of the org-mode file (found in http://orgmode.org/wo
 Preserve indentation in source blocks:
 #+BEGIN_SRC emacs-lisp
 (setq org-src-preserve-indentation t)
+#+END_SRC
+
+Don't ask for confirmation when evaluating source blocks:
+#+BEGIN_SRC emacs-lisp
+(setq org-confirm-babel-evaluate nil)
 #+END_SRC
 
 *** General keys
