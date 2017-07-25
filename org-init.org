@@ -820,6 +820,7 @@ Move to trash can (recycle bin under windows) when deleting:
 
 Use shift-up and shift-down in the usual way.
 See http://emacs.stackexchange.com/a/30890/12336
+
 #+BEGIN_SRC emacs-lisp
 (defun my-dired-toggle (arg)
   (save-restriction
@@ -1196,11 +1197,12 @@ Copied from https://fuco1.github.io/2017-05-01-Support-for-imenu-in-dired.html
 #+BEGIN_SRC emacs-lisp
 (use-package helm-dired-history
 	:ensure t
-	:config
+	:init	
 	(require 'savehist)
 	(add-to-list 'savehist-additional-variables 'helm-dired-history-variable)
 	(savehist-mode 1)
-
+	
+	:config
 	(with-eval-after-load 'dired
 		(require 'helm-dired-history) 
 		;; if you are using ido,you'd better disable ido for dired
@@ -2857,6 +2859,20 @@ Pomidor brings the promodoro technique to Emacs:
 	)
 #+END_SRC
 
+* Minor modes
+** pandoc-mode
+
+[[http://joostkremers.github.io/pandoc-mode/][pandoc-mode]] allows one to use =pandoc= from within Emacs. =pandoc= is a very rich transducer for text formats. Note that =pandoc= needs to be installed separately.
+
+#+BEGIN_SRC emacs-lisp
+(use-package pandoc-mode
+	:ensure t
+  :config
+  ;; (add-hook 'markdown-mode-hook 'pandoc-mode)
+  ;; (add-hook 'org-mode-hook 'pandoc-mode)
+  (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings))
+#+END_SRC
+
 * Buffer
 
 ** General configuration
@@ -4411,6 +4427,7 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
   (add-hook 'prog-mode-hook 'ggtags-mode))
 #+END_SRC
 
+
 * bbdb
 
 http://sachachua.com/notebook/emacs/bbdb-config.el
@@ -4735,7 +4752,8 @@ Deprecated:
        [_a_] adress book        [_d_] dired/file browser     [_t_] pomodoro timer
        [_b_] new buffer         [_e_] emacs shell            [_l_] dictionary
        [_i_] buffer overview    [_s_] system shell           [_B_] bookmarks
-       [_c_] calendar           [_m_] magit status           [_q_]uit
+       [_c_] calendar           [_m_] magit status           [_P_] pandoc
+       [_p_] projectile          ^^                           ^^                [_q_]uit
 	" 
 	("a" helm-bbdb :exit t)
 	("c" my-open-calfw :exit t)
@@ -4747,6 +4765,8 @@ Deprecated:
 	("m" magit-status :exit t)
 	("e" tl/eshell :exit t)
 	("B" bookmark-bmenu-list :exit t)
+	("p" helm-projectile :exit t)
+	("P" pandoc-main-hydra/body :exit t)
 	("t" pomidor :exit t)
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
@@ -5266,7 +5286,7 @@ A hydra for code folding with AUCTeX:
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-latex-folding (:hint nil :body-pre (TeX-fold-mode 1))
-	"LaTeX: folding"
+	"LaTeX folding"
 	("b" TeX-clearout-buffer "remove folding in buffer" :exit t)
 	("B" TeX-fold-buffer "activate folding in buffer" :exit t)
 	("o" TeX-fold-dwim "fold dwim" :exit t)
@@ -5279,7 +5299,7 @@ A hydra for code deletion with AUCTeX:
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-latex-delete (:hint nil)
-	"LaTeX: delete"
+	"LaTeX deletion"
 	("f" TeX-deletefont "font" :exit t)
 	("e" TeX-delete-environment "environment" :exit t)
 	("m" TeX-delete-macro "macro" :exit t)
@@ -5292,7 +5312,7 @@ A hydra for font selection with AUCTeX:
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-latex-fonts (:hint nil)
-	"LaTeX: fonts"
+	"LaTeX fonts"
 	("b" TeX-bold "bold" :exit t)
 	("i" TeX-italic "italic" :exit t)
 	("t" TeX-typewriter "typewriter" :exit t)
