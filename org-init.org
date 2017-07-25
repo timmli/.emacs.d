@@ -2052,15 +2052,14 @@ Customize agenda view:
 					(todo "WAITING" ((org-agenda-overriding-header "")
 													 (org-agenda-block-separator nil)))
 					(todo "TODO" ((org-agenda-overriding-header "")
-												(org-agenda-block-separator nil)
-												)
+												(org-agenda-block-separator nil)))
 					(todo "SOMEDAY" ((org-agenda-overriding-header "")
 													 (org-agenda-block-separator nil)))
 					;; (tags-todo "@work"
 					;; 					 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("NEXT")))
 					;; 						(org-agenda-overriding-header "")
 					;; 						(org-agenda-block-separator nil)))
-					))
+					)
 				 ((org-agenda-tag-filter-preset '("+@work")))
 				)))
 
