@@ -4578,17 +4578,20 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 
           ^^  _<up>_               │      ^^                    [_z_] window undo
           ^^   ↑   ^^              │split [_h_]orizontally      [_Z_] window redo
-    _<left>_ ←   → _<right>_       │      ^^                    [_n_] new frame
-          ^^   ↓   ^^             ────────^^─────────────              
-          ^^ _<down>_              split [_v_]ertically             [_q_]uit    
+    _<left>_ ←   → _<right>_       │      ^^                    [_f_] clone frame
+          ^^   ↓   ^^             ────────^^─────────────       [_b_] clone buffer      
+          ^^ _<down>_              split [_v_]ertically         [_t_] transpose frame    
+                                                                [_q_]uit    
 	"
 	("<down>" windmove-down :exit t)
 	("<up>" windmove-up :exit t)
 	("<right>" windmove-right :exit t)
 	("<left>" windmove-left :exit t)
-	("n" make-frame :exit t)
+	("f" make-frame :exit t)
+	("b" clone-indirect-buffer :exit t)
 	("v" split-window-vertically :exit t)
 	("h" split-window-horizontally :exit t)
+	("t" transpose-frame :exit t)
 	("z" winner-undo)
 	("Z" winner-redo)
 	("q" nil :color blue)
@@ -5019,6 +5022,7 @@ Don't ask for the path when searching for files:
 	"Org-mode"
 	("a" org-attach "attachments..." :exit t)
 	("A" hydra-org-archive/body "archive..." :exit t)
+	("b" org-tree-to-indirect-buffer "open in new buffer" :exit t)
 	("c" hydra-org-columns/body "columns..." :exit t)
 	("n" org-add-note "add note" :exit t)
 	("p" org-set-property "add property" :exit t)
