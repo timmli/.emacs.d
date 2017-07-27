@@ -2213,6 +2213,10 @@ Show whether links to files are valid:
 				))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(define-key org-mode-map (kbd "C-c :") 'org-set-tags)
+#+END_SRC
+
 *** Tables
 
 Some functions to select and copy columns (http://emacs.stackexchange.com/a/28298/12336)
@@ -4839,7 +4843,7 @@ Global org-mode keys:
      ^^  [_a_] agenda  ^^    [_n_] notes   ^^  ^^   ^^  ^^  ^^   [_r_] reload org       	
      ^^  [_d_] deft    ^^    [_t_] todos   ^^  ^^   ^^  ^^  ^^   [_u_] update agenda files
      ^^  [_c_] capture ^^    [_w_] work ^^  ^^  ^^  ^^ ^^        
-     ^^  [_f_] search  ^^                ^^  ^^  ^^  ^^  ^^                      [_q_]uit
+     ^^  [_f_] search  ^^    [_:_] tags ^^  ^^  ^^  ^^  ^^                      [_q_]uit
 
 	"
 	("a" org-agenda-list-work :exit t)
@@ -4851,6 +4855,7 @@ Global org-mode keys:
 	("t" org-todo-list :exit t)
 	("w" (lambda nil (interactive)
 				 (find-file (concat org-directory "/work/work.org"))) :exit t)
+	(":" org-setting-tags "tags" :exit t)
 	("r" org-reload :exit t)
 	("f" helm-org-rifle-agenda-files :exit t)
 	;; ("f" org-search-view :exit t)
@@ -5022,6 +5027,7 @@ Don't ask for the path when searching for files:
 	("s" org-sort "sort" :exit t)
 	("$" org-latex-fragment-toggle-toggle "show LaTeX" :exit t)
 	("t" org-todo "todo" :exit t)
+	(":" org-set-tags "tags" :exit t)
 	("+" org-priority-up "priority up" :exit nil)
 	("-" org-priority-down "priority down" :exit nil)
 	("\\" org-toggle-pretty-entities "toggle utf8 chars" :exit t)
