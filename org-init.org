@@ -168,7 +168,8 @@ Fringe style:
 
 ** Distraction-free mode
 
-Distraction-free mode:
+*** writeroom-mode
+
 #+BEGIN_SRC emacs-lisp
 (use-package writeroom-mode
 	:ensure t
@@ -4145,9 +4146,9 @@ Key bindings roughly following the conventions of the Windows habitat.
 #+BEGIN_SRC emacs-lisp
 (define-minor-mode winkeys-mode
 	"Key bindings roughly following the conventions of the Windows habitat."
-	:lighter " wk"
-	;; :global "t"
 	:init-value t
+	:global t
+	:lighter " wk"
 	:keymap (let ((map (make-keymap)))
 						
 						;; save
@@ -4177,36 +4178,18 @@ Key bindings roughly following the conventions of the Windows habitat.
 						(define-key map (kbd "C-z") 'undo-tree-undo)
 						(define-key map (kbd "C-S-z") 'undo-tree-redo)
 
+						;; yank
+						(define-key map (kbd "C-v") 'yank)						
+
 						;; press ESC only once
 						(define-key map (kbd "<escape>") 'keyboard-escape-quit)
-										
+						
 						map
 						)
+
+	;; body 
+
 	(add-hook 'minibuffer-setup-hook 'winkeys-minibuffer)
-
-	;; FIME: This does not work, and I have no clue why.
-	(add-hook 'org-src-mode-hook
-						(lambda ()((define-key (kbd "C-s") 'org-edit-src-save))))
-
-	)
-
-(defun winkeys-minibuffer ()
-	"Keymap for the minibuffer."
-	(let ((map minibuffer-local-map))
-
-		;; undo/redo
-		(define-key map (kbd "C-z") 'undo-tree-undo)
-		(define-key map (kbd "C-S-z") 'undo-tree-redo)
-		
-		))
-
-#+END_SRC
- 
-** TODO How to make this a proper part of the mode, i.e., how to disable this when disabeling the mode?
-
-#+BEGIN_SRC emacs-lisp
-
-(add-hook 'winkeys-mode-hook
 
 	(with-eval-after-load 'helm-swoop
 		(define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
@@ -4217,6 +4200,32 @@ Key bindings roughly following the conventions of the Windows habitat.
 		(define-key helm-swoop-map (kbd "C-S-f m") 'helm-multi-swoop-current-mode-from-helm-swoop)
 		(define-key helm-swoop-map (kbd "M-a") 'helm-multi-swoop-all-from-helm-swoop))
 
+	(with-eval-after-load 'company
+		(define-key company-active-map (kbd "C-s") 'save-buffer))
+
+	;; ;; Maybe this is not needed any more 	
+	;; (add-hook 'org-src-mode-hook
+	;; 					(lambda ()((define-key (kbd "C-s") 'org-edit-src-save))))
+
+;; (define-key key-translation-map (kbd "C-v") (kbd "C-y")) ; unfortunately this interferes with key chords using C-v
+	)
+
+(winkeys-mode)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun winkeys-minibuffer ()
+	"Keymap for the minibuffer."
+	(let ((map minibuffer-local-map))
+
+		;; undo/redo
+		(define-key map (kbd "C-z") 'undo-tree-undo)
+		(define-key map (kbd "C-S-z") 'undo-tree-redo)
+		
+		))
+#+END_SRC
+ 
+#+BEGIN_SRC emacs-lisp
 	;; Let helm-swoop behave more like isearch
 	;; FIXME: does not follow search hits; helm-action-follow-forward does not work here
 	(defun tl/helm-swoop-C-s ()
@@ -4227,12 +4236,8 @@ Key bindings roughly following the conventions of the Windows habitat.
 					(helm-next-line))
 			(helm-next-line)
 			))
-
-	(with-eval-after-load 'company
-		(define-key company-active-map (kbd "C-s") 'save-buffer))
-
-	)
 #+END_SRC
+
 
 * TODO winkeys-starter-mode
 
