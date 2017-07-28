@@ -4863,7 +4863,7 @@ Global org-mode keys:
 	("t" org-todo-list :exit t)
 	("w" (lambda nil (interactive)
 				 (find-file (concat org-directory "/work/work.org"))) :exit t)
-	(":" org-setting-tags "tags" :exit t)
+	(":" org-setting-tags :exit t)
 	("r" org-reload :exit t)
 	("f" helm-org-rifle-agenda-files :exit t)
 	;; ("f" org-search-view :exit t)
