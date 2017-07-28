@@ -4436,6 +4436,29 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
   (add-hook 'prog-mode-hook 'ggtags-mode))
 #+END_SRC
 
+* Chat
+
+** COMMENT Jabber
+
+Sadly, I cannot use =jabber= together with Google or Skype.
+
+#+BEGIN_SRC emacs-lisp
+(use-package jabber
+  :ensure t
+  :defer t
+  :config
+  (setq jabber-chat-buffer-show-avatar nil
+				jabber-vcard-avatars-retrieve nil
+				jabber-alert-presence-hooks nil
+
+				;; jabber-account-list ; better configure this in a secret place
+				;;     '(("<your-gmail-email>"
+				;;        (:network-server . "talk.google.com")
+				;;        (:port . 443)
+				;;        (:connection-type . ssl))))
+
+))
+#+END_SRC
 
 * bbdb
 
