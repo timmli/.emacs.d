@@ -760,11 +760,15 @@ Depends on plantuml.jar and Gaphviz (http://www.graphviz.org).
 
 Tips:  http://ergoemacs.org/emacs/emacs_dired_tips.html
 
-Do not open new buffer when opening a file/directory: 
+Open new buffer when opening a file/directory, if necessary: 
 #+BEGIN_SRC emacs-lisp
 ;; (define-key dired-mode-map (kbd "<return>") 'dired-find-alternate-file) ; was dired-advertised-find-file
-(define-key dired-mode-map (kbd "<backspace>") (lambda () (interactive) (find-alternate-file "..")))  ; was dired-up-directory
-(define-key dired-mode-map (kbd "<left>") (lambda () (interactive) (find-alternate-file "..")))  ; was 
+
+;; (define-key dired-mode-map (kbd "<backspace>") (lambda () (interactive) (find-alternate-file ".."))) ; find-alternate-file forgets the cursor position of the left dired buffer
+;; (define-key dired-mode-map (kbd "<left>") (lambda () (interactive) (find-alternate-file "..")))
+
+(define-key dired-mode-map (kbd "<left>") (lambda () (interactive) (diredp-up-directory)))
+(define-key dired-mode-map (kbd "<backspace>") (lambda () (interactive) (diredp-up-directory)))
 #+END_SRC
 
 View file and return to dired with q:
@@ -801,7 +805,6 @@ Order directories first (only windows?):
 #+END_SRC
 
 Other settings: http://oremacs.com/2015/01/13/dired-options/
-
 #+BEGIN_SRC emacs-lisp
 (setq dired-listing-switches "-laGh1v")
 #+END_SRC
