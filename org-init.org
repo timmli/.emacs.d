@@ -4002,7 +4002,8 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 		:init-value t
 		:keymap (let ((map (make-keymap)))
 
-							(define-key input-decode-map (kbd "C-i") (kbd "H-i")) ; to disentangle <tab> and C-i
+							(define-key input-decode-map "\C-i" [#x4000069])  ; to disentangle <tab> and C-i
+							(define-key input-decode-map (kbd "C-i") (kbd "H-i"))
 
 							;; cursor keys
 							(define-key key-translation-map (kbd "M-i") (kbd "<up>"))
@@ -4237,7 +4238,6 @@ Key bindings roughly following the conventions of the Windows habitat.
 			(helm-next-line)
 			))
 #+END_SRC
-
 
 * TODO winkeys-starter-mode
 
