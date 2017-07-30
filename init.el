@@ -22,10 +22,6 @@
 ;; start emacs server
 ;; (server-start)  ; uncomment this, if you want the server to start on every start-up
 
-;; disentangle <tab> and C-i
-;; originally kept in underi-mode, this has to be set globally in order to work when using Emacs server
-(define-key input-decode-map (kbd "C-i") (kbd "H-i"))  
-
 
 ;;==========================================================
 ;;      DIRECTORIES SETUP

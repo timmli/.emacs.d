@@ -4006,7 +4006,15 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 		:keymap (let ((map (make-keymap)))
 							
 							(define-key input-decode-map (kbd "C-i") (kbd "H-i"))  ; to disentangle <tab> and C-i
-							
+
+							;; disentangle keys when using Emacs server
+							;; local-function-key-map or input-decode-map are terminal-local
+							(defun my-disentangled-keys (&optional frame)
+								(with-selected-frame frame
+									(define-key input-decode-map (kbd "C-i") (kbd "H-i"))  ; to disentangle <tab> and C-i
+								))
+							(add-hook 'after-make-frame-functions #'my-disentangled-keys)
+
 							;; cursor keys
 							(define-key key-translation-map (kbd "M-i") (kbd "<up>"))
 							(define-key key-translation-map (kbd "M-k") (kbd "<down>"))
