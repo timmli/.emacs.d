@@ -4004,10 +4004,9 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 		;; :global "t"
 		:init-value t
 		:keymap (let ((map (make-keymap)))
-
-							(define-key input-decode-map "\C-i" [#x4000069])  ; to disentangle <tab> and C-i
-							(define-key input-decode-map (kbd "C-i") (kbd "H-i"))
-
+							
+							(define-key input-decode-map (kbd "C-i") (kbd "H-i"))  ; to disentangle <tab> and C-i
+							
 							;; cursor keys
 							(define-key key-translation-map (kbd "M-i") (kbd "<up>"))
 							(define-key key-translation-map (kbd "M-k") (kbd "<down>"))
@@ -4033,10 +4032,6 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 							(define-key map (kbd "M-s-l") 'windmove-right)
 							(define-key map (kbd "M-s-i")   'windmove-up)
 							(define-key map (kbd "M-s-k")  'windmove-down)
-
-							;; ;; Why would this be necessary?
-							;; (define-key key-translation-map (kbd "C-n") (kbd "C-c C-n"))
-							;; (define-key key-translation-map (kbd "C-p") (kbd "C-c C-p"))
 
 							;; delete 
 							(define-key map (kbd "C-d") nil)
@@ -4089,8 +4084,8 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 		(with-eval-after-load 'org
 			(define-key org-mode-map (kbd "C-d c") 'org-table-delete-column )
 			(define-key org-mode-map (kbd "C-d C-c") 'org-table-delete-column )
-			)																	
-
+			)
+											
 	)	
 	;; TODO: make C-d switch to delete-mode?
 	;; http://stackoverflow.com/a/12010437/6452961
