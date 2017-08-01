@@ -1614,6 +1614,20 @@ Toggle =org-latex-fragment-toggle=:
 	)
 #+END_SRC
 
+**** Sticky headers
+
+Show current header in first line of buffer.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-sticky-header
+	:ensure t
+	:config
+	(setq org-sticky-header-always-show-header t
+				org-sticky-header-prefix nil 		; don't indent sticky header
+				org-sticky-header-full-path 'full) ; values: nil, 'full, 'reversed
+	(add-hook 'org-mode-hook 'org-sticky-header-mode))
+#+END_SRC
+
 *** Modules
 
 See http://orgmode.org/worg/org-contrib/
