@@ -2113,7 +2113,14 @@ Agenda remains open in background. No need to recompile it every time you call i
 
 Show tags at the right edge of the screen:
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-tags-column (- (- (window-total-width) 3)))
+;; (setq org-agenda-tags-column (- (- (window-total-width) 3)))
+
+;; taken from https://lists.gnu.org/archive/html/emacs-orgmode/2010-12/msg00410.html
+(add-hook 'org-finalize-agenda-hook 'place-agenda-tags)
+(defun place-agenda-tags ()
+  "Put the agenda tags by the right border of the agenda window."
+  (setq org-agenda-tags-column (- 4 (window-width)))
+  (org-agenda-align-tags))
 #+END_SRC
 
 *** Links
