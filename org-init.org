@@ -1406,6 +1406,8 @@ Don't ask for confirmation when evaluating source blocks:
 
 **** Lists
 
+Show bullet instead of - or *.
+
 #+BEGIN_SRC emacs-lisp
 (font-lock-add-keywords 'org-mode
                         '(("^ +\\([-*]\\) "
@@ -1460,6 +1462,7 @@ See also http://kitchingroup.cheme.cmu.edu/blog/2016/01/16/Colored-text-in-org-m
 		(set-face-attribute 'org-latex-and-related nil :inherit 'fixed-pitch :background "#3E3D31")
 		(set-face-attribute 'org-link nil :inherit 'fixed-pitch)
 		(set-face-attribute 'org-date nil :inherit 'fixed-pitch)
+		(set-face-attribute 'org-tag nil :inherit 'fixed-pitch)
 		)
 
 	(setq org-hide-emphasis-markers t)
@@ -5089,9 +5092,21 @@ Don't ask for the path when searching for files:
 	(":" org-set-tags "tags" :exit t)
 	("+" org-priority-up "priority up" :exit nil)
 	("-" org-priority-down "priority down" :exit nil)
-	("\\" org-toggle-pretty-entities "toggle utf8 chars" :exit t)
+	("\\" tl/org-toggle-overlays "toggle overlays" :exit t)
 	("^" org-sort nil :exit t)
 	("q" nil :color blue)
+	)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-toggle-overlays ()
+	(interactive)
+	(org-toggle-pretty-entities)
+	(org-toggle-link-display)
+	(if (org-hide-emphasis-markers)
+			(setq org-hide-emphasis-markers nil)
+		(setq org-hide-emphasis-markers t)
+		)
 	)
 #+END_SRC
 
