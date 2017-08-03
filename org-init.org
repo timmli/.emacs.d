@@ -4440,6 +4440,28 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
 (global-set-key (kbd "C-x P") 'proced)
 #+END_SRC
 
+* Media player
+
+** COMMENT emms
+
+-[ ] For some reason, =emms= does not correctly use =vlc= under Windows.
+
+#+BEGIN_SRC emacs-lisp
+(use-package emms
+  :ensure t :defer t
+  :config
+  (progn
+		(require 'emms-setup)
+		;; (emms-minimalistic) 
+		(emms-all) 
+		(emms-default-players)
+		;; (setq emms-player-vlc-command-name
+		;; 			(expand-file-name "path/to/vlc/binaries"))
+		;; (setq emms-player-vlc-parameters '("--intf=rc")) 
+    (setq emms-source-file-default-directory "~/Music/")
+    (emms-add-directory-tree "~/Music/")))
+#+END_SRC
+
 * Tags
 
 ** etags
