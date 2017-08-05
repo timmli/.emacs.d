@@ -1377,6 +1377,16 @@ Don't ask for confirmation when evaluating source blocks:
 (setq org-confirm-babel-evaluate nil)
 #+END_SRC
 
+Fontify source blocks as defined for the  enclosed language: 
+#+BEGIN_SRC emacs-lisp
+(setq org-src-fontify-natively t)
+#+END_SRC
+
+Use tab key as defined for the enclosed language:
+#+BEGIN_SRC emacs-lisp
+(setq org-src-tab-acts-natively t)
+#+END_SRC
+
 *** General keys
 
 #+BEGIN_SRC emacs-lisp
@@ -1674,17 +1684,6 @@ See http://orgmode.org/worg/org-contrib/
 Selection
 #+BEGIN_SRC emacs-lisp
 (setq org-support-shift-select t)
-#+END_SRC
-
-Source blocks
-#+BEGIN_SRC emacs-lisp
-(setq org-src-fontify-natively t
-			org-src-tab-acts-natively t)
-#+END_SRC
-
-Todo lists
-#+BEGIN_SRC emacs-lisp
-(setq org-enforce-todo-dependencies t)
 #+END_SRC
 
 Links
@@ -2022,6 +2021,17 @@ Change export of bold font:
 #+BEGIN_SRC emacs-lisp
 (org-babel-do-load-languages 'org-babel-load-languages '((R . t)))
 (setq org-babel-R-command "R --slave --no-save")
+#+END_SRC
+
+*** Refile
+
+Following this excellent blog post: https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
+
+#+BEGIN_SRC emacs-lisp
+(setq org-refile-targets '((org-agenda-files :maxlevel . 3))
+			org-refile-use-outline-path 'file
+			org-outline-path-complete-in-steps nil
+			org-refile-allow-creating-parent-nodes 'confirm)
 #+END_SRC
 
 *** Plantuml
@@ -2381,6 +2391,11 @@ Insert timestamp when changing deadline:
 Insert timestamp when changing schedule:
 #+BEGIN_SRC emacs-lisp
 (setq org-log-reschedule 'time)
+#+END_SRC
+
+Observe dependencies between TODOs:
+#+BEGIN_SRC emacs-lisp
+(setq org-enforce-todo-dependencies t)
 #+END_SRC
 
 ** Calendar
