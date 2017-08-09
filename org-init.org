@@ -5387,6 +5387,76 @@ Automatically open the hydra with ibuffer:
 
 #+END_SRC
 
+** hydra-insert-date
+
+Copied from https://github.com/cmcmahan/elisp/blob/master/emacs-hydra.el:
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key
+ (kbd "C-c d")
+ (defhydra hydra-insert-date (:exit t)
+   "Insert Date"
+   ("t" (insert-date-time) "date/time")
+   ("d" (insert-date) "date")
+   ("O" (insert-date "<%Y-%m-%d %a %k:%M>") "org active stamp")
+   ("o" (insert-date "[%Y-%m-%d %a %k:%M]") "org inactive stamp")
+   ("q" nil "quit")))
+#+END_SRC
+
+Copied from https://github.com/cmcmahan/elisp/blob/master/emacs-misc.el:
+
+#+BEGIN_SRC emacs-lisp
+(defvar insert-time-format "%k:%M"
+  "*Format for \\[insert-time]. See `format-time-string' for info on how to format.")
+(setq insert-time-format "%k:%M") ;; 08:09
+
+(defvar insert-date-format "%Y-%m-%d"
+  "*Format for \\[insert-date]. See `format-time-string' for info on how to format.")
+(setq insert-date-format "%Y-%m-%d %a") ;; 2015-03-26 Thu
+
+(defun insert-time (&optional time-format)
+  "Insert the current time. Optional time format defaults to `insert-time-format'."
+  (interactive "*")
+  (let ((tformat (or time-format insert-time-format)))
+    (insert (concat (format-time-string tformat (current-time)) " "))))
+
+(defun insert-date (&optional date-format)
+  "Insert the current date. Option format defaults to  `insert-date-format'."
+  (interactive "*")
+  (insert-time (or date-format insert-date-format)))
+
+(defun insert-date-time ()
+  "Insert the current date formatted with `insert-date-format',
+then a space, then the current time formatted with
+`insert-time-format'."
+  (interactive "*")
+  (insert-time
+   (concat insert-date-format " " insert-time-format)))
+
+(defun idt ()
+  "Shortcut to `insert-date-time'"
+(interactive)
+(insert-date-time))
+
+(defun mp-insert-date ()
+  (interactive)
+  (insert (format-time-string "%x")))
+ 
+(defun mp-insert-time ()
+  (interactive)
+  (insert (format-time-string "%X")))
+ 
+(global-set-key (kbd "C-c i d") 'mp-insert-date)
+(global-set-key (kbd "C-c i t") 'mp-insert-time)
+
+(defun insert-current-file-name ()
+  (interactive)
+  (insert (buffer-file-name (current-buffer))))
+#+END_SRC
+
+#+RESULTS:
+: insert-current-file-name
+
 ** hydra-latex
 
 #+BEGIN_SRC emacs-lisp
