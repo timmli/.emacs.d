@@ -1761,8 +1761,8 @@ Use a prefix arg to get regular RET. "
       (org-return))
 
      ;; checkboxes too
-     ((org-at-item-checkbox-p)
-      (org-insert-todo-heading nil))
+     ;; ((org-at-item-checkbox-p)  ; commented by TL: Does not recognize empty items.
+     ;;  (org-insert-todo-heading nil))  ; commented by TL: Does not recognize empty items.
 
      ;; lists end with two blank lines, so we need to make sure we are also not
      ;; at the beginning of a line to avoid a loop where a new entry gets
@@ -1771,7 +1771,10 @@ Use a prefix arg to get regular RET. "
       ;; (if (save-excursion (beginning-of-line) (org-element-property :contents-begin (org-element-context)))
 			(if (org-element-property :contents-end (org-element-context)) ; added by TL
 					(if (not (re-search-forward "[[:graph:]]" (line-end-position) t)) ; added by TL: use org-return when character follows in line
-							(org-insert-heading)
+							(if (org-at-item-checkbox-p)			;added by TL
+									(org-insert-todo-heading nil) ; added by TL
+								(org-insert-heading)
+								)												; added by TL
 						(org-return))								; added by TL
 				(beginning-of-line)
 				(delete-region (line-beginning-position) (line-end-position))
