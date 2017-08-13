@@ -132,6 +132,8 @@ Add local themes directory to search space (just in case):
 (add-to-list 'custom-theme-load-path themes-dir)
 #+END_SRC
 
+*** monokai-theme
+
 The monokai theme is one of my favourites:
 
 #+BEGIN_SRC emacs-lisp
@@ -139,8 +141,18 @@ The monokai theme is one of my favourites:
 	:ensure t
 	:config
 	(load-theme 'monokai t)
+	
+	;; font size of org-mode headers 
+	(setq monokai-height-minus-1 1.0
+        monokai-height-plus-1 1.0
+        monokai-height-plus-2 1.1
+        monokai-height-plus-3 1.25
+        monokai-height-plus-4 1.5)
 )
 #+END_SRC
+
+#+RESULTS:
+: t
 
 ** Mode line and window labels
 
@@ -1463,40 +1475,43 @@ See also http://kitchingroup.cheme.cmu.edu/blog/2016/01/16/Colored-text-in-org-m
 
 **** Fonts
 
+General settings:
+
 #+begin_src emacs-lisp
 	(add-hook 'org-mode-hook (lambda ()
 														 (variable-pitch-mode t)
 														 ;; (text-scale-increase 0.5)
 														 ))
 
-	;; (set-face-attribute 'org-block-background nil :inherit 'fixed-pitch)
-
-	(custom-set-faces
-	 '(org-done ((t (:overline t))))
-	 '(org-todo ((t (:overline t))))
-	 '(org-block ((t (:inherit fixed-pitch :background "#3E3D31")))) ; org-mode >9
-	 '(org-block-background ((t (:inherit fixed-pitch :background "#3E3D31"))))
-	 '(org-block-begin-line ((t (:underline t))))
-	 '(org-block-end-line  ((t (:overline t))))
-	 '(org-level-1 ((t (:inherit outline-1 :overline t :weight semi-bold :height 1.5))))
-	 '(org-level-2 ((t (:inherit outline-2 :overline t :weight semi-bold :height 1.25))))
-	 '(org-level-3 ((t (:inherit outline-3 :weight semi-bold :height 1.1))))
-	 '(org-level-4 ((t (:inherit outline-4 :weight semi-bold :height 1.0))))
-	 '(org-level-5 ((t (:inherit outline-5 :weight semi-bold :height 1.0))))
-	 )
-
 	(with-eval-after-load 'org
 		(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-		(set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch :background "#3E3D31")
-		(set-face-attribute 'org-latex-and-related nil :inherit 'fixed-pitch :background "#3E3D31")
+		(set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch)
+		(set-face-attribute 'org-latex-and-related nil :inherit 'fixed-pitch)
 		(set-face-attribute 'org-link nil :inherit 'fixed-pitch)
 		(set-face-attribute 'org-date nil :inherit 'fixed-pitch)
 		(set-face-attribute 'org-tag nil :inherit 'fixed-pitch)
 		)
 
 	(setq org-hide-emphasis-markers t)
-
 #+end_src
+
+#+begin_src emacs-lisp
+	(custom-set-faces
+	 '(org-done ((t (:overline t))))
+	 '(org-todo ((t (:overline t))))
+	 '(org-block ((t (:inherit fixed-pitch )))) ; org-mode >9
+	 '(org-block-background ((t (:inherit fixed-pitch))))
+	 '(org-block-begin-line ((t (:underline t))))
+	 '(org-block-end-line  ((t (:overline t))))
+	 '(org-level-1 ((t (:inherit outline-1 :overline t :weight semi-bold ))))
+	 '(org-level-2 ((t (:inherit outline-2 :overline t :weight semi-bold ))))
+	 '(org-level-3 ((t (:inherit outline-3 :weight semi-bold ))))
+	 '(org-level-4 ((t (:inherit outline-4 :weight semi-bold ))))
+	 '(org-level-5 ((t (:inherit outline-5 :weight semi-bold ))))
+	 )
+#+end_src
+
+Further attributes: =:background=, =:height=
 
 **** Bullets, folding symbols, HTML and LaTeX symbols
 
