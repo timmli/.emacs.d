@@ -4424,6 +4424,25 @@ Enhancement of magit to make available a more comprehensive access to Github rep
 	)
 #+END_SRC
 
+* Kill ring
+
+#+BEGIN_SRC emacs-lisp
+(defun xah-show-kill-ring ()
+  "Insert all `kill-ring' content in a new buffer.
+
+URL `http://ergoemacs.org/emacs/emacs_show_kill_ring.html'
+Version 2017-06-19"
+  (interactive)
+  (let (($buf (generate-new-buffer "untitled")))
+    (progn
+      (switch-to-buffer $buf)
+      (funcall 'fundamental-mode)
+      (setq buffer-offer-save t)
+      (dolist (x kill-ring )
+        (insert x "\n--------------------------------------------------\n\n"))
+      (goto-char (point-min)))))
+#+END_SRC
+
 * Shells
 
 ** better-shell
