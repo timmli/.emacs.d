@@ -124,12 +124,22 @@ Cursor blinking:
 
 ** Theme
 
-Theme:
+Add local themes directory to search space (just in case):
+
 #+BEGIN_SRC emacs-lisp
 (setq themes-dir
       (expand-file-name "themes" user-emacs-directory))
 (add-to-list 'custom-theme-load-path themes-dir)
-(load-theme 'monokai t)
+#+END_SRC
+
+The monokai theme is one of my favourites:
+
+#+BEGIN_SRC emacs-lisp
+(use-package monokai-theme
+	:ensure t
+	:config
+	(load-theme 'monokai t)
+)
 #+END_SRC
 
 ** Mode line and window labels
