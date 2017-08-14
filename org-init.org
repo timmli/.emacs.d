@@ -1919,7 +1919,7 @@ Scale LaTeX previews:
 
 Use LaTeXmk:
 #+BEGIN_SRC emacs-lisp
-(setq org-latex-to-pdf-process (list "latexmk -f -pdf %s"))
+(setq org-latex-pdf-process (list "latexmk -f -pdf %f"))
 #+END_SRC
 
 *** COMMENT org-gcal
