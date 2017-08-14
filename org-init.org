@@ -1737,6 +1737,12 @@ C-a and C-e behave org-sensitive
 (setq org-special-ctrl-a/e t)
 #+END_SRC
 
+Footnotes
+#+BEGIN_SRC emacs-lisp
+(setq org-footnote-define-inline t
+			org-footnote-auto-adjust t)
+#+END_SRC
+
 *** Clocking and logging
 
 Collect log entries in drawer:
