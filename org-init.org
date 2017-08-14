@@ -151,8 +151,14 @@ The monokai theme is one of my favourites:
 )
 #+END_SRC
 
-#+RESULTS:
-: t
+- [ ] Yet I don't like how regions are highlighted:
+
+#+BEGIN_SRC emacs-lisp
+(custom-theme-set-faces
+ 'monokai
+ `(region ((t (:inherit highlight :background "#FFB269" :foreground ,monokai-background))))
+ )
+#+END_SRC
 
 ** Mode line and window labels
 
