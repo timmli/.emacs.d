@@ -5540,6 +5540,7 @@ then a space, then the current time formatted with
 	("f" hydra-latex-fonts/body "font..." :exit t)
 	("c" TeX-command-master "compile" :exit t)
 	("l" TeX-recenter-output-buffer "show log" :exit t)
+	("r" TeX-command-region "compile region" :exit t)
 	("s" isearch-forward "search" :exit t)
 	("o" hydra-latex-folding/body "folding..." :exit t)
 	("v" TeX-view "view output" :exit t)
