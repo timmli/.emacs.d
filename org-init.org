@@ -793,6 +793,10 @@ Depends on plantuml.jar and Gaphviz (http://www.graphviz.org).
 
 ** dired
 
+#+BEGIN_SRC emacs-lisp
+(require 'dired)
+#+END_SRC
+
 *** General settings
 
 Tips:  http://ergoemacs.org/emacs/emacs_dired_tips.html
