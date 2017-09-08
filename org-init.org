@@ -2066,7 +2066,9 @@ Change export of bold font:
  '((gnuplot . t)))
 #+END_SRC
 
-*** R support
+*** TODO COMMENT R support
+
+- [ ] as of Org 9.1, this throws =(invalid-function org-babel-header-args-safe-fn)= due to =org-babel-R-command=
 
 #+BEGIN_SRC emacs-lisp
 (org-babel-do-load-languages 'org-babel-load-languages '((R . t)))
@@ -3507,6 +3509,8 @@ Maybe an option in the future.
 https://github.com/mickeynp/discover.el
 
 *** lacarte
+
+Menu completion at the keyboard
 
 #+BEGIN_SRC emacs-lisp
 (use-package lacarte
