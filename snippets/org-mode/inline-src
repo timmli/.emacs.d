@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: inline latex code
+# key: @l
+# expand-env: ((yas-wrap-around-region t))
+# --
+@@latex:$0@@
