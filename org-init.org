@@ -793,6 +793,8 @@ Depends on plantuml.jar and Gaphviz (http://www.graphviz.org).
 
 ** dired
 
+The following prevents Emacs from throwing =Symbol's value as variable is void: dired-mode-map=: 
+
 #+BEGIN_SRC emacs-lisp
 (require 'dired)
 #+END_SRC
