@@ -2973,6 +2973,10 @@ Pomidor brings the promodoro technique to Emacs:
 	)
 #+END_SRC
 
+** EPUB reader
+
+https://github.com/wasamasa/nov.el
+
 * Minor modes
 ** pandoc-mode
 
