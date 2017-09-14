@@ -25,30 +25,28 @@
 
 (defconst xmg-font-lock-keywords
 	(list
-	 (regexp-opt '("class "
-								 "node "
-								 "declare "
-								 "value "
-								 "syn "
-								 "sem "
-								 "semantics "
-								 "highlight "
-								 "extern "
-								 "feature "
-								 "type "
-								 "use "
-								 "property "
-								 "import "
-								 "export "
-								 ) t)
-	 '("class \\([a-zA-Z0-9_.-]*\\)" 1 'font-lock-function-face)
-	 '("feature \\([a-zA-Z0-9_.-]*\\)" 1 'font-lock-type-face)
-	 '("property \\([a-zA-Z0-9_.-]*\\)" 1 'font-lock-type-face)
-	 '("type \\([a-zA-Z0-9_.-]*\\)" 1 'font-lock-type-face)
+	 (regexp-opt '("class"
+								 "node"
+								 "declare"
+								 "value"
+								 "<syn>"
+								 "<sem>"
+								 "<frame>"
+								 "feature"
+								 "type"
+								 "property"
+								 "import"
+								 "export"
+								 ;; "*="
+								 ) 'words)
+	 '("^[ \t]*class[ \t]+\\([a-zA-Z0-9_.-]*\\)" 1 'font-lock-function-name-face)
+	 '("^[ \t]*feature[ \t]+\\([a-zA-Z0-9_.-]*\\)" 1 'font-lock-type-face)
+	 '("^[ \t]*property[ \t]+\\([a-zA-Z0-9_.-]*\\)" 1 'font-lock-type-face)
+	 '("^[ \t]*type[ \t]+\\([a-zA-Z0-9_.-]*\\)" 1 'font-lock-type-face)
+	 '("^[ \t]*value[ \t]+\\([a-zA-Z0-9_.-]*\\)" 1 'font-lock-function-name-face)
+	 '("^[ \t]*\\(use\\)[ \t]+\\([a-zA-Z0-9_.-=]+\\)[ \t]*\\(with\\)[ \t]+\(\\([a-zA-Z0-9_.-=]*\\)\)[ \t]+\\(dims\\)[ \t]" (1 'font-lock-builtin-face) (3 'font-lock-builtin-face) (5 'font-lock-builtin-face))
 	 '("\?[a-zA-Z0-9]+" . font-lock-variable-name-face)
 	 '("\![a-zA-Z0-9]+" . font-lock-constant-face)
-	 '("\(\\(\\sw[a-zA-Z0-9_.-]*\\(,\\sw[a-zA-Z0-9_.-]*\\)*\\)\)" 1 font-lock-constant-face)
-	 '("$\\(\\sw*\\)*" . font-lock-constant-face)
 	 )
 	"Default highlighting expressions for xmg-mode."
 	)
