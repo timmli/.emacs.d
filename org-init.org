@@ -2977,6 +2977,12 @@ Pomidor brings the promodoro technique to Emacs:
 
 https://github.com/wasamasa/nov.el
 
+** XMG
+
+#+BEGIN_SRC emacs-lisp
+(require 'xmg-mode) 
+#+END_SRC
+
 * Minor modes
 ** pandoc-mode
 
