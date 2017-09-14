@@ -3364,7 +3364,8 @@ Execute when all backends added to =company-backends=.
 							sh-mode-hook
 							TeX-mode-hook
 							markdown-mode-hook
-							org-mode-hook)
+							org-mode-hook
+							xmg-mode)
 			(add-hook it #'smartparens-mode))
 		(require 'smartparens-latex)
 		;; org-mode
