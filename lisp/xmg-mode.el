@@ -25,23 +25,26 @@
 
 (defconst xmg-font-lock-keywords
 	(list
-	 (regexp-opt '("class"
-								 "node"
-								 "declare"
-								 "value"
-								 "syn"
-								 "sem"
-								 "semantics"
-								 "highlight"
-								 "extern"
-								 "feature"
-								 "type"
-								 "use"
-								 "property"
-								 "import"
-								 "export"
+	 (regexp-opt '("class "
+								 "node "
+								 "declare "
+								 "value "
+								 "syn "
+								 "sem "
+								 "semantics "
+								 "highlight "
+								 "extern "
+								 "feature "
+								 "type "
+								 "use "
+								 "property "
+								 "import "
+								 "export "
 								 ) t)
-	 '("class\\s \\([a-zA-Z0-9_.-]*\\)" 1 'font-lock-function-face)
+	 '("class \\([a-zA-Z0-9_.-]*\\)" 1 'font-lock-function-face)
+	 '("feature \\([a-zA-Z0-9_.-]*\\)" 1 'font-lock-type-face)
+	 '("property \\([a-zA-Z0-9_.-]*\\)" 1 'font-lock-type-face)
+	 '("type \\([a-zA-Z0-9_.-]*\\)" 1 'font-lock-type-face)
 	 '("\?[a-zA-Z0-9]+" . font-lock-variable-name-face)
 	 '("\![a-zA-Z0-9]+" . font-lock-constant-face)
 	 '("\(\\(\\sw[a-zA-Z0-9_.-]*\\(,\\sw[a-zA-Z0-9_.-]*\\)*\\)\)" 1 font-lock-constant-face)
