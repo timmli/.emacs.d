@@ -78,7 +78,7 @@
 	(set (make-local-variable 'indent-line-function) 'xmg-indent-line)
 	(setq major-mode 'xmg-mode)
   (setq mode-name "XMG")
-  (run-hooks 'xmg-mode-hook))
+  (run-mode-hooks 'prog-mode-hook 'xmg-mode-hook))
 
 (provide 'xmg-mode)
 
