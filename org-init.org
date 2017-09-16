@@ -1285,11 +1285,27 @@ Copied from https://oremacs.com/2015/01/12/dired-file-size/ and slightly adapted
 
 ** js2-mode
 
+Major mode for JavaScript files.
+
 #+BEGIN_SRC emacs-lisp
-(use-package js2-mode										; for improved JavaScript support
+(use-package js2-mode
 	:ensure t
 	:mode
-	("\\.js\\'" . js2-mode))
+	("\\.js\\'" . js2-mode)
+	:config
+	;; Better imenu
+	(add-hook 'js2-mode-hook #'js2-imenu-extras-mode)
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package js2-refactor
+	:ensure t
+	:after js2-mode
+	:config
+	(add-hook 'js2-mode-hook #'js2-refactor-mode)
+	(js2r-add-keybindings-with-prefix "C-c C-r")
+	(define-key js2-mode-map (kbd "C-k") #'js2r-kill))
 #+END_SRC
 
 ** org-mode
