@@ -3511,6 +3511,22 @@ Copy mouse selection to kill-ring:
 ;; (setq mouse-drag-copy-region t)
 #+end_src
 
+** Code folding
+
+*** hideshow
+
+#+BEGIN_SRC emacs-lisp
+(use-package hideshow)
+#+END_SRC
+
+=hideshow-org= adds org-mode like folding experience to hideshow.
+
+#+BEGIN_SRC emacs-lisp
+(use-package hideshow-org
+	:ensure t
+	)
+#+END_SRC
+
 ** Context menu
 
 #+BEGIN_SRC emacs-lisp
