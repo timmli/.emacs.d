@@ -4028,6 +4028,18 @@ Position the cursor at it's beginning, according to the current mode."
 (global-set-key (kbd "C-S-l") 'recenter-top-bottom)
 #+end_src
 
+*** Move line
+
+**** move-text
+
+#+BEGIN_SRC emacs-lisp
+(use-package move-text
+	:ensure t
+	:init
+	(move-text-default-bindings)
+	)
+#+END_SRC
+
 ** Capitalization
 
 Toggle letter case:
