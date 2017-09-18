@@ -3384,7 +3384,8 @@ Execute when all backends added to =company-backends=.
 							TeX-mode-hook
 							markdown-mode-hook
 							org-mode-hook
-							xmg-mode-hook)
+							xmg-mode-hook
+							web-mode-hook)
 			(add-hook it #'smartparens-mode))
 		(require 'smartparens-latex)
 		;; org-mode
@@ -3794,6 +3795,8 @@ Remove extra spaces from line or region (TODO):
 #+end_src
 
 *** Tracking changes
+
+**** highlight-changes-mode
 
 http://emacs-fu.blogspot.de/2009/05/tracking-changes.html
 #+begin_src emacs-lisp
