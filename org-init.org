@@ -4729,15 +4729,26 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
   (global-set-key (kbd "<f7> a") 'helm-bbdb)
 #+END_SRC
 
-* tramp
+* Remote connections
+
+** tramp
 
 #+BEGIN_SRC emacs-lisp
   (require 'tramp)
   (if (eq system-type 'windows-nt) 
-      (setq tramp-default-method "plink")
+      (progn
+				(setq ange-ftp-ftp-program-name "ftp.exe")
+				(setq tramp-default-method "plink"))
     (setq tramp-default-method "ssh"))
   ;; (setq tramp-default-user "")
 #+END_SRC
+
+
+** emacs-ssh-deploy
+
+Deploy local files and directories to remote hosts.
+
+https://github.com/cjohansson/emacs-ssh-deploy
 
 * hydra
 
