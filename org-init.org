@@ -1835,7 +1835,8 @@ Use a prefix arg to get regular RET. "
 					(if (not (re-search-forward "[[:graph:]]" (line-end-position) t)) ; added by TL: use org-return when character follows in line
 							(if (org-at-item-checkbox-p)			;added by TL
 									(org-insert-todo-heading nil) ; added by TL
-								(org-insert-heading)
+								;; (org-insert-heading) ; commented by TL
+								(org-insert-item)				; added by TL
 								)												; added by TL
 						(org-return))								; added by TL
 				(beginning-of-line)
