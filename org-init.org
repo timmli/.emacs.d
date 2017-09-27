@@ -711,6 +711,7 @@ Quick, comprehensive search on org-mode files.
 	("\\.html?\\'" . web-mode)
 	("\\.xml\\'" . web-mode)
 	("\\.css\\'" . web-mode)
+	("\\.svg\\'" . web-mode)
 	:config
 	;; highlight enclosing tags of the element under cursor
   (setq web-mode-enable-current-element-highlight t)
