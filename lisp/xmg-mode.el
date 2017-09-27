@@ -37,6 +37,8 @@
 								 "property"
 								 "import"
 								 "export"
+								 "frame-constraints"
+								 "frame-types"
 								 ;; "*="
 								 ) 'words)
 	 '("^[ \t]*class[ \t]+\\([a-zA-Z0-9_.-]*\\)" 1 'font-lock-function-name-face)
@@ -59,7 +61,8 @@
 (defvar xmg-mode-syntax-table
   (let ((st (make-syntax-table)))
 		(modify-syntax-entry ?_ "w" st)			; treat underscore as a segment of a word
-
+		(modify-syntax-entry ?- "w" st)			; treat hyphen as a segment of a word
+		
 		; comments
 		(modify-syntax-entry ?/ ". 12" st)	; C++ style comments
     (modify-syntax-entry ?% "<" st)
