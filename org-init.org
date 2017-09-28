@@ -566,6 +566,7 @@ http://sqlite.org/download.html
 		(add-hook 'latex-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
 		(add-hook 'TeX-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
 		(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Emacs Lisp"))))
+		(add-hook 'js2-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("JavaScript"))))
 		(add-hook 'org-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Org_Mode"))))
 		(add-hook 'plantuml-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("PlantUML"))))
 		(add-hook 'sh-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Bash"))))
@@ -1284,7 +1285,9 @@ Copied from https://oremacs.com/2015/01/12/dired-file-size/ and slightly adapted
 (define-key dired-mode-map (kbd "z") 'dired-get-size)
 #+END_SRC
 
-** js2-mode
+** JavaScript
+
+*** js2-mode
 
 Major mode for JavaScript files.
 
@@ -1308,6 +1311,14 @@ Major mode for JavaScript files.
 	(js2r-add-keybindings-with-prefix "C-c C-r")
 	(define-key js2-mode-map (kbd "C-k") #'js2r-kill))
 #+END_SRC
+
+*** TODO indium
+
+JavaScript development environment for Emacs
+
+*** TODO tern
+
+for better autocompletion
 
 ** org-mode
 
