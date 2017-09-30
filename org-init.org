@@ -5672,6 +5672,7 @@ Copied from https://github.com/cmcmahan/elisp/blob/master/emacs-hydra.el:
    ("o" (insert-date "[%Y-%m-%d %a %k:%M]"))
    ("O" (insert-date "<%Y-%m-%d %a %k:%M>"))
    ("q" nil)))
+(global-set-key (kbd "C-c i d") 'hydra-insert-date/body)
 #+END_SRC
 
 Copied from https://github.com/cmcmahan/elisp/blob/master/emacs-misc.el:
