@@ -5648,13 +5648,30 @@ Copied from https://github.com/cmcmahan/elisp/blob/master/emacs-hydra.el:
 #+BEGIN_SRC emacs-lisp
 (global-set-key
  (kbd "C-c d")
- (defhydra hydra-insert-date (:exit t)
-   "Insert Date"
-   ("t" (insert-date-time) "date/time")
-   ("d" (insert-date) "date")
-   ("O" (insert-date "<%Y-%m-%d %a %k:%M>") "org active stamp")
-   ("o" (insert-date "[%Y-%m-%d %a %k:%M]") "org inactive stamp")
-   ("q" nil "quit")))
+ (defhydra hydra-insert-date (:exit t :hint nil)
+   "
+
+      Insert Date
+    ╭─────────────╯
+      [_1_] 2017-09-30                            [_o_] org inactive stamp
+      [_2_] 2017-09-30 Sa                         [_O_] org active stamp
+      [_3_] 2017-09-30 Sa 23:35
+      [_4_] September 30, 2017
+      [_5_] Saturday, September 30, 2017
+      [_6_] 2017-09-30T23:47:53+02:00             [_q_] quit
+   "
+	 ("1" (insert-date "%Y-%m-%d"))
+   ("2" (insert-date))
+   ("3" (insert-date-time))
+	 ("4" (insert-date "%B %d, %Y"))
+	 ("5" (insert-date "%A, %B %d, %Y"))
+	 ;; inspired from http://ergoemacs.org/emacs/elisp_insert-date-time.html
+	 ("6" (insert (concat
+								 (format-time-string "%Y-%m-%dT%T")
+								 (funcall (lambda ($x) (format "%s:%s" (substring $x 0 3) (substring $x 3 5))) (format-time-string "%z")))))
+   ("o" (insert-date "[%Y-%m-%d %a %k:%M]"))
+   ("O" (insert-date "<%Y-%m-%d %a %k:%M>"))
+   ("q" nil)))
 #+END_SRC
 
 Copied from https://github.com/cmcmahan/elisp/blob/master/emacs-misc.el:
