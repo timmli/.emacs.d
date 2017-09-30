@@ -4170,7 +4170,7 @@ F5 inserts the entity code."
 														 (format "%10s %s" (nth 6 element) element)
 														 element))))))
 					 sources))))
-
+(global-set-key (kbd "C-c i e") 'helm-insert-org-entity)
 #+END_SRC
 
 ** Buffer actions
