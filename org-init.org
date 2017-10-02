@@ -1965,6 +1965,20 @@ Use LaTeXmk:
 (setq org-latex-pdf-process (list "latexmk -f -pdf %f"))
 #+END_SRC
 
+Add the class =langscibook= to the set of known classes.
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-latex-classes
+						 '("langscibook" 
+							 "\\documentclass{LSP/langscibook}
+				    		[NO-DEFAULT-PACKAGES]" 
+							 ("\\part{%s}" . "\\part*{%s}") 
+							 ("\\chapter{%s}" . "\\chapter*{%s}") 
+							 ("\\section{%s}" . "\\section*{%s}") 
+							 ("\\subsection{%s}" . "\\subsection*{%s}") 
+							 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+#+END_SRC
+
 *** COMMENT org-gcal
 
 Integrate Google Calendar with =org-gcal=.
