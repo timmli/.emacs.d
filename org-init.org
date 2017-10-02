@@ -122,6 +122,11 @@ Cursor blinking:
 (setq blink-cursor-blinks 0)						; blink forever
 #+END_SRC
 
+Stretch cursor:
+#+BEGIN_SRC emacs-lisp
+(setq  x-stretch-cursor t)
+#+END_SRC
+
 ** Theme
 
 Add local themes directory to search space (just in case):
