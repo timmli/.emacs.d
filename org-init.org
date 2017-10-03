@@ -1945,6 +1945,13 @@ Load export module for LaTeX:
 (require 'ox-latex)
 #+END_SRC
 
+Headlines with =:ignore:= tag are ignored during export, but not their body:
+#+BEGIN_SRC emacs-lisp
+(require 'ox-extra)
+(ox-extras-activate '(ignore-headlines))
+#+END_SRC
+
+Support from org-babel:
 #+BEGIN_SRC emacs-lisp
 (org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
 (setq org-highlight-latex-and-related '(latex script entities)) ; inline sytax highlighting
