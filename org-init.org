@@ -1940,6 +1940,11 @@ Set keys:
 
 *** LaTeX support
 
+Load export module for LaTeX:
+#+BEGIN_SRC emacs-lisp
+(require 'ox-latex)
+#+END_SRC
+
 #+BEGIN_SRC emacs-lisp
 (org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
 (setq org-highlight-latex-and-related '(latex script entities)) ; inline sytax highlighting
@@ -1965,18 +1970,30 @@ Use LaTeXmk:
 (setq org-latex-pdf-process (list "latexmk -f -pdf %f"))
 #+END_SRC
 
-Add the class =langscibook= to the set of known classes.
+Add the class [[https://github.com/langsci/latex][langscibook]] to the set of known classes.
 
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-latex-classes
 						 '("langscibook" 
-							 "\\documentclass{LSP/langscibook}
+							 "\\documentclass{langsci/langscibook}
 				    		[NO-DEFAULT-PACKAGES]" 
 							 ("\\part{%s}" . "\\part*{%s}") 
 							 ("\\chapter{%s}" . "\\chapter*{%s}") 
 							 ("\\section{%s}" . "\\section*{%s}") 
 							 ("\\subsection{%s}" . "\\subsection*{%s}") 
-							 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+							 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+							 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+							 ))
+
+(add-to-list 'org-latex-classes
+						 '("langscibook-paper" 
+							 "\\documentclass[output=paper]{langsci/langscibook}
+				    		[NO-DEFAULT-PACKAGES]" 
+							 ("\\section{%s}" . "\\section*{%s}") 
+							 ("\\subsection{%s}" . "\\subsection*{%s}") 
+							 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+							 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+							 ))
 #+END_SRC
 
 *** COMMENT org-gcal
