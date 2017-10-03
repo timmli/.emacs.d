@@ -6,12 +6,22 @@
 #+TITLE: ${1:Title}
 #+SUBTITLE: ${2:Subtitle}
 #+AUTHOR: ${3:John Doe}
+:Settings:
 #+FILETAGS: research
 #+DATE: 
 #+LANGUAGE:  en
 #+OPTIONS:   H:2 num:t toc:nil \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t ':t
 #+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
-#+LATEX_CLASS: ${4:article}
+#+LATEX_CLASS: ${4:$$(yas-choose-value (mapcar 'car org-latex-classes))}
+#+LATEX_CLASS_OPTIONS: [11pt, a4paper]
 #+LATEX_HEADER: %\input{myMacros}
+#+LATEX_HEADER: %\usepackage{linguex}
+#+LATEX_COMPILER: ${5:$$(yas-choose-value '("pdflatex" "xelatex" "lualatex"))}
+:end:
 
 $0
+
+* COMMENT Local Variables
+# Local variables:
+# org-latex-with-hyperref: nil
+# end:
