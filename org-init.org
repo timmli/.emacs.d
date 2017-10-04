@@ -2978,6 +2978,15 @@ Delete environment at point (https://www.reddit.com/r/emacs/comments/5f99nv/help
 	(add-hook 'LaTeX-mode-hook '(lambda () (setq-local tab-always-indent nil)))
 #+END_SRC
 
+Usefull extras, e.g., org-mode-like folding:
+#+BEGIN_SRC emacs-lisp
+(use-package latex-extra                
+  :ensure t
+  :defer t
+  :config (add-hook 'LaTeX-mode-hook #'latex-extra-mode))
+#+END_SRC 
+
+
 ** Markdown
 
 #+BEGIN_SRC emacs-lisp
@@ -3586,7 +3595,11 @@ Edit regions with identical content in the same way simultaneously.
 *** hideshow
 
 #+BEGIN_SRC emacs-lisp
-(use-package hideshow)
+(use-package hideshow
+  :ensure t
+  :diminish hs-minor-mode
+  :config
+	(add-hook 'prog-mode-hook 'hs-minor-mode))
 #+END_SRC
 
 =hideshow-org= adds org-mode like folding experience to hideshow.
@@ -3594,7 +3607,8 @@ Edit regions with identical content in the same way simultaneously.
 #+BEGIN_SRC emacs-lisp
 (use-package hideshow-org
 	:ensure t
-	)
+  :config
+	(add-hook 'prog-mode-hook 'hs-org/minor-mode))
 #+END_SRC
 
 ** Context menu
@@ -5798,7 +5812,7 @@ A hydra for code folding with AUCTeX:
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-latex-folding (:hint nil :body-pre (TeX-fold-mode 1))
 	"LaTeX folding"
-	("b" TeX-clearout-buffer "remove folding in buffer" :exit t)
+	("b" TeX-fold-clearout-buffer "remove folding in buffer" :exit t)
 	("B" TeX-fold-buffer "activate folding in buffer" :exit t)
 	("o" TeX-fold-dwim "fold dwim" :exit t)
 	("Q" TeX-fold-mode "quit TeX-fold-mode" :exit t)
