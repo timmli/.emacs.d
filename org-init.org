@@ -5714,8 +5714,8 @@ Copied from https://github.com/cmcmahan/elisp/blob/master/emacs-hydra.el:
     ╭─────────────╯
       [_1_] 2017-09-30                            [_o_] org inactive stamp
       [_2_] 2017-09-30 Sa                         [_O_] org active stamp
-      [_3_] 2017-09-30 Sa 23:35
-      [_4_] September 30, 2017
+      [_3_] 2017-09-30 Sa 23:35                   
+      [_4_] September 30, 2017                    [_d_] 30.09.2017
       [_5_] Saturday, September 30, 2017
       [_6_] 2017-09-30T23:47:53+02:00             [_q_] quit
    "
@@ -5730,6 +5730,7 @@ Copied from https://github.com/cmcmahan/elisp/blob/master/emacs-hydra.el:
 								 (funcall (lambda ($x) (format "%s:%s" (substring $x 0 3) (substring $x 3 5))) (format-time-string "%z")))))
    ("o" (insert-date "[%Y-%m-%d %a %k:%M]"))
    ("O" (insert-date "<%Y-%m-%d %a %k:%M>"))
+   ("d" (insert-date "%d.%m.%Y"))
    ("q" nil)))
 (global-set-key (kbd "C-c i d") 'hydra-insert-date/body)
 #+END_SRC
@@ -5777,8 +5778,8 @@ then a space, then the current time formatted with
   (interactive)
   (insert (format-time-string "%X")))
  
-(global-set-key (kbd "C-c i d") 'mp-insert-date)
-(global-set-key (kbd "C-c i t") 'mp-insert-time)
+;; (global-set-key (kbd "C-c i d") 'mp-insert-date)
+;; (global-set-key (kbd "C-c i t") 'mp-insert-time)
 
 (defun insert-current-file-name ()
   (interactive)
