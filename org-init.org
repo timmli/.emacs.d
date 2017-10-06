@@ -2458,16 +2458,16 @@ Functions to move around single cells:
 #+BEGIN_SRC emacs-lisp
 	(setq org-capture-templates
 				'(
-					("a" "Appointment" entry (file (concat org-directory "/captures.org"))
+					("a" "Appointment" entry (file (expand-file-name "captures.org" org-directory))
 					 "* APPT %?\t%^G\n\n%^T\n\n")
 					;; ;; used for org-gcal
 					;; ("a" "Appointment" entry (file (concat org-directory "/gcal.org"))
 					;;  "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
-					("t" "Todo" entry (file (concat org-directory "/captures.org"))
+					("t" "Todo" entry (file (expand-file-name "captures.org" org-directory))
 					 "* TODO %?\t%^G\n CREATED: %U\n About region:%i\n %a")
-					("n" "Note" entry (file+datetree (concat org-directory "/notes.org"))
+					("n" "Note" entry (file+datetree (expand-file-name "notes.org" org-directory))
 					 "* %?\t%^G\n CREATED: %U\n About region:%i\n %a")
-					("c" "Code" entry (file (concat org-directory "/code.org"))
+					("c" "Code" entry (file (expand-file-name "code.org" org-directory ))
 					 "* %?\t%^G\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a")
 					))
 
