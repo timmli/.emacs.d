@@ -5434,7 +5434,7 @@ Don't ask for the path when searching for files:
 ** hydra-org
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-org-main (:hint nil)
+(defhydra hydra-org-main (:hint nil :columns 4)
 	"Org-mode"
 	("a" org-attach "attachments..." :exit t)
 	("A" hydra-org-archive/body "archive..." :exit t)
@@ -5485,7 +5485,7 @@ Don't ask for the path when searching for files:
 A hydra for org-columns.
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-org-columns (:hint nil :color pink :body-pre (org-columns))
+(defhydra hydra-org-columns (:hint nil :color pink :columns 3 :body-pre (org-columns))
 "Org-mode columns"
 (">" org-columns-widen "widen")
 ("<" org-columns-narrow "narrow")
@@ -5529,7 +5529,7 @@ A hydra for org-columns.
 ** hydra-deft
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-deft (:hint nil)
+(defhydra hydra-deft (:hint nil :columns 3)
 "Deft"
 ("a" deft-archive-file "archive" :exit t)
 ("d" deft-delete-file "delete" :exit t)
@@ -5789,7 +5789,7 @@ then a space, then the current time formatted with
 ** hydra-latex
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-latex-main (:hint nil)
+(defhydra hydra-latex-main (:hint nil :columns 3)
 	"LaTeX"
 	("<up>" tl/reftex-previous "previous heading" :exit nil)
 	("<down>" tl/reftex-next "next heading" :exit nil)
@@ -5837,7 +5837,7 @@ A hydra for code deletion with AUCTeX:
 A hydra for font selection with AUCTeX:
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-latex-fonts (:hint nil)
+(defhydra hydra-latex-fonts (:hint nil :columns 3)
 	"LaTeX fonts"
 	("b" TeX-bold "bold" :exit t)
 	("i" TeX-italic "italic" :exit t)
