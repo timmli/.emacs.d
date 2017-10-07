@@ -2098,11 +2098,11 @@ Load support for exporting LaTeX beamer presentations:
 (require 'ox-beamer)
 #+END_SRC
 
-Add my beamer class (=tl-beamer=) to the known LaTeX classes:
+Add virtual beamer class (=tl-beamer=) to the known LaTeX classes:
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-latex-classes
          '("tl-beamer" 
-						"\\documentclass{preambles/tl-beamer}
+						"\\documentclass{beamer}
 						[NO-DEFAULT-PACKAGES]"
             ("\\section{%s}" . "\\section*{%s}")
             ("\\subsection{%s}" . "\\subsection*{%s}")
