@@ -6113,7 +6113,7 @@ I've added this to make it fit into [[*hydra-f3][hydra-f3]]:
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-search (:color blue :columns 3)
-  "Search:"
+  "Search"
 	("a" helm-multi-swoop-all "all")
 	("m" helm-multi-swoop-current-mode "same mode")
   ("g" helm-grep-do-git-grep "git grep")
@@ -6125,7 +6125,6 @@ I've added this to make it fit into [[*hydra-f3][hydra-f3]]:
   ("f" isearch-forward nil)
 	)
 (global-set-key (kbd "C-S-f") 'hydra-search/body)
-
 #+END_SRC
 
 ** hydra-tags
