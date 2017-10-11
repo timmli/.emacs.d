@@ -2054,6 +2054,7 @@ Add \citeauthoryear and  \citealtauthoryear to org-ref:
 (add-to-list 'org-ref-cite-types "citealtauthoryear")
 #+END_SRC
 
+Set colors:
 #+BEGIN_SRC emacs-lisp
 (custom-set-variables
  '(org-ref-label-color "magenta")
@@ -2061,6 +2062,8 @@ Add \citeauthoryear and  \citealtauthoryear to org-ref:
  '(org-ref-cite-color "ForestGreen")
  )
 #+END_SRC
+
+TODO: Change format entry string with =org-ref-formatted-citation-formats=:
 
 *** org-reveal
 
