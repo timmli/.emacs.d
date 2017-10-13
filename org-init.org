@@ -1483,6 +1483,8 @@ Use tab key as defined for the enclosed language:
     (define-key org-mode-map (kbd "S-<right>") nil )
     (define-key org-mode-map (kbd "C-n") 'org-next-visible-heading )
 		(define-key org-mode-map (kbd "C-p") 'org-previous-visible-heading )
+    (define-key org-mode-map (kbd "C-S-p") 'org-backward-heading-same-level)
+		(define-key org-mode-map (kbd "C-S-p") 'org-previous-visible-heading )
     (define-key org-mode-map (kbd "C-c C-f") 'org-footnote-action )
 		(define-key org-mode-map (kbd "C-c C-t") 'org-todo )
     (define-key org-mode-map (kbd "C-c C-x C-b") 'org-tree-to-indirect-buffer ))
