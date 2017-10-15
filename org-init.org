@@ -2481,6 +2481,19 @@ Functions to move around single cells:
 (require 'org-table-move-single-cell)
 #+END_SRC
 
+*** Listings
+
+Use the =listings= package:
+#+BEGIN_SRC emacs-lisp
+(setq org-latex-listings 'listings)
+#+END_SRC
+
+Map scr-block languages to =listings= environments:
+#+BEGIN_SRC emacs-lisp
+;; (setq org-latex-custom-lang-environments
+;; 			'((org-babel-language "listings-environment")))
+#+END_SRC
+
 *** Capture templates
 
 - Template expansions: http://orgmode.org/manual/Template-expansion.html
