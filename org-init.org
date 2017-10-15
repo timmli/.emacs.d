@@ -1894,6 +1894,7 @@ Use a prefix arg to get regular RET. "
 										 ;; (org-insert-heading-respect-content) ; commented by TL: heading is sometimes added after *next* heading.
 										 (org-insert-heading) ; added by TL
 										 (outline-show-entry))
+						(backward-char)							; added by TL: re-search-forward moves point
 						(org-return))								; added by TL
 				(beginning-of-line)
 				(setf (buffer-substring
