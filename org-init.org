@@ -1626,6 +1626,15 @@ Do not edit in invisible areas of the buffer:
 
 - [ ] activate syntax highlighting for inline code
 
+#+BEGIN_SRC emacs-lisp
+(font-lock-add-keywords 'org-mode
+												'(("\\(@@latex:\\).*?\\(@@\\)"
+													 (1 font-lock-comment-face)
+													 (2 font-lock-comment-face))
+													)
+												)
+#+END_SRC
+
 **** Checkboxes
 
 Fontify checked checkbox items. 
