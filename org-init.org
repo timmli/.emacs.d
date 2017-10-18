@@ -1622,9 +1622,7 @@ Do not edit in invisible areas of the buffer:
 (setq-default org-catch-invisible-edits 'show)
 #+END_SRC
 
-**** TODO Inline code 
-
-- [ ] activate syntax highlighting for inline code
+**** Inline code 
 
 #+BEGIN_SRC emacs-lisp
 (font-lock-add-keywords 
@@ -1632,6 +1630,22 @@ Do not edit in invisible areas of the buffer:
  '(("\\(@@latex:\\)\\(.*?\\)\\(@@\\)"
 		(1 font-lock-comment-face)
 		(2 '(org-latex-and-related))
+		(3 font-lock-comment-face))
+	 ))
+
+(font-lock-add-keywords 
+ 'org-mode
+ '(("\\(@@beamer:\\)\\(.*?\\)\\(@@\\)"
+		(1 font-lock-comment-face)
+		(2 '(org-latex-and-related))
+		(3 font-lock-comment-face))
+	 ))
+
+(font-lock-add-keywords 
+ 'org-mode
+ '(("\\(@@html:\\)\\(.*?\\)\\(@@\\)"
+		(1 font-lock-comment-face)
+		(2 '(org-latex-and-related)) 				; FIXME?
 		(3 font-lock-comment-face))
 	 ))
 #+END_SRC
