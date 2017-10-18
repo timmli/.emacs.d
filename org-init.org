@@ -1905,6 +1905,7 @@ Use a prefix arg to get regular RET. "
 								;; (org-insert-heading) ; commented by TL
 								(org-insert-item)				; added by TL
 								)												; added by TL
+						(backward-char)							; added by TL: re-search-forward moves point
 						(org-return))								; added by TL
 				(beginning-of-line)
 				(delete-region (line-beginning-position) (line-end-position))
