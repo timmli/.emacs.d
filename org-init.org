@@ -5105,7 +5105,8 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
          [_i_] init file           [_p_] package manager      [_m_] macros
          [_d_] .emacs.d            [_u_] upgrade packages    
          [_c_] customize emacs     [_t_] load theme           
-         [_v_] visual line mode    [_fp_] proportional font    [_q_]uit
+        [_lv_] visual line mode    [_fp_] proportional font    [_q_]uit
+        [_lt_] truncate lines
 	"
 	("i" (find-file (expand-file-name org-init-file user-emacs-directory)) :exit t)
 	("d" (find-file user-emacs-directory) :exit t)
@@ -5115,7 +5116,8 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 	("u" paradox-upgrade-packages :exit t)
 	("m" hydra-macro/body :exit t)
 	("t" hydra-load-theme/body :exit t)
-	("v" visual-line-mode :exit t)
+	("lv" visual-line-mode :exit t)
+	("lt" toggle-truncate-lines :exit t)
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
 	("<f2>" hydra-f2/body :exit t)
