@@ -1622,9 +1622,33 @@ Do not edit in invisible areas of the buffer:
 (setq-default org-catch-invisible-edits 'show)
 #+END_SRC
 
-**** TODO Inline code 
+**** Inline code 
 
-- [ ] activate syntax highlighting for inline code
+#+BEGIN_SRC emacs-lisp
+(font-lock-add-keywords 
+ 'org-mode
+ '(("\\(@@latex:\\)\\(.*?\\)\\(@@\\)"
+		(1 font-lock-comment-face)
+		(2 '(org-latex-and-related))
+		(3 font-lock-comment-face))
+	 ))
+
+(font-lock-add-keywords 
+ 'org-mode
+ '(("\\(@@beamer:\\)\\(.*?\\)\\(@@\\)"
+		(1 font-lock-comment-face)
+		(2 '(org-latex-and-related))
+		(3 font-lock-comment-face))
+	 ))
+
+(font-lock-add-keywords 
+ 'org-mode
+ '(("\\(@@html:\\)\\(.*?\\)\\(@@\\)"
+		(1 font-lock-comment-face)
+		(2 '(org-latex-and-related)) 				; FIXME?
+		(3 font-lock-comment-face))
+	 ))
+#+END_SRC
 
 **** Checkboxes
 
@@ -1881,6 +1905,7 @@ Use a prefix arg to get regular RET. "
 								;; (org-insert-heading) ; commented by TL
 								(org-insert-item)				; added by TL
 								)												; added by TL
+						(backward-char)							; added by TL: re-search-forward moves point
 						(org-return))								; added by TL
 				(beginning-of-line)
 				(delete-region (line-beginning-position) (line-end-position))
