@@ -6063,7 +6063,7 @@ A hydra for font selection with AUCTeX:
     [_S-<up>_] Next      [_S-<down>_] Next       [_l_] Edit lines
       [_<up>_] Skip        [_<down>_] Skip       [_a_] Mark all
     [_M-<up>_] Unmark    [_M-<down>_] Unmark     [_r_] Mark by regexp
-    ^ ^                     [_q_] Quit hydra     [_Q_] Quit mc-mode
+   [_SPC_] Mark region ^^                    [_q_] Quit hydra     [_Q_] Quit mc-mode
 	"
 	("l" mc/edit-lines :exit t)
 	("a" mc/mark-all-like-this :exit t)
@@ -6076,6 +6076,7 @@ A hydra for font selection with AUCTeX:
 	("p" mc/mark-previous-like-this)
 	("P" mc/skip-to-previous-like-this)
 	("M-p" mc/unmark-previous-like-this)
+	("SPC" set-rectangular-region-anchor :exit t)
 	("S-<up>" mc/mark-previous-like-this)
 	("<up>" mc/skip-to-previous-like-this)
 	("M-<up>" mc/unmark-previous-like-this)
