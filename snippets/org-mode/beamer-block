@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: beamer-block
+# key: b_
+# --
+*** ${1:@@latex:@@}                                       :B_block:
+:PROPERTIES:
+:BEAMER_env: block
+:END:
+$0
+***                                                       :B_ignoreheading:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:END:
