@@ -1339,6 +1339,7 @@ Org-mode files are usually bundled within a single directory stored in the varia
 #+BEGIN_SRC emacs-lisp
 (defun tl/update-org-agenda-files ()
 	(interactive)
+	(require 'org-attach) ; in order not get disturbed by org-attach links
   (setq org-agenda-files ())
   (load-org-agenda-files-recursively (expand-file-name (concat org-directory "/"))) ; trailing slash required
 
