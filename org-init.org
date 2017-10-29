@@ -2357,8 +2357,11 @@ Show whether links to files are valid:
 
 *** Tags
 
+Tags can be set globally as default using the variable =org-tag-alist=. 
+Tags can be set globally and permantly using the variable =org-tag-persistent-alist=. 
+
 #+BEGIN_SRC emacs-lisp
-(setq org-tag-alist
+(setq org-tag-persistent-alist
 			'((:startgroup . nil)
 				("@work" . ?w)
 				(:grouptags . nil)
