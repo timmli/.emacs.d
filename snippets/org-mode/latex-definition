@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: org latex definition
+# key: def_
+# --
+#+NAME: def:${1:definition}
+#+ATTR_LATEX: :options [${2:Definition title}]
+#+BEGIN_${3:definition}
+$0
+#+END_$3
