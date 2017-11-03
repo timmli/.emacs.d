@@ -1332,84 +1332,6 @@ Must appear before LaTeX stuff!
 http://pages.sachachua.com/.emacs.d/Sacha.html#orgfe5d909
 http://doc.norang.ca/org-mode.html#Setup
 
-*** Files
-
-Org-mode files are usually bundled within a single directory stored in the variable =org-directory=. But if there are links to org-mode files outside =org-directory=, they should be included to =org-agenda-files=, too.
-
-#+BEGIN_SRC emacs-lisp
-(defun tl/update-org-agenda-files ()
-	(interactive)
-	(require 'org-attach) ; in order not get disturbed by org-attach links
-  (setq org-agenda-files ())
-  (load-org-agenda-files-recursively (expand-file-name (concat org-directory "/"))) ; trailing slash required
-
-	;; ;; The following code does not search the org directory recursively:
-  ;; (setq org-agenda-files
-	;; 			(append
-	;; 			 (list org-directory)
-	;; 			 (file-expand-wildcards (concat org-directory "/*/*.org"))))
-
-	;; search for linked org-mode files within org-agenda-files and add them
-	(save-current-buffer
-		(dolist (file org-agenda-files)
-			(find-file file)
-			(add-links-to-org-agenda-files)   ; within the buffer of file
-			))
-	(switch-to-buffer (current-buffer))		; return to first buffer
-	
-	(customize-save-variable 'org-agenda-files org-agenda-files)
-	(message "org-agenda-files updated")
-	)
-#+END_SRC
-
-Search for org-mode files recursively:
-#+BEGIN_SRC emacs-lisp
-;; Modified http://stackoverflow.com/a/26548971/6452961
-(require 'dash)
-(defun load-org-agenda-files-recursively (dir) "Find all directories in DIR."
-			 (unless (file-directory-p dir) (error "Not a directory `%s'" dir))
-			 (unless (equal (directory-files dir nil org-agenda-file-regexp t) nil)
-				 (setq org-agenda-files 
-							 (append
-								org-agenda-files
-								(-filter 								; filter files with org-extension
-								 (lambda (x) (not (string-match "#" x))) 
-								 (file-expand-wildcards (concat dir "*.org"))))))
-			 (dolist (file (directory-files dir nil nil t))
-				 (unless (member file '("." ".."))
-					 (let ((file (concat dir file "/")))
-						 (when (file-directory-p file)
-							 (load-org-agenda-files-recursively file)))))
-			 )
-
-;; set refile targets to move entries inside org-agenda 
-(setq org-refile-targets '(
-													 (nil :maxlevel . 2)             ; refile to headings in the current buffer
-													 (org-agenda-files :maxlevel . 2) ; refile to any of these files
-													 ))
-#+END_SRC
-
-Add linked org-mode files to =org-agenda-files=:
-#+BEGIN_SRC emacs-lisp 
-(defun add-links-to-org-agenda-files ()
-	"Inspired by: http://stackoverflow.com/questions/38061773/add-linked-org-files-to-org-agenda-files"
-	(interactive)
-	(org-element-map  
-			(org-element-parse-buffer)
-			'link
-		(lambda (x)
-			(let ((org-link-path (org-element-property :path x))
-						(org-link-type (org-element-property :type x)))
-				(when (and (equal org-link-type "file") ; only links to files
-									 (string-prefix-p "~/" org-link-path) ; relative paths are bad
-									 (equal "org" (file-name-extension org-link-path)) ;only org-mode files
-									 (file-exists-p org-link-path) ; only existing files
-									 )
-					(princ (concat " " org-link-path))
-					(add-to-list 'org-agenda-files (expand-file-name org-link-path))
-					)))))
-#+END_SRC
-
 *** Export
 
 Use a less intrusive export interface:
@@ -2258,6 +2180,8 @@ http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
 
 *** Agenda
 
+**** Appearance
+
 Don't split window when opening agenda:
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-window-setup "only-window")
@@ -2332,6 +2256,96 @@ Show tags at the right edge of the screen:
   "Put the agenda tags by the right border of the agenda window."
   (setq org-agenda-tags-column (- 4 (window-width)))
   (org-agenda-align-tags))
+#+END_SRC
+
+
+**** Files
+
+Update =org-agenda-files= once a day during start-up.
+
+#+BEGIN_SRC emacs-lisp
+(defcustom org-agenda-files-last-update nil 
+	"This variable saves the date of the last update of org-agenda-files.")
+(when (not (string-equal org-agenda-files-last-update (format-time-string "%Y-%m-%d")))
+	(tl/update-org-agenda-files)
+	(customize-save-variable 'org-agenda-files-last-update (format-time-string "%Y-%m-%d"))
+	(message "org-agenda-files-last-update updated"))
+#+END_SRC
+
+Org-mode files are usually bundled within a single directory stored in the variable =org-directory=. But if there are links to org-mode files outside =org-directory=, they should be included to =org-agenda-files=, too.
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/update-org-agenda-files ()
+	(interactive)
+	(require 'org-attach) ; in order not get disturbed by org-attach links
+  (setq org-agenda-files ())
+  (load-org-agenda-files-recursively (expand-file-name (concat org-directory "/"))) ; trailing slash required
+
+	;; ;; The following code does not search the org directory recursively:
+  ;; (setq org-agenda-files
+	;; 			(append
+	;; 			 (list org-directory)
+	;; 			 (file-expand-wildcards (concat org-directory "/*/*.org"))))
+
+	;; search for linked org-mode files within org-agenda-files and add them
+	(save-current-buffer
+		(dolist (file org-agenda-files)
+			(find-file file)
+			(add-links-to-org-agenda-files)   ; within the buffer of file
+			))
+	(switch-to-buffer (current-buffer))		; return to first buffer
+	
+	(customize-save-variable 'org-agenda-files org-agenda-files)
+	(message "org-agenda-files updated")
+	)
+#+END_SRC
+
+Search for org-mode files recursively:
+#+BEGIN_SRC emacs-lisp
+;; Modified http://stackoverflow.com/a/26548971/6452961
+(require 'dash)
+(defun load-org-agenda-files-recursively (dir) "Find all directories in DIR."
+			 (unless (file-directory-p dir) (error "Not a directory `%s'" dir))
+			 (unless (equal (directory-files dir nil org-agenda-file-regexp t) nil)
+				 (setq org-agenda-files 
+							 (append
+								org-agenda-files
+								(-filter 								; filter files with org-extension
+								 (lambda (x) (not (string-match "#" x))) 
+								 (file-expand-wildcards (concat dir "*.org"))))))
+			 (dolist (file (directory-files dir nil nil t))
+				 (unless (member file '("." ".."))
+					 (let ((file (concat dir file "/")))
+						 (when (file-directory-p file)
+							 (load-org-agenda-files-recursively file)))))
+			 )
+
+;; set refile targets to move entries inside org-agenda 
+(setq org-refile-targets '(
+													 (nil :maxlevel . 2)             ; refile to headings in the current buffer
+													 (org-agenda-files :maxlevel . 2) ; refile to any of these files
+													 ))
+#+END_SRC
+
+Add linked org-mode files to =org-agenda-files=:
+#+BEGIN_SRC emacs-lisp 
+(defun add-links-to-org-agenda-files ()
+	"Inspired by: http://stackoverflow.com/questions/38061773/add-linked-org-files-to-org-agenda-files"
+	(interactive)
+	(org-element-map  
+			(org-element-parse-buffer)
+			'link
+		(lambda (x)
+			(let ((org-link-path (org-element-property :path x))
+						(org-link-type (org-element-property :type x)))
+				(when (and (equal org-link-type "file") ; only links to files
+									 (string-prefix-p "~/" org-link-path) ; relative paths are bad
+									 (equal "org" (file-name-extension org-link-path)) ;only org-mode files
+									 (file-exists-p org-link-path) ; only existing files
+									 )
+					(princ (concat " " org-link-path))
+					(add-to-list 'org-agenda-files (expand-file-name org-link-path))
+					)))))
 #+END_SRC
 
 *** Links
