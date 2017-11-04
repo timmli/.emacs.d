@@ -2261,17 +2261,6 @@ Show tags at the right edge of the screen:
 
 **** Files
 
-Update =org-agenda-files= once a day during start-up.
-
-#+BEGIN_SRC emacs-lisp
-(defcustom org-agenda-files-last-update nil 
-	"This variable saves the date of the last update of org-agenda-files.")
-(when (not (string-equal org-agenda-files-last-update (format-time-string "%Y-%m-%d")))
-	(tl/update-org-agenda-files)
-	(customize-save-variable 'org-agenda-files-last-update (format-time-string "%Y-%m-%d"))
-	(message "org-agenda-files-last-update updated"))
-#+END_SRC
-
 Org-mode files are usually bundled within a single directory stored in the variable =org-directory=. But if there are links to org-mode files outside =org-directory=, they should be included to =org-agenda-files=, too.
 
 #+BEGIN_SRC emacs-lisp
@@ -2346,6 +2335,17 @@ Add linked org-mode files to =org-agenda-files=:
 					(princ (concat " " org-link-path))
 					(add-to-list 'org-agenda-files (expand-file-name org-link-path))
 					)))))
+#+END_SRC
+
+Update =org-agenda-files= once a day during start-up.
+
+#+BEGIN_SRC emacs-lisp
+(defcustom org-agenda-files-last-update nil 
+	"This variable saves the date of the last update of org-agenda-files.")
+(when (not (string-equal org-agenda-files-last-update (format-time-string "%Y-%m-%d")))
+	(tl/update-org-agenda-files)
+	(customize-save-variable 'org-agenda-files-last-update (format-time-string "%Y-%m-%d"))
+	(message "org-agenda-files-last-update updated"))
 #+END_SRC
 
 *** Links
