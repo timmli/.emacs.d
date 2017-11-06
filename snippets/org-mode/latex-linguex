@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: linguex blocks
+# key: ex_
+# --
+#+BEGIN_EXPORT latex
+{\ex. $0
+ 
+}
+#+END_EXPORT
