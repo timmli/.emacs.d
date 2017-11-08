@@ -1764,6 +1764,64 @@ Footnotes
 			org-footnote-auto-adjust t)
 #+END_SRC
 
+*** Todo keywords
+
+(Must appear before =org-agenda= settings. Otherwise =org-todo-keywords= may not get updated buffer locally.)
+
+From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywords):
+#+BEGIN_QUOTE
+"WAIT(w@/!)".  "@" means to add a note (with time), "!" means to record only the time of the state change.  With X and Y being either "@" or "!", "X/Y" means use X when entering the state, and use Y when leaving the state if and only if the *target* state does not define X.  You may omit any of the fast-selection key or X or /Y, so WAIT(w@), WAIT(w/@) and WAIT(@/@) are all valid.
+#+END_QUOTE
+
+- TODO: something that needs to be done, maybe now, maybe later. 
+- NEXT: something that can be done /now/. There's everything you need to start doing it.
+- APPT: appointment (meeting, phone call etc.) with a fixed date.
+- WAITING: something that cannot be done now, because some prerequisites are not yet met.
+- HOLD: something that cannot be done now, and the prerequisites are unlikely to be fullfilled in the future.
+- SOMEDAY: you are not yet sure whether this needs to be done.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-todo-keywords
+      (quote ((sequence "TODO(t!)" "NEXT(n)" "APPT(a)" "|" "DONE(d)")
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "SOMEDAY(s)" "|" "CANCELLED(c@/!)"))))
+
+(setq org-todo-keyword-faces
+      (quote (("TODO" :foreground "red" :weight bold)
+              ("NEXT" :foreground "blue" :weight bold)
+              ("DONE" :foreground "forest green" :weight bold)
+              ("WAITING" :foreground "orange" :weight bold)
+              ("HOLD" :foreground "magenta" :weight bold)
+              ("CANCELLED" :foreground "forest green" :weight bold)
+              ("APPT" :foreground "forest green" :weight bold)
+							("SOMEDAY" :foreground "forest green" :weight bold)
+							)))
+#+END_SRC
+
+Fast TODO selection:
+#+BEGIN_SRC emacs-lisp
+(setq org-use-fast-todo-selection t)
+#+END_SRC
+
+Insert timestamp when task is marked as DONE:
+#+BEGIN_SRC emacs-lisp
+(setq org-log-done 'time)
+#+END_SRC
+
+Insert timestamp when changing deadline:
+#+BEGIN_SRC emacs-lisp
+(setq org-log-redeadline 'time)
+#+END_SRC
+
+Insert timestamp when changing schedule:
+#+BEGIN_SRC emacs-lisp
+(setq org-log-reschedule 'time)
+#+END_SRC
+
+Observe dependencies between TODOs:
+#+BEGIN_SRC emacs-lisp
+(setq org-enforce-todo-dependencies t)
+#+END_SRC
+
 *** Clocking and logging
 
 Collect log entries in drawer:
@@ -2258,7 +2316,6 @@ Show tags at the right edge of the screen:
   (org-agenda-align-tags))
 #+END_SRC
 
-
 **** Files
 
 Org-mode files are usually bundled within a single directory stored in the variable =org-directory=. But if there are links to org-mode files outside =org-directory=, they should be included to =org-agenda-files=, too.
@@ -2559,62 +2616,6 @@ Map scr-block languages to =listings= environments:
 
 	;; (global-set-key (kbd "<f9> <f9>") 'org-capture)
 	;; (global-set-key (kbd "<f9> <f9> t") (lambda () (interactive) (org-capture nil "t")))
-#+END_SRC
-
-*** Todo keywords
-
-From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywords):
-#+BEGIN_QUOTE
-"WAIT(w@/!)".  "@" means to add a note (with time), "!" means to record only the time of the state change.  With X and Y being either "@" or "!", "X/Y" means use X when entering the state, and use Y when leaving the state if and only if the *target* state does not define X.  You may omit any of the fast-selection key or X or /Y, so WAIT(w@), WAIT(w/@) and WAIT(@/@) are all valid.
-#+END_QUOTE
-
-- TODO: something that needs to be done, maybe now, maybe later. 
-- NEXT: something that can be done /now/. There's everything you need to start doing it.
-- APPT: appointment (meeting, phone call etc.) with a fixed date.
-- WAITING: something that cannot be done now, because some prerequisites are not yet met.
-- HOLD: something that cannot be done now, and the prerequisites are unlikely to be fullfilled in the future.
-- SOMEDAY: you are not yet sure whether this needs to be done.
-
-#+BEGIN_SRC emacs-lisp
-(setq org-todo-keywords
-      (quote ((sequence "TODO(t!)" "NEXT(n)" "APPT(a)" "|" "DONE(d)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "SOMEDAY(s)" "|" "CANCELLED(c@/!)"))))
-
-(setq org-todo-keyword-faces
-      (quote (("TODO" :foreground "red" :weight bold)
-              ("NEXT" :foreground "blue" :weight bold)
-              ("DONE" :foreground "forest green" :weight bold)
-              ("WAITING" :foreground "orange" :weight bold)
-              ("HOLD" :foreground "magenta" :weight bold)
-              ("CANCELLED" :foreground "forest green" :weight bold)
-              ("APPT" :foreground "forest green" :weight bold)
-							("SOMEDAY" :foreground "forest green" :weight bold)
-							)))
-#+END_SRC
-
-Fast TODO selection:
-#+BEGIN_SRC emacs-lisp
-(setq org-use-fast-todo-selection t)
-#+END_SRC
-
-Insert timestamp when task is marked as DONE:
-#+BEGIN_SRC emacs-lisp
-(setq org-log-done 'time)
-#+END_SRC
-
-Insert timestamp when changing deadline:
-#+BEGIN_SRC emacs-lisp
-(setq org-log-redeadline 'time)
-#+END_SRC
-
-Insert timestamp when changing schedule:
-#+BEGIN_SRC emacs-lisp
-(setq org-log-reschedule 'time)
-#+END_SRC
-
-Observe dependencies between TODOs:
-#+BEGIN_SRC emacs-lisp
-(setq org-enforce-todo-dependencies t)
 #+END_SRC
 
 ** Calendar
