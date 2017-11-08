@@ -4744,6 +4744,14 @@ Better keys for closing and switching between windows. The rest is done in [[*hy
 )
 #+END_SRC
 
+** Navigation
+
+Goto other window:
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-s") 'other-window)
+#+END_SRC
+
 * Bookmarks
 
 #+BEGIN_SRC emacs-lisp
