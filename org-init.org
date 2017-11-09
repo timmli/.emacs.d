@@ -5407,7 +5407,7 @@ Global org-mode keys:
  
      ^^  [_a_] agenda  ^^    [_n_] notes   ^^  ^^   ^^  ^^  ^^   [_r_] reload org       	
      ^^  [_d_] deft    ^^    [_t_] todos   ^^  ^^   ^^  ^^  ^^   [_u_] update agenda files
-     ^^  [_c_] capture ^^    [_w_] work ^^  ^^  ^^  ^^ ^^        
+     ^^  [_c_] capture ^^    [_w_/_h_] work/home notes ^^  ^^  ^^  ^^ ^^        
      ^^  [_f_] search  ^^    [_:_] tags ^^  ^^  ^^  ^^  ^^                      [_q_]uit
 
 	"
@@ -5420,6 +5420,8 @@ Global org-mode keys:
 	("t" org-todo-list :exit t)
 	("w" (lambda nil (interactive)
 				 (find-file (concat org-directory "/work/work.org"))) :exit t)
+	("h" (lambda nil (interactive)
+				 (find-file (concat org-directory "/home/home.org"))) :exit t)
 	(":" org-setting-tags :exit t)
 	("r" org-reload :exit t)
 	("f" helm-org-rifle-agenda-files :exit t)
