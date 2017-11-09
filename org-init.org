@@ -1775,6 +1775,7 @@ From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywo
 
 - TODO: something that needs to be done, maybe now, maybe later. 
 - NEXT: something that can be done /now/. There's everything you need to start doing it.
+- INPROGRESS: something that is being done right now.
 - APPT: appointment (meeting, phone call etc.) with a fixed date.
 - WAITING: something that cannot be done now, because some prerequisites are not yet met.
 - HOLD: something that cannot be done now, and the prerequisites are unlikely to be fullfilled in the future.
@@ -1782,12 +1783,13 @@ From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywo
 
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-keywords
-      (quote ((sequence "TODO(t!)" "NEXT(n)" "APPT(a)" "|" "DONE(d)")
+      (quote ((sequence "TODO(t!)" "NEXT(n)" "INPROGRESS(p!)" "APPT(a)" "|" "DONE(d)")
               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "SOMEDAY(s)" "|" "CANCELLED(c@/!)"))))
 
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
               ("NEXT" :foreground "blue" :weight bold)
+              ("INPROGRESS" :foreground "gold" :weight bold)
               ("DONE" :foreground "forest green" :weight bold)
               ("WAITING" :foreground "orange" :weight bold)
               ("HOLD" :foreground "magenta" :weight bold)
@@ -2255,13 +2257,15 @@ Show notifications of agenda events:
 Customize agenda view:
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-custom-commands
-			'(("w" "Agenda and work-related tasks"
+			'(("w" "Work-related agenda and tasks"
 				 ((tags "PRIORITY=\"A\""
                 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
 								 (org-agenda-overriding-header "High-priority tasks:")))
 					(agenda "")
-					(todo "NEXT"
+					(todo "INPROGRESS"
 								((org-agenda-overriding-header "Normal-priority tasks:")))
+					(todo "NEXT" ((org-agenda-overriding-header "")
+												(org-agenda-block-separator nil)))
 					(todo "WAITING" ((org-agenda-overriding-header "")
 													 (org-agenda-block-separator nil)))
 					(todo "TODO" ((org-agenda-overriding-header "")
@@ -2274,7 +2278,26 @@ Customize agenda view:
 					;; 						(org-agenda-block-separator nil)))
 					)
 				 ((org-agenda-tag-filter-preset '("+@work")))
-				)))
+				 )
+				("h" "Home-related agenda and tasks"
+				 ((tags "PRIORITY=\"A\""
+								((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+								 (org-agenda-overriding-header "High-priority tasks:")))
+					(agenda "")
+					(todo "INPROGRESS"
+								((org-agenda-overriding-header "Normal-priority tasks:")))
+					(todo "NEXT" ((org-agenda-overriding-header "")
+												(org-agenda-block-separator nil)))
+					(todo "WAITING" ((org-agenda-overriding-header "")
+													 (org-agenda-block-separator nil)))
+					(todo "TODO" ((org-agenda-overriding-header "")
+												(org-agenda-block-separator nil)))
+					(todo "SOMEDAY" ((org-agenda-overriding-header "")
+													 (org-agenda-block-separator nil)))
+					)
+				 ((org-agenda-tag-filter-preset '("+@home")))
+				 ))
+			)
 
 (defun org-agenda-list-work ()
 	(interactive)
