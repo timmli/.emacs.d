@@ -3029,8 +3029,16 @@ See also https://nickhigham.wordpress.com/2016/01/06/managing-bibtex-files-with-
 #+END_SRC
 
 *** Beamer
+:LOGBOOK:
+- Note taken on [2017-11-13 Mo 10:07] \\
+  Add =\begin{frame}=  to outline (and imenu):
+  #+BEGIN_SRC emacs-lisp
+  (add-to-list 'TeX-outline-extra '("\\\\begin{frame}\\(\\[.*\\]\\)?" 4))
+  #+END_SRC
+  FIXME: Does not show the title.
+:END:
 
-Add \frametitle to outline (and imenu):
+Add =\frametitle= to outline (and imenu):
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'TeX-outline-extra '("\\\\frametitle\\b" 4))
 #+END_SRC
