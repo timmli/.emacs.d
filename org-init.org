@@ -5085,6 +5085,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
     _m_ode          single _k_eybinding        _a_propros        _i_nfo
     _p_ackage       available _b_indings       _f_unction        _d_ocsets
     _c_ursor        _w_here is key             _v_ariable        _n_: man
+    ^^              _y_asnippets
 
   "
     ;; Boring help commands...
@@ -5103,13 +5104,14 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
     ("c" describe-key-briefly nil)
     ("k" describe-key nil)
     ("w" where-is nil)
+		("y" yas-describe-tables nil)
 
     ;; Elisp
     ("a" apropos-command nil)
     ("s" info-lookup-symbol nil)
     ("v" describe-variable nil)
     ("f" describe-function nil)
-    ("y" describe-syntax nil)
+    ("S" describe-syntax nil)
 
     ;; Describe
     ("p" describe-package nil)
@@ -5129,6 +5131,9 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 
 (global-set-key (kbd "<f1>") #'hydra-f1/body)
 #+END_SRC
+
+#+RESULTS:
+: hydra-f1/body
 
 ** hydra-f2
 
