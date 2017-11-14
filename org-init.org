@@ -3720,12 +3720,9 @@ Copy mouse selection to kill-ring:
 ;; (setq mouse-drag-copy-region t)
 #+end_src
 
-*** TODO iedit
-:LOGBOOK:
-- State "TODO"       from              [2017-09-30 Sa 19:49]
-:END:
+*** iedit
 
-Edit regions with identical content in the same way simultaneously.
+Edit regions with identical content in the same way simultaneously. 
 
 #+BEGIN_SRC emacs-lisp
 (use-package iedit
@@ -5376,16 +5373,17 @@ Deprecated:
      Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^  │Mark │  Org^^
    ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^───────^^──╯     └─────^^─╯
 
-      [_a_] mark all
+      [_a_] mark all                 [_g_] git gutter       
       [_c_] highlight changes        [_w_] show/hide whitespaces   [_b_] add bookmark
-      [_g_] git gutter               [_*_] critic markup           [_t_] tags
+      [_e_] edit same symbol         [_*_] critic markup           [_t_] tags
       [_s_] highlight same symbols   [_r_] mark rectangular               [_q_]uit
 	"
 	("a" mark-whole-buffer :exit t)
 	("g" hydra-git-gutter/body :exit t)
 	("c" hydra-highlight-changes/body :exit t)
 	("r" rectangle-mark-mode :exit t)
-	("b" bookmark-set :exit t) 
+	("b" bookmark-set :exit t)
+	("e" iedit-mode :exit t)  
 	("s" hydra-highlight-symbol/body :exit t)
 	("t" hydra-tags/body :exit t)
 	("w" whitespace-mode :exit t)
