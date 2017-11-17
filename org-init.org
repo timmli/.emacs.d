@@ -114,6 +114,14 @@ Line numbers:
 ;; (setq linum-format " %3d ")
 #+END_SRC
 
+*** linum-relative
+
+#+BEGIN_SRC emacs-lisp
+(use-package linum-relative
+	:ensure t
+)
+#+END_SRC
+
 ** Cursor
 
 Cursor blinking:
@@ -5188,10 +5196,10 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
    ╭─────^^─────────^^───╯      └───────^^──────────^^───^^───────^^───────^^───────^^────╯
  
          [_i_] init file           [_p_] package manager      [_m_] macros
-         [_d_] .emacs.d            [_u_] upgrade packages    
+         [_d_] .emacs.d            [_u_] upgrade packages     [_fp_] proportional font
          [_c_] customize emacs     [_t_] load theme           
-        [_lv_] visual line mode    [_fp_] proportional font    [_q_]uit
-        [_lt_] truncate lines
+        [_lv_] visual line mode   [_ln_] line numbers         
+        [_lt_] truncate lines     [_lr_] toggle relative line numbers        [_q_]uit
 	"
 	("i" (find-file (expand-file-name org-init-file user-emacs-directory)) :exit t)
 	("d" (find-file user-emacs-directory) :exit t)
@@ -5201,6 +5209,8 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 	("u" paradox-upgrade-packages :exit t)
 	("m" hydra-macro/body :exit t)
 	("t" hydra-load-theme/body :exit t)
+	("ln" linum-mode :exit t)
+	("lr" linum-relative-toggle :exit t)
 	("lv" visual-line-mode :exit t)
 	("lt" toggle-truncate-lines :exit t)
 	("q" nil :color blue)
