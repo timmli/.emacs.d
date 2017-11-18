@@ -3669,6 +3669,23 @@ Execute when all backends added to =company-backends=.
 ;; (global-set-key (kbd "C-{") 'wrap-with-braces)
 #+end_src
 
+*** embrace
+
+Add/Change/Delete pairs based on `expand-region', similar to `evil-surround'.
+https://github.com/cute-jumper/embrace.el
+
+#+BEGIN_SRC emacs-lisp
+(use-package embrace 
+	:ensure t
+	:bind
+	(("C-( a" . embrace-add)
+	 ("C-( d" . embrace-delete)
+	 ("C-( c" . embrace-change))
+	:config
+	;; (add-hook 'LaTeX-mode-hook 'embrace-LaTeX-mode-hook)
+	(add-hook 'org-mode-hook 'embrace-org-mode-hook))
+#+END_SRC
+
 ** Indentation
 
 Auto-indent when yanking
@@ -4546,6 +4563,7 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 							(define-key map (kbd "C-d (") 'sp-unwrap-sexp)
 							(define-key map (kbd "C-d )") 'sp-unwrap-sexp)
 
+							;; LaTeX
 							(define-key LaTeX-mode-map (kbd "C-d m") 'TeX-delete-macro)
 							(define-key LaTeX-mode-map (kbd "C-d e") 'TeX-delete-environment)
 							(define-key LaTeX-mode-map (kbd "C-d t") 'TeX-clean)
@@ -4555,8 +4573,11 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 							(define-key key-translation-map (kbd "H-o") (kbd "RET"))
 							(define-key map (kbd "C-S-m") 'smart-open-line)
 
- 							;; org-babel
+ 							;; org-mode
 							(define-key org-mode-map (kbd "C-d r") 'org-babel-remove-result)
+							(define-key org-mode-map (kbd "C-d f") 'embrace-delete) ; delete emphasis/font
+							(define-key org-mode-map (kbd "C-d (") 'embrace-delete) 
+							(define-key org-mode-map (kbd "C-c f") 'embrace-add) 
 
 							;; miscellaneous actions
 							(define-key map (kbd "C-j") 'ace-jump-mode)
@@ -5048,7 +5069,6 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
     (setq tramp-default-method "ssh"))
   ;; (setq tramp-default-user "")
 #+END_SRC
-
 
 ** emacs-ssh-deploy
 
