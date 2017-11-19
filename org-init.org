@@ -5359,8 +5359,9 @@ Deprecated:
        [_a_] adress book        [_d_] dired/file browser     [_t_] pomodoro timer
        [_b_] new buffer         [_e_] emacs shell            [_l_] dictionary
        [_i_] buffer overview    [_s_] system shell           [_B_] bookmarks
-       [_c_] calendar           [_m_] magit status           [_P_] pandoc
-       [_p_] projectile         [_f_] search files          [_hb_] bibliography     [_q_]uit
+       [_c_] calendar          [_gs_] magit status          [_gl_] magit buffer log 
+       [_p_] projectile         [_f_] search files          [_hb_] bibliography     
+       [_P_] pandoc                                                    [_q_]uit
 	" 
 	("a" helm-bbdb :exit t)
 	("c" my-open-calfw :exit t)
@@ -5371,7 +5372,8 @@ Deprecated:
 	("hb" helm-bibtex :exit t)
 	("i" ibuffer :exit t)
 	("l" dictcc :exit t)
-	("m" magit-status :exit t)
+	("gs" magit-status :exit t)
+	("gl" magit-log-buffer-file :exit t)
 	("e" tl/eshell :exit t)
 	("B" bookmark-bmenu-list :exit t)
 	("p" helm-projectile :exit t)
