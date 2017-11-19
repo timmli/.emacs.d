@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: income
+# key: i_
+# condition: (not (looking-back "[[:graph:]].*i_"))
+# expand-env: ((yas-indent-line 'fixed))
+# --
+IN:${1:ACCOUNT}                               -${2:AMOUNT}€

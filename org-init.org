@@ -3138,6 +3138,26 @@ Usefull extras, e.g., org-mode-like folding:
 #+END_SRC 
 
 
+** Ledger
+
+[[http://ledger-cli.org][Ledger]] is a powerful, double-entry accounting system.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ledger-mode
+	:ensure t
+  :mode ("\\.ledger\\'" "\\.dat\\'")
+  :config
+  (define-key ledger-mode-map (kbd "C-c c") 'ledger-mode-clean-buffer)
+  (setq ledger-post-amount-alignment-at :decimal
+        ledger-post-amount-alignment-column 49
+				ledger-default-date-format "%Y-%m-%d"
+				ledger-use-iso-dates t
+				ledger-reconcile-default-commodity "€"
+        ledger-clear-whole-transactions t)
+  (use-package flycheck-ledger
+		:ensure t))
+#+END_SRC
+
 ** Markdown
 
 #+BEGIN_SRC emacs-lisp

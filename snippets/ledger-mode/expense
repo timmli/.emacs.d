@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: expense
+# key: o_
+# condition: (not (looking-back "[[:graph:]].*o_"))
+# expand-env: ((yas-indent-line 'fixed))
+# --
+OUT:${1:Food}                               ${2:AMOUNT}€   
