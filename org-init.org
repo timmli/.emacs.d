@@ -4942,6 +4942,18 @@ Version 2017-06-19"
 (global-set-key (kbd "<f7> e") 'tl/eshell)
  #+END_SRC
 
+* Encryption
+
+https://www.masteringemacs.org/article/keeping-secrets-in-emacs-gnupg-auth-sources
+
+Emacs uses =epa-file= by default. Everything should be set up and running already. 
+
+GnuPG keyrings can be used for encrypting a file by adding 
+#+BEGIN_EXAMPLE
+-*- epa-file-encrypt-to: ("your@email.address") -*-
+#+END_EXAMPLE 
+to the top.
+
 * Process monitor
 
 ** proced
