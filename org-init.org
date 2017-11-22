@@ -2649,6 +2649,10 @@ Map scr-block languages to =listings= environments:
 	;; (global-set-key (kbd "<f9> <f9> t") (lambda () (interactive) (org-capture nil "t")))
 #+END_SRC
 
+*** PDF interaction
+
+https://github.com/rudolfochrist/interleave
+
 ** Calendar
 
 #+BEGIN_SRC emacs-lisp
@@ -3137,7 +3141,6 @@ Usefull extras, e.g., org-mode-like folding:
   :config (add-hook 'LaTeX-mode-hook #'latex-extra-mode))
 #+END_SRC 
 
-
 ** Ledger
 
 [[http://ledger-cli.org][Ledger]] is a powerful, double-entry accounting system.
@@ -3237,6 +3240,10 @@ https://github.com/wasamasa/nov.el
 #+BEGIN_SRC emacs-lisp
 (require 'xmg-mode) 
 #+END_SRC
+
+** PDF
+
+https://github.com/politza/pdf-tools
 
 * Minor modes
 ** pandoc-mode
