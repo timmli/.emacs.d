@@ -6030,6 +6030,7 @@ then a space, then the current time formatted with
 	("=" reftex-toc "table of contents" :exit t)
 	("d" hydra-latex-delete/body "delete..." :exit t)
 	("f" hydra-latex-fonts/body "font..." :exit t)
+	("b" reftex-create-bibtex-file  "generate bib-file" :exit t)
 	("c" TeX-command-master "compile" :exit t)
 	("l" TeX-recenter-output-buffer "show log" :exit t)
 	("r" TeX-command-region "compile region" :exit t)
