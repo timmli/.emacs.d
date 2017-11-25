@@ -4961,6 +4961,12 @@ GnuPG keyrings can be used for encrypting a file by adding
 #+END_EXAMPLE 
 to the top.
 
+Put authinfo file into =home-directory=:
+#+BEGIN_SRC emacs-lisp
+(setq auth-sources
+    (list (expand-file-name (concat home-directory ".authinfo.gpg"))))
+#+END_SRC
+
 * Process monitor
 
 ** proced
