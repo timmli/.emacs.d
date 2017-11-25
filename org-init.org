@@ -4863,7 +4863,8 @@ Goto other window:
 
 ** TODO COMMENT magithub
 
-- [ ] Has to be properly configured.
+- [X] Has to be properly configured.
+- [ ] open issue: https://github.com/magit/magit/issues/3154
 
 Enhancement of magit to make available a more comprehensive access to Github repositories, regrading issues etc.:
 
