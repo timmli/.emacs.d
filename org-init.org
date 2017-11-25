@@ -4968,6 +4968,16 @@ Look for authinfo file in =authinfo-directory=:
     (list (expand-file-name (concat authinfo-directory ".authinfo.gpg"))))
 #+END_SRC
 
+Function to look up password:
+#+BEGIN_SRC emacs-lisp
+;; Taken from https://github.com/jwiegley/dot-emacs/blob/master/init.el
+(defun lookup-password (host user port)
+  (require 'auth-source)
+  (funcall (plist-get (car (auth-source-search :host host :user user
+                                               :type 'netrc :port port))
+                      :secret)))
+#+END_SRC
+
 * Process monitor
 
 ** proced
@@ -5037,7 +5047,7 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
 
 * Chat
 
-** COMMENT Jabber
+** Jabber
 
 Sadly, I cannot use =jabber= together with Google or Skype.
 
@@ -5049,6 +5059,8 @@ Sadly, I cannot use =jabber= together with Google or Skype.
   (setq jabber-chat-buffer-show-avatar nil
 				jabber-vcard-avatars-retrieve nil
 				jabber-alert-presence-hooks nil
+				jabber-mode-line-mode t
+
 
 				;; jabber-account-list ; better configure this in a secret place
 				;;     '(("<your-gmail-email>"
