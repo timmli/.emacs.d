@@ -77,10 +77,13 @@
 
 ;; set path to private org notes
 (defvar org-directory
-	(expand-file-name "org/" home-directory)) ;; default value; may be overwritten by private directory settings
+	(expand-file-name "org/" home-directory)) ; default value; may be overwritten by private directory settings
 
 ;; set path to the directory that deft observes
-(defvar my-deft-dir org-directory) ;; default value; may be overwritten by private directory settings
+(defvar my-deft-dir org-directory) ; default value; may be overwritten by private directory settings
+
+;; set path to authinfo
+(defvar authinfo-directory home-directory) ; default value; may be overwritten by private directory settings
 
 ;; set path to private emacs settings
 (defvar private-emacs-settings-dir
