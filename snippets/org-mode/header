@@ -6,6 +6,7 @@
 #+TITLE: ${1:Notes on research}
 #+AUTHOR: ${2:Timm Lichte}
 #+FILETAGS: ${3:research}
+#+TAGS:
 #+STARTUP: #latexpreview 
 #+STARTUP: indent
 #+STARTUP: hideblocks content
