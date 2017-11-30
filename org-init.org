@@ -3151,6 +3151,7 @@ Usefull extras, e.g., org-mode-like folding:
   :mode ("\\.ledger\\'" "\\.dat\\'")
   :config
   (define-key ledger-mode-map (kbd "C-c c") 'ledger-mode-clean-buffer)
+  (define-key ledger-mode-map (kbd "C-<tab>") nil)
   (setq ledger-post-amount-alignment-at :decimal
         ledger-post-amount-alignment-column 49
 				ledger-default-date-format "%Y-%m-%d"
