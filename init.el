@@ -201,12 +201,14 @@
 
 (when (>= emacs-major-version 24)
   (require 'package)
-  ;; (add-to-list 'package-archives
-	;;        '("melpa-stable" . "http://stable.melpa.org/packages/") t)
-  (add-to-list 'package-archives
-	       '("melpa" . "https://melpa.org/packages/") t)
-  ;; (add-to-list 'package-archives
-	;; 						 '("melpa" . "http://elpa.zilongshanren.com/melpa/") t)
+	(setq package-archives
+				'(("GNU ELPA"     . "http://elpa.gnu.org/packages/")
+					("MELPA Stable" . "https://stable.melpa.org/packages/")
+					("MELPA"        . "https://melpa.org/packages/"))
+				package-archive-priorities
+				'(("MELPA Stable" . 10)
+					("GNU ELPA"     . 5)
+					("MELPA"        . 0)))
 
 	;; (add-to-list 'package-archives 				; repository of the sunrise commander
 	;; 						 '("SC"   . "http://joseito.republika.pl/sunrise-commander/") t)
