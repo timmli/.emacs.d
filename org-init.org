@@ -6247,26 +6247,26 @@ A hydra for font selection with AUCTeX:
 ** hydra-highlight-changes
 
 #+BEGIN_SRC emacs-lisp
-		(defhydra hydra-highlight-changes
-			(:body-pre (highlight-changes-visible-mode +1)
-      :hint nil
-      :idle 0.5)
-			"
+(defhydra hydra-highlight-changes
+	(:body-pre (highlight-changes-visible-mode +1)
+						 :hint nil
+						 :idle 0.5)
+	"
     Highlight changes
   ╭───────────────────╯
 	  _<up>_: next change       _q_uit
   _<down>_: previous change   _Q_uit and turn off highlighting 
 	"
-			("<down>" highlight-changes-next-change)
-			("<up>" highlight-changes-previous-change)
-			("<right>" highlight-changes-next-change)
-			("<left>" highlight-changes-previous-change)
-			("j" highlight-changes-next-change)
-			("k" highlight-changes-previous-change)
-			("n" highlight-changes-next-change)
-			("p" highlight-changes-previous-change)
-			("Q" (highlight-changes-visible-mode -1) :color blue)
-			("q" nil :color blue))
+	("<down>" highlight-changes-next-change)
+	("<up>" highlight-changes-previous-change)
+	("<right>" highlight-changes-next-change)
+	("<left>" highlight-changes-previous-change)
+	("j" highlight-changes-next-change)
+	("k" highlight-changes-previous-change)
+	("n" highlight-changes-next-change)
+	("p" highlight-changes-previous-change)
+	("Q" (highlight-changes-visible-mode -1) :color blue)
+	("q" nil :color blue))
 #+END_SRC
 
 ** hydra-highlight-symbol
