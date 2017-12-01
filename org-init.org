@@ -2020,8 +2020,7 @@ Use LaTeXmk:
 (setq org-latex-pdf-process (list "latexmk -f -pdf %f"))
 #+END_SRC
 
-Add the class [[https://github.com/langsci/latex][langscibook]] to the set of known classes.
-
+Add the class [[https://github.com/langsci/latex][langscibook]] to the set of known classes:
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-latex-classes
 						 '("langscibook" 
@@ -2044,6 +2043,11 @@ Add the class [[https://github.com/langsci/latex][langscibook]] to the set of kn
 							 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
 							 ("\\paragraph{%s}" . "\\paragraph*{%s}")
 							 ))
+#+END_SRC
+
+Use =#+NAME:= field as argument of =\label= during export:
+#+BEGIN_SRC emacs-lisp
+(setq org-latex-prefer-user-labels t)
 #+END_SRC
 
 *** COMMENT org-gcal
