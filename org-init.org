@@ -3240,6 +3240,73 @@ Pomidor brings the promodoro technique to Emacs:
 
 https://github.com/wasamasa/nov.el
 
+** TODO RSS feed reader 
+:LOGBOOK:
+- State "TODO"       from              [2017-12-03 So 23:13]
+:END:
+
+- [ ] add hydra for navigation and filtering
+
+Largely taken from http://cestlaz.github.io/posts/using-emacs-29%20elfeed/.
+Feed collections can be converted to the format of =elfeed-org= with the function =elfeed-org-import-opml=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package elfeed
+  :ensure t
+  :bind (:map elfeed-search-mode-map
+	      ("q" . bjm/elfeed-save-db-and-bury)
+	      ("Q" . bjm/elfeed-save-db-and-bury)
+	      ("m" . elfeed-toggle-star)
+	      ("M" . elfeed-toggle-star)
+				("A" . elfeed-mark-all-as-read) ; known from Feedly
+				("R" . elfeed-mark-all-as-read) 
+				)
+	:config
+	(setq elfeed-db-directory my-elfeed-db-directory)
+	(defalias 'elfeed-toggle-star
+		(elfeed-expose #'elfeed-search-toggle-all 'star))
+
+	(defface star-elfeed-entry
+		'((t :foreground "#f77"))
+		"Marks an stared Elfeed entry.")
+	(push '(star star-elfeed-entry)
+				elfeed-search-face-alist)
+
+	(defun elfeed-mark-all-as-read ()
+		(interactive)
+		(mark-whole-buffer)
+		(elfeed-search-untag-all-unread))
+
+	;;functions to support syncing .elfeed between machines
+	;;makes sure elfeed reads index from disk before launching
+	(defun bjm/elfeed-load-db-and-open ()
+		"Wrapper to load the elfeed db from disk before opening"
+		(interactive)
+		(elfeed-db-load)
+		(elfeed)
+		(elfeed-search-update--force))
+
+	;;write to disk when quiting
+	(defun bjm/elfeed-save-db-and-bury ()
+		"Wrapper to save the elfeed db to disk before burying buffer"
+		(interactive)
+		(elfeed-db-save)
+		(quit-window))
+
+	;; (use-package elfeed-goodies
+	;; 	:ensure t
+	;; 	:config
+	;; 	(elfeed-goodies/setup))
+
+	(use-package elfeed-org
+		:ensure t
+		:config
+		(elfeed-org)
+		(setq rmh-elfeed-org-files (list my-elfeed-org-file)))
+
+	)
+#+END_SRC
+
 ** XMG
 
 #+BEGIN_SRC emacs-lisp
