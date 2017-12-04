@@ -3240,9 +3240,11 @@ Pomidor brings the promodoro technique to Emacs:
 
 https://github.com/wasamasa/nov.el
 
-** TODO RSS feed reader 
+** RSS/Atom feed reader 
+
+*** TODO elfeed
 :LOGBOOK:
-- State "TODO"       from              [2017-12-03 So 23:13]
+- State "TODO"       from              [2017-12-04 Mo 09:10]
 :END:
 
 - [ ] add hydra for navigation and filtering
@@ -3254,13 +3256,16 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 (use-package elfeed
   :ensure t
   :bind (:map elfeed-search-mode-map
-	      ("q" . bjm/elfeed-save-db-and-bury)
-	      ("Q" . bjm/elfeed-save-db-and-bury)
-	      ("m" . elfeed-toggle-star)
-	      ("M" . elfeed-toggle-star)
-				("A" . elfeed-mark-all-as-read) ; known from Feedly
-				("R" . elfeed-mark-all-as-read) 
-				)
+							("q" . bjm/elfeed-save-db-and-bury)
+							("Q" . bjm/elfeed-save-db-and-bury)
+							("m" . elfeed-toggle-star)
+							("M" . elfeed-toggle-star)
+							;; ("A" . elfeed-mark-all-as-read) ; known from Feedly
+							("R" . elfeed-mark-all-as-read)
+							("U" . tl/elfeed-show-unread)
+							("/" . bjm/elfeed-search-live-filter-space)
+							("A" . tl/elfeed-show-all)
+							)
 	:config
 	(setq elfeed-db-directory my-elfeed-db-directory)
 	(defalias 'elfeed-toggle-star
@@ -3276,6 +3281,14 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 		(interactive)
 		(mark-whole-buffer)
 		(elfeed-search-untag-all-unread))
+
+	(defun tl/elfeed-show-all ()
+		(interactive)
+		(elfeed-search-set-filter "@6-months-ago"))
+
+	(defun tl/elfeed-show-unread ()
+		(interactive)
+		(elfeed-search-set-filter "@6-months-ago +unread"))
 
 	;;functions to support syncing .elfeed between machines
 	;;makes sure elfeed reads index from disk before launching
@@ -3293,6 +3306,13 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 		(elfeed-db-save)
 		(quit-window))
 
+	;;insert space before elfeed filter
+	(defun bjm/elfeed-search-live-filter-space ()
+		"Insert space when running elfeed filter"
+		(interactive)
+		(let ((elfeed-search-filter (concat elfeed-search-filter " ")))
+			(elfeed-search-live-filter)))
+
 	;; (use-package elfeed-goodies
 	;; 	:ensure t
 	;; 	:config
@@ -3306,6 +3326,8 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 
 	)
 #+END_SRC
+
+#+RESULTS:
 
 ** XMG
 
@@ -5508,6 +5530,7 @@ Deprecated:
 	("B" bookmark-bmenu-list :exit t)
 	("p" helm-projectile :exit t)
 	("P" pandoc-main-hydra/body :exit t)
+	("r" elfeed :exit t)
 	("t" pomidor :exit t)
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
