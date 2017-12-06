@@ -3260,10 +3260,11 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 							("Q" . bjm/elfeed-save-db-and-bury)
 							("m" . elfeed-toggle-star)
 							("M" . elfeed-toggle-star)
-							;; ("A" . elfeed-mark-all-as-read) ; known from Feedly
 							("R" . elfeed-mark-all-as-read)
 							("U" . tl/elfeed-show-unread)
-							("/" . bjm/elfeed-search-live-filter-space)
+							("s" . bjm/elfeed-search-live-filter-space)
+							("f" . bjm/elfeed-search-live-filter-space)
+							("/" . mz/make-and-run-elfeed-hydra)
 							("A" . tl/elfeed-show-all)
 							)
 	:config
@@ -3327,7 +3328,56 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 	)
 #+END_SRC
 
-#+RESULTS:
+Generate filter hydra for a given set of tags (using code macros).
+Taken from http://cestlaz.github.io/posts/using-emacs-31-elfeed-3/.
+
+#+BEGIN_SRC emacs-lisp
+(defun z/hasCap (s) 
+	""
+	(let ((case-fold-search nil))
+				 (string-match-p "[[:upper:]]" s)
+				 ))
+
+(defun z/get-hydra-option-key (s)
+  "returns single upper case letter (converted to lower) or first"
+  (interactive)
+  (let ( (loc (z/hasCap s)))
+    (if loc
+				(downcase (substring s loc (+ loc 1)))
+      (substring s 0 1)
+			)))
+
+(defun mz/make-elfeed-cats (tags)
+  "Returns a list of lists. Each one is line for the hydra configuratio in the form
+     (c function hint)"
+  (interactive)
+  (mapcar (lambda (tag)
+						(let* (
+									 (tagstring (symbol-name tag))
+									 (c (z/get-hydra-option-key tagstring))
+									 )
+							(list c (append '(elfeed-search-set-filter) (list (format "@6-months-ago +%s" tagstring) ))tagstring  )))
+					tags))
+
+(defmacro mz/make-elfeed-hydra ()
+  `(defhydra mz/hydra-elfeed ()
+     "filter"
+     ,@(mz/make-elfeed-cats (elfeed-db-get-all-tags))
+     ("*" (elfeed-search-set-filter "@6-months-ago +star") "Starred")
+     ;; ("M" elfeed-toggle-star "Mark")
+     ("A" (elfeed-search-set-filter "@6-months-ago") "All")
+     ("T" (elfeed-search-set-filter "@1-day-ago") "Today")
+     ("Q" bjm/elfeed-save-db-and-bury "Quit Elfeed" :color blue)
+     ("q" nil "quit" :color blue)
+     ))
+
+(defun mz/make-and-run-elfeed-hydra ()
+  ""
+  (interactive)
+  (mz/make-elfeed-hydra)
+  (mz/hydra-elfeed/body))
+
+#+END_SRC
 
 ** XMG
 
@@ -5442,6 +5492,8 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 		(hydra-deft/body))
 	 ((string-equal (buffer-mode) "dired-mode")
 		(hydra-dired-main/body))
+	 ((string-equal (buffer-mode) "elfeed-search-mode")
+		(mz/make-and-run-elfeed-hydra))
 	 ((string-equal (buffer-mode) "image-mode")
 		(hydra-image/body))
 	 ((string-equal (buffer-mode) "latex-mode")
