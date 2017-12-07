@@ -2084,6 +2084,7 @@ I don't use =org-gcal= any more.
 				;; org-ref-bibliography-notes "~/bibliography/notes.org"
 				org-ref-pdf-directory user-bibliography-pdf-dir
 				org-ref-prefer-bracket-links t
+				org-ref-default-ref-type "autoref"
 				)
 	:config
 	:bind (:map org-mode-map
@@ -5282,6 +5283,7 @@ https://github.com/cjohansson/emacs-ssh-deploy
 
 Nice examples:
 https://github.com/rubensts/.emacs.d#hydra
+https://github.com/jojojames/hydra-integrations
 
 ** hydra: begin
 
