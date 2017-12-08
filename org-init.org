@@ -3390,6 +3390,17 @@ Taken from http://cestlaz.github.io/posts/using-emacs-31-elfeed-3/.
 
 https://github.com/politza/pdf-tools
 
+** COMMENT Email
+
+-[ ] incompatible with windows?
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path (expand-file-name "lisp/mu4e" user-emacs-directory))
+(require 'mu4e)
+(setq mu4e-mu-binary (expand-file-name "mu/mu.bat" wemacs-dir)
+			mu4e-maildir "/mnt/c/User/timm/Maildir") 
+#+END_SRC
+
 * Minor modes
 ** pandoc-mode
 
