@@ -3390,7 +3390,11 @@ Taken from http://cestlaz.github.io/posts/using-emacs-31-elfeed-3/.
 
 https://github.com/politza/pdf-tools
 
-** COMMENT Email
+** Email
+
+Offlineimap or mbsync? http://pragmaticemacs.com/emacs/migrating-from-offlineimap-to-mbsync-for-mu4e/
+
+*** COMMENT mu4e
 
 -[ ] incompatible with windows?
 
@@ -3398,7 +3402,17 @@ https://github.com/politza/pdf-tools
 (add-to-list 'load-path (expand-file-name "lisp/mu4e" user-emacs-directory))
 (require 'mu4e)
 (setq mu4e-mu-binary (expand-file-name "mu/mu.bat" wemacs-dir)
-			mu4e-maildir "/mnt/c/User/timm/Maildir") 
+			mu4e-maildir (expand-file-name "Maildir" home-directory)) 
+#+END_SRC
+
+*** COMMENT notmuch
+
+#+BEGIN_SRC emacs-lisp
+(use-package notmuch
+	:ensure t
+	:config
+	(setq notmuch-command "/path/to/your/remote-notmuch.sh"))
+
 #+END_SRC
 
 * Minor modes
