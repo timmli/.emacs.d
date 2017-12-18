@@ -3942,7 +3942,12 @@ Shift/delete indentation at cursor position or region:
 
 ** Selection
 
-*** expand-region
+*** TODO expand-region
+:LOGBOOK:
+- State "TODO"       from              [2017-12-06 Mi 19:01]
+:END:
+
+- [ ] add better support for AUCTeX
 
 #+begin_src emacs-lisp
 (use-package expand-region
