@@ -2227,17 +2227,19 @@ http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
 #+END_SRC
 
 *** Spell checking
+
 #+BEGIN_SRC emacs-lisp
 ;; ispell
-(add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\):" . ":END:"))
+(add-to-list 'ispell-skip-region-alist '(":\\(PROPERTIES\\|LOGBOOK\\|SETTINGS\\):" . ":END:"))
 (add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_SRC" . "#\\+END_SRC"))
+(add-to-list 'ispell-skip-region-alist '("#\\+BEGIN_EXPORT" . "#\\+END_EXPORT"))
 ;; flyspell
 ;; http://emacs.stackexchange.com/a/9347/12336
 ;; NO spell check for embedded snippets
 (defadvice org-mode-flyspell-verify (after org-mode-flyspell-verify-hack activate)
   (let ((rlt ad-return-value)
-        (begin-regexp "^[ \t]*#\\+begin_\\(src\\|html\\|latex\\)")
-        (end-regexp "^[ \t]*#\\+end_\\(src\\|html\\|latex\\)")
+        (begin-regexp "^[ \t]*#\\+begin_\\(src\\|html\\|latex\\|export\\)")
+        (end-regexp "^[ \t]*#\\+end_\\(src\\|html\\|latex\\|export\\)")
         old-flag
         b e)
     (when ad-return-value
@@ -3754,7 +3756,22 @@ Execute when all backends added to =company-backends=.
 
 #+end_src
 
-*** flyspell-popup
+*** flyspell-correct
+
+#+BEGIN_SRC emacs-lisp
+(use-package flyspell-correct
+	:ensure t
+	:config
+	(use-package flyspell-correct-helm
+		:ensure t)
+	;; (add-hook 'flyspell-mode-hook #'flyspell-correct-auto-mode)
+	;; (setq flyspell-correct-auto-delay 0.8)
+	)
+#+END_SRC
+
+*** COMMENT flyspell-popup
+
+Deprecated. I instead use =flyspell-correct=.
 
 #+BEGIN_SRC emacs-lisp
 (use-package flyspell-popup
@@ -3768,9 +3785,8 @@ Execute when all backends added to =company-backends=.
 	;; unset keys in popup-menu, so that flyspell-popup will close the popup when using them. 
 	(define-key popup-menu-keymap (kbd "<right>") nil)
 	(define-key popup-menu-keymap (kbd "<left>") nil)
-	(define-key popup-menu-keymap (kbd "TAB") 'popup-select)
+	(define-key popup-menu-keymap (kbd "TAB") 'popup-select) ; Unfortunately, this does not seem to work.
 )
-
 #+END_SRC
 
 ** Paren handling
