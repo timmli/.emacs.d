@@ -3742,8 +3742,7 @@ Execute when all backends added to =company-backends=.
 	(progn
 		(flyspell-goto-next-error)
 		(ispell-word)
-		)
-  )
+		))
 
 (defun flyspell-previous-and-ispell-word (args)
   ""
@@ -3751,8 +3750,25 @@ Execute when all backends added to =company-backends=.
 	(progn
 		(flyspell-goto-previous-error)
 		(ispell-word)
-		)
-  )
+		))
+
+(defun flyspell-goto-next-and-correct (args)
+  ""
+  (interactive "P")
+	(progn
+		(flyspell-goto-next-error)
+		(flyspell-correct-word-generic)
+		(right-char)
+		))
+
+(defun flyspell-goto-previous-and-correct (args)
+  ""
+  (interactive "P")
+	(progn
+		(flyspell-goto-previous-error 1)
+		(flyspell-correct-word-generic)
+		(left-word)
+		))
 
 #+end_src
 
@@ -6327,7 +6343,9 @@ A hydra for font selection with AUCTeX:
 ** hydra-flyspell
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-flyspell (:pre (flyspell-mode +1)
+(defhydra hydra-flyspell (:pre (when (not flyspell-mode)
+																 (flyspell-mode +1)
+																 (flyspell-buffer))
 															 :color blue
 															 :hint nil
 															 :idle 0.2)
@@ -6347,11 +6365,16 @@ A hydra for font selection with AUCTeX:
     ("d" ispell-change-dictionary)
     ("f" flyspell-mode)
     ("p" flyspell-prog-mode)
-    ("c" flyspell-auto-correct-word)
-    ("<up>"  flyspell-previous-and-ispell-word :color red)
-		("<down>" flyspell-next-and-ispell-word :color red)
-    ("k"  flyspell-previous-and-ispell-word :color red)
-		("j" flyspell-next-and-ispell-word :color red)
+    ;; ("c" flyspell-auto-correct-word)
+		("c" flyspell-correct-word-generic)
+    ;; ("<up>"  flyspell-previous-and-ispell-word :color red)
+		;; ("<down>" flyspell-next-and-ispell-word :color red)
+    ;; ("k"  flyspell-previous-and-ispell-word :color red)
+		;; ("j" flyspell-next-and-ispell-word :color red)
+    ("<up>"  flyspell-goto-previous-and-correct :color red)
+		("<down>" flyspell-goto-next-and-correct :color red)
+    ("k"  flyspell-goto-previous-and-correct :color red)
+		("j" flyspell-goto-next-and-correct :color red)
     ("q" nil)
     ("Q" (flyspell-mode -1)))
 
