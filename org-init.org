@@ -3411,6 +3411,17 @@ Offlineimap or mbsync? http://pragmaticemacs.com/emacs/migrating-from-offlineima
 
 *** COMMENT notmuch
 
+Idea: offlineimap and notmuch are running in a WSL where also the maildir is located. Emacs calls notmuch from outside to search and obtain mails from the WSL maildir.
+
+- [ ] install offlinimap and notmuch in the WSL
+- [ ] write shell script to call notmuch from windows (=remote-notmuch.bat=)
+- [ ] start offlineimap when starting notmuch in emacs.
+- [ ] configure smtp
+
+https://wwwtech.de/articles/2016/jul/my-personal-mail-setup
+https://notmuchmail.org/remoteusage/
+https://kkatsuyuki.github.io/notmuch-conf/
+
 #+BEGIN_SRC emacs-lisp
 (use-package notmuch
 	:ensure t
