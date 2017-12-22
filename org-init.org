@@ -3317,10 +3317,12 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 		(let ((elfeed-search-filter (concat elfeed-search-filter " ")))
 			(elfeed-search-live-filter)))
 
-	;; (use-package elfeed-goodies
-	;; 	:ensure t
-	;; 	:config
-	;; 	(elfeed-goodies/setup))
+	(use-package elfeed-goodies
+		:ensure t
+		:config
+		(elfeed-goodies/setup)
+		(setq elfeed-goodies/entry-pane-size 0.75
+					elfeed-goodies/entry-pane-position 'bottom))
 
 	(use-package elfeed-org
 		:ensure t
