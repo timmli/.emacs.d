@@ -3606,7 +3606,9 @@ When =company= is actively used by browsing completion candidates, =<return>= sh
 	:config (company-auctex-init))
 #+end_src
 
-**** eshell
+**** COMMENT eshell
+
+Unfortunately, this really slows down eshell a lot.
 
 #+begin_src emacs-lisp
 (add-hook 'eshell-mode-hook '(lambda () (setq company-idle-delay 0)))
@@ -5171,6 +5173,29 @@ Version 2017-06-19"
   (eshell t))
 (global-set-key (kbd "<f7> e") 'tl/eshell)
  #+END_SRC
+
+
+** COMMENT WSL  bash
+
+#+BEGIN_SRC emacs-lisp
+(when (and 
+			 (eq system-type 'windows-nt)
+			 (executable-find "bash"))
+	(setq explicit-shell-file-name "bash") 	; WSL bash
+	(setq shell-file-name explicit-shell-file-name))
+#+END_SRC
+
+** Windows cmd
+
+#+BEGIN_SRC emacs-lisp
+(when (and 
+			 (eq system-type 'windows-nt)
+			 (executable-find "cmdproxy"))
+	(setq explicit-shell-file-name "cmdproxy") 
+	(setq shell-file-name explicit-shell-file-name)
+	(setq shell-command-switch "-c")
+	(setq w32-quote-process-args t))
+#+END_SRC
 
 * Encryption
 
