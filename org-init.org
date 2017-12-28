@@ -3328,7 +3328,8 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 		:ensure t
 		:config
 		(elfeed-org)
-		(setq rmh-elfeed-org-files (list my-elfeed-org-file)))
+		(setq rmh-elfeed-org-files (list my-elfeed-org-file)
+					rmh-elfeed-org-auto-ignore-invalid-feeds nil)) ; handle with care
 
 	)
 #+END_SRC
