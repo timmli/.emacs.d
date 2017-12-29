@@ -3339,6 +3339,15 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 	)
 #+END_SRC
 
+Wrapper function for elfeed (used in [[*hydra-f7][hydra-f7]]):
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/elfeed ()
+	(interactive)
+	(elfeed)
+	(visual-line-mode -1))
+#+END_SRC
+
 Generate filter hydra for a given set of tags (using code macros).
 Taken from http://cestlaz.github.io/posts/using-emacs-31-elfeed-3/.
 
@@ -5704,7 +5713,7 @@ Deprecated:
 	("B" bookmark-bmenu-list :exit t)
 	("p" helm-projectile :exit t)
 	("P" pandoc-main-hydra/body :exit t)
-	("r" elfeed :exit t)
+	("r" tl/elfeed :exit t)
 	("t" pomidor :exit t)
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
