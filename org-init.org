@@ -5091,12 +5091,24 @@ Goto other window:
 	)
 #+end_src
 
+** TODO COMMENT magit-gh-pulls
+
+- [ ] "Error (use-package): magit-gh-pulls/:catch: Wrong number of arguments: (3 . 4), 2"
+
+Show pull requests from Github in Magit.
+
+#+BEGIN_SRC emacs-lisp
+(use-package magit-gh-pulls             
+  :ensure t
+  :init (add-hook 'magit-mode-hook #'turn-on-magit-gh-pulls))
+#+END_SRC
+
 ** TODO COMMENT magithub
 
 - [X] Has to be properly configured.
 - [ ] open issue: https://github.com/magit/magit/issues/3154
 
-Enhancement of magit to make available a more comprehensive access to Github repositories, regrading issues etc.:
+Enhancement of magit to make available a more comprehensive access to Github repositories, regarding issues etc.:
 
 #+BEGIN_SRC emacs-lisp
 (use-package magithub
