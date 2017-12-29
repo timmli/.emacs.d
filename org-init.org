@@ -3250,7 +3250,7 @@ https://github.com/wasamasa/nov.el
 - State "TODO"       from              [2017-12-04 Mo 09:10]
 :END:
 
-- [ ] add hydra for navigation and filtering
+- [ ] truncate lines in elfeed search
 
 Largely taken from http://cestlaz.github.io/posts/using-emacs-29%20elfeed/.
 Feed collections can be converted to the format of =elfeed-org= with the function =elfeed-org-import-opml=.
@@ -3262,11 +3262,12 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 							("q" . bjm/elfeed-save-db-and-bury)
 							("Q" . bjm/elfeed-save-db-and-bury)
 							("m" . elfeed-toggle-star)
-							("M" . elfeed-toggle-star)
+							("M" . tl/elfeed-show-starred)
 							("R" . elfeed-mark-all-as-read)
 							("U" . tl/elfeed-show-unread)
 							("s" . bjm/elfeed-search-live-filter-space)
 							("f" . bjm/elfeed-search-live-filter-space)
+							("*" . tl/elfeed-show-starred)
 							("/" . mz/make-and-run-elfeed-hydra)
 							("A" . tl/elfeed-show-all)
 							)
@@ -3277,7 +3278,7 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 
 	(defface star-elfeed-entry
 		'((t :foreground "#f77"))
-		"Marks an stared Elfeed entry.")
+		"Marks an starred Elfeed entry.")
 	(push '(star star-elfeed-entry)
 				elfeed-search-face-alist)
 
@@ -3286,6 +3287,10 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 		(mark-whole-buffer)
 		(elfeed-search-untag-all-unread))
 
+	(defun tl/elfeed-show-starred ()
+		(interactive)
+		(elfeed-search-set-filter "@6-months-ago +star"))
+	
 	(defun tl/elfeed-show-all ()
 		(interactive)
 		(elfeed-search-set-filter "@6-months-ago"))
