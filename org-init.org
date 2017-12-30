@@ -3245,12 +3245,7 @@ https://github.com/wasamasa/nov.el
 
 ** RSS/Atom feed reader 
 
-*** TODO elfeed
-:LOGBOOK:
-- State "TODO"       from              [2017-12-04 Mo 09:10]
-:END:
-
-- [ ] truncate lines in elfeed search
+*** elfeed
 
 Largely taken from http://cestlaz.github.io/posts/using-emacs-29%20elfeed/.
 Feed collections can be converted to the format of =elfeed-org= with the function =elfeed-org-import-opml=.
@@ -3943,8 +3938,41 @@ https://github.com/cute-jumper/embrace.el
 	 ("C-( d" . embrace-delete)
 	 ("C-( c" . embrace-change))
 	:config
+
+	(defun tl/embrace-delete-* ()
+		(interactive)
+		(embrace--delete ?*))
+	(defun tl/embrace-delete-/ ()
+		(interactive)
+		(embrace--delete ?/))
+	(defun tl/embrace-delete-_ ()
+		(interactive)
+		(embrace--delete ?_))
+	(defun tl/embrace-delete-+ ()
+		(interactive)
+		(embrace--delete ?+))
+	(defun tl/embrace-delete-= ()
+		(interactive)
+		(embrace--delete ?=))
+	(defun tl/embrace-delete-~ ()
+		(interactive)
+		(embrace--delete ?~))
+
+	(defun tl/embrace-org-mode-hook ()
+		(dolist (lst '((?= "=" . "=")
+									 (?~ "~" . "~")
+									 (?/ "/" . "/")
+									 (?* "*" . "*")
+									 (?_ "_" . "_")
+									 (?+ "+" . "+")
+									 (?k "@@html:<kbd>@@" . "@@html:</kbd>@@")
+									 (?l "@@latex:" . "@@")))
+			(embrace-add-pair (car lst) (cadr lst) (cddr lst)))
+		(embrace-add-pair-regexp ?b "#\\+BEGIN_.*" "#\\+END_.*" 'embrace-with-org-block
+														 (embrace-build-help "#+BEGIN_*" "#+END") t))
+
 	;; (add-hook 'LaTeX-mode-hook 'embrace-LaTeX-mode-hook)
-	(add-hook 'org-mode-hook 'embrace-org-mode-hook))
+	(add-hook 'org-mode-hook 'tl/embrace-org-mode-hook))
 #+END_SRC
 
 ** Indentation
@@ -4842,7 +4870,13 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
  							;; org-mode
 							(define-key org-mode-map (kbd "C-d r") 'org-babel-remove-result)
 							(define-key org-mode-map (kbd "C-d f") 'embrace-delete) ; delete emphasis/font
-							(define-key org-mode-map (kbd "C-d (") 'embrace-delete) 
+							(define-key org-mode-map (kbd "C-d (") 'embrace-delete)
+							(define-key org-mode-map (kbd "C-d *") 'tl/embrace-delete-*)
+							(define-key org-mode-map (kbd "C-d /") 'tl/embrace-delete-/)
+							(define-key org-mode-map (kbd "C-d +") 'tl/embrace-delete-+)
+							(define-key org-mode-map (kbd "C-d _") 'tl/embrace-delete-_)
+							(define-key org-mode-map (kbd "C-d =") 'tl/embrace-delete-=)
+							(define-key org-mode-map (kbd "C-d ~") 'tl/embrace-delete-~) 
 							(define-key org-mode-map (kbd "C-c f") 'embrace-add) 
 
 							;; miscellaneous actions
