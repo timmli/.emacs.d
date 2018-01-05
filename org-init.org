@@ -6001,6 +6001,7 @@ Don't ask for the path when searching for files:
 	("A" hydra-org-archive/body "archive..." :exit t)
 	("b" org-tree-to-indirect-buffer "open in new buffer" :exit t)
 	("c" hydra-org-columns/body "columns..." :exit t)
+	("C" hydra-org-clock/body "clocking..." :exit t)
 	("n" org-add-note "add note" :exit t)
 	("p" org-set-property "add property" :exit t)
 	("P" org-set-property-and-value "add property-value pair" :exit t)
@@ -6066,6 +6067,43 @@ A hydra for org-columns.
 ("v" org-columns-show-value "show value")
 ("q" org-columns-quit :color blue)
 )
+#+END_SRC
+
+*** hydra-org-clock
+
+Hydra for clocking activities in org-mode (taken from https://github.com/abo-abo/hydra/wiki/Org-clock-and-timers):
+
+#+BEGIN_SRC emacs-lisp
+(bind-key "C-c c" 'hydra-org-clock/body)
+ (defhydra hydra-org-clock (:color blue :hint nil)
+   "
+^Clock:^ ^In/out^     ^Edit^   ^Summary^    | ^Timers:^ ^Run^           ^Insert
+-^-^-----^-^----------^-^------^-^----------|--^-^------^-^-------------^------
+(_?_)    _i_n         _e_dit   _g_oto entry | (_z_)     _r_elative      ti_m_e
+ ^ ^     _c_ontinue   _q_uit   _d_isplay    |  ^ ^      cou_n_tdown     i_t_em
+ ^ ^     _o_ut        ^ ^      _r_eport     |  ^ ^      _p_ause toggle
+ ^ ^     ^ ^          ^ ^      ^ ^          |  ^ ^      _s_top
+"
+   ("i" org-clock-in)
+   ("c" org-clock-in-last)
+   ("o" org-clock-out)
+   
+   ("e" org-clock-modify-effort-estimate)
+   ("q" org-clock-cancel)
+
+   ("g" org-clock-goto)
+   ("d" org-clock-display)
+   ("r" org-clock-report)
+   ("?" (org-info "Clocking commands"))
+
+  ("r" org-timer-start)
+  ("n" org-timer-set-timer)
+  ("p" org-timer-pause-or-continue)
+  ("s" org-timer-stop)
+
+  ("m" org-timer)
+  ("t" org-timer-item)
+  ("z" (org-info "Timers")))
 #+END_SRC
 
 *** hydra-org-agenda
