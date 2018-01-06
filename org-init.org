@@ -5820,7 +5820,7 @@ Global org-mode keys:
  
      ^^  [_a_] agenda  ^^    [_n_] notes   ^^  ^^   ^^  ^^  ^^   [_r_] reload org       	
      ^^  [_d_] deft    ^^    [_t_] todos   ^^  ^^   ^^  ^^  ^^   [_u_] update agenda files
-     ^^  [_c_] capture ^^    [_w_/_h_] work/home notes ^^  ^^  ^^  ^^ ^^        
+     ^^  [_c_] capture ^^    [_w_/_h_] work/home notes ^^  ^^[_C_] clocking...       
      ^^  [_f_] search  ^^    [_:_] tags ^^  ^^  ^^  ^^  ^^                      [_q_]uit
 
 	"
@@ -5830,6 +5830,7 @@ Global org-mode keys:
 				 (find-file (concat org-directory "/notes.org"))) :exit t)
 	("o" deft :exit t)
 	("c" org-capture :exit t)
+	("C" hydra-org-clock/body :exit t)
 	("t" org-todo-list :exit t)
 	("w" (lambda nil (interactive)
 				 (find-file (concat org-directory "/work/work.org"))) :exit t)
