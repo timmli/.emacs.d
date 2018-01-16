@@ -79,6 +79,8 @@
   (use-local-map xmg-mode-map)
 	(set (make-local-variable 'font-lock-defaults) '(xmg-font-lock-keywords))
 	(set (make-local-variable 'indent-line-function) 'xmg-indent-line)
+	(set (make-local-variable 'comment-start) "% ")
+	(set (make-local-variable 'comment-end) "")
 	(setq major-mode 'xmg-mode)
   (setq mode-name "XMG")
   (run-mode-hooks 'prog-mode-hook 'xmg-mode-hook))
@@ -86,5 +88,3 @@
 (provide 'xmg-mode)
 
 ;;; xmg-mode.el ends here
-
-
