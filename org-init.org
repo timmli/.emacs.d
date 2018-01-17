@@ -1337,6 +1337,8 @@ for better autocompletion
 
 Must appear before LaTeX stuff!
 
+Documentation and examples:
+http://ehneilsen.net/notebook/orgExamples/org-examples.html
 http://pages.sachachua.com/.emacs.d/Sacha.html#orgfe5d909
 http://doc.norang.ca/org-mode.html#Setup
 
