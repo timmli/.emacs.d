@@ -209,7 +209,7 @@
 				'(("MELPA Stable" . 10)
 					("GNU ELPA"     . 5)
 					("MELPA"        . 0)))
-
+	(add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
 	;; (add-to-list 'package-archives 				; repository of the sunrise commander
 	;; 						 '("SC"   . "http://joseito.republika.pl/sunrise-commander/") t)
   (package-initialize))
