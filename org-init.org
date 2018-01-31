@@ -4343,17 +4343,22 @@ Remove extra spaces from line or region (TODO):
 **** highlight-changes-mode
 
 http://emacs-fu.blogspot.de/2009/05/tracking-changes.html
+
 #+begin_src emacs-lisp
 ;; higlight changes in documents
 (global-highlight-changes-mode t)
 (setq highlight-changes-visibility-initial-state nil); initially hide
+
 ;; toggle visibility
 ;; (global-set-key (kbd "<f8>") 'highlight-changes-visible-mode) ;; changes
+
 ;; remove the change-highlight in region
 ;; (global-set-key (kbd "S-<f8>") 'highlight-changes-remove-highlight)
+
 ;; if you're not already using it for something else...
-(global-set-key (kbd "<M-prior>") 'highlight-changes-next-change)
-(global-set-key (kbd "<M-next>")  'highlight-changes-previous-change)
+;; (global-set-key (kbd "<M-prior>") 'highlight-changes-next-change)
+;; (global-set-key (kbd "<M-next>")  'highlight-changes-previous-change)
+
 ;; faces
 (set-face-foreground 'highlight-changes nil)
 (set-face-background 'highlight-changes "#916868")
