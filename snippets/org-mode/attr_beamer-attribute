@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: attr_beamer attribute
+# key: :
+# condition: (save-excursion (beginning-of-line) (looking-at "^#\\+ATTR_BEAMER:"))
+# --
+${1:$$(yas-choose-value '(":overlay <+->" ":environment nonindentlist" ":options []"))} $0

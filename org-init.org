@@ -4368,17 +4368,22 @@ Remove extra spaces from line or region (TODO):
 **** highlight-changes-mode
 
 http://emacs-fu.blogspot.de/2009/05/tracking-changes.html
+
 #+begin_src emacs-lisp
 ;; higlight changes in documents
 (global-highlight-changes-mode t)
 (setq highlight-changes-visibility-initial-state nil); initially hide
+
 ;; toggle visibility
 ;; (global-set-key (kbd "<f8>") 'highlight-changes-visible-mode) ;; changes
+
 ;; remove the change-highlight in region
 ;; (global-set-key (kbd "S-<f8>") 'highlight-changes-remove-highlight)
+
 ;; if you're not already using it for something else...
-(global-set-key (kbd "<M-prior>") 'highlight-changes-next-change)
-(global-set-key (kbd "<M-next>")  'highlight-changes-previous-change)
+;; (global-set-key (kbd "<M-prior>") 'highlight-changes-next-change)
+;; (global-set-key (kbd "<M-next>")  'highlight-changes-previous-change)
+
 ;; faces
 (set-face-foreground 'highlight-changes nil)
 (set-face-background 'highlight-changes "#916868")
@@ -6136,13 +6141,18 @@ Hydra for clocking activities in org-mode (taken from https://github.com/abo-abo
 *** hydra-org-agenda
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-org-agenda (:hint nil :color pink)
+(defhydra hydra-org-agenda (:hint nil :color pink :columns 4)
 	"Org-agenda view"
 	("+" org-agenda-priority-up "priority up" :exit nil)
 	("-" org-agenda-priority-down "priority down" :exit nil)
 	("d" org-agenda-day-view "day view" :exit nil)
+	("w" org-agenda-week-view "week view" :exit nil)
 	("h" org-agenda-holidays "holidays" :exit nil)
+	("f" org-agenda-later "forward" :exit nil)
+	("b" org-agenda-earlier "backward" :exit nil)
 	("j" org-agenda-goto-date "jump to date" :exit nil)
+	("J" org-agenda-clock-goto "clocked-in" :exit nil)
+	("." org-agenda-goto-today "today" :exit nil)
 	("k" org-agenda-kill "kill" :exit nil)
 	("t" org-agenda-todo "todo keyword" :exit nil)
 	("/" org-agenda-filter-by-tag "filter by tag" :exit nil)
