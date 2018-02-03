@@ -56,7 +56,41 @@
 (defun xmg-indent-line ()
   "Indent current line as XMG code."
   (interactive)
-	)
+	(beginning-of-line)
+	(if (bobp)  ; at begin of buffer
+      (indent-line-to 0)
+		(let ((not-indented t)
+					(cur-indent 0)
+					(block-end-regexp ".*\}[ \t]*$")		; "^[ \t]*\}"
+					(block-start-regexp ".*\{[ \t]*$")) ; "^[ \t]*\{"
+			
+			(if (looking-at "^[ \t\}]*$")			; at end of block consisting only of \}
+					(progn
+						(save-excursion
+							(forward-line -1)
+							(setq cur-indent (- (current-indentation) tab-width))))
+				
+				(save-excursion 								; within a block
+          (while not-indented						; search backwards until an indentation hint is found
+            (forward-line -1)
+            (if (looking-at block-end-regexp) ; indentation hint: closing bracket
+                (progn
+                  (setq cur-indent (- (current-indentation) tab-width))
+                  (setq not-indented nil))
+																				
+              (if (looking-at block-start-regexp) ; indentation hint: opening bracket
+                  (progn
+                    (setq cur-indent (+ (current-indentation) tab-width))
+                    (setq not-indented nil))
+								
+                (if (bobp)							; no indentation hint found
+                    (setq not-indented nil)))))))
+
+			(if (< cur-indent 0)				; don't deindent too far
+					(setq cur-indent 0))
+			(if cur-indent		; finally, set indentation based on cur-indent
+          (indent-line-to cur-indent)
+        (indent-line-to 0))))) ; if we didn't see an indentation hint, then allow no indentation
 
 (defvar xmg-mode-syntax-table
   (let ((st (make-syntax-table)))
@@ -84,6 +118,14 @@
 	(setq major-mode 'xmg-mode)
   (setq mode-name "XMG")
   (run-mode-hooks 'prog-mode-hook 'xmg-mode-hook))
+
+;; imenu support
+(defvar xmg-imenu-generic-expression
+      '(("class"  "^ *class *\\(.*\\)" 1)
+        ("value"     "^ *value *\\(.*\\)" 1)))
+(add-hook 'xmg-mode-hook
+					(lambda ()
+						(setq imenu-generic-expression xmg-imenu-generic-expression)))
 
 (provide 'xmg-mode)
 
