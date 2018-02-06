@@ -5058,6 +5058,10 @@ Key bindings roughly following the conventions of the Windows habitat.
 		(define-key helm-swoop-map (kbd "C-S-f m") 'helm-multi-swoop-current-mode-from-helm-swoop)
 		(define-key helm-swoop-map (kbd "M-a") 'helm-multi-swoop-all-from-helm-swoop))
 
+	(with-eval-after-load 'swiper-helm
+		(define-key swiper-helm-keymap (kbd "C-r") 'helm-previous-line)
+		(define-key swiper-helm-keymap (kbd "C-f") 'tl/swiper-helm-C-s))
+
 	(with-eval-after-load 'company
 		(define-key company-active-map (kbd "C-s") 'save-buffer))
 
@@ -5082,9 +5086,10 @@ Key bindings roughly following the conventions of the Windows habitat.
 		
 		))
 #+END_SRC
- 
+
+Let =helm-swoop= behave more like isearch:
+
 #+BEGIN_SRC emacs-lisp
-	;; Let helm-swoop behave more like isearch
 	;; FIXME: does not follow search hits; helm-action-follow-forward does not work here
 	(defun tl/helm-swoop-C-s ()
 		(interactive)
@@ -5095,6 +5100,20 @@ Key bindings roughly following the conventions of the Windows habitat.
 			(helm-next-line)
 			))
 #+END_SRC
+
+TESTING: Let =swiper-helm= behave more like isearch:
+
+#+BEGIN_SRC emacs-lisp
+	(defun tl/swiper-helm-C-s ()
+		(interactive)
+		(if (boundp 'helm-pattern)
+				(if (equal helm-pattern "")
+						(previous-history-element 1)
+					(helm-next-line))
+			(helm-next-line)
+			))
+#+END_SRC
+
 
 * TODO winkeys-starter-mode
 
