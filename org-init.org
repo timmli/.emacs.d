@@ -5967,7 +5967,7 @@ https://gitlab.com/xuhdev/dired-quick-sort
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-dired-main (:hint nil)
-"
+	"
  ^Navigation^            ^^            ^Mark^              ^Actions^             ^View^
 -^----------^------------^^------------^----^--------------^-------^-------------^----^------------
 
@@ -5980,51 +5980,52 @@ https://gitlab.com/xuhdev/dired-quick-sort
   ^^            v        ^^             _w_: copy file name _P_: change property
             _<down>_     ^^             _W_: copy path      _c_/_Z_: compress				  
   ^^                     ^^             ^^                  _=_: diff             _q_: quit dired     
-   _._: home  _j_: jump  _f_: find                          _e_: diff on marked   _Q_: quit hydra
+   _._: home  _j_: jump  _f_: find        _$_: wdired         _e_: diff on marked   _Q_: quit hydra
                                                     
 -^----------^------------------------^----^---------------^-------^-------------^----^-----------
 "
 
-("<left>" (lambda () (interactive) (find-alternate-file "..")))
-("<up>" diredp-previous-line)
-("<down>" diredp-next-line)
-("RET" dired-find-file)
-("<right>" dired-view-file)
-("+" hydra-dired-new/body :color blue)
-("*" hydra-dired-mark/body :color blue)
-("P" hydra-dired-properties/body :color blue)
-("O" dired-do-chown)
-("M" dired-do-chmod)
-("G" dired-do-chgrp)
-("C" dired-do-copy)
-("D" dired-do-delete)
-("<delete>" dired-do-delete)
-("R" dired-do-rename)
-("S" dired-do-symlink)
-("Z" dired-do-compress)
-("c" dired-do-compress-to)
-("/" dired-narrow)
-("(" dired-hide-details-mode)
-("f" my-find-name-dired)
-("." (find-file home-directory))
-;; ("=" diredp-ediff)  ; FIXME: does not work under windows; does not find diff 
-("=" dired-diff)
-("e" ora-ediff-files)
-("g" revert-buffer)
-("j" dired-goto-file)
-("r" dired-efap)
-("s" dired-sort-toggle-or-edit)
-("m" dired-mark)
-("u" dired-unmark)
-("U" dired-unmark-all-marks)
-("t" dired-toggle-marks)
-("v" dired-view-file)
-("w" dired-copy-filename-as-kill)
-("W" tl/dired-copy-path-at-point)
-("z" dired-get-size)
-("q" quit-window :color blue)
-("Q" nil :color blue)
-)
+	("<left>" (lambda () (interactive) (find-alternate-file "..")))
+	("<up>" diredp-previous-line)
+	("<down>" diredp-next-line)
+	("RET" dired-find-file)
+	("<right>" dired-view-file)
+	("+" hydra-dired-new/body :color blue)
+	("*" hydra-dired-mark/body :color blue)
+	("P" hydra-dired-properties/body :color blue)
+	("O" dired-do-chown)
+	("M" dired-do-chmod)
+	("G" dired-do-chgrp)
+	("C" dired-do-copy)
+	("D" dired-do-delete)
+	("<delete>" dired-do-delete)
+	("R" dired-do-rename)
+	("S" dired-do-symlink)
+	("Z" dired-do-compress)
+	("c" dired-do-compress-to)
+	("/" dired-narrow)
+	("(" dired-hide-details-mode)
+	("$" wdired-change-to-wdired-mode)
+	("f" my-find-name-dired)
+	("." (find-file home-directory))
+	;; ("=" diredp-ediff)  ; FIXME: does not work under windows; does not find diff 
+	("=" dired-diff)
+	("e" ora-ediff-files)
+	("g" revert-buffer)
+	("j" dired-goto-file)
+	("r" dired-efap)
+	("s" dired-sort-toggle-or-edit)
+	("m" dired-mark)
+	("u" dired-unmark)
+	("U" dired-unmark-all-marks)
+	("t" dired-toggle-marks)
+	("v" dired-view-file)
+	("w" dired-copy-filename-as-kill)
+	("W" tl/dired-copy-path-at-point)
+	("z" dired-get-size)
+	("q" quit-window :color blue)
+	("Q" nil :color blue)
+	)
 
 (defhydra hydra-dired-new (:hint nil )
 	"New"
@@ -6036,7 +6037,7 @@ https://gitlab.com/xuhdev/dired-quick-sort
 	)
 
 (defhydra hydra-dired-mark (:hint nil :after-exit (hydra-dired-main/body))
-"Mark"
+	"Mark"
 	("a" (dired-mark-files-regexp ".*") "all" :exit t)
 	("d" dired-mark-directories "directories" :exit t)
 	("." diredp-mark/unmark-extension "by extension" :exit t)
@@ -6047,7 +6048,7 @@ https://gitlab.com/xuhdev/dired-quick-sort
 	)
 
 (defhydra hydra-dired-properties (:hint nil :after-exit (hydra-dired-main/body))
-"Change"
+	"Change"
 	("o" dired-do-chown "owner")
 	("r" dired-do-chmod "rights")
 	("g" dired-do-chgrp "group")
