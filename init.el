@@ -204,12 +204,14 @@
 	(setq package-archives
 				'(("GNU ELPA"     . "http://elpa.gnu.org/packages/")
 					("MELPA Stable" . "https://stable.melpa.org/packages/")
-					("MELPA"        . "https://melpa.org/packages/"))
+					("MELPA"        . "https://melpa.org/packages/")
+					("org" . "https://orgmode.org/elpa/"))
 				package-archive-priorities
 				'(("MELPA Stable" . 10)
 					("GNU ELPA"     . 5)
-					("MELPA"        . 0)))
-	(add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
+					("MELPA"        . 0)
+					("org"          . 0)))
+	;; (add-to-list 'package-archives '("org" . "https://orgmode.org/elpa/") t)
 	;; (add-to-list 'package-archives 				; repository of the sunrise commander
 	;; 						 '("SC"   . "http://joseito.republika.pl/sunrise-commander/") t)
   (package-initialize))
