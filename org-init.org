@@ -3224,7 +3224,7 @@ Usefull extras, e.g., org-mode-like folding:
 
 ** R
 
-*** COMMENT ess
+*** ess
 
 - [ ] "Error (use-package): ess/:init: Recursive ‘require’ for feature ‘ess-r-mode’"
 
