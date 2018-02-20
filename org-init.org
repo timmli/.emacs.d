@@ -6102,6 +6102,7 @@ Don't ask for the path when searching for files:
 	(":" org-set-tags "tags" :exit t)
 	("+" org-priority-up "priority up" :exit nil)
 	("-" org-priority-down "priority down" :exit nil)
+	("*" org-cycle-list-bullet "cycle list type" :exit nil)
 	("\\" tl/org-toggle-overlays "toggle overlays" :exit t)
 	("^" org-sort nil :exit t)
 	("q" nil :color blue)
