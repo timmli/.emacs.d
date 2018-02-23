@@ -3574,7 +3574,9 @@ Show vertical line per indentation level:
 #+begin_src emacs-lisp
 (use-package yasnippet
 	:ensure t
-	:config (yas-global-mode 1))
+	:config 
+	(yas-global-mode 1)
+	(add-to-list 'warning-suppress-types '(yasnippet backquote-change)))
 #+end_src
 
 *** auto-complete
