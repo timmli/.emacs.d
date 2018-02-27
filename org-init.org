@@ -1405,6 +1405,18 @@ Use tab key as defined for the enclosed language:
 (setq org-src-tab-acts-natively t)
 #+END_SRC
 
+*** Download
+
+****  org-download
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-download
+	:ensure t
+	:after org
+	:config
+	(setq org-download-method 'attach)))
+#+END_SRC
+
 *** General keys
 
 #+BEGIN_SRC emacs-lisp
