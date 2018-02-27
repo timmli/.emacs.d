@@ -3919,24 +3919,26 @@ Deprecated. I instead use =flyspell-correct=.
 		:config
 		(use-package smartparens-config)
 		(setq sp-autoescape-string-quote nil)
-		(--each '(css-mode-hook
-							js-mode-hook
+		(--each '(LaTeX-mode-hook
+							R-mode-hook
+							TeX-mode-hook
+							bibtex-mode-hook
+							css-mode-hook
+							emacs-lisp-mode-hook
 							java-mode-hook
+							js-mode-hook
+							markdown-mode-hook
+							org-mode-hook
 							perl-mode-hook
               plantuml-mode-hook
 							python-mode-hook
-							emacs-lisp-mode-hook
-							LaTeX-mode-hook
-							bibtex-mode-hook
-							shell-mode-hook
 							sh-mode-hook
-							TeX-mode-hook
-							markdown-mode-hook
-							org-mode-hook
+							shell-mode-hook
 							xmg-mode-hook
 							web-mode-hook)
 			(add-hook it #'smartparens-mode))
 		(require 'smartparens-latex)
+		(require 'smartparens-ess)
 		;; org-mode
 		(sp-with-modes 'org-mode
 			(sp-local-pair "*" "*" :actions '(insert wrap) :unless '(sp-point-after-word-p sp-point-before-word-p sp-point-at-bol-p sp-in-math-p) )
