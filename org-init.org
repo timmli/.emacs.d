@@ -1414,7 +1414,7 @@ Use tab key as defined for the enclosed language:
 	:ensure t
 	:after org
 	:config
-	(setq org-download-method 'attach)))
+	(setq org-download-method 'attach))
 #+END_SRC
 
 *** General keys
