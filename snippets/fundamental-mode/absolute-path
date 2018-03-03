@@ -2,4 +2,4 @@
 # name: asolute path
 # key: /_
 # --
-`(insert (read-file-name ""))`
+`(read-file-name "")`

@@ -2,4 +2,4 @@
 # name: relative path
 # key: ._
 # --
-`(insert (file-relative-name (read-file-name "") (file-name-directory (buffer-file-name))))`
+`(file-relative-name (read-file-name "") (file-name-directory (buffer-file-name)))`
