@@ -4972,6 +4972,7 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 
 							;; miscellaneous actions
 							(define-key map (kbd "C-j") 'ace-jump-mode)
+							(define-key map (kbd "C-S-j") 'ace-jump-line-mode)
 							(define-key map (kbd "H-i") 'helm-imenu)
 							(define-key map (kbd "C-S-i") 'imenu-list)
 
