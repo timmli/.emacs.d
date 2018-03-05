@@ -766,6 +766,16 @@ Quick, comprehensive search on org-mode files.
 	:ensure t)
 #+END_SRC
 
+** COMMENT CoNNLL-U
+
+#+BEGIN_SRC emacs-lisp
+(use-package conllu-mode
+	:ensure t
+	:config
+	(add-to-list 'auto-mode-alist '("\\.conllu\\'" . conllu-mode))
+)
+#+END_SRC
+
 ** Python
 
 *** elpy
@@ -4200,6 +4210,14 @@ Menu completion at the keyboard
 #+END_SRC
 
 ** Cursor actions
+
+*** General
+
+This is supposed to accelerate cursor movement (https://emacs.stackexchange.com/a/28746/12336):
+
+#+BEGIN_SRC emacs-lisp
+(setq auto-window-vscroll nil)
+#+END_SRC
 
 *** ace-jump
 
