@@ -6525,6 +6525,25 @@ then a space, then the current time formatted with
   (insert (buffer-file-name (current-buffer))))
 #+END_SRC
 
+** hydra-insert-file-name
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-insert-file-name (:exit t :hint nil)
+	"
+
+      Insert File Name
+    ╭──────────────────╯
+      [_._] ../relative/path      [_w_] file namew
+      [_/_] /absolute/path   
+      ^^                                          [_q_] quit
+   "
+	("/" (insert (read-file-name "")))
+	("." (insert (file-relative-name (read-file-name "") (file-name-directory (buffer-file-name)))))
+  ("w" (insert (file-name-nondirectory (read-file-name ""))))
+	("q" nil))
+(global-set-key (kbd "C-c i f") 'hydra-insert-date/body)
+#+END_SRC
+
 ** hydra-latex
 
 #+BEGIN_SRC emacs-lisp
