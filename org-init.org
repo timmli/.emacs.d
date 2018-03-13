@@ -7,7 +7,8 @@
 * Good examples
 
 - http://ivanmalison.github.io/dotfiles/
-- https://github.com/novoid/dot-emacs/blob/master/config.org
+- https://github.com/novoid/dot-emacs/blob/master/config.org 
+- http://www.coli.uni-saarland.de/~slemaguer/emacs/main.html
 
 * General appearence
 
@@ -3487,6 +3488,18 @@ https://github.com/cadadr/elisp#bibliothekel
 	:if (executable-find "epdfinfo")
 	:config
 	(setq bibliothek-path (list user-bibliography-pdf-dir)))
+#+END_SRC
+
+*** interleave
+
+#+BEGIN_SRC emacs-lisp
+(use-package interleave
+  :ensure t
+  :bind ("C-x i" . interleave-mode)
+  :config
+  (setq interleave-split-direction 'horizontal
+        interleave-split-lines 20
+        interleave-disable-narrowing t))
 #+END_SRC
 
 ** Email
