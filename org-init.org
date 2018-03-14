@@ -4455,14 +4455,16 @@ Remove extra spaces from line or region (TODO):
 
 *** Tracking changes
 
-**** highlight-changes-mode
+**** COMMENT highlight-changes-mode
+
+FIXME: =highligh-changes-mode= is sometimes visible when loading buffers even though =highlight-changes-visibility-initial-state= is set to =nil=.
 
 http://emacs-fu.blogspot.de/2009/05/tracking-changes.html
 
 #+begin_src emacs-lisp
 ;; higlight changes in documents
 (global-highlight-changes-mode t)
-(setq highlight-changes-visibility-initial-state nil); initially hide
+(setq highlight-changes-visibility-initial-state nil); initially hide; 
 
 ;; toggle visibility
 ;; (global-set-key (kbd "<f8>") 'highlight-changes-visible-mode) ;; changes
@@ -5498,9 +5500,9 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
 
 * Chat
 
-** Jabber
+** COMMENT Jabber
 
-Sadly, I cannot use =jabber= together with Google or Skype.
+- [ ] OMEMO support missing
 
 #+BEGIN_SRC emacs-lisp
 (use-package jabber
@@ -5511,7 +5513,6 @@ Sadly, I cannot use =jabber= together with Google or Skype.
 				jabber-vcard-avatars-retrieve nil
 				jabber-alert-presence-hooks nil
 				jabber-mode-line-mode t
-
 
 				;; jabber-account-list ; better configure this in a secret place
 				;;     '(("<your-gmail-email>"
