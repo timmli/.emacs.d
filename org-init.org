@@ -5487,9 +5487,9 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
 
 * Chat
 
-** Jabber
+** COMMENT Jabber
 
-Sadly, I cannot use =jabber= together with Google or Skype.
+- [ ] OMEMO support missing
 
 #+BEGIN_SRC emacs-lisp
 (use-package jabber
@@ -5500,7 +5500,6 @@ Sadly, I cannot use =jabber= together with Google or Skype.
 				jabber-vcard-avatars-retrieve nil
 				jabber-alert-presence-hooks nil
 				jabber-mode-line-mode t
-
 
 				;; jabber-account-list ; better configure this in a secret place
 				;;     '(("<your-gmail-email>"
