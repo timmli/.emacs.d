@@ -4125,6 +4125,21 @@ Shift/delete indentation at cursor position or region:
 		))
 #+END_SRC
 
+*** COMMENT aggressive-indent
+
+Not sure whether I want to auto-indent whole files ...
+
+#+BEGIN_SRC emacs-lisp
+(use-package aggressive-indent
+  :ensure t
+  ;; :config
+  ;; (global-aggressive-indent-mode)
+  ;; (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+  ;; (add-to-list 'aggressive-indent-excluded-modes 'sql-mode)
+  ;; (add-to-list 'aggressive-indent-excluded-modes 'web-mode)
+)
+#+END_SRC
+
 ** Selection
 
 *** TODO expand-region
