@@ -402,6 +402,7 @@ Smex helps to remember often used commands; used by ido and counsel
 	("C-?" . imenu-list)
 	:init
 	(setq imenu-list-focus-after-activation t)
+	(setq imenu-list-after-jump-hook t)
 	;; (setq imenu-list-auto-resize t)
 	(setq imenu-list-position (quote left))
 	(setq imenu-list-size 30)
