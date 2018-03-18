@@ -3464,22 +3464,29 @@ Taken from http://cestlaz.github.io/posts/using-emacs-31-elfeed-3/.
 
 ** PDF
 
-*** pdf-tools
+*** COMMENT pdf-tools
+
+The hard part is to generate =epdfinfo.exe= under Windows. Therefore I'm not using it.
 
 https://github.com/politza/pdf-tools
 
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
 	:ensure t
-	:if (executable-find "epdfinfo")
+	;; :if (executable-find "epdfinfo")
 	:mode (("\\.pdf\\'" . pdf-view-mode))
 	:config
 	(setq-default pdf-view-display-size 'fit-page) ; fit page by default
 	(setq pdf-view-resize-factor 1.10)
-	(pdf-tools-install))
+	;; (pdf-tools-install)
+	;; (setq pdf-info-epdfinfo-program (expand-file-name "epdinfo.exe" (concat wemacs-dir "pdftools")))
+)
 #+END_SRC
 
-*** bibliothek
+*** COMMENT bibliothek
+
+- Nice idea, but it currently does not work because of "damaged" PDFs in my collection. 
+- Depends on =pdf-tools=.
 
 https://github.com/cadadr/elisp#bibliothekel
 
