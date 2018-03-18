@@ -3485,8 +3485,8 @@ https://github.com/politza/pdf-tools
 
 *** COMMENT bibliothek
 
-- Nice idea, but it currently does not work because of "damaged" PDFs in my collection. 
-- Depends on =pdf-tools=.
+Nice idea, but it currently does not work because of "damaged" PDFs in my collection. 
+Depends on =pdf-tools=.
 
 https://github.com/cadadr/elisp#bibliothekel
 
@@ -3498,7 +3498,10 @@ https://github.com/cadadr/elisp#bibliothekel
 	(setq bibliothek-path (list user-bibliography-pdf-dir)))
 #+END_SRC
 
-*** interleave
+*** COMMENT interleave
+
+For taking notes in =org-mode= side by side with the PDF.
+Depends on =pdf-tools=.
 
 #+BEGIN_SRC emacs-lisp
 (use-package interleave
@@ -5218,7 +5221,6 @@ TESTING: Let =swiper-helm= behave more like isearch:
 			(helm-next-line)
 			))
 #+END_SRC
-
 
 * TODO winkeys-starter-mode
 
