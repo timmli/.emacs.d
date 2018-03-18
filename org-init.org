@@ -6578,7 +6578,7 @@ then a space, then the current time formatted with
 	("." (insert (file-relative-name (read-file-name "") (file-name-directory (buffer-file-name)))))
   ("w" (insert (file-name-nondirectory (read-file-name ""))))
 	("q" nil))
-(global-set-key (kbd "C-c i f") 'hydra-insert-file-name)
+(global-set-key (kbd "C-c i f") 'hydra-insert-file-name/body)
 #+END_SRC
 
 ** hydra-latex
