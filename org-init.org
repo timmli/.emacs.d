@@ -2317,7 +2317,7 @@ http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
 
 Don't split window when opening agenda:
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-window-setup "only-window")
+(setq org-agenda-window-setup "current-window")
 #+END_SRC
 
 Show notifications of agenda events:
@@ -2410,6 +2410,11 @@ Show tags at the right edge of the screen:
   "Put the agenda tags by the right border of the agenda window."
   (setq org-agenda-tags-column (- 4 (window-width)))
   (org-agenda-align-tags))
+#+END_SRC
+
+Add the Emacs [[*Calendar/Diary][diary]] (which also stores holidays) to =org-agenda=:
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-include-diary t) 
 #+END_SRC
 
 **** Files
@@ -2718,7 +2723,7 @@ Map scr-block languages to =listings= environments:
 
 https://github.com/rudolfochrist/interleave
 
-** Calendar
+** Calendar/Diary
 
 #+BEGIN_SRC emacs-lisp
   (setq calendar-week-start-day 1)
@@ -6250,8 +6255,10 @@ Hydra for clocking activities in org-mode (taken from https://github.com/abo-abo
 	("d" org-agenda-day-view "day view" :exit nil)
 	("w" org-agenda-week-view "week view" :exit nil)
 	("h" org-agenda-holidays "holidays" :exit nil)
-	("f" org-agenda-later "forward" :exit nil)
-	("b" org-agenda-earlier "backward" :exit nil)
+	("H" org-agenda-holidays "" :exit nil)
+	("f" org-agenda-later "forward day/week/year" :exit nil)
+	("b" org-agenda-earlier "backward day/week/year" :exit nil)
+	("F" org-agenda-follow-mode "follow mode" :exit nil)
 	("j" org-agenda-goto-date "jump to date" :exit nil)
 	("J" org-agenda-clock-goto "clocked-in" :exit nil)
 	("." org-agenda-goto-today "today" :exit nil)
