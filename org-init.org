@@ -7,7 +7,8 @@
 * Good examples
 
 - http://ivanmalison.github.io/dotfiles/
-- https://github.com/novoid/dot-emacs/blob/master/config.org
+- https://github.com/novoid/dot-emacs/blob/master/config.org 
+- http://www.coli.uni-saarland.de/~slemaguer/emacs/main.html
 
 * General appearence
 
@@ -401,6 +402,7 @@ Smex helps to remember often used commands; used by ido and counsel
 	("C-?" . imenu-list)
 	:init
 	(setq imenu-list-focus-after-activation t)
+	(setq imenu-list-after-jump-hook t)
 	;; (setq imenu-list-auto-resize t)
 	(setq imenu-list-position (quote left))
 	(setq imenu-list-size 30)
@@ -3467,22 +3469,29 @@ Taken from http://cestlaz.github.io/posts/using-emacs-31-elfeed-3/.
 
 ** PDF
 
-*** pdf-tools
+*** COMMENT pdf-tools
+
+The hard part is to generate =epdfinfo.exe= under Windows. Therefore I'm not using it.
 
 https://github.com/politza/pdf-tools
 
 #+BEGIN_SRC emacs-lisp
 (use-package pdf-tools
 	:ensure t
-	:if (executable-find "epdfinfo")
+	;; :if (executable-find "epdfinfo")
 	:mode (("\\.pdf\\'" . pdf-view-mode))
 	:config
 	(setq-default pdf-view-display-size 'fit-page) ; fit page by default
 	(setq pdf-view-resize-factor 1.10)
-	(pdf-tools-install))
+	;; (pdf-tools-install)
+	;; (setq pdf-info-epdfinfo-program (expand-file-name "epdinfo.exe" (concat wemacs-dir "pdftools")))
+)
 #+END_SRC
 
-*** bibliothek
+*** COMMENT bibliothek
+
+Nice idea, but it currently does not work because of "damaged" PDFs in my collection. 
+Depends on =pdf-tools=.
 
 https://github.com/cadadr/elisp#bibliothekel
 
@@ -3492,6 +3501,21 @@ https://github.com/cadadr/elisp#bibliothekel
 	:if (executable-find "epdfinfo")
 	:config
 	(setq bibliothek-path (list user-bibliography-pdf-dir)))
+#+END_SRC
+
+*** COMMENT interleave
+
+For taking notes in =org-mode= side by side with the PDF.
+Depends on =pdf-tools=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package interleave
+  :ensure t
+  :bind ("C-x i" . interleave-mode)
+  :config
+  (setq interleave-split-direction 'horizontal
+        interleave-split-lines 20
+        interleave-disable-narrowing t))
 #+END_SRC
 
 ** Email
@@ -3764,6 +3788,14 @@ Execute when all backends added to =company-backends=.
 						'(:with company-yasnippet))))
 (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
   #+end_src
+
+*** academic-phrases
+
+#+BEGIN_SRC emacs-lisp
+(use-package academic-phrases
+	:ensure t
+)
+#+END_SRC
 
 ** Syntax checking
 
@@ -4115,6 +4147,21 @@ Shift/delete indentation at cursor position or region:
 			(shift-region -999)
 		(indent-rigidly (line-beginning-position) (line-end-position) -999)
 		))
+#+END_SRC
+
+*** COMMENT aggressive-indent
+
+Not sure whether I want to auto-indent whole files ...
+
+#+BEGIN_SRC emacs-lisp
+(use-package aggressive-indent
+  :ensure t
+  ;; :config
+  ;; (global-aggressive-indent-mode)
+  ;; (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+  ;; (add-to-list 'aggressive-indent-excluded-modes 'sql-mode)
+  ;; (add-to-list 'aggressive-indent-excluded-modes 'web-mode)
+)
 #+END_SRC
 
 ** Selection
@@ -5179,7 +5226,6 @@ TESTING: Let =swiper-helm= behave more like isearch:
 			(helm-next-line)
 			))
 #+END_SRC
-
 
 * TODO winkeys-starter-mode
 
@@ -6549,7 +6595,7 @@ then a space, then the current time formatted with
 	("." (insert (file-relative-name (read-file-name "") (file-name-directory (buffer-file-name)))))
   ("w" (insert (file-name-nondirectory (read-file-name ""))))
 	("q" nil))
-(global-set-key (kbd "C-c i f") 'hydra-insert-file-name)
+(global-set-key (kbd "C-c i f") 'hydra-insert-file-name/body)
 #+END_SRC
 
 ** hydra-latex
