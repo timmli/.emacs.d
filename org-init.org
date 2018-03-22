@@ -3033,20 +3033,43 @@ Formatting:
 (setq bibtex-field-indentation 2
 			bibtex-text-indentation 14
 			bibtex-contline-indentation 15)
+(add-hook 'bibtex-mode-hook (lambda () (set-fill-column 999))) ; don't fill column
 #+END_SRC
 
 Cleaning actions: 
 #+BEGIN_SRC emacs-lisp
-(setq bibtex-entry-format '(opts-or-alts ; delete empty optional and alternative fields
-														required-fields ; signal an error if a required field is missing.
-														numerical-fields ; delete delimiters around numeral fields
-														inherit-booktitle ; insert booktitle if it is in the crossref
-														realign						; realign entries
-														last-comma				; add or delete last comma
-														delimiters				; change delimiters 
-														unify-case
-														sort-fields
-														)) 							
+(setq bibtex-entry-format
+			'(opts-or-alts ; delete empty optional and alternative fields
+				required-fields ; signal an error if a required field is missing.
+				numerical-fields ; delete delimiters around numeral fields
+				inherit-booktitle ; insert booktitle if it is in the crossref
+				realign						; realign entries
+				last-comma				; add or delete last comma
+				delimiters				; change delimiters 
+				unify-case				; change case of entry types and field names
+				sort-fields
+				)) 							
+#+END_SRC
+
+Key generation:
+#+BEGIN_SRC emacs-lisp
+(setq
+ ;; name part
+ bibtex-autokey-names 2						; maximal number of names used
+ bibtex-autokey-preserve-case t		
+ bibtex-autokey-name-separator ":" 
+ ;; year part
+ bibtex-autokey-year-length 2 			; size of year part (from the right)
+ bibtex-autokey-name-year-separator ":" 
+ bibtex-autokey-year-use-crossref-entry t ; use year from crossref (depends on bibtex-maintain-sorted-entries)
+;; title part
+ bibtex-autokey-titleword-length 0			; number of used titlewords
+)
+#+END_SRC
+
+Sorting entries:
+#+BEGIN_SRC emacs-lisp
+(setq bibtex-maintain-sorted-entries t)
 #+END_SRC
 
 *** TODO helm-bibtex
