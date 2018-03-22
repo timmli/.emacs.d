@@ -4331,7 +4331,6 @@ Menu completion at the keyboard
 
 #+BEGIN_SRC emacs-lisp
 (use-package lacarte
-  :ensure t
   :bind ("C-<f6>" . lacarte-execute-menu-command))
 #+END_SRC
 

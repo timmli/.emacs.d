@@ -219,6 +219,7 @@
 (setq package-list '(async 							; paradox needs async
 										 paradox
 										 use-package
+										 org
                      ))
 ;; ;; fetch the list of packages available
 ;; (unless package-archive-contents
