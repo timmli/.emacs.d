@@ -1813,6 +1813,12 @@ Footnotes
 			org-footnote-auto-adjust t)
 #+END_SRC
 
+Jump
+#+BEGIN_SRC emacs-lisp
+(setq org-goto-interface 'outline-path-completion
+      org-goto-max-level 10)
+#+END_SRC
+
 *** Todo keywords
 
 (Must appear before =org-agenda= settings. Otherwise =org-todo-keywords= may not get updated buffer locally.)
@@ -5061,8 +5067,9 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 							(define-key org-mode-map (kbd "C-d _") 'tl/embrace-delete-_)
 							(define-key org-mode-map (kbd "C-d =") 'tl/embrace-delete-=)
 							(define-key org-mode-map (kbd "C-d ~") 'tl/embrace-delete-~) 
-							(define-key org-mode-map (kbd "C-c f") 'embrace-add) 
-
+							(define-key org-mode-map (kbd "C-c f") 'embrace-add)
+							(define-key org-mode-map (kbd "H-i") 'org-goto) ; otherwise helm-imenu will be used (FIXME)
+ 
 							;; miscellaneous actions
 							(define-key map (kbd "C-j") 'ace-jump-mode)
 							(define-key map (kbd "C-S-j") 'ace-jump-line-mode)
@@ -5073,8 +5080,8 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 							)
 		(add-hook 'minibuffer-setup-hook 'underi-minibuffer)
 		(with-eval-after-load 'org
-			(define-key org-mode-map (kbd "C-d c") 'org-table-delete-column )
-			(define-key org-mode-map (kbd "C-d C-c") 'org-table-delete-column )
+			(define-key org-mode-map (kbd "C-d c") 'org-table-delete-column)
+			(define-key org-mode-map (kbd "C-d C-c") 'org-table-delete-column)
 			)
 											
 	)	
