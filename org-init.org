@@ -3022,6 +3022,27 @@ Align at equal sign instead of field text:
 (setq bibtex-align-at-equal-sign t)
 #+END_SRC
 
+Formatting:
+#+BEGIN_SRC emacs-lisp
+(setq bibtex-field-indentation 2
+			bibtex-text-indentation 14
+			bibtex-contline-indentation 15)
+#+END_SRC
+
+Cleaning actions: 
+#+BEGIN_SRC emacs-lisp
+(setq bibtex-entry-format '(opts-or-alts ; delete empty optional and alternative fields
+														required-fields ; signal an error if a required field is missing.
+														numerical-fields ; delete delimiters around numeral fields
+														inherit-booktitle ; insert booktitle if it is in the crossref
+														realign						; realign entries
+														last-comma				; add or delete last comma
+														delimiters				; change delimiters 
+														unify-case
+														sort-fields
+														)) 							
+#+END_SRC
+
 *** TODO helm-bibtex
 
 On the long run, this is supposed to help to replace JabRef.
@@ -5845,6 +5866,8 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 		(hydra-image/body))
 	 ((string-equal (buffer-mode) "latex-mode")
 		(hydra-latex-main/body))
+	 ((string-equal (buffer-mode) "bibtex-mode")
+		(hydra-bibtex/body))
 	 ((string-equal (buffer-mode) "org-mode")
 		(hydra-org-main/body))
 	 ((string-equal (buffer-mode) "org-agenda-mode")
@@ -6037,6 +6060,28 @@ Global org-mode keys:
 )
 	(global-set-key (kbd "<f9>") 'hydra-f9/body)
 
+#+END_SRC
+
+** hydra-bibtex
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-bibtex (:hint nil :columns 4)
+	"BibTeX mode"
+	("o" bibtex-remove-OPT-or-ALT "remove OPT/ALT" :exit t)
+	("c" bibtex-clean-entry "clean entry" :exit t)
+	("f"  bibtex-make-field "new field" :exit t)
+	("C-k"  bibtex-kill-field "kill field" :exit t)
+	("k"  bibtex-kill-field "" :exit t)
+	("C-w"  bibtex-kill-entry "kill entry" :exit t)
+	("w"  bibtex-kill-entry "" :exit t)
+	("y"  bibtex-yank "yank field" :exit t)
+	("s"  bibtex-sort-buffer "sort entries" :exit t)
+	("+"  org-ref-bibtex-new-entry/body "new entry..." :exit t)
+	("F"  org-ref-bibtex-file/body "file actions..." :exit t)
+	("O"  org-ref-bibtex-hydra/body "org-ref hydra..." :exit t)
+	("?" bibtex-print-help-message "help" :exit nil)
+	("q" nil :color blue)
+	)
 #+END_SRC
 
 ** hydra-cm-mode
