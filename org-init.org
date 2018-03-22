@@ -3072,6 +3072,30 @@ Sorting entries:
 (setq bibtex-maintain-sorted-entries t)
 #+END_SRC
 
+**** import
+
+Taken from http://www.anghyflawn.net/blog/2014/emacs-give-a-doi-get-a-bibtex-entry/:
+
+#+BEGIN_SRC emacs-lisp
+(defun get-bibtex-from-doi (doi)
+ "Get a BibTeX entry from the DOI"
+ (interactive "MDOI: ")
+ (let ((url-mime-accept-string "text/bibliography;style=bibtex"))
+   (with-current-buffer 
+     (url-retrieve-synchronously 
+       (format "http://dx.doi.org/%s" 
+       	(replace-regexp-in-string "http://dx.doi.org/" "" doi)))
+     (switch-to-buffer (current-buffer))
+     (goto-char (point-max))
+     (setq bibtex-entry 
+     	  (buffer-substring 
+          	(string-match "@" (buffer-string))
+              (point)))
+     (kill-buffer (current-buffer))))
+ (insert (decode-coding-string bibtex-entry 'utf-8))
+ (bibtex-fill-entry))
+#+END_SRC
+
 *** TODO helm-bibtex
 
 On the long run, this is supposed to help to replace JabRef.
@@ -6107,6 +6131,7 @@ Global org-mode keys:
 	("y"  bibtex-yank "yank field" :exit t)
 	("s"  bibtex-sort-buffer "sort entries" :exit t)
 	("+"  org-ref-bibtex-new-entry/body "new entry..." :exit t)
+	("i"  get-bibtex-from-doi "import from doi" :exit t)
 	("F"  org-ref-bibtex-file/body "file actions..." :exit t)
 	("O"  org-ref-bibtex-hydra/body "org-ref hydra..." :exit t)
 	("?" bibtex-print-help-message "help" :exit nil)
