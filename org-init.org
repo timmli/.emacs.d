@@ -2535,6 +2535,11 @@ Show whether links to files are valid:
  :face (lambda (path) (when (not (file-remote-p path))(if (file-exists-p path) 'org-link 'org-warning))))
 #+END_SRC
 
+Use IDs rather than headline names:
+#+BEGIN_SRC emacs-lisp
+(setq org-id-link-to-org-use-id t)
+#+END_SRC
+
 *** Tags
 
 Tags can be set globally as default using the variable =org-tag-alist=. 
@@ -6288,6 +6293,7 @@ Don't ask for the path when searching for files:
 	("n" org-add-note "add note" :exit t)
 	("p" org-set-property "add property" :exit t)
 	("P" org-set-property-and-value "add property-value pair" :exit t)
+	("i" org-id-get-create "add ID" :exit t)
 	("r" org-ref "org-ref" :exit t)
 	("s" org-sort "sort" :exit t)
 	("$" org-latex-fragment-toggle-toggle "show LaTeX" :exit t)
