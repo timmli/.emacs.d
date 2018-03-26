@@ -3116,12 +3116,9 @@ Taken from http://www.anghyflawn.net/blog/2014/emacs-give-a-doi-get-a-bibtex-ent
  (bibtex-fill-entry))
 #+END_SRC
 
-*** TODO helm-bibtex
+*** helm-bibtex
 
-On the long run, this is supposed to help to replace JabRef.
-See also https://nickhigham.wordpress.com/2016/01/06/managing-bibtex-files-with-emacs/
-
-- [ ] see  pull request: https://github.com/tmalsburg/helm-bibtex/pull/113
+Search through your BibTeX bibliography with helm. 
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-bibtex
@@ -3131,6 +3128,23 @@ See also https://nickhigham.wordpress.com/2016/01/06/managing-bibtex-files-with-
 	(setq bibtex-completion-additional-search-fields '(bibtexkey))
 	;; The standard function with modified default action  
 	;; :bind (:map LaTeX-mode-map ("C-l C-r" . helm-bibtex-with-local-bibliography))
+	
+	(helm-delete-action-from-source "Open PDF, URL or DOI" helm-source-bibtex)
+	(helm-delete-action-from-source "Open PDF file (if present)" helm-source-bibtex)
+	(helm-delete-action-from-source "Open URL or DOI in browser" helm-source-bibtex)
+	(helm-delete-action-from-source "Show entry" helm-source-bibtex)
+	(helm-add-action-to-source
+	 "Show entry" 'bibtex-completion-show-entry
+	 helm-source-bibtex 5)
+	(helm-add-action-to-source
+	 "Open PDF, URL or DOI" 'bibtex-completion-open-any
+	 helm-source-bibtex 6)
+	(helm-add-action-to-source
+	 "Open PDF file (if present)" 'bibtex-completion-open-pdf
+	 helm-source-bibtex 7)
+	(helm-add-action-to-source
+	 "Open URL or DOI in browser" 'bibtex-completion-open-url-or-doi
+	 helm-source-bibtex 8)
 	)
 #+END_SRC
 
