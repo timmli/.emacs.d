@@ -2452,6 +2452,9 @@ Org-mode files are usually bundled within a single directory stored in the varia
 	
 	(customize-save-variable 'org-agenda-files org-agenda-files)
 	(message "org-agenda-files updated")
+
+	(org-id-update-id-locations)
+	(message "org-id-files updated")	
 	)
 #+END_SRC
 
@@ -2538,6 +2541,18 @@ Show whether links to files are valid:
 Use IDs rather than headline names:
 #+BEGIN_SRC emacs-lisp
 (setq org-id-link-to-org-use-id t)
+#+END_SRC
+
+Use ID completion when generating ID links:
+#+BEGIN_SRC emacs-lisp
+;; taken from https://emacs.stackexchange.com/a/12434/12336
+(defun org-id-complete-link (&optional arg)
+  "Create an id: link using completion"
+  (concat "id:"
+          (org-id-get-with-outline-path-completion)))
+
+(org-link-set-parameters "id"
+                         :complete 'org-id-complete-link)
 #+END_SRC
 
 *** Tags
