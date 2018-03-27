@@ -3402,6 +3402,7 @@ Search through your BibTeX bibliography with helm.
 	(helm-delete-action-from-source "Open PDF file (if present)" helm-source-bibtex)
 	(helm-delete-action-from-source "Open URL or DOI in browser" helm-source-bibtex)
 	(helm-delete-action-from-source "Show entry" helm-source-bibtex)
+	
 	(helm-add-action-to-source
 	 "Show entry" 'bibtex-completion-show-entry
 	 helm-source-bibtex 5)
@@ -3414,6 +3415,11 @@ Search through your BibTeX bibliography with helm.
 	(helm-add-action-to-source
 	 "Open URL or DOI in browser" 'bibtex-completion-open-url-or-doi
 	 helm-source-bibtex 8)
+	
+	(advice-add 'bibtex-completion-candidates :filter-return 'reverse)
+
+	(setq bibtex-completion-display-formats 
+				'((t . "${author:36} ${title:*} ${year:4} ${timestamp:8} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
 	)
 #+END_SRC
 
