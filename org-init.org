@@ -3043,6 +3043,10 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 
 *** bibtex
 
+#+BEGIN_SRC emacs-lisp
+(setq bibtex-dialect 'biblatex)
+#+END_SRC
+
 Align at equal sign instead of field text:
 #+BEGIN_SRC emacs-lisp
 (setq bibtex-align-at-equal-sign t)
@@ -3114,6 +3118,271 @@ Taken from http://www.anghyflawn.net/blog/2014/emacs-give-a-doi-get-a-bibtex-ent
      (kill-buffer (current-buffer))))
  (insert (decode-coding-string bibtex-entry 'utf-8))
  (bibtex-fill-entry))
+#+END_SRC
+
+**** entry templates
+
+#+BEGIN_QUOTE
+Documentation of bibtex-entry-field-alist:
+Alist of BibTeX entry types and their associated fields.
+Elements are lists (ENTRY-TYPE DOC REQUIRED CROSSREF OPTIONAL).
+ENTRY-TYPE is the type of a BibTeX entry.
+DOC is a brief doc string used for menus. If nil ENTRY-TYPE is used.
+REQUIRED is a list of required fields.
+CROSSREF is a list of fields that are optional if a crossref field
+is present; but these fields are required otherwise.
+OPTIONAL is a list of optional fields.
+
+Each element of these lists is a list of the form
+  (FIELD COMMENT INIT ALTERNATIVE).
+COMMENT, INIT, and ALTERNATIVE are optional.
+
+FIELD is the name of the field.
+COMMENT is the comment string that appears in the echo area.
+If COMMENT is nil use ‘bibtex-BibTeX-field-alist’ if possible.
+INIT is either the initial content of the field or a function,
+which is called to determine the initial content of the field.
+ALTERNATIVE if non-nil is an integer that numbers sets of
+alternatives, starting from zero.
+#+END_QUOTE
+
+#+BEGIN_SRC emacs-lisp
+(defvar bibtex-langsci-entry-alist 
+	`(("Article" "Article in Journal"
+		 ;; required
+		 (("author")
+			("title" "Title of the article (BibTeX converts it to lowercase)"))
+		 ;; required without crossref
+		 (("journal")
+			("year"))
+		 ;; optional
+		 (("volume" "Volume of the journal")
+			("number" "Number of the journal (only allowed if entry contains volume)")
+			("pages" "Pages in the journal")
+			("url")
+			("urldate")
+			("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+
+		("Book" "Book"
+		 ;; required
+		 (("author" nil nil 0)
+			("editor" nil nil 0)
+			("title" nil nil 1)
+			("booktitle" nil nil 1)
+			("year")
+			("publisher")
+			("address"))
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("volume" "Volume of the book in the series")
+			("number" "Number of the book in a small series (overwritten by volume)")
+			("series" "Series in which the book appeared")
+			("edition" "Edition of the book as a capitalized English word")
+			("url")
+			("urldate")
+			("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+
+		("Collection" "Collection"
+		 ;; required
+		 (("editor")
+			("booktitle")
+			("year")
+			("publisher")
+			("address"))
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("title")
+			("volume" "Volume of the book in the series")
+			("number" "Number of the book in a small series (overwritten by volume)")
+			("series" "Series in which the book appeared")
+			("edition" "Edition of the book as a capitalized English word")
+			("url")
+			("urldate")
+			("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+
+		("Proceedings" "Conference Proceedings"
+		 ;; required
+		 (("booktitle")
+			("year"))
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("editor")
+			("title")
+			("volume" "Volume of the conference proceedings in the series")
+			("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+			("series" "Series in which the conference proceedings appeared")
+			("address")
+			("organization" "Sponsoring organization of the conference")
+			("publisher" "Publishing company, its location")
+			("url")
+			("urldate")
+			("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+
+		("InProceedings" "Article in Conference Proceedings"
+		 ;; required
+		 (("author")
+			("title" "Title of the article in proceedings (BibTeX converts it to lowercase)")
+			("pages" "Pages in the conference proceedings"))
+		 ;; required without crossref
+		 (("booktitle" "Name of the conference proceedings")
+			("address")
+			("publisher" "Publishing company, its location")
+			("year"))
+		 ;; optional
+		 (("editor")
+			("volume" "Volume of the conference proceedings in the series")
+			("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+			("series" "Series in which the conference proceedings appeared")
+			("url")
+			("urldate")
+			("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+
+		("InCollection" "Article in a Collection"
+		 ;; required
+		 (("author")
+			("title" "Title of the article in proceedings (BibTeX converts it to lowercase)")
+			("pages" "Pages in the conference proceedings"))
+		 ;; required without crossref
+		 (("booktitle" "Name of the conference proceedings")
+			("editor")
+			("address")
+			("publisher" "Publishing company, its location")
+			("year"))
+		 ;; optional
+		 (("volume" "Volume of the conference proceedings in the series")
+			("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+			("series" "Series in which the conference proceedings appeared")
+			("chapter")
+			("url")
+			("urldate")
+			("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+		
+		("Thesis" "Thesis"
+		 ;; required
+		 (("author")
+			("title" "Title of the thesis")
+			("type" "Type of the thesis")
+			("school" "School where the thesis was written")
+			("address")
+			("year"))
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("url")
+			("urldate")
+			("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+		
+		("TechReport" "Technical Report"
+		 ;; required
+		 (("author")
+			("title" "Title of the technical report (BibTeX converts it to lowercase)")
+			("year")
+			("address")
+			("publisher"))
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("number" "Number of the technical report")
+			("series")
+			("url")
+			("urldate")
+			("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+		
+		("Online" "Online resource"
+		 ;; required
+		 (("title" "Title of the manual")
+			("author")
+			("year")
+			("url")
+			("urldate"))
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("doi")
+			("booktitle")
+			("editor")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+		
+		("Unpublished" "Unpublished"
+		 ;; required
+		 (("author")
+			("title" "Title of the unpublished work (BibTeX converts it to lowercase)")
+			("note"))
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("url")
+			("urldate")
+			("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			))
+		
+		("Misc" "Miscellaneous"
+		 ;; required
+		 nil
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("author")
+			("editor")
+			("title")
+			("booktitle")
+			("journal")
+			("edition")
+			("series")
+			("volume")
+			("number")
+			("pages")
+			("chapter")
+			("address")
+			("publisher")
+			("school")
+			("type")
+			("year")
+			("url")
+			("urldate")
+			("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note"))))
+	"Entry types following the formatting rules of Language Science Press (https://github.com/langsci/bib-db)."
+	)
+#+END_SRC
+
+Activate langsci dialect:
+#+BEGIN_SRC emacs-lisp
+(defvar bibtex-langsci-field-alist bibtex-biblatex-field-alist)
+(add-to-list 'bibtex-langsci-field-alist '("timestamp" "Date of creation or modification of the entry."))
+
+(add-to-list 'bibtex-dialect-list 'langsci)
+(setq bibtex-dialect 'langsci)
+#+END_SRC
+
+Function to add timestamp:
+#+BEGIN_SRC emacs-lisp
+(defun tl/bibtex-add-timestamp ()
+	(interactive)
+	(bibtex-set-field "timestamp" (format-time-string "%Y-%m-%d" (current-time))) 
+)
 #+END_SRC
 
 *** helm-bibtex
@@ -6163,6 +6432,7 @@ Global org-mode keys:
 	("w"  bibtex-kill-entry "" :exit t)
 	("y"  bibtex-yank "yank field" :exit t)
 	("s"  bibtex-sort-buffer "sort entries" :exit t)
+	("t"  tl/bibtex-add-timestamp "add timestamp" :exit t)
 	("+"  org-ref-bibtex-new-entry/body "new entry..." :exit t)
 	("i"  get-bibtex-from-doi "import from doi" :exit t)
 	("F"  org-ref-bibtex-file/body "file actions..." :exit t)
