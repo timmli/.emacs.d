@@ -3416,21 +3416,24 @@ Search through your BibTeX bibliography with helm.
 														 'bibtex-completion-open-url-or-doi
 														 helm-source-bibtex 8)
 
-	;; This is not optimal, since action variables are global:
-	(add-hook 'org-mode-hook 
-						'(lambda ()
-							 (helm-delete-action-from-source "Show entry" helm-source-bibtex)
-							 (helm-add-action-to-source "Show entry"
-																					'bibtex-completion-show-entry
-																					helm-source-bibtex 5)))
-	(add-hook 'bibtex-mode-hook
-						'(lambda ()
-							 (helm-delete-action-from-source "Show entry" helm-source-bibtex)
-							 (helm-add-action-to-source "Show entry"
-																					'bibtex-completion-show-entry
-																					helm-source-bibtex 0)))
-	(define-key bibtex-mode-map (kbd "C-c h") 'helm-bibtex)
-	(define-key bibtex-mode-map (kbd "C-c C-h") 'helm-bibtex)
+	;; Temporarily move "Show entry" to the first position of the action list when in bibtex-mode
+	(defun tl/promote_show_entry (&optional arg local-bib)
+		(helm-delete-action-from-source "Show entry" helm-source-bibtex)
+		(helm-add-action-to-source "Show entry"
+															 'bibtex-completion-show-entry
+															 helm-source-bibtex 0))
+	(defun tl/demote_show_entry (&optional arg local-bib)
+		(helm-delete-action-from-source "Show entry" helm-source-bibtex)
+		(helm-add-action-to-source "Show entry"
+															 'bibtex-completion-show-entry
+															 helm-source-bibtex 5))
+	(defun tl/helm-bibtex-in-bibtex-mode ()
+		(interactive)
+		(tl/promote_show_entry)
+		(helm-bibtex)
+		(tl/demote_show_entry))
+	(define-key bibtex-mode-map (kbd "C-c h") 'tl/helm-bibtex-in-bibtex-mode)
+	(define-key bibtex-mode-map (kbd "C-c C-h") 'tl/helm-bibtex-in-bibtex-mode)
 	
 	(advice-add 'bibtex-completion-candidates :filter-return 'reverse)
 
