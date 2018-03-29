@@ -3236,14 +3236,14 @@ alternatives, starting from zero.
 			("pages" "Pages in the conference proceedings"))
 		 ;; required without crossref
 		 (("booktitle" "Name of the conference proceedings")
-			("address")
-			("publisher" "Publishing company, its location")
 			("year"))
 		 ;; optional
 		 (("editor")
 			("volume" "Volume of the conference proceedings in the series")
 			("number" "Number of the conference proceedings in a small series (overwritten by volume)")
 			("series" "Series in which the conference proceedings appeared")
+			("publisher" "Publishing company, its location")
+			("address")
 			("url")
 			("urldate")
 			("doi")
