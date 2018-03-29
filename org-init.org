@@ -3403,23 +3403,39 @@ Search through your BibTeX bibliography with helm.
 	(helm-delete-action-from-source "Open URL or DOI in browser" helm-source-bibtex)
 	(helm-delete-action-from-source "Show entry" helm-source-bibtex)
 	
-	(helm-add-action-to-source
-	 "Show entry" 'bibtex-completion-show-entry
-	 helm-source-bibtex 5)
-	(helm-add-action-to-source
-	 "Open PDF, URL or DOI" 'bibtex-completion-open-any
-	 helm-source-bibtex 6)
-	(helm-add-action-to-source
-	 "Open PDF file (if present)" 'bibtex-completion-open-pdf
-	 helm-source-bibtex 7)
-	(helm-add-action-to-source
-	 "Open URL or DOI in browser" 'bibtex-completion-open-url-or-doi
-	 helm-source-bibtex 8)
+	(helm-add-action-to-source "Show entry"
+														 'bibtex-completion-show-entry
+														 helm-source-bibtex 5)
+	(helm-add-action-to-source "Open PDF, URL or DOI"
+														 'bibtex-completion-open-any
+														 helm-source-bibtex 6)
+	(helm-add-action-to-source "Open PDF file (if present)"
+														 'bibtex-completion-open-pdf
+														 helm-source-bibtex 7)
+	(helm-add-action-to-source "Open URL or DOI in browser"
+														 'bibtex-completion-open-url-or-doi
+														 helm-source-bibtex 8)
+
+	;; This is not optimal, since action variables are global:
+	(add-hook 'org-mode-hook 
+						'(lambda ()
+							 (helm-delete-action-from-source "Show entry" helm-source-bibtex)
+							 (helm-add-action-to-source "Show entry"
+																					'bibtex-completion-show-entry
+																					helm-source-bibtex 5)))
+	(add-hook 'bibtex-mode-hook
+						'(lambda ()
+							 (helm-delete-action-from-source "Show entry" helm-source-bibtex)
+							 (helm-add-action-to-source "Show entry"
+																					'bibtex-completion-show-entry
+																					helm-source-bibtex 0)))
+	(define-key bibtex-mode-map (kbd "C-c h") 'helm-bibtex)
+	(define-key bibtex-mode-map (kbd "C-c C-h") 'helm-bibtex)
 	
 	(advice-add 'bibtex-completion-candidates :filter-return 'reverse)
 
 	(setq bibtex-completion-display-formats 
-				'((t . "${author:36} ${title:*} ${year:4} ${timestamp:8} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
+				'((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
 	)
 #+END_SRC
 
@@ -6441,6 +6457,7 @@ Global org-mode keys:
 	("t"  tl/bibtex-add-timestamp "add timestamp" :exit t)
 	("+"  org-ref-bibtex-new-entry/body "new entry..." :exit t)
 	("i"  get-bibtex-from-doi "import from doi" :exit t)
+	("h"  helm-bibtex "helm-bibtex" :exit t)
 	("F"  org-ref-bibtex-file/body "file actions..." :exit t)
 	("O"  org-ref-bibtex-hydra/body "org-ref hydra..." :exit t)
 	("?" bibtex-print-help-message "help" :exit nil)
