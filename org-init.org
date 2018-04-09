@@ -2358,8 +2358,8 @@ Customize agenda view:
 					;; 						(org-agenda-overriding-header "")
 					;; 						(org-agenda-block-separator nil)))
 					)
-				 ((org-agenda-tag-filter-preset '("+@work")))
-				 )
+				 ((org-agenda-tag-filter-preset '("+@work"))))
+
 				("h" "Home-related agenda and tasks"
 				 ((tags "PRIORITY=\"A\""
 								((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
@@ -2376,14 +2376,43 @@ Customize agenda view:
 					(todo "SOMEDAY" ((org-agenda-overriding-header "")
 													 (org-agenda-block-separator nil)))
 					)
-				 ((org-agenda-tag-filter-preset '("+@home")))
-				 ))
-			)
+				 ((org-agenda-tag-filter-preset '("+@home"))))
+
+				("c" "Complete list of agenda and tasks"
+				 ((tags "PRIORITY=\"A\""
+								((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+								 (org-agenda-overriding-header "High-priority tasks:")))
+					(agenda "")
+					(todo "INPROGRESS"
+								((org-agenda-overriding-header "Normal-priority tasks:")))
+					(todo "NEXT" ((org-agenda-overriding-header "")
+												(org-agenda-block-separator nil)))
+					(todo "WAITING" ((org-agenda-overriding-header "")
+													 (org-agenda-block-separator nil)))
+					(todo "TODO" ((org-agenda-overriding-header "")
+												(org-agenda-block-separator nil)))
+					(todo "SOMEDAY" ((org-agenda-overriding-header "")
+													 (org-agenda-block-separator nil)))
+					)
+				 ;; ((org-agenda-tag-filter-preset '("+@home")))
+				 )
+				))
 
 (defun org-agenda-list-work ()
 	(interactive)
 	(org-agenda nil "w"))
 
+(defun org-agenda-list-home ()
+	(interactive)
+	(org-agenda nil "h"))
+
+(defun org-agenda-list-complete ()
+	(interactive)
+	(org-agenda nil "c"))
+
+(define-key org-agenda-mode-map (kbd "W") 'org-agenda-list-work)
+(define-key org-agenda-mode-map (kbd "H") 'org-agenda-list-home)
+(define-key org-agenda-mode-map (kbd "C") 'org-agenda-list-complete)
 #+END_SRC
 
 Sort agenda TODOs with =org-agenda-sorting-strategy=.
@@ -6410,7 +6439,7 @@ Global org-mode keys:
      ^^  [_f_] search  ^^    [_:_] tags ^^  ^^  ^^  ^^  ^^                      [_q_]uit
 
 	"
-	("a" org-agenda-list-work :exit t)
+	("a" org-agenda-list-complete :exit t)
 	("d" deft :exit t)
 	("n" (lambda nil (interactive)
 				 (find-file (concat org-directory "/notes.org"))) :exit t)
