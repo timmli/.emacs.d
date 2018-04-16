@@ -1519,6 +1519,27 @@ Add support for export to LaTeX:
 				 (format "No Color RGB for %s" color)))))))
 #+END_SRC
 
+***** Other link types
+
+Link type for typesetting linguistic examples:
+
+#+BEGIN_SRC emacs-lisp
+(org-link-set-parameters
+ "bsp"
+ ;; :follow (lambda (path) (message "You clicked me."))
+ :export (lambda (path desc backend)
+           (cond
+            ((eq backend 'latex)								
+						 (format "{\\bsp{%s}}" (or desc path)))
+						((eq 'html backend)
+             (format "<font color=\"blue\">%s</font>"
+                     (or desc path)))))
+ :face '(:foreground "CornflowerBlue"	:slant italic	:weight bold		)
+ ;; :help-echo "Click me for a message."
+ )
+#+END_SRC
+
+
 **** Fonts
 
 General settings:
