@@ -1526,7 +1526,7 @@ Link type for typesetting linguistic examples:
 #+BEGIN_SRC emacs-lisp
 (org-link-set-parameters
  "bsp"
- ;; :follow (lambda (path) (message "You clicked me."))
+ :follow (lambda (path) (message "You clicked me."))
  :export (lambda (path desc backend)
            (cond
             ((eq backend 'latex)								
@@ -1535,10 +1535,9 @@ Link type for typesetting linguistic examples:
              (format "<font color=\"blue\">%s</font>"
                      (or desc path)))))
  :face '(:foreground "CornflowerBlue"	:slant italic	:weight bold		)
- ;; :help-echo "Click me for a message."
+ :help-echo "This will be exported as example."
  )
 #+END_SRC
-
 
 **** Fonts
 
