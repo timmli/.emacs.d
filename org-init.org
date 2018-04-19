@@ -4617,14 +4617,17 @@ Shift/delete indentation at cursor position or region:
 		))
 #+END_SRC
 
-*** COMMENT aggressive-indent
+*** aggressive-indent
 
+=aggressive-indent-mode= is a minor mode that keeps your code always indented.
 Not sure whether I want to auto-indent whole files ...
 
 #+BEGIN_SRC emacs-lisp
 (use-package aggressive-indent
   :ensure t
-  ;; :config
+  :config
+	(add-hook 'emacs-lisp-mode-hook #'aggressive-indent-mode)
+	(add-hook 'css-mode-hook #'aggressive-indent-mode)
   ;; (global-aggressive-indent-mode)
   ;; (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
   ;; (add-to-list 'aggressive-indent-excluded-modes 'sql-mode)
