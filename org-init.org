@@ -4200,6 +4200,17 @@ When =company= is actively used by browsing completion candidates, =<return>= sh
 	:config (company-auctex-init))
 #+end_src
 
+**** RefTeX
+
+#+BEGIN_SRC emacs-lisp
+(use-package company-reftex
+	:ensure t
+	:config
+	(add-to-list 'company-backends 'company-reftex-labels) 
+	(add-to-list 'company-backends 'company-reftex-citations) 
+	)
+#+END_SRC
+
 **** COMMENT eshell
 
 Unfortunately, this really slows down eshell a lot.
