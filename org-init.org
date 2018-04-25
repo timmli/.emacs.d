@@ -1530,7 +1530,7 @@ Link type for typesetting linguistic examples:
  :export (lambda (path desc backend)
            (cond
             ((eq backend 'latex)								
-						 (format "{\\bsp{%s}}" (or desc path)))
+						 (format "\\bsp{%s}" (or desc path)))
 						((eq 'html backend)
              (format "<font color=\"blue\">%s</font>"
                      (or desc path)))))
@@ -1547,7 +1547,7 @@ Link type for typesetting emphasized text:
  :export (lambda (path desc backend)
            (cond
             ((eq backend 'latex)								
-						 (format "{\\emph{%s}}" (or desc path)))
+						 (format "\\emph{%s}" (or desc path)))
 						((eq 'html backend)
              (format "<em>%s</em>"
                      (or desc path)))))
@@ -2241,7 +2241,7 @@ See https://github.com/jkitchin/jmax/blob/master/org/org-show.org for more infor
 
 *** TODO org-beamer
 
-- [ ] add export of text colored with `color:` links (see [[*Color text][Color text]])
+- [ ] add export of text colored with `color:` links (see [[color:red][Color text]])
 
 Documentation:
 - https://github.com/fniessen/refcard-org-beamer
@@ -2282,6 +2282,15 @@ Change export of bold font:
     (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textbf" contents)))
 
 (add-to-list 'org-export-filter-bold-functions 'my-beamer-bold)
+#+END_SRC
+
+Change export of italic font:
+#+BEGIN_SRC emacs-lisp
+(defun my-beamer-italic (contents backend info)
+  (when (eq backend 'beamer)
+    (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textit" contents)))
+
+(add-to-list 'org-export-filter-italic-functions 'my-beamer-italic)
 #+END_SRC
 
 *** Graphviz/dot support
