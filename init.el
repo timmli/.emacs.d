@@ -189,9 +189,9 @@
 ;;              '(font . "DejaVu Sans Mono-11"))
 ;; stolen from custom.el (can be overridden by custom.el)
 (custom-set-faces
- '(default ((t (:family custom-default-font :foundry "outline" :slant normal :weight normal :height 113 :width normal))))
- '(fixed-pitch ((t (:family custom-fixed-pitch-font :foundry "outline" :slant normal :weight normal :height 113 :width normal))))
- '(variable-pitch ((t (:family custom-variable-pitch-font :foundry "outline" :slant normal :weight normal :height 125 :width normal))))
+ `(default ((t (:family ,custom-default-font :foundry "outline" :slant normal :weight normal :height 113 :width normal))))
+ `(fixed-pitch ((t (:family ,custom-fixed-pitch-font :foundry "outline" :slant normal :weight normal :height 113 :width normal))))
+ `(variable-pitch ((t (:family ,custom-variable-pitch-font :foundry "outline" :slant normal :weight normal :height 125 :width normal))))
  )
 
 ;; load custom file
