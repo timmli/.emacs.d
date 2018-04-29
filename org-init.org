@@ -3814,7 +3814,8 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 							("A" . tl/elfeed-show-all)
 							)
 	:config
-	(setq elfeed-db-directory my-elfeed-db-directory)
+	(when (boundp 'my-elfeed-db-directory)
+		(setq elfeed-db-directory my-elfeed-db-directory))
 	(defalias 'elfeed-toggle-star
 		(elfeed-expose #'elfeed-search-toggle-all 'star))
 
