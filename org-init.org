@@ -586,25 +586,26 @@ Complete tags with helm when using =org-set-tags=:
 http://sqlite.org/download.html
 
 #+BEGIN_SRC emacs-lisp
-	(use-package helm-dash
-		:ensure t
-		:init
-		(setq helm-dash-common-docsets			; active in all buffers
-					'())
-		(setq helm-dash-browser-func 'eww)		; use internal web browser
-		(setq helm-dash-docsets-path (expand-file-name (concat wemacs-dir "/docsets"))) ; FIXME: under windows, helm-dash does not install docsets here but in ~/AppData/... Because of missing tar command?
-		(add-hook 'latex-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
-		(add-hook 'TeX-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
-		(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Emacs Lisp"))))
-		(add-hook 'js2-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("JavaScript"))))
-		(add-hook 'org-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Org_Mode"))))
-		(add-hook 'plantuml-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("PlantUML"))))
-		(add-hook 'sh-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Bash"))))
-		(add-hook 'perl-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Perl"))))
-		(add-hook 'python-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Python 3" "SciPy" "NumPy"))))
-		:bind
-		(("C-h d" . helm-dash))
-		)
+(use-package helm-dash
+	:ensure t
+	:init
+	(setq helm-dash-common-docsets			; active in all buffers
+				'())
+	(setq helm-dash-browser-func 'eww)		; use internal web browser
+	(when (eq system-type 'windows-nt)
+		(setq helm-dash-docsets-path (expand-file-name (concat wemacs-dir "/docsets")))) ; FIXME: under windows, helm-dash does not install docsets here but in ~/AppData/... Because of missing tar command?
+	(add-hook 'latex-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
+	(add-hook 'TeX-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
+	(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Emacs Lisp"))))
+	(add-hook 'js2-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("JavaScript"))))
+	(add-hook 'org-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Org_Mode"))))
+	(add-hook 'plantuml-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("PlantUML"))))
+	(add-hook 'sh-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Bash"))))
+	(add-hook 'perl-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Perl"))))
+	(add-hook 'python-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Python 3" "SciPy" "NumPy"))))
+	:bind
+	(("C-h d" . helm-dash))
+	)
 #+END_SRC
 
 *** TODO COMMENT helm-gtags
@@ -830,10 +831,11 @@ Depends on plantuml.jar and Gaphviz (http://www.graphviz.org).
   :ensure t
   :mode ("\\.plu\\'" "\\.puml\\'") 
   :init
-	(setq org-plantuml-jar-path
-				(expand-file-name "plantuml.jar" wemacs-dir))
-	(setq plantuml-jar-path
-				(expand-file-name "plantuml.jar" wemacs-dir)))
+	(when (eq system-type 'windows-nt)
+		(setq org-plantuml-jar-path
+					(expand-file-name "plantuml.jar" wemacs-dir))
+		(setq plantuml-jar-path
+					(expand-file-name "plantuml.jar" wemacs-dir))))
 #+END_SRC
 
 ** dired
