@@ -182,7 +182,7 @@
 (defvar custom-fixed-pitch-font "DejaVu Sans Mono" nil)
 (defvar custom-variable-pitch-font "Segoe UI" nil) 
 (when (not (find-font (font-spec :name "Segoe UI"))) ; Segoe UI might be unavailable on Linux
-	(setq custom-variable-pitch-font "Roboto"))
+	(setq custom-variable-pitch-font "OpenSans"))
 
 ;; ;; default (can be overridden by custom.el)
 ;; (add-to-list 'default-frame-alist
