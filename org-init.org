@@ -2161,16 +2161,17 @@ Integrate Google Calendar with =org-gcal=.
 I don't use =org-gcal= any more.
 
 #+BEGIN_SRC emacs-lisp
-	(setq package-check-signature nil)
+(setq package-check-signature nil)
 
-	(use-package org-gcal
-		:ensure t
-		:config
-		(when (load-file (expand-file-name "gcal-credentials.el" private-emacs-settings-dir))
-			(setq org-gcal-client-id my-org-gcal-client-id
-						org-gcal-client-secret my-org-gcal-client-secret
-						org-gcal-file-alist '((my-gmail-address .  (concat org-notes-dir "gcal.org"))))
-	))
+(use-package org-gcal
+	:ensure t
+	:config
+	(when (file-exists-p (expand-file-name "gcal-credentials.el" private-emacs-settings-dir))
+		(load-file (expand-file-name "gcal-credentials.el" private-emacs-settings-dir))
+		(setq org-gcal-client-id my-org-gcal-client-id
+					org-gcal-client-secret my-org-gcal-client-secret
+					org-gcal-file-alist '((my-gmail-address .  (concat org-notes-dir "gcal.org"))))
+		))
 #+END_SRC
 
 *** org-ref
