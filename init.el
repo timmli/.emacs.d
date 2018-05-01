@@ -141,9 +141,9 @@
 
 	(defvar wemacs-dir "") 
 	(when (getenv "WEMACS_HOME")
-		 ;; set path to wemacs folder with additional third-party software
-		 (setq wemacs-dir
-					 (expand-file-name (getenv "WEMACS_HOME"))))
+		;; set path to wemacs folder with additional third-party software
+		(setq wemacs-dir
+					(expand-file-name (getenv "WEMACS_HOME"))))
 
 	(when (getenv "WEMACS_PATH")
 		;; using setenv makes available the PATH variable to the emacs shells
@@ -178,14 +178,20 @@
 ;;=========================================================
 
 ;; font
+(defvar custom-default-font "DejaVu Sans Mono" nil)
+(defvar custom-fixed-pitch-font "DejaVu Sans Mono" nil)
+(defvar custom-variable-pitch-font "Segoe UI" nil) 
+(when (not (find-font (font-spec :name "Segoe UI"))) ; Segoe UI might be unavailable on Linux
+	(setq custom-variable-pitch-font "OpenSans"))
+
 ;; ;; default (can be overridden by custom.el)
 ;; (add-to-list 'default-frame-alist
 ;;              '(font . "DejaVu Sans Mono-11"))
 ;; stolen from custom.el (can be overridden by custom.el)
 (custom-set-faces
- '(default ((t (:family "DejaVu Sans Mono" :foundry "outline" :slant normal :weight normal :height 113 :width normal))))
- '(fixed-pitch ((t (:family "DejaVu Sans Mono" :foundry "outline" :slant normal :weight normal :height 113 :width normal))))
- '(variable-pitch ((t (:family "Segoe UI" :foundry "outline" :slant normal :weight normal :height 125 :width normal))))
+ `(default ((t (:family ,custom-default-font :foundry "outline" :slant normal :weight normal :height 113 :width normal))))
+ `(fixed-pitch ((t (:family ,custom-fixed-pitch-font :foundry "outline" :slant normal :weight normal :height 113 :width normal))))
+ `(variable-pitch ((t (:family ,custom-variable-pitch-font :foundry "outline" :slant normal :weight normal :height 125 :width normal))))
  )
 
 ;; load custom file

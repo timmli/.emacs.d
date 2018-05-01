@@ -586,25 +586,26 @@ Complete tags with helm when using =org-set-tags=:
 http://sqlite.org/download.html
 
 #+BEGIN_SRC emacs-lisp
-	(use-package helm-dash
-		:ensure t
-		:init
-		(setq helm-dash-common-docsets			; active in all buffers
-					'())
-		(setq helm-dash-browser-func 'eww)		; use internal web browser
-		(setq helm-dash-docsets-path (expand-file-name (concat wemacs-dir "/docsets"))) ; FIXME: under windows, helm-dash does not install docsets here but in ~/AppData/... Because of missing tar command?
-		(add-hook 'latex-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
-		(add-hook 'TeX-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
-		(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Emacs Lisp"))))
-		(add-hook 'js2-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("JavaScript"))))
-		(add-hook 'org-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Org_Mode"))))
-		(add-hook 'plantuml-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("PlantUML"))))
-		(add-hook 'sh-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Bash"))))
-		(add-hook 'perl-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Perl"))))
-		(add-hook 'python-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Python 3" "SciPy" "NumPy"))))
-		:bind
-		(("C-h d" . helm-dash))
-		)
+(use-package helm-dash
+	:ensure t
+	:init
+	(setq helm-dash-common-docsets			; active in all buffers
+				'())
+	(setq helm-dash-browser-func 'eww)		; use internal web browser
+	(when (eq system-type 'windows-nt)
+		(setq helm-dash-docsets-path (expand-file-name (concat wemacs-dir "/docsets")))) ; FIXME: under windows, helm-dash does not install docsets here but in ~/AppData/... Because of missing tar command?
+	(add-hook 'latex-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
+	(add-hook 'TeX-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
+	(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Emacs Lisp"))))
+	(add-hook 'js2-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("JavaScript"))))
+	(add-hook 'org-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Org_Mode"))))
+	(add-hook 'plantuml-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("PlantUML"))))
+	(add-hook 'sh-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Bash"))))
+	(add-hook 'perl-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Perl"))))
+	(add-hook 'python-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Python 3" "SciPy" "NumPy"))))
+	:bind
+	(("C-h d" . helm-dash))
+	)
 #+END_SRC
 
 *** TODO COMMENT helm-gtags
@@ -830,10 +831,11 @@ Depends on plantuml.jar and Gaphviz (http://www.graphviz.org).
   :ensure t
   :mode ("\\.plu\\'" "\\.puml\\'") 
   :init
-	(setq org-plantuml-jar-path
-				(expand-file-name "plantuml.jar" wemacs-dir))
-	(setq plantuml-jar-path
-				(expand-file-name "plantuml.jar" wemacs-dir)))
+	(when (eq system-type 'windows-nt)
+		(setq org-plantuml-jar-path
+					(expand-file-name "plantuml.jar" wemacs-dir))
+		(setq plantuml-jar-path
+					(expand-file-name "plantuml.jar" wemacs-dir))))
 #+END_SRC
 
 ** dired
@@ -2159,16 +2161,17 @@ Integrate Google Calendar with =org-gcal=.
 I don't use =org-gcal= any more.
 
 #+BEGIN_SRC emacs-lisp
-	(setq package-check-signature nil)
+(setq package-check-signature nil)
 
-	(use-package org-gcal
-		:ensure t
-		:config
-		(when (load-file (expand-file-name "gcal-credentials.el" private-emacs-settings-dir))
-			(setq org-gcal-client-id my-org-gcal-client-id
-						org-gcal-client-secret my-org-gcal-client-secret
-						org-gcal-file-alist '((my-gmail-address .  (concat org-notes-dir "gcal.org"))))
-	))
+(use-package org-gcal
+	:ensure t
+	:config
+	(when (file-exists-p (expand-file-name "gcal-credentials.el" private-emacs-settings-dir))
+		(load-file (expand-file-name "gcal-credentials.el" private-emacs-settings-dir))
+		(setq org-gcal-client-id my-org-gcal-client-id
+					org-gcal-client-secret my-org-gcal-client-secret
+					org-gcal-file-alist '((my-gmail-address .  (concat org-notes-dir "gcal.org"))))
+		))
 #+END_SRC
 
 *** org-ref
@@ -3811,7 +3814,8 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 							("A" . tl/elfeed-show-all)
 							)
 	:config
-	(setq elfeed-db-directory my-elfeed-db-directory)
+	(when (boundp 'my-elfeed-db-directory)
+		(setq elfeed-db-directory my-elfeed-db-directory))
 	(defalias 'elfeed-toggle-star
 		(elfeed-expose #'elfeed-search-toggle-all 'star))
 
@@ -3872,8 +3876,9 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 		:ensure t
 		:config
 		(elfeed-org)
-		(setq rmh-elfeed-org-files (list my-elfeed-org-file)
-					rmh-elfeed-org-auto-ignore-invalid-feeds nil)) ; handle with care
+		(when (boundp 'my-elfeed-org-file)
+			(setq rmh-elfeed-org-files (list my-elfeed-org-file)))
+		(setq rmh-elfeed-org-auto-ignore-invalid-feeds nil)) ; handle with care
 
 	)
 #+END_SRC
