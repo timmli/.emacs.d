@@ -6727,12 +6727,15 @@ Don't ask for the path when searching for files:
 	(interactive)
 	(org-toggle-pretty-entities)
 	(org-toggle-link-display)
-	(if (org-hide-emphasis-markers)
+	(if org-hide-emphasis-markers
 			(setq org-hide-emphasis-markers nil)
 		(setq org-hide-emphasis-markers t)
 		)
 	)
 #+END_SRC
+
+#+RESULTS:
+: tl/org-toggle-overlays
 
 *** hydra-org-archive
 
