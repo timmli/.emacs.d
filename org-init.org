@@ -1558,6 +1558,23 @@ Link type for typesetting emphasized text:
  )
 #+END_SRC
 
+Link type for typesetting small caps:
+#+BEGIN_SRC emacs-lisp
+(org-link-set-parameters
+ "textsc"
+ :follow (lambda (path) (message "You clicked me."))
+ :export (lambda (path desc backend)
+           (cond
+            ((eq backend 'latex)								
+						 (format "\\testsc{%s}" (or desc path)))
+						((eq 'html backend)
+             (format "<span style=\"font-variant:small-caps;\">%s</span>" 
+										 (or desc path)))))
+ :face '(:box t :slant normal)
+ :help-echo "This will be exported as example."
+ )
+#+END_SRC
+
 **** Fonts
 
 General settings:
