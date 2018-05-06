@@ -1554,7 +1554,7 @@ Link type for typesetting emphasized text:
              (format "<em>%s</em>"
                      (or desc path)))))
  :face '(:box t :slant italic)
- :help-echo "This will be exported as example."
+ :help-echo "This will be exported as emphasized text."
  )
 #+END_SRC
 
@@ -1571,7 +1571,7 @@ Link type for typesetting small caps:
              (format "<span style=\"font-variant:small-caps;\">%s</span>" 
 										 (or desc path)))))
  :face '(:box t :slant normal)
- :help-echo "This will be exported as example."
+ :help-echo "This will be exported in small caps."
  )
 #+END_SRC
 
