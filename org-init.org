@@ -822,6 +822,15 @@ Prerequisites as for Python:
   (add-hook 'python-mode-hook 'my/python-mode-hook))
 #+END_SRC
 
+*** ein (Jupyter noteboook)
+
+#+BEGIN_SRC emacs-lisp
+(use-package ein
+  :ensure t
+	:config
+	(setq ein:completion-backend 'ein:use-ac-jedi-backend))
+#+END_SRC
+
 ** PlantUML
 
 Depends on plantuml.jar and Gaphviz (http://www.graphviz.org).
