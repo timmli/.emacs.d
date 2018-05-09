@@ -2927,7 +2927,7 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 #+BEGIN_SRC emacs-lisp
 (use-package tex
 	:ensure auctex												; because auctex overwrites tex
-
+	:mode ("\\.bbx\\'" . latex-mode)("\\.cbx\\'" . latex-mode)
 	:init
 
 	;; to activate auctex
