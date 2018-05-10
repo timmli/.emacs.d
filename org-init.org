@@ -5151,7 +5151,9 @@ Use deer instead plain directory listing:
 #+BEGIN_SRC emacs-lisp
 (use-package poporg
 	:ensure t
-	:bind (("C-c '" . poporg-dwim)))
+	:bind (("C-c '" . poporg-dwim))
+	:config
+	(define-key poporg-mode-map (kbd "C-c '") 'poporg-dwim)))
 #+END_SRC
 
 *** Critical markup
