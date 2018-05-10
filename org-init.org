@@ -2294,16 +2294,6 @@ Add virtual beamer class (=tl-beamer=) to the known LaTeX classes:
             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
 #+END_SRC
 
-Add my abstract class (=tl-abstract=) to the known LaTeX classes (cannot be placed in [[*LaTeX support][LaTeX support]]???): 
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'org-latex-classes
-         '("tl-abstract" 
-						"\\documentclass{preambles/tl-abstract}
-						[NO-DEFAULT-PACKAGES]"
-            ("\\paragraph{%s}" . "\\paragraph*{%s}")
-            ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-#+END_SRC
-
 Change export of bold font:
 #+BEGIN_SRC emacs-lisp
 (defun my-beamer-bold (contents backend info)
