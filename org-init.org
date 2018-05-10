@@ -5146,6 +5146,14 @@ Use deer instead plain directory listing:
     (next-line)))
 #+end_src
 
+*** poporg
+
+#+BEGIN_SRC emacs-lisp
+(use-package poporg
+	:ensure t
+	:bind (("C-c '" . poporg-dwim)))
+#+END_SRC
+
 *** Critical markup
 
 #+begin_src emacs-lisp
