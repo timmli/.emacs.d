@@ -5153,7 +5153,7 @@ Use deer instead plain directory listing:
 	:ensure t
 	:bind (("C-c '" . poporg-dwim))
 	:config
-	(define-key poporg-mode-map (kbd "C-c '") 'poporg-dwim)))
+	(define-key poporg-mode-map (kbd "C-c '") 'poporg-dwim))
 #+END_SRC
 
 *** Critical markup
