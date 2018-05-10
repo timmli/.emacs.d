@@ -1575,7 +1575,7 @@ Link type for typesetting small caps:
  :export (lambda (path desc backend)
            (cond
             ((eq backend 'latex)								
-						 (format "\\testsc{%s}" (or desc path)))
+						 (format "\\textsc{%s}" (or desc path)))
 						((eq 'html backend)
              (format "<span style=\"font-variant:small-caps;\">%s</span>" 
 										 (or desc path)))))
