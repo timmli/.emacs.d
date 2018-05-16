@@ -5863,7 +5863,9 @@ Enhancement of magit to make available a more comprehensive access to Github rep
 (use-package magithub
 	:ensure t
   :after magit
-  :config (magithub-feature-autoinject t))
+  :config
+	(magithub-feature-autoinject t)
+	(setq magithub-clone-default-directory "~/github"))
 #+END_SRC
 
 ** git-gutter
