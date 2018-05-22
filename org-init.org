@@ -673,6 +673,7 @@ Quick, comprehensive search on org-mode files.
 	(define-key helm-org-rifle-map (kbd "<right>") 'forward-char) ; instead of helm-next-source
 	(define-key helm-org-rifle-map (kbd "C-n") 'helm-next-source)
 	(define-key helm-org-rifle-map (kbd "C-p") 'helm-previous-source)
+	(setq helm-org-rifle-show-path t)
 )
 #+END_SRC
 
