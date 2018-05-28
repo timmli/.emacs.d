@@ -673,6 +673,7 @@ Quick, comprehensive search on org-mode files.
 	(define-key helm-org-rifle-map (kbd "<right>") 'forward-char) ; instead of helm-next-source
 	(define-key helm-org-rifle-map (kbd "C-n") 'helm-next-source)
 	(define-key helm-org-rifle-map (kbd "C-p") 'helm-previous-source)
+	(setq helm-org-rifle-show-path t)
 )
 #+END_SRC
 
@@ -5879,7 +5880,9 @@ Enhancement of magit to make available a more comprehensive access to Github rep
 (use-package magithub
 	:ensure t
   :after magit
-  :config (magithub-feature-autoinject t))
+  :config
+	(magithub-feature-autoinject t)
+	(setq magithub-clone-default-directory "~/github"))
 #+END_SRC
 
 ** git-gutter
@@ -6531,9 +6534,9 @@ Deprecated:
 Global org-mode keys:
 
 #+BEGIN_SRC emacs-lisp
-	(defhydra hydra-f9
-		(:hint nil
-					 :idle 0.2)
+(defhydra hydra-f9
+	(:hint nil
+				 :idle 0.2)
 	"
          ^^         ^^         ^^       ^^        ^^      ^^       ^^       ^^      ╭────┐       
      _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_   _<f8>_  │<f9>│ 
@@ -6558,7 +6561,7 @@ Global org-mode keys:
 				 (find-file (concat org-directory "/work/work.org"))) :exit t)
 	("h" (lambda nil (interactive)
 				 (find-file (concat org-directory "/home/home.org"))) :exit t)
-	(":" org-setting-tags :exit t)
+	(":" org-tags-view :exit t)
 	("r" org-reload :exit t)
 	("f" helm-org-rifle-agenda-files :exit t)
 	;; ("f" org-search-view :exit t)
@@ -6574,9 +6577,8 @@ Global org-mode keys:
 	("<f7>" hydra-f7/body :exit t)
 	("<f8>" hydra-f8/body :exit t)
 
-)
-	(global-set-key (kbd "<f9>") 'hydra-f9/body)
-
+	)
+(global-set-key (kbd "<f9>") 'hydra-f9/body)
 #+END_SRC
 
 ** hydra-bibtex
