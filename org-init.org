@@ -2804,6 +2804,22 @@ Functions to move around single cells:
 (require 'org-table-move-single-cell)
 #+END_SRC
 
+*** Timestamps/Dates
+
+#+BEGIN_SRC emacs-lisp
+(defun org-read-date-and-insert-timestamp/tl ()
+	"Replace date in region with active timestamp"
+	(interactive)
+	(if (use-region-p)
+			(let ((date (org-read-date nil nil (buffer-substring-no-properties (region-beginning) (region-end)))))
+				(save-excursion
+					(delete-region (region-beginning) (region-end))
+					(goto-char (region-beginning))
+					(insert "[" date "]")
+					(org-ctrl-c-ctrl-c)))
+		(message "No region selected")))
+#+END_SRC
+
 *** Listings
 
 Use the =listings= package:
