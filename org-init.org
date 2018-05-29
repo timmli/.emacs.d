@@ -5428,7 +5428,7 @@ For showing the character map and letting one select a special symbol:
 ** Thesauri
 *** synosaurus
 
-Thesaurus fontend for Emacs with pluggable backends:
+Thesaurus frontend for Emacs with pluggable backends:
 - OpenThesaurus for German (online)
 - WordNet for English (http://wordnet.princeton.edu/wordnet/download/current-version)
 
@@ -5439,6 +5439,15 @@ Thesaurus fontend for Emacs with pluggable backends:
 	(setq-default synosaurus-choose-method "default"
 								synosaurus-backend 'synosaurus-backend-openthesaurus)
 	)
+#+END_SRC
+
+*** powerthesaurus 
+
+Uses [[https://www.powerthesaurus.org/][powerthesaurus.org]] for English.
+
+#+BEGIN_SRC emacs-lisp
+(use-package powerthesaurus
+	:ensure t)
 #+END_SRC
 
 * Project management
