@@ -3753,17 +3753,13 @@ Usefull extras, e.g., org-mode-like folding:
 
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
-	:ensure t
-	:config 
-	(defun my-markdown-mode-config ()
-		"settings for markdown mode"
-		(interactive)
-		(setq-default tab-width 4)
-		(setq-default indent-tabs-mode t)
-		(setq markdown-enable-math t))
-	(add-hook 'markdown-mode 'my-markdown-mode-config)
-	(setq markdown-enable-math t)
-	)
+  :ensure t
+  :commands (markdown-mode gfm-mode)
+  :mode (("README\\.md\\'" . gfm-mode)
+         ("\\.md\\'" . markdown-mode)
+         ("\\.markdown\\'" . markdown-mode))
+  :init (setq markdown-command "multimarkdown")
+	:config	(setq markdown-enable-math t))
 #+END_SRC
 
 *** markdown-toc
