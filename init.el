@@ -72,22 +72,27 @@
 
 
 ;;==========================================================
-;;      PRIVATE DIRECTORIES SETUP (outside .emacs.d)
+;;      PRIVATE SETTINGS: DIRECTORIES (outside .emacs.d)
 ;;==========================================================
 
-;; set path to private org notes
 (defvar org-directory
-	(expand-file-name "org/" home-directory)) ; default value; may be overwritten by private directory settings
+	(expand-file-name "org/" home-directory) ; default value; may be overwritten by private directory settings
+	"Path to private org notes.
+This variable should be changed in private-emacs-settings.el.") 
 
-;; set path to the directory that deft observes
-(defvar my-deft-dir org-directory) ; default value; may be overwritten by private directory settings
+(defvar my-deft-dir org-directory ; default value; may be overwritten by private directory settings
+	"Path to the directory that deft observes.
+This variable should be changed in private-emacs-settings.el.")
 
-;; set path to authinfo
-(defvar authinfo-directory home-directory) ; default value; may be overwritten by private directory settings
+(defvar authinfo-directory home-directory ; default value; may be overwritten by private directory settings
+	"Path to authinfo.
+This variable should be changed in private-emacs-settings.el.")
 
-;; set path to private emacs settings
 (defvar private-emacs-settings-dir
-	(expand-file-name "Dropbox/emacs-settings/" home-directory)) ;; FIXME: make this more generic, e.g. with using links in .emacs.d
+	(expand-file-name "Dropbox/emacs-settings/" home-directory) ;; FIXME: make this more generic, e.g. with using links in .emacs.d
+	"Path to private Emacs settings directory.
+This variable should be changed in private-emacs-settings.el.")
+
 ;; if system variable exists, use it
 (when (getenv "PRIVATE_EMACS_SETTINGS")
 	(setq private-emacs-settings-dir
@@ -97,41 +102,33 @@
 (defvar trimmed-private-emacs-settings-dir
 	(concat "~/" (string-remove-prefix home-directory private-emacs-settings-dir))
 	"This variable contains the trimmed version of the path in private-emacs-settings-dir starting with ~/.
-  Using trimmed paths is necessary with some packages, e.g. calfw. 
-  "	
-	)
-
-;; load private directory settings file
-(let ((dir-settings-file (expand-file-name "directory-settings.el" private-emacs-settings-dir)))
-	(when (file-exists-p dir-settings-file)
-		(load-file dir-settings-file)))
-
+Using trimmed paths is necessary with some packages, e.g. calfw. 
+  ")
 
 ;;==========================================================
-;;      USER INFOS (outside .emacs.d)
+;;      PRIVATE SETTINGS: USER INFO (outside .emacs.d)
 ;;==========================================================
 
 ;; GENERAL USER INFO
-;; available variables 
 (defvar user-acronym "user-acronym"
-	"Contains the acronym of the user name. This is used, e.g. in cm-mode.")
-;; load user info file
-(let ((user-info-file (expand-file-name "user-info.el" private-emacs-settings-dir)))
-	(when (file-exists-p user-info-file)
-		(load-file user-info-file)))
+	"Contains the acronym of the user name, which is used, e.g., in cm-mode.
+This variable should be changed in private-emacs-settings.el.")
 
 ;; MISCELLANEOUS USER SETTINGS
-;; available variables
 (defvar user-bibliography-file
 	"/path/to/bibliography.bib"
-	"Path to the user bibliography file.")
+	"Path to the user bibliography file.
+This variable should be changed in private-emacs-settings.el.")
+
 (defvar user-bibliography-pdf-dir
 	"/path/to/pdfs/"
-	"Path to the user directory of PDFs belonging to the bibliography.")
-;; load file with miscellaneous private settings
-(let ((misc-settings-file (expand-file-name "misc-settings.el" private-emacs-settings-dir)))
-	(when (file-exists-p misc-settings-file)
-		(load-file misc-settings-file)))
+	"Path to the user directory of PDFs belonging to the bibliography.
+This variable should be changed in private-emacs-settings.el.")
+
+;; load file with private settings
+(let ((private-settings-file (expand-file-name "private-emacs-settings.el" private-emacs-settings-dir)))
+	(when (file-exists-p private-settings-file)
+		(load-file private-settings-file)))
 
 ;;==========================================================
 ;;      WEMACS
