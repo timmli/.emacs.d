@@ -1811,6 +1811,30 @@ Show current header in first line of buffer.
 	(add-hook 'org-mode-hook 'org-sticky-header-mode))
 #+END_SRC
 
+**** Outline
+
+Only unfold current heading and its content:
+
+#+BEGIN_SRC emacs-lisp
+;; Taken from https://stackoverflow.com/a/28031539/6452961
+;; and slightly modified.
+(defun org-show-current-heading-tidily ()
+  "Show entry under point, keeping other entries closed."
+  (interactive) 
+	(save-excursion
+		(if (save-excursion (end-of-line) (outline-invisible-p))
+				(progn (org-show-entry) (show-children))
+			(outline-back-to-heading)
+			(unless (and (bolp) (org-on-heading-p))
+				(org-up-heading-safe)
+				(hide-subtree)
+				(error "Boundary reached"))
+			(org-overview)
+			(org-reveal t)
+			(org-show-entry)
+			(show-children))))
+#+END_SRC
+
 *** Modules
 
 See http://orgmode.org/worg/org-contrib/
@@ -6776,6 +6800,7 @@ Don't ask for the path when searching for files:
 	("r" org-ref "org-ref" :exit t)
 	("s" org-sort "sort" :exit t)
 	("$" org-latex-fragment-toggle-toggle "show LaTeX" :exit t)
+	("<tab>" org-show-current-heading-tidily "tidily unfold" :exit t)
 	("t" org-todo "todo" :exit t)
 	(":" org-set-tags "tags" :exit t)
 	("+" org-priority-up "priority up" :exit nil)
@@ -6789,6 +6814,7 @@ Don't ask for the path when searching for files:
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/org-toggle-overlays ()
+	"Toggle the use of overlays that are used with links, emphasis markers, special symbols in the buffer."
 	(interactive)
 	(org-toggle-pretty-entities)
 	(org-toggle-link-display)
@@ -6798,9 +6824,6 @@ Don't ask for the path when searching for files:
 		)
 	)
 #+END_SRC
-
-#+RESULTS:
-: tl/org-toggle-overlays
 
 *** hydra-org-archive
 
