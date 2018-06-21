@@ -2833,7 +2833,21 @@ Functions to move around single cells:
 *** Timestamps/Dates
 
 #+BEGIN_SRC emacs-lisp
-(defun org-read-date-and-insert-timestamp/tl ()
+(defun tl/org-timestamp-dwim ()
+	(interactive)
+	(cond
+	 ((use-region-p)
+		(tl/org-read-date-and-insert-timestamp))
+	 ((eq (org-at-timestamp-p 'inactive') 'bracket)
+		(org-toggle-timestamp-type))
+	 ((not (eq (org-at-timestamp-p 'inactive) 'bracket))
+		(org-time-stamp nil))))
+
+(define-key org-mode-map (kbd "C-c .") 'tl/org-timestamp-dwim)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-read-date-and-insert-timestamp ()
 	"Replace date in region with active timestamp"
 	(interactive)
 	(if (use-region-p)
@@ -2841,7 +2855,7 @@ Functions to move around single cells:
 				(save-excursion
 					(delete-region (region-beginning) (region-end))
 					(goto-char (region-beginning))
-					(insert "[" date "]")
+					(insert "<" date ">")
 					(org-ctrl-c-ctrl-c)))
 		(message "No region selected")))
 #+END_SRC
@@ -6810,6 +6824,7 @@ Don't ask for the path when searching for files:
 	("i" org-id-get-create "add ID" :exit t)
 	("r" org-ref "org-ref" :exit t)
 	("s" org-sort "sort" :exit t)
+	("." tl/org-timestamp-dwim "timestamp" :exit t)
 	("$" org-latex-fragment-toggle-toggle "show LaTeX" :exit t)
 	("<tab>" org-show-current-heading-tidily "tidily unfold" :exit t)
 	("t" org-todo "todo" :exit t)
