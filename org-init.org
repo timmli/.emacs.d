@@ -2838,7 +2838,7 @@ Functions to move around single cells:
 	(cond
 	 ((use-region-p)
 		(tl/org-read-date-and-insert-timestamp))
-	 ((eq (org-at-timestamp-p 'inactive') 'bracket)
+	 ((eq (org-at-timestamp-p 'inactive) 'bracket)
 		(org-toggle-timestamp-type))
 	 ((not (eq (org-at-timestamp-p 'inactive) 'bracket))
 		(org-time-stamp nil))))
