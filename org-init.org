@@ -3460,7 +3460,7 @@ alternatives, starting from zero.
 		
 		("Online" "Online resource"
 		 ;; required
-		 (("title" "Title of the manual")
+		 (("title" "Title of the online resource")
 			("author")
 			("year")
 			("url")
@@ -3534,6 +3534,11 @@ Function to add timestamp:
 	(interactive)
 	(bibtex-set-field "timestamp" (format-time-string "%Y-%m-%d" (current-time))) 
 )
+#+END_SRC
+
+Use [[*hydra-bibtex-langsci-new-entry][hydra-bibtex-langsci-new-entry]] when inserting entry templates:
+#+BEGIN_SRC emacs-lisp
+(define-key bibtex-mode-map (kbd "C-c C-e") 'hydra-bibtex-langsci-new-entry/body)
 #+END_SRC
 
 *** helm-bibtex
@@ -6669,7 +6674,8 @@ Global org-mode keys:
 	("y"  bibtex-yank "yank field" :exit t)
 	("s"  bibtex-sort-buffer "sort entries" :exit t)
 	("t"  tl/bibtex-add-timestamp "add timestamp" :exit t)
-	("+"  org-ref-bibtex-new-entry/body "new entry..." :exit t)
+	;; ("+"  org-ref-bibtex-new-entry/body "new entry..." :exit t)
+	("+"  hydra-bibtex-langsci-new-entry/body "new entry..." :exit t)
 	("i"  get-bibtex-from-doi "import from doi" :exit t)
 	("h"  helm-bibtex "helm-bibtex" :exit t)
 	("F"  org-ref-bibtex-file/body "file actions..." :exit t)
@@ -6677,6 +6683,27 @@ Global org-mode keys:
 	("?" bibtex-print-help-message "help" :exit nil)
 	("q" nil :color blue)
 	)
+#+END_SRC
+
+*** hydra-bibtex-langsci-new-entry
+
+- [ ] The hydra should be automatically generated depending on what entry templates are defined -- similarly to what is done here [[*elfeed][elfeed]]. 
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-bibtex-langsci-new-entry (:color blue :hint nil :columns 6)
+  "New Bibtex entry"
+  ("a" bibtex-Article "Article")
+  ("b" bibtex-Book "Book")
+  ("C" bibtex-Collection "Collection")
+  ("c" bibtex-InCollection "InCollection")
+  ("m" bibtex-Misc "Misc")
+  ("o" bibtex-Online "Online")
+  ("P" bibtex-Proceedings "Proceedings")
+  ("p" bibtex-InProceedings "InProceedings")
+  ("r" bibtex-TechReport "TechReport")
+  ("t" bibtex-Thesis "Thesis")
+  ("u" bibtex-Unpublished "Unpublished")
+  ("q" nil "quit"))
 #+END_SRC
 
 ** hydra-cm-mode
