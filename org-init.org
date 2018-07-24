@@ -4116,6 +4116,13 @@ https://kkatsuyuki.github.io/notmuch-conf/
 	(setq notmuch-command "remote-notmuch.bat")) ; make sure this is in your PATH variable
 #+END_SRC
 
+** gtypist
+
+GNU Typist: An interactive typing tutor
+https://www.gnu.org/software/gtypist/doc/gtypist.html
+
+Unfortunately, there doesn't seem to be an easy way to run this within Emacs (at least under Windows).
+
 * Minor modes
 ** pandoc-mode
 
