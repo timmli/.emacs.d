@@ -3536,9 +3536,9 @@ Function to add timestamp:
 )
 #+END_SRC
 
-Use [[*hydra-bibtex-langsci-new-entry][hydra-bibtex-langsci-new-entry]] when inserting entry templates:
+Use =bibtex-entry= when inserting entry templates:
 #+BEGIN_SRC emacs-lisp
-(define-key bibtex-mode-map (kbd "C-c C-e") 'hydra-bibtex-langsci-new-entry/body)
+(define-key bibtex-mode-map (kbd "C-c C-e") 'bibtex-entry)
 #+END_SRC
 
 *** helm-bibtex
@@ -6675,7 +6675,8 @@ Global org-mode keys:
 	("s"  bibtex-sort-buffer "sort entries" :exit t)
 	("t"  tl/bibtex-add-timestamp "add timestamp" :exit t)
 	;; ("+"  org-ref-bibtex-new-entry/body "new entry..." :exit t)
-	("+"  hydra-bibtex-langsci-new-entry/body "new entry..." :exit t)
+	;; ("+"  hydra-bibtex-langsci-new-entry/body "new entry..." :exit t)
+	("+"  bibtex-entry "new entry..." :exit t)
 	("i"  get-bibtex-from-doi "import from doi" :exit t)
 	("h"  helm-bibtex "helm-bibtex" :exit t)
 	("F"  org-ref-bibtex-file/body "file actions..." :exit t)
@@ -6685,9 +6686,10 @@ Global org-mode keys:
 	)
 #+END_SRC
 
-*** hydra-bibtex-langsci-new-entry
+*** COMMENT hydra-bibtex-langsci-new-entry
 
-- [ ] The hydra should be automatically generated depending on what entry templates are defined -- similarly to what is done here [[*elfeed][elfeed]]. 
+- Superseded by =bibtex-entry=.
+- The hydra should be automatically generated depending on what entry templates are defined -- similarly to what is done here [[*elfeed][elfeed]]. 
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-bibtex-langsci-new-entry (:color blue :hint nil :columns 6)
