@@ -4543,6 +4543,8 @@ Deprecated. I instead use =flyspell-correct=.
 
 *** smartparens
 
+Similar to [[embrace]].
+
 #+begin_src emacs-lisp
 (use-package smartparens
 	:ensure t
@@ -4643,7 +4645,7 @@ Deprecated. I instead use =flyspell-correct=.
 
 *** embrace
 
-Add/Change/Delete pairs based on `expand-region', similar to `evil-surround'.
+Add/Change/Delete pairs based on =expand-region=, similar to =evil-surround= and [[smartparens]].
 https://github.com/cute-jumper/embrace.el
 
 #+BEGIN_SRC emacs-lisp
