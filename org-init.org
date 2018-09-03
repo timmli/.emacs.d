@@ -4607,8 +4607,7 @@ https://github.com/cute-jumper/embrace.el
 
 	;; (add-hook 'LaTeX-mode-hook 'embrace-LaTeX-mode-hook)
 	;; (add-hook 'org-mode-hook 'embrace-org-mode-hook)
-	(add-hook 'org-mode-hook 'tl/embrace-org-mode-hook)
-)
+	(add-hook 'org-mode-hook 'tl/embrace-org-mode-hook))
 #+END_SRC
 
 ** Indentation
