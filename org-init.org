@@ -4553,7 +4553,12 @@ Similar to [[embrace]].
 ;; (global-set-key (kbd "C-{") 'wrap-with-braces)
 #+end_src
 
-*** embrace
+*** TODO embrace
+:LOGBOOK:
+- State "TODO"       from              [2018-09-03 Mo 23:13]
+:END:
+
+- [ ] Still does not load correctly in =org-mode=. 
 
 Add/Change/Delete pairs based on =expand-region=, similar to =evil-surround= and [[smartparens]].
 https://github.com/cute-jumper/embrace.el
@@ -4587,6 +4592,7 @@ https://github.com/cute-jumper/embrace.el
 		(embrace--delete ?~))
 
 	(defun tl/embrace-org-mode-hook ()
+		"Mostly taken from embrace-org-mode-hook which is defined in embrace.el."
 		(dolist (lst '((?= "=" . "=")
 									 (?~ "~" . "~")
 									 (?/ "/" . "/")
@@ -4600,7 +4606,9 @@ https://github.com/cute-jumper/embrace.el
 														 (embrace-build-help "#+BEGIN_*" "#+END") t))
 
 	;; (add-hook 'LaTeX-mode-hook 'embrace-LaTeX-mode-hook)
-	(add-hook 'org-mode-hook 'tl/embrace-org-mode-hook))
+	;; (add-hook 'org-mode-hook 'embrace-org-mode-hook)
+	(add-hook 'org-mode-hook 'tl/embrace-org-mode-hook)
+)
 #+END_SRC
 
 ** Indentation
