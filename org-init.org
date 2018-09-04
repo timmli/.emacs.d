@@ -6439,10 +6439,11 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
    ╭─────^^─────────^^─────────^^──╯     └─────────^^───^^───────^^───────^^───────^^─────╯
  
       [_e_] compilation errors      [_c_] code checking     [_s_] spell checking 
-      [_#_] count words              ^^                                 [_q_]uit
+      [_#_] count words             [_r_] recover file                            [_q_]uit
 	"
 	("e" hydra-compilation-error/body :exit t)
 	("c" hydra-flycheck/body :exit t)
+	("r" recover-this-file :exit t)
 	("s" hydra-flyspell/body :exit t)
 	("#" count-words :exit t)
 	("q" nil :color blue)
