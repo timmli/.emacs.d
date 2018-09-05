@@ -4483,6 +4483,7 @@ Similar to [[embrace]].
 	(sp-pair "(" nil :unless '(sp-point-before-word-p))
 	(sp-pair "[" nil :unless '(sp-point-before-word-p))
 	(sp-pair "{" nil :unless '(sp-point-before-word-p))
+	(sp-pair "\"" nil :unless '(sp-point-before-word-p))
 	;; org-mode
 	(sp-with-modes 'org-mode
 		(sp-local-pair "*" "*"
