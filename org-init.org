@@ -2155,7 +2155,12 @@ Scale LaTeX previews:
 
 Use LaTeXmk:
 #+BEGIN_SRC emacs-lisp
-(setq org-latex-pdf-process (list "latexmk -f -pdf %f"))
+(setq org-latex-pdf-process (list "latexmk -f -pdf %f -cd %o"))
+;; The option "-cd %o" is needed when executing babel source blocks, 
+;; during which the auxiliary files are moved to some temporary directory.
+;; Instead of "-cd %o", one could also use "-outdir=%o". 
+;; See the discussion here:
+;; https://github.com/fniessen/refcard-org-beamer/commit/9f75e013127940e793e0a925fc4ee222bae0e45c
 #+END_SRC
 
 Add some classes to the set of known classes:
