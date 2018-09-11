@@ -1872,11 +1872,6 @@ Selection
 (setq org-support-shift-select t)
 #+END_SRC
 
-Links
-#+BEGIN_SRC emacs-lisp
-(setq org-return-follows-link t)
-#+END_SRC
-
 Block
 #+BEGIN_SRC emacs-lisp
 (setq org-hide-block-startup t) 				; hide blocks at startup
@@ -2550,7 +2545,19 @@ Add the Emacs [[*Calendar/Diary][diary]] (which also stores holidays) to =org-ag
 (setq org-agenda-include-diary t) 
 #+END_SRC
 
+*** Images
+
+Only use actual width of image when not specified with =#+ATTR* :width= (requires imagemagick)
+#+BEGIN_SRC emacs-lisp
+(setq org-image-actual-width nil)
+#+END_SRC
+
 *** Links
+
+Follow links when pressing =<return>=:
+#+BEGIN_SRC emacs-lisp
+(setq org-return-follows-link t)
+#+END_SRC
 
 Add some link types:
 #+BEGIN_SRC emacs-lisp
