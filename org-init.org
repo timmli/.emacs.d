@@ -3738,7 +3738,8 @@ Usefull extras, e.g., org-mode-like folding:
 
 *** ess
 
-- [ ] "Error (use-package): ess/:init: Recursive ‘require’ for feature ‘ess-r-mode’"
+- [ ] "Error (use-package): ess :init: Cannot open load file: No such file or directory, julia-mode"
+- [X] "Error (use-package): ess/:init: Recursive ‘require’ for feature ‘ess-r-mode’"
 
 =ess= (Emacs Speaks Statistics) is the package that integrates R into Emacs.
 
@@ -5524,7 +5525,7 @@ Add linked org-mode files to =org-agenda-files=:
 			(let ((org-link-path (org-element-property :path x))
 						(org-link-type (org-element-property :type x)))
 				(when (and (equal org-link-type "file") ; only links to files
-									 (string-prefix-p "~/" org-link-path) ; relative paths are bad
+									 (string-match-p "\\(^[a-z]:\\)\\|\\(~/\\)" "~/") ; relative paths are bad
 									 (equal "org" (file-name-extension org-link-path)) ;only org-mode files
 									 (file-exists-p org-link-path) ; only existing files
 									 )
