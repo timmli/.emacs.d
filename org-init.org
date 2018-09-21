@@ -1972,6 +1972,23 @@ Collect log entries in drawer:
 (setq org-log-into-drawer t)
 #+END_SRC
 
+Clock out when quitting emacs:
+#+BEGIN_SRC emacs-lisp
+;; Taken from https://emacs.stackexchange.com/a/38487/12336
+(defun my/org-clock-query-out ()
+  "Ask the user before clocking out.
+This is a useful function for adding to `kill-emacs-query-functions'."
+  (if (and
+       (featurep 'org-clock)
+       (funcall 'org-clocking-p)
+       (y-or-n-p "You are currently clocking time, clock out? "))
+      (org-clock-out) 
+    t)) ;; only fails on keyboard quit or error
+
+;; timeclock.el puts this on the wrong hook!
+(add-hook 'kill-emacs-query-functions 'my/org-clock-query-out)
+#+END_SRC
+
 *** TODO Newline
 
 Don't split the line with =M-<return>=:
@@ -5535,7 +5552,6 @@ Add linked org-mode files to =org-agenda-files=:
 #+END_SRC
 
 Update =org-agenda-files= once a day during start-up.
-
 #+BEGIN_SRC emacs-lisp
 (defcustom org-agenda-files-last-update nil 
 	"This variable saves the date of the last update of org-agenda-files.")
@@ -5544,8 +5560,6 @@ Update =org-agenda-files= once a day during start-up.
 	(customize-save-variable 'org-agenda-files-last-update (format-time-string "%Y-%m-%d"))
 	(message "org-agenda-files-last-update updated"))
 #+END_SRC
-
-
 
 * Project management
 
