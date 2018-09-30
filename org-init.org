@@ -6984,7 +6984,7 @@ Hydra for clocking activities in org-mode (taken from https://github.com/abo-abo
 ^Clock:^ ^In/out^     ^Edit^   ^Summary^    | ^Timers:^ ^Run^           ^Insert
 -^-^-----^-^----------^-^------^-^----------|--^-^------^-^-------------^------
 (_?_)    _i_n         _e_dit   _g_oto entry | (_h_)     _b_egin         ti_m_e
- ^ ^     _c_ontinue   _q_uit   _d_isplay    |  ^ ^      cou_n_tdown     i_t_em
+ ^ ^     _c_ontinue   _Q_uit   _d_isplay    |  ^ ^      cou_n_tdown     i_t_em
  ^ ^     _o_ut        ^ ^      _r_eport     |  ^ ^      _p_ause toggle
  ^ ^     ^ ^          ^ ^      ^ ^          |  ^ ^      _s_top
 "
@@ -6993,7 +6993,7 @@ Hydra for clocking activities in org-mode (taken from https://github.com/abo-abo
    ("o" org-clock-out)
    
    ("e" org-clock-modify-effort-estimate)
-   ("q" org-clock-cancel)
+   ("Q" org-clock-cancel)
 
    ("g" org-clock-goto)
    ("d" org-clock-display)
