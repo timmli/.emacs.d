@@ -1989,6 +1989,11 @@ This is a useful function for adding to `kill-emacs-query-functions'."
 (add-hook 'kill-emacs-query-functions 'my/org-clock-query-out)
 #+END_SRC
 
+Only use hours and minutes as duration format in clocktables:
+#+BEGIN_SRC emacs-lisp
+(setq org-duration-format (quote h:mm))
+#+END_SRC
+
 *** TODO Newline
 
 Don't split the line with =M-<return>=:
