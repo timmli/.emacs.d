@@ -22,7 +22,6 @@
 ;; start emacs server
 ;; (server-start)  ; uncomment this, if you want the server to start on every start-up
 
-
 ;;==========================================================
 ;;      DIRECTORIES SETUP
 ;;==========================================================

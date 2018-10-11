@@ -2809,6 +2809,11 @@ Functions to move around single cells:
 		(message "No region selected")))
 #+END_SRC
 
+Set timestamp language to English:
+#+BEGIN_SRC emacs-lisp
+(setq system-time-locale "C")
+#+END_SRC
+
 *** Listings
 
 Use the =listings= package:
