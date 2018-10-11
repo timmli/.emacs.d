@@ -4066,6 +4066,7 @@ Idea: offlineimap and notmuch are running in a WSL where also the maildir is loc
 https://wwwtech.de/articles/2016/jul/my-personal-mail-setup
 https://notmuchmail.org/remoteusage/
 https://kkatsuyuki.github.io/notmuch-conf/
+https://admiralakber.github.io/2018/09/20/myos-email/
 
 #+BEGIN_SRC emacs-lisp
 (use-package notmuch
