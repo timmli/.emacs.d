@@ -1609,19 +1609,19 @@ General settings:
 #+end_src
 
 #+begin_src emacs-lisp
-	(custom-set-faces
-	 '(org-done ((t (:overline t))))
-	 '(org-todo ((t (:overline t))))
-	 '(org-block ((t (:inherit fixed-pitch )))) ; org-mode >9
-	 '(org-block-background ((t (:inherit fixed-pitch))))
-	 '(org-block-begin-line ((t (:underline t))))
-	 '(org-block-end-line  ((t (:overline t))))
-	 '(org-level-1 ((t (:inherit outline-1 :overline t :weight semi-bold ))))
-	 '(org-level-2 ((t (:inherit outline-2 :overline t :weight semi-bold ))))
-	 '(org-level-3 ((t (:inherit outline-3 :weight semi-bold ))))
-	 '(org-level-4 ((t (:inherit outline-4 :weight semi-bold ))))
-	 '(org-level-5 ((t (:inherit outline-5 :weight semi-bold ))))
-	 )
+(custom-set-faces
+ '(org-done ((t (:overline t))))
+ '(org-todo ((t (:overline t))))
+ '(org-block ((t (:inherit fixed-pitch )))) ; org-mode >9
+ '(org-block-background ((t (:inherit fixed-pitch))))
+ '(org-block-begin-line ((t (:underline t))))
+ '(org-block-end-line  ((t (:overline t))))
+ '(org-level-1 ((t (:inherit outline-1 :overline t :weight semi-bold ))))
+ '(org-level-2 ((t (:inherit outline-2 :overline t :weight semi-bold ))))
+ '(org-level-3 ((t (:inherit outline-3 :weight semi-bold ))))
+ '(org-level-4 ((t (:inherit outline-4 :weight semi-bold ))))
+ '(org-level-5 ((t (:inherit outline-5 :weight semi-bold ))))
+ )
 #+end_src
 
 Further attributes: =:background=, =:height=
@@ -1689,7 +1689,17 @@ Do not edit in invisible areas of the buffer:
 	 ))
 #+END_SRC
 
-**** Checkboxes
+**** TODO Checkboxes
+:LOGBOOK:
+- State "TODO"       from              [2018-10-11 Do 12:16]
+:END:
+
+- [ ] Does not work like this: Fontify unchecked checkbox items: 
+#+BEGIN_SRC emacs-lisp
+(custom-set-faces
+ '(org-checkbox ((t (:inherit org-todo :overline nil))))
+ )
+#+END_SRC
 
 Fontify checked checkbox items. 
 (see https://fuco1.github.io/2017-05-25-Fontify-done-checkbox-items-in-org-mode.html)
