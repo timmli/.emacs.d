@@ -6958,6 +6958,7 @@ Don't ask for the path when searching for files:
 	("t" org-toggle-archive-tag "set archive tag" :exit t)
 	("a" org-archive-to-archive-sibling "archive below" :exit t)
 	("A" org-archive-subtree-default "archive outside" :exit t)
+	("<tab>" org-force-cycle-archived "expand archive" :exit t)
 	("q" nil :color blue)
 	)
 #+END_SRC
