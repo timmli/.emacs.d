@@ -1701,13 +1701,28 @@ Do not edit in invisible areas of the buffer:
  )
 #+END_SRC
 
-Fontify checked checkbox items. 
-(see https://fuco1.github.io/2017-05-25-Fontify-done-checkbox-items-in-org-mode.html)
+Fontify checkbox items. 
+(inspired by https://fuco1.github.io/2017-05-25-Fontify-done-checkbox-items-in-org-mode.html)
 
 #+BEGIN_SRC emacs-lisp
+(defface org-checkbox-todo-text
+	'((t (:foreground "red"  :overline nil)))
+	"Face for the text part of an unchecked org-mode checkbox.")
+
 (font-lock-add-keywords
  'org-mode
- `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-headline-done prepend))
+ `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?: \\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-todo-text prepend))
+ 'append)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defface org-checkbox-done-text
+	'((t (:foreground "forest green"  :overline nil)))
+	"Face for the text part of a checked org-mode checkbox.")
+
+(font-lock-add-keywords
+ 'org-mode
+ `(("^[ \t]*\\(?:[-+*]\\|[0-9]+[).]\\)[ \t]+\\(\\(?:\\[@\\(?:start:\\)?[0-9]+\\][ \t]*\\)?\\[\\(?:X\\|\\([0-9]+\\)/\\2\\)\\][^\n]*\n\\)" 1 'org-checkbox-done-text prepend))
  'append)
 #+END_SRC
 
