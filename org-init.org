@@ -1608,10 +1608,17 @@ General settings:
 	(setq org-hide-emphasis-markers t)
 #+end_src
 
+Modify some faces:
+
+#+BEGIN_SRC emacs-lisp
+(face-spec-set 'org-todo '((t (:overline t))))
+(face-spec-set 'org-done '((t (:overline t))))
+#+END_SRC
+
+Overwrite some faces:
+
 #+begin_src emacs-lisp
 (custom-set-faces
- '(org-done ((t (:overline t))))
- '(org-todo ((t (:overline t))))
  '(org-block ((t (:inherit fixed-pitch )))) ; org-mode >9
  '(org-block-background ((t (:inherit fixed-pitch))))
  '(org-block-begin-line ((t (:underline t))))
@@ -1689,24 +1696,17 @@ Do not edit in invisible areas of the buffer:
 	 ))
 #+END_SRC
 
-**** TODO Checkboxes
-:LOGBOOK:
-- State "TODO"       from              [2018-10-11 Do 12:16]
-:END:
-
-- [ ] Does not work like this: Fontify unchecked checkbox items: 
-#+BEGIN_SRC emacs-lisp
-(custom-set-faces
- '(org-checkbox ((t (:inherit org-todo :overline nil))))
- )
-#+END_SRC
+**** Checkboxes
 
 Fontify checkbox items. 
 (inspired by https://fuco1.github.io/2017-05-25-Fontify-done-checkbox-items-in-org-mode.html)
 
 #+BEGIN_SRC emacs-lisp
 (defface org-checkbox-todo-text
-	'((t (:foreground "red"  :overline nil)))
+	'((t (;;:inherit org-todo
+								 :overline nil
+								 :foreground "red"
+								 :weight unspecified)))
 	"Face for the text part of an unchecked org-mode checkbox.")
 
 (font-lock-add-keywords
@@ -1717,7 +1717,10 @@ Fontify checkbox items.
 
 #+BEGIN_SRC emacs-lisp
 (defface org-checkbox-done-text
-	'((t (:foreground "forest green"  :overline nil)))
+	'((t (;;:inherit org-done
+								 :overline nil
+								 :foreground "forest green"
+								 :weight unspecified)))
 	"Face for the text part of a checked org-mode checkbox.")
 
 (font-lock-add-keywords
