@@ -904,6 +904,11 @@ Order directories first (only windows?):
 (setq ls-lisp-dirs-first t)
 #+END_SRC
 
+Ignore case when sorting:
+#+BEGIN_SRC emacs-lisp
+(setq ls-lisp-ignore-case t)
+#+END_SRC
+
 Other settings: http://oremacs.com/2015/01/13/dired-options/
 #+BEGIN_SRC emacs-lisp
 (setq dired-listing-switches "-laGh1v")
