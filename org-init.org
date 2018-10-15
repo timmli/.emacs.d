@@ -4384,6 +4384,18 @@ Execute when all backends added to =company-backends=.
   :config (flycheck-plantuml-setup))
 #+END_SRC
 
+*** flycheck-vale
+
+Flycheck integration for [[https://github.com/errata-ai/vale][vale]], a natural language linter.
+=flycheck-vale= currently supports =text-mode=, =markdown-mode=, =rst-mode=, and =org-mode=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck-vale
+	:ensure t
+	:after (flycheck)
+	:config (flycheck-vale-setup))
+#+END_SRC
+
 ** Spell checking
 
 *** flyspell
