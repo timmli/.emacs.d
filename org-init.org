@@ -4542,13 +4542,14 @@ Deprecated. I instead use =flyspell-correct=.
 
 [[flycheck-vale]]
 
-*** TODO COMMENT emacs-langtool
+*** emacs-langtool
 
-- [ ] add to schokemace
+Grammar checking with [[https://www.languagetool.org/][LanguageTool]].
 
 #+BEGIN_SRC emacs-lisp
-(setq langtool-language-tool-jar "C:\ProgramData\chocolatey\lib\languagetool\tools\LanguageTool-4.3\languagetool-commandline.jar")
-(require 'langtool)
+(use-package langtool
+	:ensure t
+	:config (setq langtool-language-tool-jar (expand-file-name (concat (getenv "WEMACS_LANGUAGETOOL_PATH") "/languagetool-commandline.jar"))))
 #+END_SRC
 
 ** Paren handling
