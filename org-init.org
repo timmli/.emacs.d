@@ -906,7 +906,13 @@ Order directories first (only windows?):
 
 Other settings: http://oremacs.com/2015/01/13/dired-options/
 #+BEGIN_SRC emacs-lisp
-(setq dired-listing-switches "-laGh1v")
+(setq dired-listing-switches "-laGh1v --group-directories-first") ; --group-directories-first is only supported by recent versions of ls.
+#+END_SRC
+
+Specify ls program: https://www.gnu.org/software/emacs/manual/html_node/efaq-w32/Dired-ls.html
+#+BEGIN_SRC emacs-lisp
+(setq ls-lisp-use-insert-directory-program t)	; use external ls
+;; (setq insert-directory-program "c:/tools/cygwin/bin/ls") ; path to ls program
 #+END_SRC
 
 Chose Windows drives:
