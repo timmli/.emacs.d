@@ -4395,7 +4395,6 @@ Flycheck integration for [[https://github.com/errata-ai/vale][vale]], a natural 
 	:after (flycheck)
 	:config (flycheck-vale-setup))
 #+END_SRC
-
 ** Spell checking
 
 *** flyspell
@@ -4531,6 +4530,19 @@ Deprecated. I instead use =flyspell-correct=.
 	(define-key popup-menu-keymap (kbd "<left>") nil)
 	(define-key popup-menu-keymap (kbd "TAB") 'popup-select) ; Unfortunately, this does not seem to work.
 )
+#+END_SRC
+
+** Grammar checking
+
+[[flycheck-vale]]
+
+*** TODO COMMENT emacs-langtool
+
+- [ ] add to schokemace
+
+#+BEGIN_SRC emacs-lisp
+(setq langtool-language-tool-jar "C:\ProgramData\chocolatey\lib\languagetool\tools\LanguageTool-4.3\languagetool-commandline.jar")
+(require 'langtool)
 #+END_SRC
 
 ** Paren handling
