@@ -904,6 +904,11 @@ Order directories first (only windows?):
 (setq ls-lisp-dirs-first t)
 #+END_SRC
 
+Ignore case when sorting:
+#+BEGIN_SRC emacs-lisp
+(setq ls-lisp-ignore-case t)
+#+END_SRC
+
 Other settings: http://oremacs.com/2015/01/13/dired-options/
 #+BEGIN_SRC emacs-lisp
 (setq dired-listing-switches "-laGh1v --group-directories-first") ; --group-directories-first is only supported by recent versions of ls.
@@ -4385,6 +4390,17 @@ Execute when all backends added to =company-backends=.
   :config (flycheck-plantuml-setup))
 #+END_SRC
 
+*** flycheck-vale
+
+Flycheck integration for [[https://github.com/errata-ai/vale][vale]], a natural language linter.
+=flycheck-vale= currently supports =text-mode=, =markdown-mode=, =rst-mode=, and =org-mode=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck-vale
+	:ensure t
+	:after (flycheck)
+	:config (flycheck-vale-setup))
+#+END_SRC
 ** Spell checking
 
 *** flyspell
@@ -4520,6 +4536,19 @@ Deprecated. I instead use =flyspell-correct=.
 	(define-key popup-menu-keymap (kbd "<left>") nil)
 	(define-key popup-menu-keymap (kbd "TAB") 'popup-select) ; Unfortunately, this does not seem to work.
 )
+#+END_SRC
+
+** Grammar checking
+
+[[flycheck-vale]]
+
+*** TODO COMMENT emacs-langtool
+
+- [ ] add to schokemace
+
+#+BEGIN_SRC emacs-lisp
+(setq langtool-language-tool-jar "C:\ProgramData\chocolatey\lib\languagetool\tools\LanguageTool-4.3\languagetool-commandline.jar")
+(require 'langtool)
 #+END_SRC
 
 ** Paren handling
