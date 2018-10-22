@@ -7153,7 +7153,7 @@ _q_ quit
 *** hydra-org-markup
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-org-markup (:hint nil)
+(defhydra hydra-org-markup (global-map "C-c m" :hint nil)
 	"Org-mode markup"
 	("b" (org-emphasize ?*) "bold" :exit t)
 	("i" (org-emphasize ?/) "italic" :exit t)
