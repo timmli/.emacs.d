@@ -7104,6 +7104,7 @@ Don't ask for the path when searching for files:
 	("i" org-id-get-create "add ID" :exit t)
 	("r" org-ref "org-ref" :exit t)
 	("s" org-sort "sort" :exit t)
+	("/" org-sparse-tree "filter" :exit t)
 	("." tl/org-timestamp-dwim "timestamp" :exit t)
 	("$" org-latex-fragment-toggle-toggle "show LaTeX" :exit t)
 	("<tab>" org-show-current-heading-tidily "tidily unfold" :exit t)
