@@ -524,10 +524,7 @@ Smex helps to remember often used commands; used by ido and counsel
   :bind ("C-h b" . helm-descbinds))
 #+end_src
 
-*** TODO org-mode
-:LOGBOOK:
-- State "TODO"       from              [2017-08-05 Sa 01:16]
-:END:
+*** org-mode
 
 Complete tags with helm when using =org-set-tags=:
 
@@ -608,9 +605,9 @@ http://sqlite.org/download.html
 	)
 #+END_SRC
 
-*** TODO COMMENT helm-gtags
+*** COMMENT helm-gtags
 
-- [ ]  [[*GLOBAL][GLOBAL]] has to be properly installed first. 
+I don't use it right now.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-gtags
@@ -766,7 +763,12 @@ Quick, comprehensive search on org-mode files.
 - [ ] compiling Gnuplot crashes Emacs
 
 #+BEGIN_SRC emacs-lisp
-(use-package gnuplot
+;; (use-package gnuplot
+;; 	:ensure t)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package gnuplot-mode
 	:ensure t)
 #+END_SRC
 
@@ -1326,9 +1328,7 @@ Copied from https://fuco1.github.io/2017-05-01-Support-for-imenu-in-dired.html
 	)
 #+END_SRC
 
-*** TODO size info 
-
-- [ ] Does not work anymore?
+*** size info 
 
 Calculates the size of marked directories using =du=.
 Copied from https://oremacs.com/2015/01/12/dired-file-size/ and slightly adapted.
@@ -1679,7 +1679,10 @@ Do not edit in invisible areas of the buffer:
 (setq-default org-catch-invisible-edits 'show)
 #+END_SRC
 
-**** Inline code 
+**** TODO Inline code 
+:LOGBOOK:
+- State "TODO"       from              [2018-10-24 Wed 23:02]
+:END:
 
 #+BEGIN_SRC emacs-lisp
 (font-lock-add-keywords 
@@ -1704,6 +1707,14 @@ Do not edit in invisible areas of the buffer:
 		(1 font-lock-comment-face)
 		(2 '(org-latex-and-related)) 				; FIXME?
 		(3 font-lock-comment-face))
+	 ))
+
+;; Does not work
+(font-lock-add-keywords 
+ 'org-mode
+ '(("\\(#\\+BEAMER_HEADER:\\)\\(.*\\)"
+		(1 font-lock-comment-face)
+		(2 '(org-latex-and-related)))
 	 ))
 #+END_SRC
 
