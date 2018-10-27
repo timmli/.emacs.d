@@ -1521,6 +1521,12 @@ Allow for alphabetical list item labels:
 (setq org-list-allow-alphabetical t)
 #+END_SRC
 
+Set indentation of list items:
+
+#+BEGIN_SRC emacs-lisp
+(setq-default org-list-indent-offset 4)
+#+END_SRC
+
 **** Color text
 
 Text can be colored using the link syntax, e.g. [[color:red][this is red]].
