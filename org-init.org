@@ -1496,9 +1496,23 @@ Use tab key as defined for the enclosed language:
 Show bullet instead of - or *.
 
 #+BEGIN_SRC emacs-lisp
-(font-lock-add-keywords 'org-mode
-                        '(("^ +\\([-*]\\) "
-                           (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+(font-lock-add-keywords
+ 'org-mode
+ '(("^[[:space:]]*\\(-\\) "
+		(0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
+;; ;; Trying to make bullet face aware of embedding depth
+;; (font-lock-add-keywords
+;;  'org-mode
+;;  '(("^[[:space:]]*\\(-\\) "
+;;     (0 (prog1 () (let ((bullet "-")
+;; 											 (depth (org-list--depth (org-element-at-point))))
+;; 									 (cond ((= depth 2) (setq bullet "•"))
+;; 												 ((= depth 3) (setq bullet "▸"))
+;; 												 ((= depth 4) (setq bullet "-"))
+;; 												 ((= depth 5) (setq bullet "▪"))
+;; 												 )
+;; 									 (compose-region (match-beginning 1) (match-end 1) bullet)))))))
 #+end_src
 
 Allow for alphabetical list item labels:
