@@ -7838,12 +7838,13 @@ A hydra for font selection with AUCTeX:
 ;; inspired by https://github.com/abo-abo/hydra/wiki/multiple-cursors
 (defhydra hydra-multiple-cursors (:hint nil :idle 0.2)
 	"
-    			 ^Up^                   ^Down^            ^Other^
-   ╭───^^─────────────────────────^^────────────^^───────────────────╯
-    [_S-<up>_] Next      [_S-<down>_] Next       [_l_] Edit lines
-      [_<up>_] Skip        [_<down>_] Skip       [_a_] Mark all
-    [_M-<up>_] Unmark    [_M-<down>_] Unmark     [_r_] Mark by regexp
-   [_SPC_] Mark region ^^                    [_q_] Quit hydra     [_Q_] Quit mc-mode
+    		 	 ^Up^                   ^Down^            ^Other^
+   ╭───^^───────────────────────────────^^──────────────^^───────────────────╯
+    [_S-<up>_] Next      [_S-<down>_] Next         [_l_] Edit lines
+      [_<up>_] Skip        [_<down>_] Skip         [_a_] Mark all
+    [_M-<up>_] Unmark    [_M-<down>_] Unmark       [_r_] Mark by regexp
+           [_SPC_] Mark region ^^       ^^[C-S-<mouse1>] Mark with mouse    
+        ^   ^              ^^                      [_q_] Quit hydra     [_Q_] Quit mc-mode
 	"
 	("l" mc/edit-lines :exit t)
 	("a" mc/mark-all-like-this :exit t)
@@ -7860,12 +7861,12 @@ A hydra for font selection with AUCTeX:
 	("S-<up>" mc/mark-previous-like-this)
 	("<up>" mc/skip-to-previous-like-this)
 	("M-<up>" mc/unmark-previous-like-this)
-	("S-<down-mouse-1>" mc/add-cursor-on-click)
 	("r" mc/mark-all-in-region-regexp :exit t)
   ("Q" (multiple-cursors-mode -1) :exit t)
 	("q" nil))
 (global-set-key (kbd "C-<") 'hydra-multiple-cursors/body)
 (global-set-key (kbd "M-+") 'hydra-multiple-cursors/body)
+(global-set-key (kbd "C-S-<mouse-1>") 'mc/add-cursor-on-click)
   #+END_SRC
 
 ** hydra-highlight-changes
