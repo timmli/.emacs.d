@@ -1566,7 +1566,6 @@ Add support for export to LaTeX:
 ***** Other link types
 
 Link type for typesetting linguistic examples:
-
 #+BEGIN_SRC emacs-lisp
 (org-link-set-parameters
  "bsp"
@@ -1583,6 +1582,23 @@ Link type for typesetting linguistic examples:
  )
 #+END_SRC
 
+Link type for typesetting terminology:
+#+BEGIN_SRC emacs-lisp
+(org-link-set-parameters
+ "term"
+ :follow (lambda (path) (message "You clicked me."))
+ :export (lambda (path desc backend)
+           (cond
+            ((eq backend 'latex)								
+						 (format "\\term{%s}" (or desc path)))
+						((eq 'html backend)
+             (format "<span style=\"font-variant:small-caps;\">%s</span>" 
+										 (or desc path)))))
+ :face '(:box t :slant normal)
+ :help-echo "This will be exported as term."
+ )
+#+END_SRC
+
 Link type for typesetting emphasized text:
 #+BEGIN_SRC emacs-lisp
 (org-link-set-parameters
@@ -1595,7 +1611,7 @@ Link type for typesetting emphasized text:
 						((eq 'html backend)
              (format "<em>%s</em>"
                      (or desc path)))))
- :face '(:box t :slant italic)
+ :face '(:overline t :underline t :slant italic)
  :help-echo "This will be exported as emphasized text."
  )
 #+END_SRC
@@ -7294,7 +7310,9 @@ _q_ quit
 	("b" (org-emphasize ?*) "bold" :exit t)
 	("i" (org-emphasize ?/) "italic" :exit t)
 	("u" (org-emphasize ?_) "underlined" :exit t)
-	("e" tl/insert-org-link-example "example" :exit t)
+	("e" tl/insert-org-link-emph "emphasized" :exit t)
+	("t" tl/insert-org-link-term "term" :exit t)
+	("x" tl/insert-org-link-example "example" :exit t)
 	("s" tl/insert-org-link-smallcaps "small caps" :exit t)
 	("c" tl/insert-org-link-color "color" :exit t)
 	("q" nil :color blue)
@@ -7302,39 +7320,36 @@ _q_ quit
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(defun tl/insert-org-link-example ()
-	(interactive)
+(defun tl/insert-org-link (type)
 	(if (use-region-p)
 			(let ((marked (buffer-substring (region-beginning) (region-end))))
 				(progn
 					(delete-region(region-beginning) (region-end))
-					(insert (concat "[[bsp:][" marked "]]"))))
-		(insert "[[bsp:][]]")
+					(insert (concat "[[" type ":][" marked "]]"))))
+		(insert (concat "[[" type ":][]]"))
 		(backward-char 2))) 
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
+(defun tl/insert-org-link-term ()
+	(interactive)
+	(tl/insert-org-link "term"))
+
 (defun tl/insert-org-link-smallcaps ()
 	(interactive)
-	(if (use-region-p)
-			(let ((marked (buffer-substring (region-beginning) (region-end))))
-				(progn
-					(delete-region(region-beginning) (region-end))
-					(insert (concat "[[textsc:][" marked "]]"))))
-		(insert "[[textsc:][]]")
-		(backward-char 2))) 
-#+END_SRC
+	(tl/insert-org-link "textsc"))
 
-#+BEGIN_SRC emacs-lisp
+(defun tl/insert-org-link-emph ()
+	(interactive)
+	(tl/insert-org-link "emph"))
+
+(defun tl/insert-org-link-emph ()
+	(interactive)
+	(tl/insert-org-link "emph"))
+
 (defun tl/insert-org-link-color ()
 	(interactive)
-	(if (use-region-p)
-			(let ((marked (buffer-substring (region-beginning) (region-end))))
-				(progn
-					(delete-region(region-beginning) (region-end))
-					(insert (concat "[[color:red][" marked "]]"))))
-		(insert "[[color:red][]]")
-		(backward-char 2))) 
+	(tl/insert-org-link (concat "color:" (helm-colors)))) 
 #+END_SRC
 
 ** hydra-deft
