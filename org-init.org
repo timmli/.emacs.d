@@ -292,6 +292,12 @@ Inspired by https://ogbe.net/blog/toggle-serif.html
                (message "Restored default fonts."))))))
 #+END_SRC
 
+Replace LaTeX commands by UTF8 symbols:
+#+BEGIN_SRC emacs-lisp
+;; (use-package latex-pretty-symbols
+;; 	:ensure t)
+#+END_SRC
+
 ** Overlays
 
 #+BEGIN_SRC emacs-lisp
@@ -7325,31 +7331,33 @@ _q_ quit
 			(let ((marked (buffer-substring (region-beginning) (region-end))))
 				(progn
 					(delete-region(region-beginning) (region-end))
-					(insert (concat "[[" type ":][" marked "]]"))))
-		(insert (concat "[[" type ":][]]"))
+					(insert (concat "[[" type "][" marked "]]"))))
+		(insert (concat "[[" type "][]]"))
 		(backward-char 2))) 
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/insert-org-link-term ()
 	(interactive)
-	(tl/insert-org-link "term"))
+	(tl/insert-org-link "term:"))
 
 (defun tl/insert-org-link-smallcaps ()
 	(interactive)
-	(tl/insert-org-link "textsc"))
+	(tl/insert-org-link "textsc:"))
 
 (defun tl/insert-org-link-emph ()
 	(interactive)
-	(tl/insert-org-link "emph"))
+	(tl/insert-org-link "emph:"))
 
-(defun tl/insert-org-link-emph ()
+(defun tl/insert-org-link-example ()
 	(interactive)
-	(tl/insert-org-link "emph"))
+	(tl/insert-org-link "bsp:"))
 
 (defun tl/insert-org-link-color ()
 	(interactive)
-	(tl/insert-org-link (concat "color:" (helm-colors)))) 
+	(tl/insert-org-link
+	 (concat "color:"
+					 (replace-regexp-in-string "[[:space:]]+" "" (helm-colors))))) 
 #+END_SRC
 
 ** hydra-deft
