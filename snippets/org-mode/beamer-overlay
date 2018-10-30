@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: beamer-overlay
+# key: <>_
+# --
+#+ATTR_BEAMER: :overlay <${1:+-}> $0

@@ -2,5 +2,4 @@
 # name: attr_beamer
 # key: ab_
 # --
-#+ATTR_BEAMER: :overlay <+->
-$0
+#+ATTR_BEAMER: :overlay <+-> $0
