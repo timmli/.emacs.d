@@ -1499,6 +1499,12 @@ Use tab key as defined for the enclosed language:
 
 **** Lists
 
+Set indentation of list items:
+
+#+BEGIN_SRC emacs-lisp
+(setq-default org-list-indent-offset 4)
+#+END_SRC
+
 Show bullet instead of - or *.
 
 #+BEGIN_SRC emacs-lisp
@@ -1507,7 +1513,32 @@ Show bullet instead of - or *.
  '(("^[[:space:]]*\\(-\\) "
 		(0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
-;; ;; Trying to make bullet face aware of embedding depth
+;; ;; The following tries to estimate the embedding level via the number of preceding spaces.
+;;
+;; (font-lock-add-keywords
+;;  'org-mode
+;;  '(("^\\(-\\) "
+;; 		(0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+;;
+;; (font-lock-add-keywords
+;;  'org-mode
+;;  `((,(concat "^[[:space:]]\\{" (number-to-string (+ 2 org-list-indent-offset)) "\\}\\(-\\) ")
+;; 		(0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "◦"))))))
+;;
+;; (font-lock-add-keywords
+;;  'org-mode
+;;  `((,(concat "^[[:space:]]\\{" (number-to-string 
+;; 																(* 2 (+ 2 org-list-indent-offset))) "\\}\\(-\\) ")
+;; 		(0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "▸"))))))
+;;
+;; (font-lock-add-keywords
+;;  'org-mode
+;;  `((,(concat "^[[:space:]]\\{" (number-to-string 
+;; 																(* 3 (+ 2 org-list-indent-offset))) "\\}\\(-\\) ")
+;; 		(0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "▹"))))))
+
+;; ;; Trying to make bullet face aware of embedding depth:
+;;
 ;; (font-lock-add-keywords
 ;;  'org-mode
 ;;  '(("^[[:space:]]*\\(-\\) "
@@ -1525,12 +1556,6 @@ Allow for alphabetical list item labels:
 
 #+BEGIN_SRC emacs-lisp
 (setq org-list-allow-alphabetical t)
-#+END_SRC
-
-Set indentation of list items:
-
-#+BEGIN_SRC emacs-lisp
-(setq-default org-list-indent-offset 4)
 #+END_SRC
 
 **** Color text
