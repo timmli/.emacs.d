@@ -3133,6 +3133,36 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 
 #+END_SRC
 
+*** TODO COMMENT org-caldav
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-caldav
+  :ensure t
+	:after (org org-agenda)
+  :config (setq org-icalendar-timezone "Europe/Berlin"
+								org-caldav-files nil
+								org-caldav-backup-file (concat org-directory "org-caldav-backup.org")
+								org-caldav-save-directory (concat org-directory "org-caldav/")
+								org-caldav-delete-calendar-entries 'never ; values: 'never 'ask
+								;; for creating calendar events from org headings
+								org-icalendar-include-todo t
+								org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due)
+								org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo))
+	)
+
+
+(setq
+ org-caldav-calendars
+ `((:calendar-id "org" ; name of calendar on CalDAV server
+								 :inbox ,(concat org-directory "/org-caldav-inbox.org")
+								 :url "https://address.of.cloud"
+								 :files ,(org-agenda-files) ; where to look for new dates
+								 :select-tags '("calendar")))) 
+
+(org-caldav-sync)
+#+END_SRC
+
+
 ** LaTeX
 
 *** TODO AUCTeX 
