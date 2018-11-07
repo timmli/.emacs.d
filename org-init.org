@@ -851,9 +851,9 @@ Depends on plantuml.jar and Gaphviz (http://www.graphviz.org).
   :init
 	(when (eq system-type 'windows-nt)
 		(setq org-plantuml-jar-path
-					(expand-file-name "plantuml.jar" wemacs-dir))
+					(expand-file-name "C:/ProgramData/chocolatey/lib/plantuml/tools/plantuml.jar"))
 		(setq plantuml-jar-path
-					(expand-file-name "plantuml.jar" wemacs-dir))))
+					(expand-file-name "C:/ProgramData/chocolatey/lib/plantuml/tools/plantuml.jar"))))
 #+END_SRC
 
 ** dired
