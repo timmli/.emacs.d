@@ -1499,6 +1499,12 @@ Use tab key as defined for the enclosed language:
 
 **** Lists
 
+Set indentation of list items:
+
+#+BEGIN_SRC emacs-lisp
+(setq-default org-list-indent-offset 4)
+#+END_SRC
+
 Show bullet instead of - or *.
 
 #+BEGIN_SRC emacs-lisp
@@ -1507,7 +1513,32 @@ Show bullet instead of - or *.
  '(("^[[:space:]]*\\(-\\) "
 		(0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
 
-;; ;; Trying to make bullet face aware of embedding depth
+;; ;; The following tries to estimate the embedding level via the number of preceding spaces.
+;;
+;; (font-lock-add-keywords
+;;  'org-mode
+;;  '(("^\\(-\\) "
+;; 		(0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+;;
+;; (font-lock-add-keywords
+;;  'org-mode
+;;  `((,(concat "^[[:space:]]\\{" (number-to-string (+ 2 org-list-indent-offset)) "\\}\\(-\\) ")
+;; 		(0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "◦"))))))
+;;
+;; (font-lock-add-keywords
+;;  'org-mode
+;;  `((,(concat "^[[:space:]]\\{" (number-to-string 
+;; 																(* 2 (+ 2 org-list-indent-offset))) "\\}\\(-\\) ")
+;; 		(0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "▸"))))))
+;;
+;; (font-lock-add-keywords
+;;  'org-mode
+;;  `((,(concat "^[[:space:]]\\{" (number-to-string 
+;; 																(* 3 (+ 2 org-list-indent-offset))) "\\}\\(-\\) ")
+;; 		(0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "▹"))))))
+
+;; ;; Trying to make bullet face aware of embedding depth:
+;;
 ;; (font-lock-add-keywords
 ;;  'org-mode
 ;;  '(("^[[:space:]]*\\(-\\) "
@@ -1525,12 +1556,6 @@ Allow for alphabetical list item labels:
 
 #+BEGIN_SRC emacs-lisp
 (setq org-list-allow-alphabetical t)
-#+END_SRC
-
-Set indentation of list items:
-
-#+BEGIN_SRC emacs-lisp
-(setq-default org-list-indent-offset 4)
 #+END_SRC
 
 **** Color text
@@ -3107,6 +3132,36 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 		 ))
 
 #+END_SRC
+
+*** TODO COMMENT org-caldav
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-caldav
+  :ensure t
+	:after (org org-agenda)
+  :config (setq org-icalendar-timezone "Europe/Berlin"
+								org-caldav-files nil
+								org-caldav-backup-file (concat org-directory "org-caldav-backup.org")
+								org-caldav-save-directory (concat org-directory "org-caldav/")
+								org-caldav-delete-calendar-entries 'never ; values: 'never 'ask
+								;; for creating calendar events from org headings
+								org-icalendar-include-todo t
+								org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due)
+								org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo))
+	)
+
+
+(setq
+ org-caldav-calendars
+ `((:calendar-id "org" ; name of calendar on CalDAV server
+								 :inbox ,(concat org-directory "/org-caldav-inbox.org")
+								 :url "https://address.of.cloud"
+								 :files ,(org-agenda-files) ; where to look for new dates
+								 :select-tags '("calendar")))) 
+
+(org-caldav-sync)
+#+END_SRC
+
 
 ** LaTeX
 
@@ -6457,6 +6512,20 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
 
 ))
 #+END_SRC
+
+* Web browsing
+
+** atomic-chrome
+
+Edit text areas of the browser in Emacs.
+
+#+BEGIN_SRC emacs-lisp
+(use-package atomic-chrome
+	:ensure t
+	:config (atomic-chrome-start-server))
+#+END_SRC
+
+On the side of the browser, you need to install an extension such as [[https://github.com/GhostText/GhostText][GhostText]].
 
 * bbdb
 
