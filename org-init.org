@@ -1078,11 +1078,10 @@ Delete with <delete> key.
 ))
 #+END_SRC
 
-*** TODO COMMENT dired-quick-sort
+*** dired-quick-sort
 
-- [ ] Grouping (=--group-directories-first=) does not work under windows.
-
-Depends on =ls=.
+Depends on =ls=, the version of which should support =--group-directories-first=.
+Activated in =dired= with <S-s>.
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired-quick-sort
