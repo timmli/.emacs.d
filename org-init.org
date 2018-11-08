@@ -6668,6 +6668,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 ** hydra-f2
 
 #+BEGIN_SRC emacs-lisp
+(require 'hydra-examples)								; provides hydra-move-splitter-left etc.
 (defhydra hydra-f2
 	(:hint nil
 				 :idle 0.2)
@@ -6677,21 +6678,27 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
      Help^^  │Window│  Config^^   Check^^   Refresh^^   Mode^^   Open^^   Mark^^   Org^^
    ╭─────^^──╯      └────────^^────────^^──────────^^───^^───────^^───────^^───────^^────╯
 
-          ^^  _<up>_            │      ^^           [_z_] window undo    [_t_] transpose frame
+          ^^  _<up>_            │→ _M-<right>_      [_z_] window undo    [_t_] transpose frame
           ^^   ↑   ^^           │split [_h_]oriz.   [_Z_] window redo    [_H_] swap horizontally
-    _<left>_ ←   → _<right>_    │      ^^           [_f_] clone frame    [_V_] swap vertically
+    _<left>_ ←   → _<right>_    │← _M-<left>_       [_f_] clone frame    [_V_] swap vertically
           ^^   ↓   ^^          ────────^^────────   [_b_] clone buffer      
-          ^^ _<down>_           split [_v_]ert.             
-                                                                       [_q_]uit    
+          ^^ _<down>_           ↑ _M-<up>_             
+          ^^ ^^                 split [_v_]ert.     [_=_] balance windows         [_q_]uit    
+          ^^ ^^                 ↓ _M-<down>_
 	"
 	("<down>" windmove-down :exit t)
 	("<up>" windmove-up :exit t)
 	("<right>" windmove-right :exit t)
-	("<left>" windmove-left :exit t)
+	("<left>" windmove-left :exit t) 
 	("f" make-frame :exit t)
 	("b" clone-indirect-buffer :exit t)
 	("v" split-window-vertically :exit t)
 	("h" split-window-horizontally :exit t)
+	("M-<right>" hydra-move-splitter-right :exit nil)
+	("M-<left>" hydra-move-splitter-left :exit nil)
+	("M-<up>" hydra-move-splitter-up :exit nil)
+	("M-<down>" hydra-move-splitter-down :exit nil)
+	("=" balance-windows :exit t)
 	("t" transpose-frame :exit t)
 	("H" flop-frame :exit t)
 	("V" flip-frame :exit t)
