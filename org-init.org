@@ -2111,17 +2111,15 @@ Only use hours and minutes as duration format in clocktables:
 (setq org-duration-format (quote h:mm))
 #+END_SRC
 
-*** TODO Newline/<return>
+*** Newline/<return>
 
-Don't split the line with =M-<return>=:
+Split the line with =M-<return>=. Disables =org-table-wrap-region= when set to =nil=.
 #+BEGIN_SRC emacs-lisp
-(setq org-M-RET-may-split-line '((default . nil)))
+(setq org-M-RET-may-split-line '((default . t)))
 #+END_SRC
 
 The following is taken from [[http://github.com/jkitchin/scimax/blob/master/scimax-org.el]] . 
 See also http://kitchingroup.cheme.cmu.edu/blog/2017/04/09/A-better-return-in-org-mode/ .
-
-- [ ] Where to include =org-table-wrap-region=?
 
 #+BEGIN_SRC emacs-lisp
 (require 'org-inlinetask)
