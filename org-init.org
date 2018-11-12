@@ -1608,8 +1608,20 @@ Link type for typesetting linguistic examples:
              (format "<font color=\"blue\">%s</font>"
                      (or desc path)))))
  :face '(:foreground "CornflowerBlue"	:slant italic	:weight bold		)
- :help-echo "This will be exported as example."
- )
+ :help-echo "This will be exported as example.")
+
+(org-link-set-parameters
+ "bspcolor"
+ :follow (lambda (path) (message "You clicked me."))
+ :export (lambda (path desc backend)
+           (cond
+            ((eq backend 'latex)								
+						 (format "\\bspcolor{%s}" (or desc path)))
+						((eq 'html backend)
+             (format "<font color=\"blue\">%s</font>"
+                     (or desc path)))))
+ :face '(:foreground "CornflowerBlue")
+ :help-echo "This will be exported in the color of examples.")
 #+END_SRC
 
 Link type for typesetting terminology:
