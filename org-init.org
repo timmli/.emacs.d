@@ -5385,6 +5385,16 @@ http://emacs-fu.blogspot.de/2009/05/tracking-changes.html
 								(highlight-changes-remove-highlight (point-min) (point-max))))))
 #+end_src
 
+** Save, kill & yank
+
+*** TODO easy-kill
+:LOGBOOK:
+- State "TODO"       from              [2018-11-09 Fri 19:00]
+:END:
+
+https://github.com/leoliu/easy-kill
+https://emacsredux.com/blog/2018/11/09/an-easy-kill/
+
 ** Switch between buffers
 
 Switching between buffers with C-tab:
@@ -5404,30 +5414,30 @@ http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
 
 #+begin_src emacs-lisp
 (defun narrow-or-widen-dwim (p)
-"Widen if buffer is narrowed, narrow-dwim otherwise.
+	"Widen if buffer is narrowed, narrow-dwim otherwise.
 Dwim means: region, org-src-block, org-subtree, or
 defun, whichever applies first. Narrowing to
 org-src-block actually calls `org-edit-src-code'.
 
 With prefix P, don't widen, just narrow even if buffer
 is already narrowed."
-(interactive "P")
-(declare (interactive-only))
-(cond ((and (buffer-narrowed-p) (not p)) (widen))
-			((region-active-p)
-			 (narrow-to-region (region-beginning)
-												 (region-end)))
-			((derived-mode-p 'org-mode)
-			 ;; `org-edit-src-code' is not a real narrowing
-			 ;; command. Remove this first conditional if
-			 ;; you don't want it.
-			 (cond ((ignore-errors (org-edit-src-code) t)
-							(delete-other-windows))
-						 ((ignore-errors (org-narrow-to-block) t))
-						 (t (org-narrow-to-subtree))))
-			((derived-mode-p 'latex-mode)
-			 (LaTeX-narrow-to-environment))
-			(t (narrow-to-defun))))
+	(interactive "P")
+	(declare (interactive-only))
+	(cond ((and (buffer-narrowed-p) (not p)) (widen))
+				((region-active-p)
+				 (narrow-to-region (region-beginning)
+													 (region-end)))
+				((derived-mode-p 'org-mode)
+				 ;; `org-edit-src-code' is not a real narrowing
+				 ;; command. Remove this first conditional if
+				 ;; you don't want it.
+				 (cond ((ignore-errors (org-edit-src-code) t)
+								(delete-other-windows))
+							 ((ignore-errors (org-narrow-to-block) t))
+							 (t (org-narrow-to-subtree))))
+				((derived-mode-p 'latex-mode)
+				 (LaTeX-narrow-to-environment))
+				(t (narrow-to-defun))))
 
 ;; This line actually replaces Emacs' entire narrowing
 ;; keymap, that's how much I like this command. Only
