@@ -1665,14 +1665,37 @@ Link type for typesetting small caps:
  :follow (lambda (path) (message "You clicked me."))
  :export (lambda (path desc backend)
            (cond
-            ((eq backend 'latex)								
-						 (format "\\textsc{%s}" (or desc path)))
+            ((eq backend 'latex)
+						 (if path
+								 (format "{\\color{%s}\\textsc{%s}}" path desc)
+							 (format "\\textsc{%s}" desc)))
 						((eq 'html backend)
-             (format "<span style=\"font-variant:small-caps;\">%s</span>" 
+						 (format "<span style=\"font-variant:small-caps;\">%s</span>" 
 										 (or desc path)))))
- :face '(:box t :slant normal)
- :help-echo "This will be exported in small caps."
- )
+ :face (lambda (path)
+				 `(:box t :slant normal  
+								:foreground ,(if path "CornflowerBlue")))
+ :help-echo "This will be exported in small caps.")
+#+END_SRC
+
+Link type for typesetting with typewriter font:
+#+BEGIN_SRC emacs-lisp
+(org-link-set-parameters
+ "texttt"
+ :follow (lambda (path) (message "You clicked me."))
+ :export (lambda (path desc backend)
+           (cond
+            ((eq backend 'latex)
+						 (if path
+								 (format "{\\color{%s}\\texttt{%s}}" path desc)
+							 (format "\\texttt{%s}" desc)))
+						((eq 'html backend)
+						 (format "<span style=\"font-family:monospace;\">%s</span>" 
+										 (or desc path)))))
+ :face (lambda (path)
+				 `(:box t :slant normal  
+								:foreground ,(if path "CornflowerBlue")))
+ :help-echo "This will be exported in small caps.")
 #+END_SRC
 
 **** Fonts
