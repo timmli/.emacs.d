@@ -1674,7 +1674,7 @@ Link type for typesetting small caps:
 										 (or desc path)))))
  :face (lambda (path)
 				 `(:box t :slant normal  
-								:foreground ,(if path "CornflowerBlue")))
+								:foreground ,(if (not (string= "" path)) "CornflowerBlue")))
  :help-echo "This will be exported in small caps.")
 #+END_SRC
 
@@ -1693,8 +1693,8 @@ Link type for typesetting with typewriter font:
 						 (format "<span style=\"font-family:monospace;\">%s</span>" 
 										 (or desc path)))))
  :face (lambda (path)
-				 `(:box t :slant normal  
-								:foreground ,(if path "CornflowerBlue")))
+				 `(:box t :slant normal :family ,custom-fixed-pitch-font  
+								:foreground ,(if (not (string= "" path)) "CornflowerBlue")))
  :help-echo "This will be exported in small caps.")
 #+END_SRC
 
