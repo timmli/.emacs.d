@@ -2212,9 +2212,16 @@ Use a prefix arg to get regular RET. "
 						 (looking-back "- " 3))
 				(beginning-of-line)
 				(delete-region (line-beginning-position) (line-end-position)))
-       ;; numbered list
-       ((and (looking-at "$")
-						 (looking-back "[0-9]+. " (line-beginning-position)))
+       ;; ;; numbered list (original)
+       ;; ((and (looking-at "$")
+			 ;; 			 (looking-back "[0-9]+. " (line-beginning-position)))
+			 ;; 	(beginning-of-line)
+			 ;; 	(delete-region (line-beginning-position) (line-end-position)))
+			 ;; numbered or alphabetical list (changed by TL)
+       ((save-excursion
+					(beginning-of-line)
+					(or (looking-at " *[0-9]+. *$")
+							(looking-at " *[a-zA-Z]. *$")))
 				(beginning-of-line)
 				(delete-region (line-beginning-position) (line-end-position)))
        ;; insert new item
