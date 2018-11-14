@@ -7421,18 +7421,20 @@ _q_ quit
 *** hydra-org-markup
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-org-markup (global-map "C-c m" :hint nil)
+(defhydra hydra-org-markup (:hint nil)
 	"Org-mode markup"
 	("b" (org-emphasize ?*) "bold" :exit t)
-	("i" (org-emphasize ?/) "italic" :exit t)
-	("u" (org-emphasize ?_) "underlined" :exit t)
-	("e" tl/insert-org-link-emph "emphasized" :exit t)
-	("t" tl/insert-org-link-term "term" :exit t)
-	("x" tl/insert-org-link-example "example" :exit t)
-	("s" tl/insert-org-link-smallcaps "small caps" :exit t)
-	("d" afs/org-replace-link-by-link-description "delete markup" :exit t)
 	("c" tl/insert-org-link-color "color" :exit t)
+	("e" tl/insert-org-link-emph "emphasized" :exit t)
+	("i" (org-emphasize ?/) "italic" :exit t)
+	("m" tl/insert-org-link-mono "monospaced" :exit t)
+	("s" tl/insert-org-link-smallcaps "small caps" :exit t)
+	("t" tl/insert-org-link-term "term" :exit t)
+	("u" (org-emphasize ?_) "underlined" :exit t)
+	("x" tl/insert-org-link-example "example" :exit t)
+	("d" afs/org-replace-link-by-link-description "delete markup" :exit t)
 	("q" nil :color blue))
+(global-set-key (kbd "C-c m") 'hydra-org-markup/body)
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -7454,6 +7456,10 @@ _q_ quit
 (defun tl/insert-org-link-smallcaps ()
 	(interactive)
 	(tl/insert-org-link "textsc:"))
+
+(defun tl/insert-org-link-mono ()
+	(interactive)
+	(tl/insert-org-link "texttt:"))
 
 (defun tl/insert-org-link-emph ()
 	(interactive)
