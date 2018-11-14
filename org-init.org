@@ -7430,9 +7430,9 @@ _q_ quit
 	("t" tl/insert-org-link-term "term" :exit t)
 	("x" tl/insert-org-link-example "example" :exit t)
 	("s" tl/insert-org-link-smallcaps "small caps" :exit t)
+	("d" afs/org-replace-link-by-link-description "delete markup" :exit t)
 	("c" tl/insert-org-link-color "color" :exit t)
-	("q" nil :color blue)
-	)
+	("q" nil :color blue))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -7468,6 +7468,21 @@ _q_ quit
 	(tl/insert-org-link
 	 (concat "color:"
 					 (replace-regexp-in-string "[[:space:]]+" "" (helm-colors))))) 
+#+END_SRC
+
+Function to replace a link with its description, taken from https://emacs.stackexchange.com/a/21945/12336:
+#+BEGIN_SRC emacs-lisp
+(defun afs/org-replace-link-by-link-description ()
+  "Replace an org link by its description or if empty its address"
+  (interactive)
+  (if (org-in-regexp org-bracket-link-regexp 1)
+      (save-excursion
+        (let ((remove (list (match-beginning 0) (match-end 0)))
+              (description (if (match-end 3) 
+                               (org-match-string-no-properties 3)
+                             (org-match-string-no-properties 1))))
+          (apply 'delete-region remove)
+          (insert description)))))
 #+END_SRC
 
 ** hydra-deft
