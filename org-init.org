@@ -1666,7 +1666,7 @@ Link type for typesetting small caps:
  :export (lambda (path desc backend)
            (cond
             ((eq backend 'latex)
-						 (if path
+						 (if (not (string= path ""))
 								 (format "{\\color{%s}\\textsc{%s}}" path desc)
 							 (format "\\textsc{%s}" desc)))
 						((eq 'html backend)
@@ -1686,7 +1686,7 @@ Link type for typesetting with typewriter font:
  :export (lambda (path desc backend)
            (cond
             ((eq backend 'latex)
-						 (if path
+						 (if (not (string= path ""))
 								 (format "{\\color{%s}\\texttt{%s}}" path desc)
 							 (format "\\texttt{%s}" desc)))
 						((eq 'html backend)
