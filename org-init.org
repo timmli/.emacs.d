@@ -1666,7 +1666,7 @@ Link type for typesetting small caps:
  :export (lambda (path desc backend)
            (cond
             ((eq backend 'latex)
-						 (if path
+						 (if (not (string= path ""))
 								 (format "{\\color{%s}\\textsc{%s}}" path desc)
 							 (format "\\textsc{%s}" desc)))
 						((eq 'html backend)
@@ -1686,7 +1686,7 @@ Link type for typesetting with typewriter font:
  :export (lambda (path desc backend)
            (cond
             ((eq backend 'latex)
-						 (if path
+						 (if (not (string= path ""))
 								 (format "{\\color{%s}\\texttt{%s}}" path desc)
 							 (format "\\texttt{%s}" desc)))
 						((eq 'html backend)
@@ -1814,7 +1814,7 @@ Do not edit in invisible areas of the buffer:
 ;; Does not work
 (font-lock-add-keywords 
  'org-mode
- '(("\\(#\\+BEAMER_HEADER:\\)\\(.*\\)"
+ '(("\\(#\\+BEAMER_HEADER:\\)\\(.*\\)$"
 		(1 font-lock-comment-face)
 		(2 '(org-latex-and-related)))
 	 ))
@@ -2490,6 +2490,17 @@ Use =#+NAME:= field as argument of =\label= during export:
 (setq org-latex-prefer-user-labels t)
 #+END_SRC
 
+*** org-edit-latex
+
+=org-edit-latex= lets you edit inline math equations in a separate buffer.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-edit-latex
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook #'org-edit-latex-mode))
+#+END_SRC
+
 *** COMMENT org-gcal
 
 Integrate Google Calendar with =org-gcal=.
@@ -2577,9 +2588,7 @@ See https://github.com/jkitchin/jmax/blob/master/org/org-show.org for more infor
 (require 'org-show) 
 #+END_SRC
 
-*** TODO org-beamer
-
-- [ ] add export of text colored with `color:` links (see [[color:red][Color text]])
+*** org-beamer
 
 Documentation:
 - https://github.com/fniessen/refcard-org-beamer
@@ -3193,7 +3202,6 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 								org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo))
 	)
 #+END_SRC
-
 
 ** LaTeX
 
@@ -7257,16 +7265,17 @@ Don't ask for the path when searching for files:
 	("b" org-tree-to-indirect-buffer "open in new buffer" :exit t)
 	("C" hydra-org-columns/body "columns..." :exit t)
 	("c" hydra-org-clock/body "clocking..." :exit t)
+	("i" org-id-get-create "add ID" :exit t)
+	("l" org-toggle-latex-fragment "preview LaTeX" :exit t)
+	("$" org-latex-fragment-toggle-toggle "preview LaTeX" :exit t)
 	("m" hydra-org-markup/body "markup..." :exit t)
 	("n" org-add-note "add note" :exit t)
 	("p" org-set-property "add property" :exit t)
 	("P" org-set-property-and-value "add property-value pair" :exit t)
-	("i" org-id-get-create "add ID" :exit t)
 	("r" org-ref "org-ref" :exit t)
 	("s" org-sort "sort" :exit t)
 	("/" org-sparse-tree "filter" :exit t)
 	("." tl/org-timestamp-dwim "timestamp" :exit t)
-	("$" org-latex-fragment-toggle-toggle "show LaTeX" :exit t)
 	("<tab>" org-show-current-heading-tidily "tidily unfold" :exit t)
 	("t" org-todo "todo" :exit t)
 	(":" org-set-tags "tags" :exit t)
@@ -8279,6 +8288,7 @@ Uses [[*Tables][org-table-move-single-cell]]:
 ** TODO hydra-macro
 
 Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
+
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-macro (:hint nil :color pink :pre 
                              (when defining-kbd-macro
