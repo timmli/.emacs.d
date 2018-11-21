@@ -1755,6 +1755,7 @@ Nicer bullets:
 ;; 	:init
 ;; 	(setq org-bullets-bullet-list
 ;; 				'("◉" "◎" "○" "●" "►" "♦" "◇"))
+;;  (setq inhibit-compacting-font-caches t) ; effects an acceleration under Windows
 ;; 	:config 
 ;; 	(add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
 ;; 	)
