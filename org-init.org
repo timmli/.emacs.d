@@ -6903,6 +6903,12 @@ If buffer-or-name is nil return current buffer's mode."
 											(if buffer-or-name (get-buffer buffer-or-name) (current-buffer))))
 #+END_SRC
 
+
+For using a hydra within =helm=:
+#+BEGIN_SRC emacs-lisp
+(define-key helm-map (kbd "<f6>") 'hydra-helm/body)
+#+END_SRC
+
 Deprecated:
 
 #+BEGIN_SRC 
@@ -7569,6 +7575,58 @@ Function to replace a link with its description, taken from https://emacs.stacke
 									(sit-for 0.1)
 									(git-gutter:clear))
 			 :color blue))
+#+END_SRC
+
+** TODO hydra-helm
+:LOGBOOK:
+- State "TODO"       from              [2018-11-21 Wed 22:06]
+:END:
+
+- [ ] needs revision
+- [ ] define hydra for helm-ag
+      - [ ] unfold org-mode headings in follow mode
+
+Inspired by https://github.com/abo-abo/hydra/wiki/Helm-2.
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-helm (:hint nil
+														:color pink)
+	"
+                                                                          ╭──────┐
+   Navigation   Other  Sources     Mark             Do             Help   │ Helm │
+  ╭───────────────────────────────────────────────────────────────────────┴──────╯
+        ^_k_^         _K_       _p_   [_m_] mark         [_v_] view         [_H_] helm help
+        ^^↑^^         ^↑^       ^↑^   [_t_] toggle all   [_d_] delete       [_s_] source help
+    _h_ ←   → _l_     _c_       ^ ^   [_u_] unmark all   [_f_] follow: %(helm-attr 'follow)
+        ^^↓^^         ^↓^       ^↓^    ^ ^               [_y_] yank selection
+        ^_j_^         _J_       _n_    ^ ^               [_w_] toggle windows
+  --------------------------------------------------------------------------------
+        "
+	("<tab>" helm-keyboard-quit "back" :exit t)
+	("<escape>" nil "quit")
+	("\\" (insert "\\") "\\" :color blue)
+	("h" helm-beginning-of-buffer)
+	("j" helm-next-line)
+	("k" helm-previous-line)
+	("l" helm-end-of-buffer)
+	("g" helm-beginning-of-buffer)
+	("G" helm-end-of-buffer)
+	("n" helm-next-source)
+	("p" helm-previous-source)
+	("K" helm-scroll-other-window-down)
+	("J" helm-scroll-other-window)
+	("c" helm-recenter-top-bottom-other-window)
+	("m" helm-toggle-visible-mark)
+	("t" helm-toggle-all-marks)
+	("u" helm-unmark-all)
+	("H" helm-help)
+	("s" helm-buffer-help)
+	("v" helm-execute-persistent-action)
+	("d" helm-persistent-delete-marked)
+	("y" helm-yank-selection)
+	("w" helm-toggle-resplit-and-swap-windows)
+	("f" helm-follow-mode)
+	)
 #+END_SRC
 
 ** hydra-ibuffer
