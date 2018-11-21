@@ -1813,7 +1813,7 @@ Do not edit in invisible areas of the buffer:
 ;; Does not work
 (font-lock-add-keywords 
  'org-mode
- '(("\\(#\\+BEAMER_HEADER:\\)\\(.*\\)"
+ '(("\\(#\\+BEAMER_HEADER:\\)\\(.*\\)$"
 		(1 font-lock-comment-face)
 		(2 '(org-latex-and-related)))
 	 ))
@@ -2587,9 +2587,7 @@ See https://github.com/jkitchin/jmax/blob/master/org/org-show.org for more infor
 (require 'org-show) 
 #+END_SRC
 
-*** TODO org-beamer
-
-- [ ] add export of text colored with `color:` links (see [[color:red][Color text]])
+*** org-beamer
 
 Documentation:
 - https://github.com/fniessen/refcard-org-beamer
@@ -3203,7 +3201,6 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 								org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo))
 	)
 #+END_SRC
-
 
 ** LaTeX
 
@@ -8290,6 +8287,7 @@ Uses [[*Tables][org-table-move-single-cell]]:
 ** TODO hydra-macro
 
 Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
+
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-macro (:hint nil :color pink :pre 
                              (when defining-kbd-macro
