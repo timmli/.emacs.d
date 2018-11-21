@@ -2489,6 +2489,17 @@ Use =#+NAME:= field as argument of =\label= during export:
 (setq org-latex-prefer-user-labels t)
 #+END_SRC
 
+*** org-edit-latex
+
+=org-edit-latex= lets you edit inline math equations in a separate buffer.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-edit-latex
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook #'org-edit-latex-mode))
+#+END_SRC
+
 *** COMMENT org-gcal
 
 Integrate Google Calendar with =org-gcal=.
