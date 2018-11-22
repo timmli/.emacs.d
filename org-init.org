@@ -686,7 +686,7 @@ Quick, comprehensive search on org-mode files.
 (use-package helm-ag
 	:ensure    t
 	;; :config
-	;; (setq helm-ag-base-command "rg --no-heading")
+	;; (setq helm-ag-base-command "rg  --vimgrep --no-heading --smart-case") ; use ripgrep instead of ag
 	)
 #+END_SRC
 
@@ -7209,10 +7209,10 @@ https://gitlab.com/xuhdev/dired-quick-sort
 	("/" dired-narrow)
 	("(" dired-hide-details-mode)
 	("$" wdired-change-to-wdired-mode)
-	("f" my-find-name-dired)
+	("f" helm-find)
 	("." (find-file home-directory))
-	;; ("=" diredp-ediff)  ; FIXME: does not work under windows; does not find diff 
-	("=" dired-diff)
+	("=" diredp-ediff)  
+	;; ("=" dired-diff)
 	("e" ora-ediff-files)
 	("g" revert-buffer)
 	("j" dired-goto-file)
@@ -8285,9 +8285,10 @@ I've added this to make it fit into [[*hydra-f3][hydra-f3]]:
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-search (:color blue :columns 3)
   "Search"
-	("a" helm-ag "ag")
+	("a" helm-ag "ag grep")
 	("A" helm-multi-swoop-all "all")
 	("M" helm-multi-swoop-current-mode "same mode")
+	("f" helm-find "find file")
   ("g" helm-grep-do-git-grep "git grep")
   ("O" multi-occur "moccur")
   ("o" occur "occur")
