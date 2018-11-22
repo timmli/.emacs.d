@@ -3104,12 +3104,9 @@ Map scr-block languages to =listings= environments:
 #+BEGIN_SRC emacs-lisp
 (setq org-capture-templates
 			'(
-				;; uses appointment tag
+				;; uses appointment tag and todo keyword APPT
 				("a" "Appointment" entry (file (lambda () (expand-file-name "captures.org" org-directory)))
-				 "* %?\t%^G:appointment:\n\n%^T\n\n")
-				;; ;; uses todo keyword APPT
-				;; ("a" "Appointment" entry (file (lambda () (expand-file-name "captures.org" org-directory)))
-				;; "* APPT %?\t%^G\n\n%^T\n\n")
+				 "* APPT %?\t%^G:appointment:\n\n%^T\n\n")
 				;; ;; used for org-gcal
 				;; ("a" "Appointment" entry (file (concat org-directory "/gcal.org"))
 				;;  "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
