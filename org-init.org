@@ -8283,19 +8283,27 @@ I've added this to make it fit into [[*hydra-f3][hydra-f3]]:
 ** hydra-search
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-search (:color blue :columns 3)
-  "Search"
-	("a" helm-ag "ag grep")
-	("A" helm-multi-swoop-all "all")
-	("M" helm-multi-swoop-current-mode "same mode")
-	("f" helm-find "find file")
-  ("g" helm-grep-do-git-grep "git grep")
-  ("O" multi-occur "moccur")
-  ("o" occur "occur")
-  ("p" projectile-grep "project grep")
-  ("r" isearch-backward "backwards")
-	("s" isearch-forward "forward")
-  ("f" isearch-forward nil)
+(defhydra hydra-search (:color blue :hint nil)
+  "
+  ^^                     ^^                      ^^                   ^^          ╭────────┐   
+   ^in buffer^            ^across buffers^        ^grep-like^          ^file^     │ Search │
+╭─^^─────────────────────^^──────────────────────^^───────────────────^^──────────┴────────╯
+   _b_ helm-swoop         _B_ all buffers         _a_ helm-ag          _f_ helm-find
+   _s_ isearch forward    _M_ all buffers         _g_ git grep
+   _r_ isearch backward   ^^  with current mode   _p_ procetile grep
+   _o_ occurr             _O_ all buffers
+"
+	("a" helm-ag)
+	("b" helm-swoop)
+	("B" helm-multi-swoop-all)
+	("M" helm-multi-swoop-current-mode)
+	("f" helm-find)
+  ("g" helm-grep-do-git-grep)
+  ("O" multi-occur)
+  ("o" occur)
+  ("p" projectile-grep)
+  ("r" isearch-backward)
+	("s" isearch-forward)
 	)
 (global-set-key (kbd "C-S-f") 'hydra-search/body)
 #+END_SRC
