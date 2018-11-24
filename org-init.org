@@ -774,18 +774,13 @@ Quick, comprehensive search on org-mode files.
 	:mode "\\.dot\\'")
 #+END_SRC
 
-** TODO Gnuplot
-
-- [ ] compiling Gnuplot crashes Emacs
-
-#+BEGIN_SRC emacs-lisp
-;; (use-package gnuplot
-;; 	:ensure t)
-#+END_SRC
+** Gnuplot
 
 #+BEGIN_SRC emacs-lisp
 (use-package gnuplot-mode
-	:ensure t)
+	:ensure t
+	:mode	"\\.\\(gp\\|gnuplot|plt\\)$"
+	)
 #+END_SRC
 
 ** COMMENT CoNNLL-U
@@ -1454,6 +1449,16 @@ Fontify source blocks as defined for the  enclosed language:
 Use tab key as defined for the enclosed language:
 #+BEGIN_SRC emacs-lisp
 (setq org-src-tab-acts-natively t)
+#+END_SRC
+
+The following fixes a problem with gnuplot-mode under windows.
+Alternatively, one could add `:session none` to every source block. 
+See https://www.mail-archive.com/emacs-orgmode@gnu.org/msg30416.html
+#+BEGIN_SRC emacs-lisp
+(when (eq system-type 'windows-nt)
+	(setq org-babel-default-header-args:gnuplot
+				'((:results . "file")
+					(:exports . "results"))))
 #+END_SRC
 
 *** Download
