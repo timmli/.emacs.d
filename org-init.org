@@ -3195,18 +3195,19 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 
 #+END_SRC
 
-*** TODO COMMENT org-caldav
-
-- [ ] Does not work with Horde CalDAV servers.
+*** org-caldav
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-caldav
   :ensure t
 	:after (org org-agenda)
+	:init
+	(when (not (file-exists-p (concat org-directory "caldav")))
+		(make-directory (concat org-directory "caldav")))
   :config (setq org-icalendar-timezone "Europe/Berlin"
 								org-caldav-files nil
-								org-caldav-backup-file (concat org-directory "org-caldav-backup.org")
-								org-caldav-save-directory (concat org-directory "save/")
+								org-caldav-backup-file (concat org-directory "caldav/org-caldav-backup.org")
+								org-caldav-save-directory (concat org-directory "caldav/")
 								org-caldav-delete-calendar-entries 'ask ; values: 'never 'ask
 								;; for creating calendar events from org headings
 								org-icalendar-include-todo t
