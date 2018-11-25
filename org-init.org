@@ -3162,6 +3162,14 @@ https://github.com/rudolfochrist/interleave
     )
 #+END_SRC
 
+
+*** TODO Calendar import
+:LOGBOOK:
+- State "TODO"       from              [2018-11-25 Sun 11:24]
+:END:
+
+- [ ] Idea: import ics-files from caldav servers into the diary file. This will eventually be shown in org-agenda thanks to =org-agenda-include-diary=.
+
 *** calfw 
 
 http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
@@ -3196,6 +3204,8 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 #+END_SRC
 
 *** org-caldav
+
+Unfortunately, =org-caldav= is not able to handle recurring events created on the calendar side, see "Knwon Bugs" and https://github.com/dengste/org-caldav/issues/150. On the other hand, =icalendar-import-file= can import them to the Emacs diary.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-caldav
