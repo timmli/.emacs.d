@@ -8421,3 +8421,14 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
   #+BEGIN_SRC emacs-lisp
 		)                   
 #+END_SRC
+
+** Private settings 
+
+Load file with private settings after generic settings.
+
+#+BEGIN_SRC emacs-lisp
+(let ((private-settings-file (expand-file-name "private-emacs-settings-after.el" private-emacs-settings-dir)))
+	(when (file-exists-p private-settings-file)
+		(load-file private-settings-file)))
+#+END_SRC
+
