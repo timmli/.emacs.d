@@ -1403,6 +1403,9 @@ http://pages.sachachua.com/.emacs.d/Sacha.html#orgfe5d909
 http://doc.norang.ca/org-mode.html#Setup
 http://doc.rix.si/cce/cce-org.html
 
+Historical remark on taking notes:
+http://takingnotenow.blogspot.com/2008/07/note-keeping-in-1786-blumenbachs-system.html
+
 *** Export
 
 Use a less intrusive export interface:
@@ -4343,6 +4346,25 @@ Depends on =pdf-tools=.
   (setq interleave-split-direction 'horizontal
         interleave-split-lines 20
         interleave-disable-narrowing t))
+#+END_SRC
+
+*** COMMENT org-noter
+
+For taking notes in =org-mode= side by side with the PDF.
+Successor of =interleave=.
+
+https://github.com/weirdNox/org-noter
+https://write.as/dani/notes-on-org-noter
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-noter
+  :after org
+  :ensure t
+	:config
+	(setq org-noter-default-notes-file-names '("org-noter-notes.org")
+				org-noter-notes-search-path org-directory
+				org-noter-separate-notes-from-heading t)
+	)
 #+END_SRC
 
 ** Email
