@@ -7135,6 +7135,7 @@ Global org-mode keys:
 	("y"  bibtex-yank "yank field" :exit t)
 	("s"  bibtex-sort-buffer "sort entries" :exit t)
 	("t"  tl/bibtex-add-timestamp "add timestamp" :exit t)
+	("x"  bibtex-search-crossref "goto crossref" :exit t)
 	;; ("+"  org-ref-bibtex-new-entry/body "new entry..." :exit t)
 	;; ("+"  hydra-bibtex-langsci-new-entry/body "new entry..." :exit t)
 	("+"  bibtex-entry "new entry..." :exit t)
