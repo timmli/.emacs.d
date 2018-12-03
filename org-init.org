@@ -838,6 +838,11 @@ Prerequisites as for Python:
 
 *** ein (Jupyter noteboook)
 
+Procedure to open a notebook:
+1. externally start Jupyter server
+2. =ein:notebooklist-login= and insert the token of the Jupyter session (see terminal)
+3. =ein:notebooklist-open= and select the notebook
+
 #+BEGIN_SRC emacs-lisp
 (use-package ein
   :ensure t
@@ -7003,7 +7008,8 @@ Deprecated:
        [_i_] buffer overview    [_s_] system shell           [_B_] bookmarks
        [_c_] calendar          [_gs_] magit status          [_gl_] magit buffer log 
        [_p_] projectile         [_f_] search files          [_hb_] bibliography     
-       [_P_] pandoc             [_r_] elfeed                              [_q_]uit
+       [_P_] pandoc             [_r_] elfeed                 [_j_] Jupyter notebook
+        ^^                       ^^                           ^^              [_q_]uit
 	" 
 	("a" helm-bbdb :exit t)
 	("c" my-open-calfw :exit t)
@@ -7013,6 +7019,7 @@ Deprecated:
 	("b" xah-new-empty-buffer :exit t)
 	("hb" helm-bibtex :exit t)
 	("i" ibuffer :exit t)
+	("j" tl/open-jupyter-notebook :exit t)
 	("l" dictcc :exit t)
 	("gs" magit-status :exit t)
 	("gl" magit-log-buffer-file :exit t)
@@ -7030,10 +7037,17 @@ Deprecated:
 	("<f5>" revert-buffer :exit t)
 	("<f6>" hydra-f6/body :exit t)
 	("<f8>" hydra-f8/body :exit t)
-	("<f9>" hydra-f9/body :exit t)
-
-)
+	("<f9>" hydra-f9/body :exit t))
 (global-set-key (kbd "<f7>") 'hydra-f7/body)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/open-jupyter-notebook ()
+	"Open iPython/Jupyter notebook within emacs.
+This presupposes a running Jupyter server on localhost."
+	(interactive)
+	(call-interactively 'ein:notebooklist-login)
+	(ein:notebooklist-open))
 #+END_SRC
 
 ** hydra-f8
