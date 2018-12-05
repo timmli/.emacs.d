@@ -838,6 +838,11 @@ Prerequisites as for Python:
 
 *** ein (Jupyter noteboook)
 
+Procedure to open a notebook:
+1. externally start Jupyter server
+2. =ein:notebooklist-login= and insert the token of the Jupyter session (see terminal)
+3. =ein:notebooklist-open= and select the notebook
+
 #+BEGIN_SRC emacs-lisp
 (use-package ein
   :ensure t
@@ -6539,7 +6544,7 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
 (setq proced-auto-update-interval 1)
 
 (defun proced-settings ()
-  (proced-toggle-auto-update))
+  (call-interactively 'proced-toggle-auto-update))
 (add-hook 'proced-mode-hook 'proced-settings)
 
 (global-set-key (kbd "C-x P") 'proced)
@@ -6719,66 +6724,67 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-f1 (:exit t :hint nil)
 
-    "
+	"
     ╭────┐      
     │<f1>│  _<f2>_     _<f3>_     _<f4>_    _<f5>_      _<f6>_   _<f7>_   _<f8>_   _<f9>_ 
     │Help│  Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^   Mark^^   Org^^
    ╭╯    └──^^─────────^^─────────^^────────^^──────────^^───────^^───────^^───────^^────╯
 
-    Describe      ^^Keys                     ^^Elisp           ^^Documentation
-    --------------^^-------------------------^^----------------^^---------------
-    _m_ode          single _k_eybinding        _a_propros        _i_nfo
-    _p_ackage       available _b_indings       _f_unction        _d_ocsets
-    _c_ursor        _w_here is key             _v_ariable        _n_: man
+    Describe      ^^Keys                     ^^Elisp          ^^Documentation     ^^Processes
+    --------------^^-------------------------^^---------------^^------------------^^-----------
+    _m_ode          single _k_eybinding        _a_propros       _i_nfo              _S_ystem 
+    _p_ackage       available _b_indings       _f_unction       _d_ocsets           _E_macs
+    _c_ursor        _w_here is key             _v_ariable       _n_: man
     ^^              _y_asnippets
 
   "
-    ;; Boring help commands...
-    ("e" view-echo-area-messages "messages")
-    ("l" view-lossage "lossage")
-    ("C" describe-coding-system "coding system")
-    ("I" describe-input-method "input method")
+	;; Boring help commands...
+	("e" view-echo-area-messages "messages")
+	("l" view-lossage "lossage")
+	("C" describe-coding-system "coding system")
+	("I" describe-input-method "input method")
 
-    ;; Documentation
-    ("i" info nil)
-    ("n" helm-man-woman nil)
-    ("d" helm-dash nil)
+	;; Documentation
+	("i" info nil)
+	("n" helm-man-woman nil)
+	("d" helm-dash nil)
 
-    ;; Keybinds
-    ("b" describe-bindings nil)
-    ("c" describe-key-briefly nil)
-    ("k" describe-key nil)
-    ("w" where-is nil)
-		("y" yas-describe-tables nil)
+	;; Keybinds
+	("b" describe-bindings nil)
+	("c" describe-key-briefly nil)
+	("k" describe-key nil)
+	("w" where-is nil)
+	("y" yas-describe-tables nil)
 
-    ;; Elisp
-    ("a" apropos-command nil)
-    ("s" info-lookup-symbol nil)
-    ("v" describe-variable nil)
-    ("f" describe-function nil)
-    ("S" describe-syntax nil)
+	;; Elisp
+	("a" apropos-command nil)
+	("s" info-lookup-symbol nil)
+	("v" describe-variable nil)
+	("f" describe-function nil)
+	("S" describe-syntax nil)
 
-    ;; Describe
-    ("p" describe-package nil)
-    ("m" describe-mode nil)
-		("c" (what-cursor-position t) nil)
+	;; Describe
+	("p" describe-package nil)
+	("m" describe-mode nil)
+	("c" (what-cursor-position t) nil)
 
-		("<f2>" hydra-f2/body :exit t)
-		("<f3>" hydra-f3/body :exit t)
-		("<f4>" hydra-f4/body :exit t)
-		("<f5>" revert-buffer :exit t)
-		("<f6>" hydra-f6/body :exit t)
-		("<f7>" hydra-f7/body :exit t)
-		("<f8>" hydra-f8/body :exit t)
-		("<f9>" hydra-f9/body :exit t)
-    ;; quit
-    ("q" help-quit "quit"))
+	;; ^Processes
+	("P" proced nil)
+	("E" list-processes nil)
+
+	("<f2>" hydra-f2/body :exit t)
+	("<f3>" hydra-f3/body :exit t)
+	("<f4>" hydra-f4/body :exit t)
+	("<f5>" revert-buffer :exit t)
+	("<f6>" hydra-f6/body :exit t)
+	("<f7>" hydra-f7/body :exit t)
+	("<f8>" hydra-f8/body :exit t)
+	("<f9>" hydra-f9/body :exit t)
+	;; quit
+	("q" help-quit "quit"))
 
 (global-set-key (kbd "<f1>") #'hydra-f1/body)
 #+END_SRC
-
-#+RESULTS:
-: hydra-f1/body
 
 ** hydra-f2
 
@@ -7003,7 +7009,8 @@ Deprecated:
        [_i_] buffer overview    [_s_] system shell           [_B_] bookmarks
        [_c_] calendar          [_gs_] magit status          [_gl_] magit buffer log 
        [_p_] projectile         [_f_] search files          [_hb_] bibliography     
-       [_P_] pandoc             [_r_] elfeed                              [_q_]uit
+       [_P_] pandoc             [_r_] elfeed                 [_j_] Jupyter notebook
+        ^^                       ^^                           ^^              [_q_]uit
 	" 
 	("a" helm-bbdb :exit t)
 	("c" my-open-calfw :exit t)
@@ -7013,6 +7020,7 @@ Deprecated:
 	("b" xah-new-empty-buffer :exit t)
 	("hb" helm-bibtex :exit t)
 	("i" ibuffer :exit t)
+	("j" tl/open-jupyter-notebook :exit t)
 	("l" dictcc :exit t)
 	("gs" magit-status :exit t)
 	("gl" magit-log-buffer-file :exit t)
@@ -7030,10 +7038,17 @@ Deprecated:
 	("<f5>" revert-buffer :exit t)
 	("<f6>" hydra-f6/body :exit t)
 	("<f8>" hydra-f8/body :exit t)
-	("<f9>" hydra-f9/body :exit t)
-
-)
+	("<f9>" hydra-f9/body :exit t))
 (global-set-key (kbd "<f7>") 'hydra-f7/body)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/open-jupyter-notebook ()
+	"Open iPython/Jupyter notebook within emacs.
+This presupposes a running Jupyter server on localhost."
+	(interactive)
+	(call-interactively 'ein:notebooklist-login)
+	(ein:notebooklist-open))
 #+END_SRC
 
 ** hydra-f8
@@ -7848,6 +7863,8 @@ Copied from https://github.com/cmcmahan/elisp/blob/master/emacs-misc.el:
   "Insert the current time. Optional time format defaults to `insert-time-format'."
   (interactive "*")
   (let ((tformat (or time-format insert-time-format)))
+		(when (use-region-p)
+			(delete-region (region-beginning) (region-end)))
     (insert (concat (format-time-string tformat (current-time)) " "))))
 
 (defun insert-date (&optional date-format)
