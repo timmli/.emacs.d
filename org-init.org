@@ -2876,8 +2876,8 @@ Follow links when pressing =<return>=:
 
 Add some link types:
 #+BEGIN_SRC emacs-lisp
-(setq org-link-abbrev-alist '(("att" . org-attach-expand-link)))
-(setq org-link-abbrev-alist '(("attachment" . org-attach-expand-link)))
+(add-to-list 'org-link-abbrev-alist '("attachment" . org-attach-expand-link))
+(add-to-list 'org-link-abbrev-alist '("att" . org-attach-expand-link))
 #+END_SRC
 
 Links to files are opened in the same window, i.e. the window does not get split:
