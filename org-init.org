@@ -7360,6 +7360,7 @@ Don't ask for the path when searching for files:
 	("-" org-priority-down "priority down" :exit nil)
 	("*" org-cycle-list-bullet "cycle list type" :exit nil)
 	("#" hydra-org-table/body "table..." :exit t)
+	("v" org-toggle-inline-images "toggle images" :exit t)
 	("\\" tl/org-toggle-overlays "toggle overlays" :exit t)
 	("^" org-sort nil :exit t)
 	("q" nil :color blue)
