@@ -7622,13 +7622,13 @@ Hydra for clocking activities in org-mode (taken from https://github.com/abo-abo
 	╭─^^───────────────────^^──────────────────^^────────────────^^──────────────┴────────────╯
     _b_ backward d/w/y   _+_ priority up     _/_ by tag        _F_ follow mode 
     _._ today            _-_ priority down   _<_ by category   _J_ clocked-in
-    _f_ forward d/w/y    _t_ set todo        _\^_ siblings
+    _f_ forward d/w/y    _t_ set todo        \^ siblings
     _j_ goto date        _:_ set tags        _|_ remove all			  
     _d_ day view         _>_ set date        _l_ show done  
     _w_ week view      _C-k_ kill
-   _vm_ month view
-   _vy_ year view        ^^                   ^^                  ^^            _r_efresh
-    _h_ show holidays    ^^                   ^^                  ^^            _q_uit
+   _vm_ month view       _m_ mark
+   _vy_ year view        _u_ unmark               ^^                  ^^            _r_efresh
+    _h_ show holidays    _B_ action on marked     ^^                  ^^            _q_uit
     _]_ show inactive timestamps
     _k_ capture with timestamp						  
 "
@@ -7647,6 +7647,9 @@ Hydra for clocking activities in org-mode (taken from https://github.com/abo-abo
 	("J" org-agenda-clock-goto)
 	("." org-agenda-goto-today)
 	("C-k" org-agenda-kill)
+	("m" org-agenda-bulk-mark)
+	("u" org-agenda-bulk-unmark)
+	("B" org-agenda-bulk-action)
 	("k" org-agenda-capture)
 	("t" org-agenda-todol)
 	("/" org-agenda-filter-by-tag)
