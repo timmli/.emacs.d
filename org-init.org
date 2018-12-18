@@ -7165,7 +7165,7 @@ Deprecated:
        [_c_] calendar          [_gs_] magit status          [_gl_] magit buffer log 
        [_p_] projectile         [_f_] search files          [_hb_] bibliography     
        [_P_] pandoc             [_r_] elfeed                 [_j_] Jupyter notebook
-        ^^                       ^^                           ^^              [_q_]uit
+       [_o_] open externally     ^^                           ^^              [_q_]uit
 	" 
 	("a" helm-bbdb :exit t)
 	("c" my-open-calfw :exit t)
@@ -7181,6 +7181,7 @@ Deprecated:
 	("gl" magit-log-buffer-file :exit t)
 	("e" tl/eshell :exit t)
 	("B" bookmark-bmenu-list :exit t)
+	("o" xah-open-in-external-app :exit t)
 	("p" helm-projectile :exit t)
 	("P" pandoc-main-hydra/body :exit t)
 	("r" tl/elfeed :exit t)
