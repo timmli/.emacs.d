@@ -6855,6 +6855,22 @@ Deploy local files and directories to remote hosts.
 
 https://github.com/cjohansson/emacs-ssh-deploy
 
+* Help
+
+** helpful
+
+#+BEGIN_SRC emacs-lisp
+(use-package helpful
+	:ensure t
+  :bind
+  (("C-h f" . helpful-callable)
+   ("C-h v" . helpful-variable)
+   ("C-h k" . helpful-key)
+   ("C-c C-d" . helpful-at-point)
+   ("C-h F" . helpful-function)
+   ("C-h C" . helpful-command)))
+#+END_SRC
+
 * hydra
 
 Nice examples:
