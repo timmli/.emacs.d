@@ -3240,6 +3240,44 @@ Set timestamp language to English:
 (setq system-time-locale "C")
 #+END_SRC
 
+Use Alt-Shift+cursor key chords to quickly change timestamps:
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-alt-shift-up ()
+	(interactive)
+	(if (org-at-timestamp-p)
+			(org-timestamp-up)
+		(org-shiftmetaup)
+		))
+
+(defun tl/org-alt-shift-down ()
+	(interactive)
+	(if (org-at-timestamp-p)
+			(org-timestamp-down)
+		(org-shiftmetadown)
+		))
+
+(defun tl/org-alt-shift-left ()
+	(interactive)
+	(if (org-at-timestamp-p)
+			(org-timestamp-down-day)
+		(org-shiftmetaleft)
+		))
+
+(defun tl/org-alt-shift-right ()
+	(interactive)
+	(if (org-at-timestamp-p)
+			(org-timestamp-up-day)
+		(org-shiftmetaright)
+		))
+
+(with-eval-after-load 'org
+	(define-key org-mode-map (kbd "M-S-<up>") 'tl/org-alt-shift-up)
+	(define-key org-mode-map (kbd "M-S-<down>") 'tl/org-alt-shift-down)
+	(define-key org-mode-map (kbd "M-S-<left>") 'tl/org-alt-shift-left)
+	(define-key org-mode-map (kbd "M-S-<right>") 'tl/org-alt-shift-right)
+	)
+#+END_SRC
+
 *** Listings
 
 Use the =listings= package:
