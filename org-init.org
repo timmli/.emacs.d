@@ -3275,6 +3275,10 @@ Use Alt-Shift+cursor key chords to quickly change timestamps:
 	(define-key org-mode-map (kbd "M-S-<down>") 'tl/org-alt-shift-down)
 	(define-key org-mode-map (kbd "M-S-<left>") 'tl/org-alt-shift-left)
 	(define-key org-mode-map (kbd "M-S-<right>") 'tl/org-alt-shift-right)
+	(define-key org-agenda-mode-map (kbd "M-S-<up>") 'org-agenda-date-earlier)
+	(define-key org-agenda-mode-map (kbd "M-S-<down>") 'org-agenda-date-later)
+	(define-key org-agenda-mode-map (kbd "M-S-<left>") 'org-agenda-date-earlier)
+	(define-key org-agenda-mode-map (kbd "M-S-<right>") 'org-agenda-date-later)
 	)
 #+END_SRC
 
@@ -3350,7 +3354,7 @@ https://github.com/rudolfochrist/interleave
           'font-lock-face 'font-lock-warning-face))
 
   (setq calendar-intermonth-header
-        (propertize "KW"                  ; or e.g. "KW" in Germany
+        (propertize "W"                  ; or e.g. "KW" in Germany
                     'font-lock-face 'font-lock-keyword-face))
 #+END_SRC
 
@@ -7682,10 +7686,12 @@ Hydra for clocking activities in org-mode (taken from https://github.com/abo-abo
     _f_ forward d/w/y    _t_ set todo        \^ siblings
     _j_ goto date        _:_ set tags        _|_ remove all			  
     _d_ day view         _>_ set date        _l_ show done  
-    _w_ week view      _C-k_ kill
-   _vm_ month view       _m_ mark
-   _vy_ year view        _u_ unmark               ^^                  ^^            _r_efresh
-    _h_ show holidays    _B_ action on marked     ^^                  ^^            _q_uit
+    _w_ week view      _C-d_ set deadline
+   _vm_ month view     _C-s_ set schedule    _m_ mark
+   _vy_ year view      _C-k_ kill            _u_ unmark               ^^           _r_efresh
+      ^^    _M-S-<up>_ earlier date          _B_ action on marked     ^^           _q_uit
+    ^^    _M-S-<down>_ later date        
+    _h_ show holidays
     _]_ show inactive timestamps
     _k_ capture with timestamp						  
 "
@@ -7704,6 +7710,10 @@ Hydra for clocking activities in org-mode (taken from https://github.com/abo-abo
 	("J" org-agenda-clock-goto)
 	("." org-agenda-goto-today)
 	("C-k" org-agenda-kill)
+	("C-s" org-agenda-schedule)
+	("C-d" org-agenda-deadline)
+	("M-S-<up>" org-agenda-date-earlier)
+	("M-S-<down>" org-agenda-date-later)
 	("m" org-agenda-bulk-mark)
 	("u" org-agenda-bulk-unmark)
 	("B" org-agenda-bulk-action)
