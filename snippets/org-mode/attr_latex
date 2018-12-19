@@ -2,5 +2,4 @@
 # name: attr_latex
 # key: al_
 # --
-#+ATTR_LATEX: :width ${1:0.9}\textwidth
-$0
+#+ATTR_LATEX: :width ${1:0.9}\textwidth $0

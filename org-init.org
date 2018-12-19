@@ -105,6 +105,8 @@
 - [[#remote-connections][Remote connections]]
       - [[#tramp][tramp]]
       - [[#emacs-ssh-deploy][emacs-ssh-deploy]]
+- [[#help][Help]]
+      - [[#helpful][helpful]]
 - [[#hydra][hydra]]
       - [[#hydra-begin][hydra: begin]]
       - [[#hydra-f1][hydra-f1]]
