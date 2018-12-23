@@ -88,7 +88,7 @@ This variable should be changed in private-emacs-settings.el.")
 This variable should be changed in private-emacs-settings.el.")
 
 (defvar private-emacs-settings-dir
-	(expand-file-name "Dropbox/emacs-settings/" home-directory) ;; FIXME: make this more generic, e.g. with using links in .emacs.d
+	(expand-file-name "private-emacs-settings/" user-emacs-directory) ; default value; may be overwritten by system variable PRIVATE_EMACS_SETTINGS
 	"Path to private Emacs settings directory.
 This variable should be changed in private-emacs-settings.el.")
 
