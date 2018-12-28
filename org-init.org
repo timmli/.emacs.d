@@ -8189,6 +8189,7 @@ then a space, then the current time formatted with
 	("s" isearch-forward "search" :exit t)
 	("o" hydra-latex-folding/body "folding..." :exit t)
 	("v" TeX-view "view output" :exit t)
+	("_" TeX-master-file-ask "ask for master file" :exit t)
 	("q" nil :color blue)
 	)
 #+END_SRC
