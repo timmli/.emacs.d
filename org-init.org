@@ -5188,12 +5188,12 @@ https://github.com/cute-jumper/embrace.el
 #+BEGIN_SRC emacs-lisp
 (use-package embrace 
 	:ensure t
+	;; :hook (org-mode . embrace-org-mode-hook)
 	:bind
 	(("C-( a" . embrace-add)
 	 ("C-( d" . embrace-delete)
 	 ("C-( c" . embrace-change))
 	:config
-
 	(defun tl/embrace-delete-* ()
 		(interactive)
 		(embrace--delete ?*))
@@ -5782,12 +5782,26 @@ Use deer instead plain directory listing:
 
 *** poporg
 
+=[[https://github.com/QBobWatson/poporg][poporg]]= lets one edit comments in a separate buffer.
+
 #+BEGIN_SRC emacs-lisp
 (use-package poporg
 	:ensure t
 	:bind (("C-c '" . poporg-dwim))
+	:init
+	(setq-default poporg-edit-hook 'org-mode)
+	(add-hook 'TeX-mode-hook 
+						'(lambda ()
+							 "poporg configuration"
+							 (define-key TeX-mode-map (kbd "C-c '") 'poporg-dwim)
+							 (setq poporg-edit-hook 'TeX-mode)))
+	(add-hook 'LaTeX-mode-hook 
+						'(lambda ()
+							 "poporg configuration"
+							 (define-key LaTeX-mode-map (kbd "C-c '") 'poporg-dwim)
+							 (setq poporg-edit-hook 'LaTeX-mode)))
 	:config
-	(define-key poporg-mode-map (kbd "C-c '") 'poporg-dwim))
+	(define-key poporg-mode-map (kbd "C-c '") 'poporg-dwim)) 
 #+END_SRC
 
 *** Critical markup
@@ -8723,7 +8737,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 		)                   
 #+END_SRC
 
-** Private settings 
+* Private settings 
 
 Load file with private settings after generic settings.
 
