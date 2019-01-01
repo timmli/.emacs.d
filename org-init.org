@@ -7565,34 +7565,50 @@ Don't ask for the path when searching for files:
 ** hydra-org
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-org-main (:hint nil :columns 4)
-	"Org-mode"
-	("a" org-attach "attachments..." :exit t)
-	("A" hydra-org-archive/body "archive..." :exit t)
-	("b" org-tree-to-indirect-buffer "open in new buffer" :exit t)
-	("C" hydra-org-columns/body "columns..." :exit t)
-	("c" hydra-org-clock/body "clocking..." :exit t)
-	("i" org-id-get-create "add ID" :exit t)
-	("l" org-toggle-latex-fragment "preview LaTeX" :exit t)
-	("$" org-latex-fragment-toggle-toggle "preview LaTeX" :exit t)
-	("m" hydra-org-markup/body "markup..." :exit t)
-	("n" org-add-note "add note" :exit t)
-	("p" org-set-property "add property" :exit t)
-	("P" org-set-property-and-value "add property-value pair" :exit t)
-	("r" org-ref "org-ref" :exit t)
-	("s" org-sort "sort" :exit t)
-	("/" org-sparse-tree "filter" :exit t)
-	("." tl/org-timestamp-dwim "timestamp" :exit t)
-	("<tab>" org-show-current-heading-tidily "tidily unfold" :exit t)
-	("t" org-todo "todo" :exit t)
-	(":" org-set-tags "tags" :exit t)
-	("+" org-priority-up "priority up" :exit nil)
-	("-" org-priority-down "priority down" :exit nil)
-	("*" org-cycle-list-bullet "cycle list type" :exit nil)
-	("#" hydra-org-table/body "table..." :exit t)
-	("v" org-toggle-inline-images "toggle images" :exit t)
-	("\\" tl/org-toggle-overlays "toggle overlays" :exit t)
-	("^" org-sort nil :exit t)
+(defhydra hydra-org-main (:hint nil :color blue)
+	"
+    ^^                          ^^                      ^^                 ╭──────────┐   
+    ^Heading^                   ^Text^                  ^Filter^           │ org-mode │
+	╭─^^──────────────────────────^^──────────────────────^^─────────────────┴──────────╯ 
+    _a_ attachment...           _l_ preview LaTeX       _C_ columns...
+    _A_ archive...              _$_ preview LaTeX       _/_ filter
+    _b_ open in new buffer      _m_ markup...       _<tab>_ tidily unfold
+    _c_ clocking...             _r_ org-ref
+    _i_ add ID                  _._ timestamp
+    _n_ add note                _*_ cycle list type
+    _p_ add property            _#_ table...
+    _P_ add property-value pair _v_ toggle images
+  _s_/\^ sort                   ^^\\ toggle overlays
+    _t_ set todo keyword
+    _:_ set tags                ^^                      ^^                 _q_ quit
+  _+_/_-_ priority up/down
+"
+	("a" org-attach)
+	("A" hydra-org-archive/body)
+	("b" org-tree-to-indirect-buffer)
+	("C" hydra-org-columns/body)
+	("c" hydra-org-clock/body)
+	("i" org-id-get-createq)
+	("l" org-toggle-latex-fragment)
+	("$" org-latex-fragment-toggle-toggle)
+	("m" hydra-org-markup/body)
+	("n" org-add-note)
+	("p" org-set-property)
+	("P" org-set-property-and-value)
+	("r" org-ref)
+	("s" org-sort)
+	("/" org-sparse-tree)
+	("." tl/org-timestamp-dwim)
+	("<tab>" org-show-current-heading-tidily)
+	("t" org-todo)
+	(":" org-set-tags)
+	("+" org-priority-up :color pink)
+	("-" org-priority-down :color pink)
+	("*" org-cycle-list-bullet)
+	("#" hydra-org-table/body)
+	("v" org-toggle-inline-images)
+	("\\" tl/org-toggle-overlays)
+	("^" org-sort nil)
 	("q" nil :color blue)
 	)
 #+END_SRC
