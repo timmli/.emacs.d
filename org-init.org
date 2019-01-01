@@ -7608,7 +7608,7 @@ Don't ask for the path when searching for files:
 	("#" hydra-org-table/body)
 	("v" org-toggle-inline-images)
 	("\\" tl/org-toggle-overlays)
-	("^" org-sort nil)
+	("^" org-sort)
 	("q" nil :color blue)
 	)
 #+END_SRC
