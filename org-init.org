@@ -5077,9 +5077,7 @@ Similar to [[embrace]].
 #+begin_src emacs-lisp
 (use-package smartparens
 	:ensure t
-	:config
-	(use-package smartparens-config)
-	(setq sp-autoescape-string-quote nil)
+	:init
 	(--each '(LaTeX-mode-hook
 						R-mode-hook
 						TeX-mode-hook
@@ -5098,8 +5096,11 @@ Similar to [[embrace]].
 						xmg-mode-hook
 						web-mode-hook)
 		(add-hook it #'smartparens-mode))
-	(require 'smartparens-latex)
-	(require 'smartparens-ess)
+	(require 'smartparens-config)					; loads configurations for several modes, e.g. latex-mode
+	:config
+	(setq sp-autoescape-string-quote nil)
+	(setq sp-show-pair-from-inside nil)
+	(setq smartparens-strict-mode t)			; skip over delimiters when deleting
 	;; for all modes
 	(sp-pair "(" nil :unless '(sp-point-before-word-p))
 	(sp-pair "[" nil :unless '(sp-point-before-word-p))
@@ -5118,7 +5119,7 @@ Similar to [[embrace]].
 		(sp-local-pair "$" "$" :unless '(sp-point-after-word-p sp-point-before-word-p) )
 		(sp-local-pair "«" "»"))
 	;; latex-mode
-	(sp-local-pair 'latex-mode "$" nil :unless '(sp-point-before-word-p))
+	(sp-local-pair 'LaTeX-mode "$" nil :unless '(sp-point-before-word-p sp-point-after-word-p))
 	)
 
 (defun tl/sp-point-after-hash-p (id action context)
