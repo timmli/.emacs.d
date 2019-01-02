@@ -5957,6 +5957,8 @@ Version 2016-01-08"
 
 ** Special characters
 
+*** helm + org-entities-help
+
 Insert special characters with [[*helm][helm]] based on =org-entities-help=.
 Copied from https://github.com/jkitchin/scimax/blob/master/scimax-org.el.
 
@@ -6020,6 +6022,16 @@ F5 inserts the entity code."
 														 element))))))
 					 sources))))
 (global-set-key (kbd "C-c i e") 'helm-insert-org-entity)
+#+END_SRC
+
+*** unicode-math-input
+
+#+BEGIN_SRC emacs-lisp
+(use-package unicode-math-input
+	:ensure t
+	:bind ("C-c i m" . unicode-math-input)
+	:init
+	(setq unicode-math-input-insert-tex t))
 #+END_SRC
 
 ** Buffer actions
