@@ -31,6 +31,7 @@
       - [[#plantuml][PlantUML]]
       - [[#dired][dired]]
       - [[#javascript][JavaScript]]
+      - [[#clojure][Clojure]]
       - [[#org-mode][org-mode]]
       - [[#calendardiary][Calendar/Diary]]
       - [[#latex][LaTeX]]
@@ -1540,6 +1541,15 @@ JavaScript development environment for Emacs
 *** TODO tern
 
 for better autocompletion
+
+** Clojure
+
+*** cider
+
+#+BEGIN_SRC emacs-lisp
+(use-package cider
+  :ensure t)
+#+END_SRC
 
 ** org-mode
 
