@@ -145,7 +145,7 @@
       - [[#hydra-org-table-move-cell][hydra-org-table-move-cell]]
       - [[#hydra-macro][hydra-macro]]
       - [[#hydra-end][hydra: end]]
-      - [[#private-settings][Private settings]]
+- [[#private-settings][Private settings]]
 
 * Good examples
 
@@ -6619,8 +6619,8 @@ Show pull requests from Github in Magit.
 
 ** TODO COMMENT magithub
 
-- [X] Has to be properly configured.
-- [ ] open issue: https://github.com/magit/magit/issues/3154
+- [ ] Ghub does not recognize credentials in auth-source file correctly and keeps asking to generate a token.
+- [ ] I still get the message during creation of tokens: "ghub--token: Wrong type argument: listp, "/authorizations""
 
 Enhancement of magit to make available a more comprehensive access to Github repositories, regarding issues etc.:
 
@@ -6631,6 +6631,19 @@ Enhancement of magit to make available a more comprehensive access to Github rep
   :config
 	(magithub-feature-autoinject t)
 	(setq magithub-clone-default-directory "~/github"))
+#+END_SRC
+
+** COMMENT forge
+
+- use extra functions of Git forges: issues, pull requests
+- very similar to [[*magithub][magithub]]
+- [ ] error message: "emacsql-sqlite-ensure-binary: No EmacSQL SQLite binary available, aborting"
+      - depends on EmacsSQL and is therefore not supported on Windows due to an issue with =start-process-shell-command= (https://github.com/skeeto/emacsql#windows-issues)
+
+#+BEGIN_SRC emacs-lisp
+(use-package forge
+	:ensure t
+	:after magit)
 #+END_SRC
 
 ** git-gutter
