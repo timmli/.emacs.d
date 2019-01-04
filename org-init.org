@@ -3158,7 +3158,7 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(define-key org-mode-map (kbd "C-c :") 'org-set-tags)
+(define-key org-mode-map (kbd "C-c :") 'org-set-tags-command)
 #+END_SRC
 
 *** Tables
@@ -7637,7 +7637,7 @@ Don't ask for the path when searching for files:
 	("." tl/org-timestamp-dwim)
 	("<tab>" org-show-current-heading-tidily)
 	("t" org-todo)
-	(":" org-set-tags)
+	(":" org-set-tags-command)
 	("+" org-priority-up :color pink)
 	("-" org-priority-down :color pink)
 	("*" org-cycle-list-bullet)
