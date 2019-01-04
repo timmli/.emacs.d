@@ -6535,9 +6535,11 @@ Key bindings roughly following the conventions of the Windows habitat.
 
 	;; ;; Maybe this is not needed any more 	
 	;; (add-hook 'org-src-mode-hook
-	;; 					(lambda ()((define-key (kbd "C-s") 'org-edit-src-save))))
+	;; 					(lambda ()((define-key org-src-mode-map (kbd "C-s") 'org-edit-src-save))))
+	;; (with-eval-after-load 'org-mode
+	;; 	(define-key org-src-mode-map (kbd "C-s") 'org-edit-src-save))
 
-;; (define-key key-translation-map (kbd "C-v") (kbd "C-y")) ; unfortunately this interferes with key chords using C-v
+	;; (define-key key-translation-map (kbd "C-v") (kbd "C-y")) ; unfortunately this interferes with key chords using C-v
 	)
 
 (winkeys-mode)
