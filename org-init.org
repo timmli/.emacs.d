@@ -834,6 +834,15 @@ Quick, comprehensive search on org-mode files.
 	)
 #+END_SRC
 
+*** helm-cider
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-cider
+	:ensure t
+	:hook ((cider-mode . helm-cider-mode)
+				 (clojure-mode . helm-cider-mode)))
+#+END_SRC
+
 *** Key bindings
 
 #+BEGIN_SRC emacs-lisp
@@ -1544,11 +1553,60 @@ for better autocompletion
 
 ** Clojure
 
+*** clojure-mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package clojure-mode
+  :ensure t
+  :mode (("\\.clj\\'" . clojure-mode)
+         ("\\.edn\\'" . clojure-mode))
+	:init
+	(add-hook 'clojure-mode-hook #'subword-mode))
+#+END_SRC
+
+*** clj-refactor
+
+#+BEGIN_SRC emacs-lisp
+(use-package clj-refactor
+  :defer t
+  :ensure t
+  :diminish clj-refactor-mode
+  :config (cljr-add-keybindings-with-prefix "C-c C-m"))
+#+END_SRC
+
 *** cider
+
+A basic configuration of Cider is shown here: http://ccann.github.io/2015/10/18/cider.html
 
 #+BEGIN_SRC emacs-lisp
 (use-package cider
-  :ensure t)
+  :ensure t
+  :defer t
+  :init (add-hook 'cider-mode-hook #'clj-refactor-mode)
+  :diminish subword-mode
+	:bind (:map cider-repl-mode-map
+							("C-h a" . cider-apropos)
+							:map clojure-mode-map
+							("C-h a" . cider-apropos))
+  :config
+  (setq nrepl-log-messages t									 ; useful for debugging
+        cider-repl-display-in-current-window t ; switch to REPL in this window
+        cider-repl-use-clojure-font-lock t ; syntax highlighting in REPL
+        cider-prompt-save-file-on-load 'always-save	; just always save when loading buffer
+        cider-font-lock-dynamically '(macro core function var) ; syntax highlight all namespaces
+        nrepl-hide-special-buffers t		; hide nrepl buffers from menu
+        cider-overlays-use-font-lock t)	; syntax highlight evaluation overlays
+  (cider-repl-toggle-pretty-printing)) ; REPL always pretty-prints results
+#+END_SRC
+
+*** cider-eval-sexp-fu
+
+From the README: "=eval-sexp-fu= provides tiny improvements to expression evaluation - e.g. the expression you've just evaluated would briefly flash and so on."
+
+#+BEGIN_SRC emacs-lisp
+(use-package cider-eval-sexp-fu
+	:ensure t
+  :defer t)
 #+END_SRC
 
 ** org-mode
@@ -7494,6 +7552,13 @@ Global org-mode keys:
 (global-set-key (kbd "C-*") 'hydra-cm-mode/body)
 #+END_SRC
 
+** TODO hydra-clojure 
+
+#+BEGIN_SRC emacs-lisp
+(use-package cider-hydra
+	:ensure t)
+#+END_SRC
+
 ** hydra-dired
 
 https://gitlab.com/xuhdev/dired-quick-sort
@@ -7657,9 +7722,7 @@ Don't ask for the path when searching for files:
 	(org-toggle-link-display)
 	(if org-hide-emphasis-markers
 			(setq org-hide-emphasis-markers nil)
-		(setq org-hide-emphasis-markers t)
-		)
-	)
+		(setq org-hide-emphasis-markers t)))
 #+END_SRC
 
 *** hydra-org-archive
