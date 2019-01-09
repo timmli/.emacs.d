@@ -7605,7 +7605,7 @@ https://gitlab.com/xuhdev/dired-quick-sort
 	("c" dired-do-compress-to)
 	("/" dired-narrow)
 	("(" dired-hide-details-mode)
-	("$" wdired-change-to-wdired-mode)
+	("$" wdired-change-to-wdired-mode :color blue)
 	("f" helm-find)
 	("." (find-file home-directory))
 	("=" diredp-ediff)  
