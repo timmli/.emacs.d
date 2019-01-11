@@ -7712,9 +7712,9 @@ Don't ask for the path when searching for files:
 	("v" org-toggle-inline-images)
 	("\\" tl/org-toggle-overlays)
 	("^" org-sort)
-	("C-n" org-next-visible-heading)
-	("C-p" org-previous-visible-heading)
-	("C-c C-u" outline-up-heading)
+	("C-n" org-next-visible-heading :color pink)
+	("C-p" org-previous-visible-heading :color pink)
+	("C-c C-u" outline-up-heading :color pink)
 	("q" nil :color blue)
 	)
 #+END_SRC
