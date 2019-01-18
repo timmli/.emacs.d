@@ -7849,7 +7849,7 @@ Hydra for clocking activities in org-mode (taken from https://github.com/abo-abo
 	("u" org-agenda-bulk-unmark)
 	("B" org-agenda-bulk-action)
 	("k" org-agenda-capture)
-	("t" org-agenda-todol)
+	("t" org-agenda-todo)
 	("/" org-agenda-filter-by-tag)
 	("|" org-agenda-filter-remove-all)
 	("^" org-agenda-filter-by-top-headline)
