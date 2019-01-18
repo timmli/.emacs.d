@@ -7670,21 +7670,21 @@ Don't ask for the path when searching for files:
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-main (:hint nil :color blue)
 	"
-    ^^                          ^^                      ^^                 ╭──────────┐   
-    ^Heading^                   ^Text^                  ^Filter^           │ org-mode │
-	╭─^^──────────────────────────^^──────────────────────^^─────────────────┴──────────╯ 
-    _a_ attachment...           _l_ preview LaTeX       _C_ columns...
-    _A_ archive...              _$_ preview LaTeX       _/_ filter
-    _b_ open in new buffer      _m_ markup...       _<tab>_ tidily unfold
-    _c_ clocking...             _r_ org-ref
-    _i_ add ID                  _._ timestamp
-    _n_ add note                _*_ cycle list type
-    _p_ add property            _#_ table...
-    _P_ add property-value pair _v_ toggle images
-  _s_/\^ sort                   ^^\\ toggle overlays
-    _t_ set todo keyword
-    _:_ set tags                ^^                      ^^                 _q_ quit
-  _+_/_-_ priority up/down
+     ^^                           ^^                       ^^                    ^^               ╭──────────┐   
+     ^Heading^                    ^Text^                   ^Filter^               ^Navigation^    │ org-mode │
+	╭──^^───────────────────────────^^───────────────────────^^─────────────────────^^──────────────┴──────────╯ 
+     _a_ attachment...            _l_ preview LaTeX        _C_ columns...         _C-n_ next heading
+     _A_ archive...               _$_ preview LaTeX        _/_ filter             _C-p_ previous heading
+     _b_ open in new buffer       _m_ markup...        _<tab>_ tidily unfold  _C-c C-u_ embedding heading
+     _c_ clocking...              _r_ org-ref
+     _i_ add ID                   _._ timestamp
+     _n_ add note                 _*_ cycle list type
+     _p_ add property             _#_ table...
+     _P_ add property-value pair  _v_ toggle images
+   _s_/\^ sort                     \\ toggle overlays
+     _t_ set todo keyword
+     _:_ set tags                 ^^                       ^^                      ^^      _q_ quit
+   _+_/_-_ priority up/down
 "
 	("a" org-attach)
 	("A" hydra-org-archive/body)
@@ -7712,6 +7712,9 @@ Don't ask for the path when searching for files:
 	("v" org-toggle-inline-images)
 	("\\" tl/org-toggle-overlays)
 	("^" org-sort)
+	("C-n" org-next-visible-heading :color pink)
+	("C-p" org-previous-visible-heading :color pink)
+	("C-c C-u" outline-up-heading :color pink)
 	("q" nil :color blue)
 	)
 #+END_SRC
