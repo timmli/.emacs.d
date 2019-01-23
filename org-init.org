@@ -1695,37 +1695,43 @@ See https://www.mail-archive.com/emacs-orgmode@gnu.org/msg30416.html
 *** General keys
 
 #+BEGIN_SRC emacs-lisp
-  (global-set-key (kbd "<f9> c") 'org-goto-calendar)
-  (global-set-key (kbd "<f9> a") 'org-agenda-list)
-  (global-set-key (kbd "<f9> t") 'org-todo-list)
-  (global-set-key (kbd "C-<f9>") 'org-cycle-agenda-files)
-  (global-set-key (kbd "<f9> s") 'org-search-view)
-  (global-set-key (kbd "<f9> f") 'org-search-view)
-  (global-set-key (kbd "<f9> l") 'org-tags-view)
-  (global-set-key (kbd "<f9> r") 'org-reload)
-  (global-set-key (kbd "<f9> w")
-                  (lambda() (interactive)(find-file (concat org-notes-dir "/work/work.org"))))
-  (global-set-key (kbd "<f9> n")
-                  (lambda() (interactive)(find-file (concat org-notes-dir "/notes.org"))))
-  (global-set-key (kbd "C-c a") 'org-agenda)
-  (global-set-key (kbd "C-c l") 'org-store-link)
+(global-set-key (kbd "<f9> c") 'org-goto-calendar)
+(global-set-key (kbd "<f9> a") 'org-agenda-list)
+(global-set-key (kbd "<f9> t") 'org-todo-list)
+(global-set-key (kbd "C-<f9>") 'org-cycle-agenda-files)
+(global-set-key (kbd "<f9> s") 'org-search-view)
+(global-set-key (kbd "<f9> f") 'org-search-view)
+(global-set-key (kbd "<f9> l") 'org-tags-view)
+(global-set-key (kbd "<f9> r") 'org-reload)
+(global-set-key (kbd "<f9> w")
+								(lambda() (interactive)(find-file (concat org-notes-dir "/work/work.org"))))
+(global-set-key (kbd "<f9> n")
+								(lambda() (interactive)(find-file (concat org-notes-dir "/notes.org"))))
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c l") 'org-store-link)
 
-  (with-eval-after-load 'org
-    (define-key org-mode-map (kbd "C-<tab>") nil )
-    (define-key org-mode-map (kbd "S-<up>") nil )
-    (define-key org-mode-map (kbd "S-<down>") nil )
-    (define-key org-mode-map (kbd "S-<left>") nil )
-    (define-key org-mode-map (kbd "S-<right>") nil )
-    (define-key org-mode-map (kbd "C-n") 'org-next-visible-heading )
-		(define-key org-mode-map (kbd "C-p") 'org-previous-visible-heading )
-    (define-key org-mode-map (kbd "C-S-p") 'org-backward-heading-same-level)
-		(define-key org-mode-map (kbd "C-S-n") '(lambda () (interactive) (org-backward-heading-same-level -1)))
-    (define-key org-mode-map (kbd "C-c C-f") 'org-footnote-action )
-		(define-key org-mode-map (kbd "C-c C-t") 'org-todo )
-    (define-key org-mode-map (kbd "C-c C-x C-b") 'org-tree-to-indirect-buffer ))
+(with-eval-after-load 'org
+	(define-key org-mode-map (kbd "C-<tab>") nil )
+	(define-key org-mode-map (kbd "S-<up>") nil )
+	(define-key org-mode-map (kbd "S-<down>") nil )
+	(define-key org-mode-map (kbd "S-<left>") nil )
+	(define-key org-mode-map (kbd "S-<right>") nil )
+	(define-key org-mode-map (kbd "C-n") 'org-next-visible-heading )
+	(define-key org-mode-map (kbd "C-p") 'org-previous-visible-heading )
+	(define-key org-mode-map (kbd "C-S-p") 'org-backward-heading-same-level)
+	(define-key org-mode-map (kbd "C-S-n") '(lambda () (interactive) (org-backward-heading-same-level -1)))
+	(define-key org-mode-map (kbd "C-c C-f") 'org-footnote-action )
+	(define-key org-mode-map (kbd "C-c C-t") 'org-todo )
+	(define-key org-mode-map (kbd "C-c C-x C-b") 'org-tree-to-indirect-buffer )
+	(define-key org-mode-map (kbd "C-c C-t") 'org-todo )
+	;; With Org-mode v9.2, the explicit mapping of C-a and C-e becomes necessary.
+	;; See http://lists.gnu.org/archive/html/emacs-orgmode/2019-01/msg00253.html
+	(define-key org-mode-map (kbd "C-a") 'org-beginning-of-line )
+	(define-key org-mode-map (kbd "C-e") 'org-end-of-line )
+	)
 
-  ;; (with-eval-after-load 'org-agenda
-  ;;   (bind-key "i" 'org-agenda-clock-in org-agenda-mode-map))
+;; (with-eval-after-load 'org-agenda
+;;   (bind-key "i" 'org-agenda-clock-in org-agenda-mode-map))
 #+END_SRC
 
 *** General appearence
