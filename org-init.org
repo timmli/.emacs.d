@@ -2070,7 +2070,7 @@ Fontify checkbox items.
 	'((t (;;:inherit org-todo
 								 :overline nil
 								 :foreground "red"
-								 :weight unspecified)))
+								 :weight bold)))
 	"Face for the text part of an unchecked org-mode checkbox.")
 
 (font-lock-add-keywords
