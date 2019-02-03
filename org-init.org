@@ -1632,6 +1632,37 @@ Use a less intrusive export interface:
 
 Note that the last export command on the current buffer can be reused with =C-u C-c C-e=. 
 
+Function to export minutes (work in progress):
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-export-minutes ()
+	(interactive)
+	(save-excursion
+		(when (use-region-p)
+			(copy-to-buffer "*Minutes*" (region-beginning) (region-end))
+			(switch-to-buffer "*Minutes*")
+			(org-mode)
+			(setq-local case-replace nil)
+			(beginning-of-buffer) 
+			(replace-regexp "\- \\(A:\\|\\[ \\]\\) \\(.*\\) ::"
+											"- @@latex:\\\\colorbox{red}{A}@@ \\2 $::$ @@latex:\\\\marginpar{\\\\colorbox{red}{A} \\2}@@ ")
+			(beginning-of-buffer) 
+			(replace-regexp "\- E:\\(.*\\) ::"
+											"\- @@latex:\\\\colorbox{green}{E}@@ \\1 $::$ @@latex:\\\\marginpar{\\\\colorbox{green}{E} \\1}@@ ")
+			(beginning-of-buffer) 
+			(replace-regexp "\- I:\\(.*\\) ::"
+											"\- @@latex:\\\\colorbox{blue}{I}@@ \\1 $::$ @@latex:\\\\marginpar{\\\\colorbox{blue}{I} \\1}@@ ")
+			(beginning-of-buffer)
+			(replace-regexp "I:\\(.*\\) ::"
+											"@@latex:\\\\marginpar{\\\\colorbox{blue}{I} \\1}@@ ")
+			(beginning-of-buffer)
+			(replace-regexp " ::" " $::$")
+			(beginning-of-buffer) 
+			(replace-regexp "\\([0-9]+\) \\)" "* ")
+			(org-export-dispatch)
+			)))
+#+END_SRC
+
 *** Archive
 
 Preserves the first heading of the org-mode file (found in http://orgmode.org/worg/org-hacks.html#orgheadline59):
@@ -7713,7 +7744,7 @@ Don't ask for the path when searching for files:
 	(":" org-set-tags-command)
 	("+" org-priority-up :color pink)
 	("-" org-priority-down :color pink)
-	("*" org-cycle-list-bullet)
+	("*" org-cycle-list-bullet :color pink)
 	("#" hydra-org-table/body)
 	("v" org-toggle-inline-images)
 	("\\" tl/org-toggle-overlays)
