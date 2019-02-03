@@ -5814,7 +5814,7 @@ Switching between buffers with C-tab:
 
 ** Narrowing
 
-http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html
+Taken from http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html:
 
 #+begin_src emacs-lisp
 (defun narrow-or-widen-dwim (p)
@@ -5852,6 +5852,21 @@ is already narrowed."
             (define-key LaTeX-mode-map "\C-xn"
               nil)))
 #+end_src
+
+Taken from https://emacs.stackexchange.com/a/21356/12336:
+
+#+BEGIN_SRC emacs-lisp
+(defun org-narrow-to-here ()
+	"Exclude the current heading while narrowing."
+  (interactive)
+  (save-excursion
+    (narrow-to-region
+     (progn (unless (org-at-heading-p) (org-next-visible-heading -1))
+            (forward-line)
+            (point))
+     (progn (org-next-visible-heading 1)
+            (point)))))
+#+END_SRC
 
 ** File browser
 *** ranger, deer
