@@ -1966,7 +1966,27 @@ Link type for typesetting with typewriter font:
  :face (lambda (path)
 				 `(:box t :slant normal :family ,custom-fixed-pitch-font  
 								:foreground ,(if (not (string= "" path)) "CornflowerBlue")))
- :help-echo "This will be exported in small caps.")
+ :help-echo "This will be exported with typewriter font.")
+#+END_SRC
+
+Link type for typesetting with alert font:
+#+BEGIN_SRC emacs-lisp
+(org-link-set-parameters
+ "alert"
+ :follow (lambda (path) (message "You clicked me."))
+ :export (lambda (path desc backend)
+           (cond
+            ((eq backend 'latex)
+						 (if (not (string= path ""))
+								 (format "\\alert<%s>{%s}" path desc)
+							 (format "\\alert<.>{%s}" desc)))
+						((eq 'html backend)
+						 (format "<span style=\"color: red;\">%s</span>" 
+										 (or desc path)))))
+ :face (lambda (path)
+				 '(:box t :slant normal  
+								:foreground "red"))
+ :help-echo "This will be exported as alerted text.")
 #+END_SRC
 
 **** Fonts
