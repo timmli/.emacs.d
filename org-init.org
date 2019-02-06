@@ -3108,6 +3108,16 @@ Add the Emacs [[*Calendar/Diary][diary]] (which also stores holidays) to =org-ag
 (setq org-agenda-include-diary t) 
 #+END_SRC
 
+**** COMMENT org-timeline
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-timeline
+	:ensure t
+  :after org
+  :config
+	(add-hook 'org-agenda-finalize-hook 'org-timeline-insert-timeline :append))
+#+END_SRC
+
 *** Images
 
 Only use actual width of image when not specified with =#+ATTR* :width= (requires imagemagick)
