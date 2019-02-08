@@ -1645,20 +1645,20 @@ Function to export minutes (work in progress):
 			(setq-local case-replace nil)
 			(beginning-of-buffer) 
 			(replace-regexp "\- \\(A:\\|\\[ \\]\\) \\(.*\\) ::"
-											"- @@latex:\\\\colorbox{red}{A}@@ \\2 $::$ @@latex:\\\\marginpar{\\\\colorbox{red}{A} \\2}@@ ")
+											"- @@latex:\\\\colorbox{red}{A}@@ \\2 $::$ @@latex:\\\\marginpar{\\\\colorbox{red}{A}@@ \\2@@latex: }@@ ")
 			(beginning-of-buffer) 
 			(replace-regexp "\- E:\\(.*\\) ::"
-											"\- @@latex:\\\\colorbox{green}{E}@@ \\1 $::$ @@latex:\\\\marginpar{\\\\colorbox{green}{E} \\1}@@ ")
+											"\- @@latex:\\\\colorbox{green}{E}@@ \\1 $::$ @@latex:\\\\marginpar{\\\\colorbox{green}{E}@@ \\1@@latex:}@@ ")
 			(beginning-of-buffer) 
 			(replace-regexp "\- I:\\(.*\\) ::"
-											"\- @@latex:\\\\colorbox{blue}{I}@@ \\1 $::$ @@latex:\\\\marginpar{\\\\colorbox{blue}{I} \\1}@@ ")
+											"\- @@latex:\\\\colorbox{blue!20}{I}@@ \\1 $::$ @@latex:\\\\marginpar{\\\\colorbox{blue!20}{I}@@ \\1@@latex:}@@ ")
 			(beginning-of-buffer)
 			(replace-regexp "I:\\(.*\\) ::"
-											"@@latex:\\\\marginpar{\\\\colorbox{blue}{I} \\1}@@ ")
+											"@@latex:\\\\protect\\\\marginpar{\\\\colorbox{blue!20}{I}@@ \\1@@latex:}@@ ")
 			(beginning-of-buffer)
 			(replace-regexp " ::" " $::$")
 			(beginning-of-buffer) 
-			(replace-regexp "\\([0-9]+\) \\)" "* ")
+			(replace-regexp "^\\([0-9]+\) \\)" "* ")
 			(org-export-dispatch)
 			)))
 #+END_SRC
