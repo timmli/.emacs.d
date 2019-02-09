@@ -1643,22 +1643,36 @@ Function to export minutes (work in progress):
 			(switch-to-buffer "*Minutes*")
 			(org-mode)
 			(setq-local case-replace nil)
-			(beginning-of-buffer) 
-			(replace-regexp "\- \\(A:\\|\\[ \\]\\) \\(.*\\) ::"
-											"- @@latex:\\\\colorbox{red}{A}@@ \\2 $::$ @@latex:\\\\marginpar{\\\\colorbox{red}{A}@@ \\2@@latex: }@@ ")
-			(beginning-of-buffer) 
-			(replace-regexp "\- E:\\(.*\\) ::"
-											"\- @@latex:\\\\colorbox{green}{E}@@ \\1 $::$ @@latex:\\\\marginpar{\\\\colorbox{green}{E}@@ \\1@@latex:}@@ ")
-			(beginning-of-buffer) 
-			(replace-regexp "\- I:\\(.*\\) ::"
-											"\- @@latex:\\\\colorbox{blue!20}{I}@@ \\1 $::$ @@latex:\\\\marginpar{\\\\colorbox{blue!20}{I}@@ \\1@@latex:}@@ ")
 			(beginning-of-buffer)
-			(replace-regexp "I:\\(.*\\) ::"
-											"@@latex:\\\\protect\\\\marginpar{\\\\colorbox{blue!20}{I}@@ \\1@@latex:}@@ ")
-			(beginning-of-buffer)
-			(replace-regexp " ::" " $::$")
-			(beginning-of-buffer) 
-			(replace-regexp "^\\([0-9]+\) \\)" "* ")
+			(while (re-search-forward "^\\s-*\\([0-9]+\)\\|-\\)\\s-*\\(A:\\|E:\\|I:\\)?\\s-*\\(.*?\\)\\s-*::" nil t)
+				(replace-match
+				 (let ((mark (match-string 1))
+							 (cat (match-string 2))
+							 (name (match-string 3)))
+					 (if (string= mark "-")
+							 (concat "-"
+											 (cond ((string= cat "A:")
+															(concat " @@latex:\\\\colorbox{red}{A}@@"))
+														 ((string= cat "E:")
+															(concat " @@latex:\\\\colorbox{green}{E}@@"))
+														 ((string= cat "I:")
+															(concat " @@latex:\\\\colorbox{blue!20}{I}@@"))
+														 )
+											 (concat " " name " ::")
+											 (cond ((string= cat "A:")
+															(concat " @@latex:\\\\marginpar{\\\\colorbox{red}{A}@@ "
+																			name "@@latex:}@@"))
+														 ((string= cat "E:")
+															(concat " @@latex:\\\\marginpar{\\\\colorbox{green}{E}@@ "
+																			name "@@latex:}@@"))
+														 ((string= cat "I:")
+															(concat " @@latex:\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
+																			name "@@latex:}@@"))))
+						 (concat "*" 
+										 (if (stringp name)
+												 (concat " @@latex:\\\\protect\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
+																 name "@@latex:}@@"))) 
+						 ))))
 			(org-export-dispatch)
 			)))
 #+END_SRC
