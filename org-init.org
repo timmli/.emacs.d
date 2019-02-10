@@ -120,6 +120,7 @@
       - [[#hydra-f9][hydra-f9]]
       - [[#hydra-bibtex][hydra-bibtex]]
       - [[#hydra-cm-mode][hydra-cm-mode]]
+      - [[#hydra-clojure][hydra-clojure]]
       - [[#hydra-dired][hydra-dired]]
       - [[#hydra-org][hydra-org]]
       - [[#hydra-deft][hydra-deft]]
@@ -1632,51 +1633,6 @@ Use a less intrusive export interface:
 
 Note that the last export command on the current buffer can be reused with =C-u C-c C-e=. 
 
-Function to export minutes (work in progress):
-
-#+BEGIN_SRC emacs-lisp
-(defun tl/org-export-minutes ()
-	(interactive)
-	(save-excursion
-		(when (use-region-p)
-			(copy-to-buffer "*Minutes*" (region-beginning) (region-end))
-			(switch-to-buffer "*Minutes*")
-			(org-mode)
-			(setq-local case-replace nil)
-			(beginning-of-buffer)
-			(while (re-search-forward "^\\s-*\\([0-9]+\)\\|-\\)\\s-*\\(A:\\|E:\\|I:\\)?\\s-*\\(.*?\\)\\s-*::" nil t)
-				(replace-match
-				 (let ((mark (match-string 1))
-							 (cat (match-string 2))
-							 (name (match-string 3)))
-					 (if (string= mark "-")
-							 (concat "-"
-											 (cond ((string= cat "A:")
-															(concat " @@latex:\\\\colorbox{red}{A}@@"))
-														 ((string= cat "E:")
-															(concat " @@latex:\\\\colorbox{green}{E}@@"))
-														 ((string= cat "I:")
-															(concat " @@latex:\\\\colorbox{blue!20}{I}@@"))
-														 )
-											 (concat " " name " ::")
-											 (cond ((string= cat "A:")
-															(concat " @@latex:\\\\marginpar{\\\\colorbox{red}{A}@@ "
-																			name "@@latex:}@@"))
-														 ((string= cat "E:")
-															(concat " @@latex:\\\\marginpar{\\\\colorbox{green}{E}@@ "
-																			name "@@latex:}@@"))
-														 ((string= cat "I:")
-															(concat " @@latex:\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
-																			name "@@latex:}@@"))))
-						 (concat "*" 
-										 (if (stringp name)
-												 (concat " @@latex:\\\\protect\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
-																 name "@@latex:}@@"))) 
-						 ))))
-			(org-export-dispatch)
-			)))
-#+END_SRC
-
 *** Archive
 
 Preserves the first heading of the org-mode file (found in http://orgmode.org/worg/org-hacks.html#orgheadline59):
@@ -2291,6 +2247,101 @@ Only unfold current heading and its content:
 			(org-reveal t)
 			(org-show-entry)
 			(show-children))))
+#+END_SRC
+
+*** Minutes
+
+Function to export minutes (work in progress):
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-minutes-export ()
+	(interactive)
+	(save-excursion
+		(when (use-region-p)
+			(copy-to-buffer "*Minutes*" (region-beginning) (region-end))
+			(switch-to-buffer "*Minutes*")
+			(org-mode)
+			(setq-local case-replace nil)
+			(beginning-of-buffer)
+			(while (re-search-forward "^\\s-*\\([0-9]+\)\\|-\\)\\s-*\\(A:\\|E:\\|I:\\|\\[ \\]\\)?\\s-*\\(.*?\\)\\s-*\\(::\\|||\\)" nil t)
+	(replace-match
+	 (let ((mark (match-string 1))
+				 (cat (match-string 2))
+				 (name (match-string 3))
+				 (separator (match-string 4)))
+		 (if (string= mark "-")
+				 (concat "-"
+								 (cond ((or (string= cat "A:") (string= cat "[ ]"))
+												(concat " @@latex:\\\\colorbox{red}{A}@@"))
+											 ((string= cat "E:")
+												(concat " @@latex:\\\\colorbox{green}{E}@@"))
+											 ((string= cat "I:")
+												(concat " @@latex:\\\\colorbox{blue!20}{I}@@"))
+											 )
+								 (concat " " name " " separator)
+								 (cond ((or (string= cat "A:") (string= cat "[ ]"))
+												(concat " @@latex:\\\\marginpar{\\\\colorbox{red}{A}@@ "
+																name "@@latex:}@@"))
+											 ((string= cat "E:")
+												(concat " @@latex:\\\\marginpar{\\\\colorbox{green}{E}@@ "
+																name "@@latex:}@@"))
+											 ((string= cat "I:")
+												(concat " @@latex:\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
+																name "@@latex:}@@"))))
+			 (concat "*" 
+							 (if (stringp name)
+									 (concat " @@latex:\\\\protect\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
+													 name "@@latex:}@@"))) 
+			 ))))
+			(org-export-dispatch)
+			)))
+#+END_SRC
+
+Faces:
+
+#+BEGIN_SRC emacs-lisp
+(defface org-minutes-information-face
+	'((t (
+				:box t
+						 :foreground "CornflowerBlue"
+						 :weight bold)))
+	"Face for the type of minutes items.")
+
+(font-lock-add-keywords 
+ 'org-mode
+ '(("^\\s-*\\([0-9]+\)\\|-\\)\\s-*\\(\\(I:\\)?\\s-*\\(.*?\\)\\s-*\\(::\\|||\\)\\)"
+		(2 '(org-minutes-information-face))
+	 )))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defface org-minutes-agenda-face
+	'((t (
+				:box t
+						 :foreground "red"
+						 :weight bold)))
+	"Face for the type of minutes items.")
+
+(font-lock-add-keywords 
+ 'org-mode
+ '(("^\\s-*-\\s-*\\(\\(A:\\|\\[ \\]\\)\\s-*\\(.*?\\)\\s-*\\(::\\|||\\)\\)"
+		(1 '(org-minutes-agenda-face))
+	 )))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defface org-minutes-decision-face
+	'((t (
+				:box t
+						 :foreground "LimeGreen"
+						 :weight bold)))
+	"Face for the type of minutes items.")
+
+(font-lock-add-keywords 
+ 'org-mode
+ '(("^\\s-*-\\s-*\\(\\(E:\\)\\s-*\\(.*?\\)\\s-*\\(::\\|||\\)\\)"
+		(1 '(org-minutes-decision-face))
+	 )))
 #+END_SRC
 
 *** Modules
