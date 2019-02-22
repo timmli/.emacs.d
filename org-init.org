@@ -2278,7 +2278,7 @@ Function to export minutes (work in progress):
 											 ((string= cat "I:")
 												(concat " @@latex:\\\\colorbox{blue!20}{I}@@"))
 											 )
-								 (concat " " name " " separator)
+								 (concat " " name " " "$" separator "$")
 								 (cond ((or (string= cat "A:") (string= cat "[ ]"))
 												(concat " @@latex:\\\\marginpar{\\\\colorbox{red}{A}@@ "
 																name "@@latex:}@@"))
