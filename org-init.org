@@ -2254,45 +2254,78 @@ Only unfold current heading and its content:
 Function to export minutes (work in progress):
 
 #+BEGIN_SRC emacs-lisp
+(defun tl/org-drawer-delete (name)
+  "Delete logbook drawer of subtree.
+Taken from: https://emacs.stackexchange.com/a/38367/12336
+"
+  (interactive)
+  (save-excursion
+    (goto-char (org-log-beginning))
+    (when (save-excursion
+            (save-match-data
+              (beginning-of-line 0)
+              (search-forward-regexp org-drawer-regexp)
+              (goto-char (match-beginning 1))
+              (looking-at name)))
+			(org-mark-element)
+			(delete-region (region-beginning) (region-end))
+			(org-remove-empty-drawer-at (point)))))
+
 (defun tl/org-minutes-export ()
 	(interactive)
 	(save-excursion
+		(progn
+			(org-back-to-heading)
+			(set-mark-command nil)
+			(org-next-visible-heading 1)
+			(if (org-at-heading-p) (previous-line)))
 		(when (use-region-p)
 			(copy-to-buffer "*Minutes*" (region-beginning) (region-end))
+			(deactivate-mark)
 			(switch-to-buffer "*Minutes*")
 			(org-mode)
-			(setq-local case-replace nil)
+			(tl/org-drawer-delete "LOGBOOK")
+			(tl/org-drawer-delete "PROPERTIES")
+			(org-back-to-heading)
+			(org-show-subtree)
+			(kill-line)
 			(beginning-of-buffer)
-			(while (re-search-forward "^\\s-*\\([0-9]+\)\\|-\\)\\s-*\\(A:\\|E:\\|I:\\|\\[ \\]\\)?\\s-*\\(.*?\\)\\s-*\\(::\\|||\\)" nil t)
-	(replace-match
-	 (let ((mark (match-string 1))
-				 (cat (match-string 2))
-				 (name (match-string 3))
-				 (separator (match-string 4)))
-		 (if (string= mark "-")
-				 (concat "-"
-								 (cond ((or (string= cat "A:") (string= cat "[ ]"))
-												(concat " @@latex:\\\\colorbox{red}{A}@@"))
-											 ((string= cat "E:")
-												(concat " @@latex:\\\\colorbox{green}{E}@@"))
-											 ((string= cat "I:")
-												(concat " @@latex:\\\\colorbox{blue!20}{I}@@"))
-											 )
-								 (concat " " name " " "$" separator "$")
-								 (cond ((or (string= cat "A:") (string= cat "[ ]"))
-												(concat " @@latex:\\\\marginpar{\\\\colorbox{red}{A}@@ "
-																name "@@latex:}@@"))
-											 ((string= cat "E:")
-												(concat " @@latex:\\\\marginpar{\\\\colorbox{green}{E}@@ "
-																name "@@latex:}@@"))
-											 ((string= cat "I:")
-												(concat " @@latex:\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
-																name "@@latex:}@@"))))
-			 (concat "*" 
-							 (if (stringp name)
-									 (concat " @@latex:\\\\protect\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
-													 name "@@latex:}@@"))) 
-			 ))))
+			(while (re-search-forward "^\\([[:blank:]]+\\)\\([0-9]+\)\\|-\\)[[:blank:]]+\\(A:\\|E:\\|I:\\|\\[ \\]\\)?[[:blank:]]*\\(.*?\\)[[:blank:]]+\\(::\\|||\\)" nil t)
+				(replace-match
+				 (let ((indentation (match-string 1))
+							 (mark (match-string 2))
+							 (cat (match-string 3))
+							 (name (match-string 4))
+							 (separator (match-string 5)))
+					 (concat indentation mark 
+									 (cond ((or (string= cat "A:") (string= cat "[ ]"))
+													(concat " @@latex:\\\\colorbox{red}{A}@@"))
+												 ((string= cat "E:")
+													(concat " @@latex:\\\\colorbox{green}{E}@@"))
+												 ((string= cat "I:")
+													(concat " @@latex:\\\\colorbox{blue!20}{I}@@"))
+												 )
+									 (concat " " name " " "$" separator "$")
+									 (cond ((or (string= cat "A:") (string= cat "[ ]"))
+													(concat " @@latex:\\\\marginpar{\\\\colorbox{red}{A}@@ "
+																	name "@@latex:}@@"))
+												 ((string= cat "E:")
+													(concat " @@latex:\\\\marginpar{\\\\colorbox{green}{E}@@ "
+																	name "@@latex:}@@"))
+												 ((string= cat "I:")
+													(concat " @@latex:\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
+																	name "@@latex:}@@"))))) 
+				 t ))	; fixed case
+			(beginning-of-buffer)
+			(while (re-search-forward "^\\([0-9]+\)\\)[[:blank:]]+\\(I:[[:blank:]]*\\(.*?\\)[[:blank:]]+::\\|||\\)?" nil t)
+				(replace-match
+				 (let ((mark (match-string 1))
+							 (name (match-string 3))) 
+					 (concat "* " 
+									 (if (and (stringp name))
+											 (concat " @@latex:\\\\protect\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
+															 name "@@latex:}@@"))))
+				 t )) ; fixed case
 			(org-export-dispatch)
 			)))
 #+END_SRC
