@@ -2282,51 +2282,56 @@ Taken from: https://emacs.stackexchange.com/a/38367/12336
 		(when (use-region-p)
 			(copy-to-buffer "*Minutes*" (region-beginning) (region-end))
 			(deactivate-mark)
-			(switch-to-buffer "*Minutes*")
-			(org-mode)
-			(tl/org-drawer-delete "LOGBOOK")
-			(tl/org-drawer-delete "PROPERTIES")
-			(org-back-to-heading)
-			(org-show-subtree)
-			(kill-line)
-			(beginning-of-buffer)
-			(while (re-search-forward "^\\([[:blank:]]+\\)\\([0-9]+\)\\|-\\)[[:blank:]]+\\(A:\\|E:\\|I:\\|\\[ \\]\\)?[[:blank:]]*\\(.*?\\)[[:blank:]]+\\(::\\|||\\)" nil t)
-				(replace-match
-				 (let ((indentation (match-string 1))
-							 (mark (match-string 2))
-							 (cat (match-string 3))
-							 (name (match-string 4))
-							 (separator (match-string 5)))
-					 (concat indentation mark 
-									 (cond ((or (string= cat "A:") (string= cat "[ ]"))
-													(concat " @@latex:\\\\colorbox{red}{A}@@"))
-												 ((string= cat "E:")
-													(concat " @@latex:\\\\colorbox{green}{E}@@"))
-												 ((string= cat "I:")
-													(concat " @@latex:\\\\colorbox{blue!20}{I}@@"))
-												 )
-									 (concat " " name " " "$" separator "$")
-									 (cond ((or (string= cat "A:") (string= cat "[ ]"))
-													(concat " @@latex:\\\\marginpar{\\\\colorbox{red}{A}@@ "
-																	name "@@latex:}@@"))
-												 ((string= cat "E:")
-													(concat " @@latex:\\\\marginpar{\\\\colorbox{green}{E}@@ "
-																	name "@@latex:}@@"))
-												 ((string= cat "I:")
-													(concat " @@latex:\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
-																	name "@@latex:}@@"))))) 
-				 t ))	; fixed case
-			(beginning-of-buffer)
-			(while (re-search-forward "^\\([0-9]+\)\\)[[:blank:]]+\\(I:[[:blank:]]*\\(.*?\\)[[:blank:]]+::\\|||\\)?" nil t)
-				(replace-match
-				 (let ((mark (match-string 1))
-							 (name (match-string 3))) 
-					 (concat "* " 
-									 (if (and (stringp name))
-											 (concat " @@latex:\\\\protect\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
-															 name "@@latex:}@@"))))
-				 t )) ; fixed case
-			(org-export-dispatch)
+			(let ((buffer (buffer-name)))
+				(switch-to-buffer "*Minutes*")
+				(org-mode)
+				(tl/org-drawer-delete "LOGBOOK")
+				(tl/org-drawer-delete "PROPERTIES")
+				(org-back-to-heading)
+				(org-show-subtree)
+				(kill-line)
+				(beginning-of-buffer)
+				(while (re-search-forward "^\\([[:blank:]]+\\)\\([0-9]+\)\\|-\\)[[:blank:]]+\\(A:\\|E:\\|I:\\|\\[ \\]\\)?[[:blank:]]*\\(.*?\\)[[:blank:]]+\\(::\\|||\\)" nil t)
+					(replace-match
+					 (let ((indentation (match-string 1))
+								 (mark (match-string 2))
+								 (cat (match-string 3))
+								 (name (match-string 4))
+								 (separator (match-string 5)))
+						 (concat indentation mark 
+										 (cond ((or (string= cat "A:") (string= cat "[ ]"))
+														(concat " @@latex:\\\\colorbox{red}{A}@@"))
+													 ((string= cat "E:")
+														(concat " @@latex:\\\\colorbox{green}{E}@@"))
+													 ((string= cat "I:")
+														(concat " @@latex:\\\\colorbox{blue!20}{I}@@"))
+													 )
+										 (concat " " name " " "$" separator "$")
+										 (cond ((or (string= cat "A:") (string= cat "[ ]"))
+														(concat " @@latex:\\\\marginpar{\\\\colorbox{red}{A}@@ "
+																		name "@@latex:}@@"))
+													 ((string= cat "E:")
+														(concat " @@latex:\\\\marginpar{\\\\colorbox{green}{E}@@ "
+																		name "@@latex:}@@"))
+													 ((string= cat "I:")
+														(concat " @@latex:\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
+																		name "@@latex:}@@"))))) 
+					 t ))	; fixed case
+				(beginning-of-buffer)
+				(while (re-search-forward "^\\([0-9]+\)\\)[[:blank:]]+\\(\\(I:\\)?[[:blank:]]*\\(.*?\\)[[:blank:]]+::\\|||\\)?" nil t)
+					(replace-match
+					 (let ((mark (match-string 1))
+								 (name (match-string 4))) 
+						 (concat "* " 
+										 (if (and (stringp name))
+												 (concat " @@latex:\\\\protect\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
+																 name "@@latex:}@@"))))
+					 t )) ; fixed case
+				(deactivate-mark)
+				(org-export-dispatch)
+				(switch-to-buffer buffer)
+				)
+			
 			)))
 #+END_SRC
 
