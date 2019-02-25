@@ -2287,6 +2287,8 @@ Taken from: https://emacs.stackexchange.com/a/38367/12336
 				(org-mode)
 				(tl/org-drawer-delete "LOGBOOK")
 				(tl/org-drawer-delete "PROPERTIES")
+				(org-deadline '(4))
+				(org-schedule '(4))
 				(org-back-to-heading)
 				(org-show-subtree)
 				(kill-line)
