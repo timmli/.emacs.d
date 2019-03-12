@@ -2271,6 +2271,12 @@ Taken from: https://emacs.stackexchange.com/a/38367/12336
 			(delete-region (region-beginning) (region-end))
 			(org-remove-empty-drawer-at (point)))))
 
+(defun tl/org-minutes-make-regexp (cat)
+	(concat
+	 "^\\([[:blank:]]*\\)\\([0-9]+\)\\|-\\)[[:blank:]]+\\(\\("
+	 cat
+	 "\\)[[:blank:]]*\\(.*?\\)[[:blank:]]+\\(::\\|||\\)\\)"))
+
 (defun tl/org-minutes-export ()
 	(interactive)
 	(save-excursion
@@ -2293,47 +2299,41 @@ Taken from: https://emacs.stackexchange.com/a/38367/12336
 				(org-show-subtree)
 				(kill-line)
 				(beginning-of-buffer)
-				(while (re-search-forward "^\\([[:blank:]]+\\)\\([0-9]+\)\\|-\\)[[:blank:]]+\\(A:\\|E:\\|I:\\|\\[ \\]\\)?[[:blank:]]*\\(.*?\\)[[:blank:]]+\\(::\\|||\\)" nil t)
+				(while (re-search-forward "^\\([[:blank:]]*\\)\\([0-9]+\)\\|-\\)[[:blank:]]+\\(A:\\|E:\\|I:\\|\\[ \\]\\)?[[:blank:]]*\\(.*?\\)[[:blank:]]+\\(::\\|||\\)" nil t)
 					(replace-match
 					 (let ((indentation (match-string 1))
 								 (mark (match-string 2))
 								 (cat (match-string 3))
 								 (name (match-string 4))
 								 (separator (match-string 5)))
-						 (concat indentation mark 
-										 (cond ((or (string= cat "A:") (string= cat "[ ]"))
-														(concat " @@latex:\\\\colorbox{red}{A}@@"))
-													 ((string= cat "E:")
-														(concat " @@latex:\\\\colorbox{green}{E}@@"))
-													 ((string= cat "I:")
-														(concat " @@latex:\\\\colorbox{blue!20}{I}@@"))
-													 )
-										 (concat " " name " " "$" separator "$")
-										 (cond ((or (string= cat "A:") (string= cat "[ ]"))
-														(concat " @@latex:\\\\marginpar{\\\\colorbox{red}{A}@@ "
-																		name "@@latex:}@@"))
-													 ((string= cat "E:")
-														(concat " @@latex:\\\\marginpar{\\\\colorbox{green}{E}@@ "
-																		name "@@latex:}@@"))
-													 ((string= cat "I:")
-														(concat " @@latex:\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
-																		name "@@latex:}@@"))))) 
+						 (if (string= indentation "") 
+								 (concat "* " 					; no indentation
+												 (if (and (stringp name))
+														 (concat " @@latex:\\\\protect\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
+																		 name "@@latex:}@@")))
+							 (concat indentation mark ; with identation
+											 (cond ((or (string= cat "A:") (string= cat "[ ]"))
+															(concat " @@latex:\\\\colorbox{red}{A}@@"))
+														 ((string= cat "E:")
+															(concat " @@latex:\\\\colorbox{green}{E}@@"))
+														 ((string= cat "I:")
+															(concat " @@latex:\\\\colorbox{blue!20}{I}@@"))
+														 )
+											 (concat " " name " " "$" separator "$")
+											 (cond ((or (string= cat "A:") (string= cat "[ ]"))
+															(concat " @@latex:\\\\marginpar{\\\\colorbox{red}{A}@@ "
+																			name "@@latex:}@@"))
+														 ((string= cat "E:")
+															(concat " @@latex:\\\\marginpar{\\\\colorbox{green}{E}@@ "
+																			name "@@latex:}@@"))
+														 ((string= cat "I:")
+															(concat " @@latex:\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
+																			name "@@latex:}@@")))))) 
 					 t ))	; fixed case
-				(beginning-of-buffer)
-				(while (re-search-forward "^\\([0-9]+\)\\)[[:blank:]]+\\(\\(I:\\)?[[:blank:]]*\\(.*?\\)[[:blank:]]+::\\|||\\)?" nil t)
-					(replace-match
-					 (let ((mark (match-string 1))
-								 (name (match-string 4))) 
-						 (concat "* " 
-										 (if (and (stringp name))
-												 (concat " @@latex:\\\\protect\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
-																 name "@@latex:}@@"))))
-					 t )) ; fixed case
 				(deactivate-mark)
 				(org-export-dispatch)
 				(switch-to-buffer buffer)
-				)
-			
+				)			
 			)))
 #+END_SRC
 
@@ -2349,9 +2349,9 @@ Faces:
 
 (font-lock-add-keywords 
  'org-mode
- '(("^\\s-*\\([0-9]+\)\\|-\\)\\s-*\\(\\(I:\\)?\\s-*\\(.*?\\)\\s-*\\(::\\|||\\)\\)"
-		(2 '(org-minutes-information-face))
-	 )))
+ `((,(tl/org-minutes-make-regexp "\\(I:\\)?")
+		(3 '(org-minutes-information-face))
+		)))
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -2364,8 +2364,8 @@ Faces:
 
 (font-lock-add-keywords 
  'org-mode
- '(("^\\s-*-\\s-*\\(\\(A:\\|\\[ \\]\\)\\s-*\\(.*?\\)\\s-*\\(::\\|||\\)\\)"
-		(1 '(org-minutes-agenda-face))
+ `((,(tl/org-minutes-make-regexp "A:\\|\\[ \\]")
+		(3 '(org-minutes-agenda-face))
 	 )))
 #+END_SRC
 
@@ -2379,8 +2379,8 @@ Faces:
 
 (font-lock-add-keywords 
  'org-mode
- '(("^\\s-*-\\s-*\\(\\(E:\\)\\s-*\\(.*?\\)\\s-*\\(::\\|||\\)\\)"
-		(1 '(org-minutes-decision-face))
+ `((,(tl/org-minutes-make-regexp "E:")
+		(3 '(org-minutes-decision-face))
 	 )))
 #+END_SRC
 
