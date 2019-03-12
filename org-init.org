@@ -2277,6 +2277,9 @@ Taken from: https://emacs.stackexchange.com/a/38367/12336
 	 cat
 	 "\\)[[:blank:]]*\\(.*?\\)[[:blank:]]+\\(::\\|||\\)\\)"))
 
+(defvar tl/org-minutes-question-regexp
+	"\\(\\?\\(:\\||\\)\\)\\(.*?\\)\\(\\(:\\||\\)\\?\\)")
+
 (defun tl/org-minutes-export ()
 	(interactive)
 	(save-excursion
@@ -2298,6 +2301,11 @@ Taken from: https://emacs.stackexchange.com/a/38367/12336
 				(org-back-to-heading)
 				(org-show-subtree)
 				(kill-line)
+				(beginning-of-buffer)
+				(while (re-search-forward tl/org-minutes-question-regexp nil t)
+					(replace-match
+					 (let ((scope (match-string 3)))
+						 (concat "@@latex:\\\\colorbox{orange}{?}{\\\\color{orange}" scope "}@@")))) 
 				(beginning-of-buffer)
 				(while (re-search-forward "^\\([[:blank:]]*\\)\\([0-9]+\)\\|-\\)[[:blank:]]+\\(A:\\|E:\\|I:\\|\\[ \\]\\)?[[:blank:]]*\\(.*?\\)[[:blank:]]+\\(::\\|||\\)" nil t)
 					(replace-match
@@ -2382,6 +2390,23 @@ Faces:
  `((,(tl/org-minutes-make-regexp "E:")
 		(3 '(org-minutes-decision-face))
 	 )))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defface org-minutes-question-face
+	'((t (
+				:box t
+						 :foreground "orange"
+						 :weight bold)))
+	"Face for the type of minutes items.")
+
+(font-lock-add-keywords 
+ 'org-mode
+ `((,tl/org-minutes-question-regexp
+		(1 '(org-minutes-question-face))
+		(3 '(org-minutes-question-face))
+		(4 '(org-minutes-question-face))
+		)))
 #+END_SRC
 
 *** Modules
