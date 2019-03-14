@@ -2249,7 +2249,11 @@ Only unfold current heading and its content:
 			(show-children))))
 #+END_SRC
 
-*** Minutes
+*** TODO Minutes
+
+- [ ] add special fields (=#+Minutes_Title=, ...)
+- [ ] activate faces only in headings with minutes?
+- [ ] regression in PDF bookmarks
 
 Function to export minutes (work in progress):
 
