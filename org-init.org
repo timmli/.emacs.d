@@ -2345,7 +2345,7 @@ Taken from: https://emacs.stackexchange.com/a/38367/12336
 			)))
 #+END_SRC
 
-Faces:
+Face for information items:
 
 #+BEGIN_SRC emacs-lisp
 (defface org-minutes-information-face
@@ -2362,6 +2362,8 @@ Faces:
 		)))
 #+END_SRC
 
+Face for agenda items:
+
 #+BEGIN_SRC emacs-lisp
 (defface org-minutes-agenda-face
 	'((t (
@@ -2376,6 +2378,8 @@ Faces:
 		(3 '(org-minutes-agenda-face))
 	 )))
 #+END_SRC
+
+Face for decision items:
 
 #+BEGIN_SRC emacs-lisp
 (defface org-minutes-decision-face
@@ -2392,6 +2396,8 @@ Faces:
 	 )))
 #+END_SRC
 
+Face for question items:
+
 #+BEGIN_SRC emacs-lisp
 (defface org-minutes-question-face
 	'((t (
@@ -2403,9 +2409,9 @@ Faces:
 (font-lock-add-keywords 
  'org-mode
  `((,tl/org-minutes-question-regexp
-		(1 '(org-minutes-question-face))
+		(1 '(font-lock-comment-face))
 		(3 '(org-minutes-question-face))
-		(4 '(org-minutes-question-face))
+		(4 '(font-lock-comment-face))
 		)))
 #+END_SRC
 
