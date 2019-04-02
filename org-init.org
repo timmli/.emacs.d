@@ -7913,8 +7913,8 @@ Don't ask for the path when searching for files:
      _a_ attachment...            _l_ preview LaTeX        _C_ columns...         _C-n_ next heading
      _A_ archive...               _$_ preview LaTeX        _/_ filter             _C-p_ previous heading
      _b_ open in new buffer       _m_ markup...        _<tab>_ tidily unfold  _C-c C-u_ embedding heading
-     _c_ clocking...              _r_ org-ref
-     _i_ add ID                   _._ timestamp
+     _c_ clocking...              _r_ org-ref              ^^                     _C-N_ next heading same level
+     _i_ add ID                   _._ timestamp            ^^                     _C-P_ previeous heading same level
      _n_ add note                 _*_ cycle list type
      _p_ add property             _#_ table...
      _P_ add property-value pair  _v_ toggle images
@@ -7951,6 +7951,10 @@ Don't ask for the path when searching for files:
 	("^" org-sort)
 	("C-n" org-next-visible-heading :color pink)
 	("C-p" org-previous-visible-heading :color pink)
+	("C-N" org-forward-heading-same-level :color pink)
+	("C-P" org-backward-heading-same-level :color pink)
+	("C-f" org-forward-heading-same-level :color pink)
+	("C-b" org-backward-heading-same-level :color pink)
 	("C-c C-u" outline-up-heading :color pink)
 	("q" nil :color blue)
 	)
