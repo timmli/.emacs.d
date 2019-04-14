@@ -7912,10 +7912,10 @@ Don't ask for the path when searching for files:
 	╭──^^───────────────────────────^^───────────────────────^^─────────────────────^^──────────────┴──────────╯ 
      _a_ attachment...            _l_ preview LaTeX        _C_ columns...         _C-n_ next heading
      _A_ archive...               _$_ preview LaTeX        _/_ filter             _C-p_ previous heading
-     _b_ open in new buffer       _m_ markup...        _<tab>_ tidily unfold  _C-c C-u_ embedding heading
-     _c_ clocking...              _r_ org-ref              ^^                     _C-N_ next heading same level
+     _b_ open in new buffer       _m_ markup...      _d <tab>_ tidily unfold  _C-c C-u_ embedding heading
+     _c_ clocking...              _r_ org-ref   _<left> <tab>_ hide sublevels     _C-N_ next heading same level
      _i_ add ID                   _._ timestamp            ^^                     _C-P_ previous heading same level
-     _n_ add note                 _*_ cycle list type
+     _n_ add note                 _*_ cycle list type      ^^                       _o_ open link/timestamp/...
      _p_ add property             _#_ table...
      _P_ add property-value pair  _v_ toggle images
    _s_/\^ sort                     \\ toggle overlays
@@ -7933,13 +7933,15 @@ Don't ask for the path when searching for files:
 	("$" org-latex-fragment-toggle-toggle)
 	("m" hydra-org-markup/body)
 	("n" org-add-note)
+	("o" org-open-at-point)
 	("p" org-set-property)
 	("P" org-set-property-and-value)
 	("r" org-ref)
 	("s" org-sort)
 	("/" org-sparse-tree)
 	("." tl/org-timestamp-dwim)
-	("<tab>" org-show-current-heading-tidily)
+	("d <tab>" org-show-current-heading-tidily)
+	("<left> <tab>" hide-sublevels)
 	("t" org-todo)
 	(":" org-set-tags-command)
 	("+" org-priority-up :color pink)
