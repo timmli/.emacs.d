@@ -2311,7 +2311,7 @@ Taken from: https://emacs.stackexchange.com/a/38367/12336
 					 (let ((scope (match-string 3)))
 						 (concat "@@latex:\\\\colorbox{orange}{?}{\\\\color{orange}" scope "}@@")))) 
 				(beginning-of-buffer)
-				(while (re-search-forward "^\\([[:blank:]]*\\)\\([0-9]+\)\\|-\\)[[:blank:]]+\\(A:\\|E:\\|I:\\|\\[ \\]\\)?[[:blank:]]*\\(.*?\\)[[:blank:]]+\\(::\\|||\\)" nil t)
+				(while (re-search-forward "^\\([[:blank:]]*\\)\\([0-9]+\)\\|-\\)[[:blank:]]+\\(A:\\|C:\\|E:\\|D:\\|I:\\|\\[ \\]\\)?[[:blank:]]*\\(.*?\\)[[:blank:]]+\\(::\\|||\\)" nil t)
 					(replace-match
 					 (let ((indentation (match-string 1))
 								 (mark (match-string 2))
@@ -2326,8 +2326,12 @@ Taken from: https://emacs.stackexchange.com/a/38367/12336
 							 (concat indentation mark ; with identation
 											 (cond ((or (string= cat "A:") (string= cat "[ ]"))
 															(concat " @@latex:\\\\colorbox{red}{A}@@"))
+														 ((string= cat "C:")
+															(concat " @@latex:\\\\colorbox{green!20!black}{C}@@"))
 														 ((string= cat "E:")
 															(concat " @@latex:\\\\colorbox{green}{E}@@"))
+														 ((string= cat "D:")
+															(concat " @@latex:\\\\colorbox{green}{D}@@"))
 														 ((string= cat "I:")
 															(concat " @@latex:\\\\colorbox{blue!20}{I}@@"))
 														 )
@@ -2335,8 +2339,14 @@ Taken from: https://emacs.stackexchange.com/a/38367/12336
 											 (cond ((or (string= cat "A:") (string= cat "[ ]"))
 															(concat " @@latex:\\\\marginpar{\\\\colorbox{red}{A}@@ "
 																			name "@@latex:}@@"))
+														 ((string= cat "C:")
+															(concat " @@latex:\\\\marginpar{\\\\colorbox{green!20!black}{C}@@ "
+																			name "@@latex:}@@"))
 														 ((string= cat "E:")
 															(concat " @@latex:\\\\marginpar{\\\\colorbox{green}{E}@@ "
+																			name "@@latex:}@@"))
+														 ((string= cat "D:")
+															(concat " @@latex:\\\\marginpar{\\\\colorbox{green}{D}@@ "
 																			name "@@latex:}@@"))
 														 ((string= cat "I:")
 															(concat " @@latex:\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
@@ -2381,6 +2391,23 @@ Face for agenda items:
  `((,(tl/org-minutes-make-regexp "A:\\|\\[ \\]")
 		(3 '(org-minutes-agenda-face))
 	 )))
+#+END_SRC
+
+Face for cleared agenda items:
+
+#+BEGIN_SRC emacs-lisp
+(defface org-minutes-cleared-agenda-face
+	'((t (
+				:inherit org-checkbox-done-text
+								 :box t
+								 :weight bold)))
+	"Face for the type of minutes items.")
+
+(font-lock-add-keywords 
+ 'org-mode
+ `((,(tl/org-minutes-make-regexp "C:")
+		(3 '(org-minutes-cleared-agenda-face))
+		)))
 #+END_SRC
 
 Face for decision items:
