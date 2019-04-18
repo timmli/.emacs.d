@@ -8148,6 +8148,7 @@ _r_ recalculate      _w_ wrap region    _c_ toggle coordinates
 _i_ iterate table    _t_ transpose      _D_ toggle debugger
 _B_ iterate buffer   _E_ export table   _?_ field info
 _e_ eval formula     _s_ sort lines     _d_ edit field
+^^                   ^^           _<space>_ empty cell
 _q_ quit
 "
   ("E" org-table-export :color blue)
@@ -8161,6 +8162,7 @@ _q_ quit
   ("D" org-table-toggle-formula-debugger)
   ("t" org-table-transpose-table-at-point)
   ("?" org-table-field-info)
+  ("<SPC>" org-table-blank-field)
   ;; ("n" dfeich/org-table-remove-num-sep :color blue) ; _n_ remove number separators
   ("c" org-table-toggle-coordinate-overlays :color blue)
   ("q" nil :color blue))
