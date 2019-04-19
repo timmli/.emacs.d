@@ -8173,6 +8173,7 @@ _q_ quit
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-markup (:hint nil)
 	"Org-mode markup"
+	("a" tl/insert-org-link-alert "alert" :exit t)
 	("b" (org-emphasize ?*) "bold" :exit t)
 	("c" tl/insert-org-link-color "color" :exit t)
 	("e" tl/insert-org-link-emph "emphasized" :exit t)
@@ -8199,6 +8200,10 @@ _q_ quit
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
+(defun tl/insert-org-link-alert ()
+	(interactive)
+	(tl/insert-org-link "alert:"))
+
 (defun tl/insert-org-link-term ()
 	(interactive)
 	(tl/insert-org-link "term:"))
