@@ -7934,20 +7934,20 @@ Don't ask for the path when searching for files:
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-main (:hint nil :color blue)
 	"
-     ^^                           ^^                       ^^                    ^^               ╭──────────┐   
-     ^Heading^                    ^Text^                   ^Filter^               ^Navigation^    │ org-mode │
-	╭──^^───────────────────────────^^───────────────────────^^─────────────────────^^──────────────┴──────────╯ 
-     _a_ attachment...            _l_ preview LaTeX        _C_ columns...         _C-n_ next heading
-     _A_ archive...               _$_ preview LaTeX        _/_ filter             _C-p_ previous heading
-     _b_ open in new buffer       _m_ markup...      _d <tab>_ tidily unfold  _C-c C-u_ embedding heading
-     _c_ clocking...              _r_ org-ref   _<left> <tab>_ hide sublevels     _C-N_ next heading same level
-     _i_ add ID                   _._ timestamp            ^^                     _C-P_ previous heading same level
-     _n_ add note                 _*_ cycle list type      ^^                       _o_ open link/timestamp/...
-     _p_ add property             _#_ table...
+     ^^                           ^^                          ^^                       ^^               ╭──────────┐   
+     ^Heading^                    ^Text^                      ^Filter^                  ^Navigation^    │ org-mode │
+	╭──^^───────────────────────────^^──────────────────────────^^────────────────────────^^──────────────┴──────────╯ 
+     _a_ attachment...            _l_ preview LaTeX           _C_ columns...       _<down>_ next visible heading
+     _A_ archive...               _$_ preview LaTeX           _/_ filter             _<up>_ previous visible heading
+     _b_ open in new buffer       _m_ markup...           _<tab>_ tidily unfold   _C-c C-u_ embedding heading
+     _c_ clocking...              _r_ org-ref            _<left>_ hide subtree   _C-<down>_ next heading same level
+     _i_ add ID                   _._ timestamp         _<right>_ show subtree     _C-<up>_ previous heading same level
+     _n_ add note                 _*_ cycle list type  _C-<left>_ hide sublevels        _o_ open link/timestamp/...
+     _p_ add property             _#_ table...        _C-<right>_ show sublevels        _j_ jump to heading
      _P_ add property-value pair  _v_ toggle images
-   _s_/\^ sort                     \\ toggle overlays
+   _s_/\^ sort                     \\ toggle overlays  
      _t_ set todo keyword
-     _:_ set tags                 ^^                       ^^                      ^^      _q_ quit
+     _:_ set tags                 ^^                         ^^                      ^^      _q_ quit
    _+_/_-_ priority up/down
 "
 	("a" org-attach)
@@ -7956,6 +7956,7 @@ Don't ask for the path when searching for files:
 	("C" hydra-org-columns/body)
 	("c" hydra-org-clock/body)
 	("i" org-id-get-createq)
+	("j" org-goto :color pink)
 	("l" org-toggle-latex-fragment)
 	("$" org-latex-fragment-toggle-toggle)
 	("m" hydra-org-markup/body)
@@ -7967,8 +7968,11 @@ Don't ask for the path when searching for files:
 	("s" org-sort)
 	("/" org-sparse-tree)
 	("." tl/org-timestamp-dwim)
-	("d <tab>" org-show-current-heading-tidily)
-	("<left> <tab>" hide-sublevels)
+	("<tab>" org-show-current-heading-tidily)
+	("<left>" tl/org-hide-subtree-or-up-dwim :color pink)
+	("C-<left>" outline-hide-sublevels :color pink)
+	("C-<right>" tl/org-show-sublevels :color pink)
+	("<right>" org-cycle :color pink)
 	("t" org-todo)
 	(":" org-set-tags-command)
 	("+" org-priority-up :color pink)
@@ -7979,9 +7983,13 @@ Don't ask for the path when searching for files:
 	("\\" tl/org-toggle-overlays)
 	("^" org-sort)
 	("C-n" org-next-visible-heading :color pink)
+	("<down>" org-next-visible-heading :color pink)
 	("C-p" org-previous-visible-heading :color pink)
+	("<up>" org-previous-visible-heading :color pink)
 	("C-N" org-forward-heading-same-level :color pink)
 	("C-P" org-backward-heading-same-level :color pink)
+	("C-<down>" org-forward-heading-same-level :color pink)
+	("C-<up>" org-backward-heading-same-level :color pink)
 	("C-f" org-forward-heading-same-level :color pink)
 	("C-b" org-backward-heading-same-level :color pink)
 	("C-c C-u" outline-up-heading :color pink)
@@ -7998,6 +8006,33 @@ Don't ask for the path when searching for files:
 	(if org-hide-emphasis-markers
 			(setq org-hide-emphasis-markers nil)
 		(setq org-hide-emphasis-markers t)))
+#+END_SRC
+
+Taken from https://emacs.stackexchange.com/a/26840/12336 and modified:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-folded-p ()
+	"Returns non-nil if point is on a folded headline or plain item."
+	(and (or (org-at-heading-p)
+					 (org-at-item-p))
+			 (invisible-p (point-at-eol))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-hide-subtree-or-up-dwim ()
+	(interactive)
+	(if (tl/org-folded-p)
+			(outline-up-heading 1)
+		(outline-hide-subtree))
+	)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-show-sublevels ()
+	(interactive)
+	(outline-hide-sublevels (+ (org-current-level) 1))
+	(recenter-top-bottom)
+	)
 #+END_SRC
 
 *** hydra-org-archive
