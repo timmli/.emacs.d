@@ -3507,6 +3507,26 @@ Functions to move around single cells:
 (require 'org-table-move-single-cell)
 #+END_SRC
 
+A function  for copying the content of a cell:
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-table-copy-cell-content ()
+	(interactive)
+	(require 's)
+	(if (org-table-p)
+			(let ((cell-content (s-trim (substring-no-properties (org-table-get-field))))) 
+				(kill-new cell-content)
+				(message "Copied cell content to kill ring."))
+		(message "Not inside org-mode table.")))
+#+END_SRC
+
+A function for killing the content of a cell:
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-table-kill-cell-content ()
+	(interactive)
+	(tl/org-table-copy-cell-content)
+	(org-table-blank-field))
+#+END_SRC
+
 *** Timestamps/Dates
 
 #+BEGIN_SRC emacs-lisp
@@ -8190,7 +8210,8 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
  _<return>_ wrap region    _E_ export table          _D_ toggle debugger     _<left>_ left cell
     _<SPC>_ empty cell     _c_ toggle coordinates    _i_ iterate table      _<right>_ right cell
         _m_ move cell      ^^                        _B_ iterate buffer
-          
+      _M-w_ copy cell  
+      _C-w_ kill cell
      ^^                 ^^                          ^^          _q_ quit
 "
   ("E" org-table-export :color blue)
@@ -8204,6 +8225,8 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
   ("D" org-table-toggle-formula-debugger)
   ("t" org-table-transpose-table-at-point)
   ("?" org-table-field-info)
+	("M-w" tl/org-table-copy-cell-content)
+	("C-w" tl/org-table-kill-cell-content)
   ("<return>" org-table-wrap-region)
   ("<SPC>" org-table-blank-field)
 	("<up>" previous-line)
