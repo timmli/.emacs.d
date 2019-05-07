@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: beamer ignoreheading
+# key: bi_
+# --
+***                                                       :B_ignoreheading:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:END:
+
+$0
