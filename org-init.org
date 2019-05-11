@@ -2259,18 +2259,17 @@ Function to export minutes (work in progress):
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/org-drawer-delete (name)
-  "Delete logbook drawer of subtree.
-Taken from: https://emacs.stackexchange.com/a/38367/12336
+  "Delete all drawers in buffer with title NAME.
+Inspired by: https://emacs.stackexchange.com/a/38367/12336
 "
   (interactive)
   (save-excursion
-    (goto-char (org-log-beginning))
-    (when (save-excursion
-            (save-match-data
-              (beginning-of-line 0)
-              (search-forward-regexp org-drawer-regexp)
-              (goto-char (match-beginning 1))
-              (looking-at name)))
+		(beginning-of-buffer)
+    (while 
+				(save-match-data
+					(if (search-forward-regexp org-drawer-regexp nil t) ; do not emit an error when there is no match
+							(goto-char (match-beginning 1)))
+					(looking-at name))
 			(org-mark-element)
 			(delete-region (region-beginning) (region-end))
 			(org-remove-empty-drawer-at (point)))))
