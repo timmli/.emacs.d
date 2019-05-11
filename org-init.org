@@ -2039,7 +2039,7 @@ Replace HTML/LaTeX code by UTF-8 characters (see org-pretty-entities for an enum
 Do not edit in invisible areas of the buffer:
 
 #+BEGIN_SRC emacs-lisp
-(setq-default org-catch-invisible-edits 'show)
+(setq-default org-catch-invisible-edits 'show-and-error)
 #+END_SRC
 
 **** TODO Inline code 
