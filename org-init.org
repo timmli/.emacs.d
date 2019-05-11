@@ -2304,11 +2304,13 @@ Inspired by: https://emacs.stackexchange.com/a/38367/12336
 				(org-back-to-heading)
 				(org-show-subtree)
 				(kill-line)
+				;; open questions
 				(beginning-of-buffer)
 				(while (re-search-forward tl/org-minutes-question-regexp nil t)
 					(replace-match
 					 (let ((scope (match-string 3)))
-						 (concat "@@latex:\\\\colorbox{orange}{?}{\\\\color{orange}" scope "}@@")))) 
+						 (concat "@@latex:\\\\colorbox{orange}{?}{\\\\color{orange}" scope "}@@"))))
+				;; tagged items
 				(beginning-of-buffer)
 				(while (re-search-forward "^\\([[:blank:]]*\\)\\([0-9]+\)\\|-\\)[[:blank:]]+\\(A:\\|C:\\|E:\\|D:\\|I:\\|\\[ \\]\\)?[[:blank:]]*\\(.*?\\)[[:blank:]]+\\(::\\|||\\)" nil t)
 					(replace-match
@@ -2351,6 +2353,10 @@ Inspired by: https://emacs.stackexchange.com/a/38367/12336
 															(concat " @@latex:\\\\marginpar{\\\\colorbox{blue!20}{I}@@ "
 																			name "@@latex:}@@")))))) 
 					 t ))	; fixed case
+				;; untagged topics
+				(beginning-of-buffer)
+				(while (re-search-forward "^[0-9]+\) " nil t)
+					(replace-match "* "))
 				(deactivate-mark)
 				(org-export-dispatch)
 				(switch-to-buffer buffer)
