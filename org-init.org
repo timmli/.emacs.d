@@ -142,6 +142,7 @@
       - [[#hydra-position-register][hydra-position-register]]
       - [[#hydra-load-theme][hydra-load-theme]]
       - [[#hydra-search][hydra-search]]
+      - [[#hydra-smerge][hydra-smerge]]
       - [[#hydra-tags][hydra-tags]]
       - [[#hydra-transpose][hydra-transpose]]
       - [[#hydra-org-table-move-cell][hydra-org-table-move-cell]]
