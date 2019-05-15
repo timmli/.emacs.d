@@ -7,7 +7,7 @@
 :BEAMER_env: block
 :END:
 $0
-***                                                       :B_ignoreheading:
+*** END OF BLOCK                                          :B_ignoreheading:
 :PROPERTIES:
 :BEAMER_env: ignoreheading
 :END:

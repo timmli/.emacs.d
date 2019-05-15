@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: beamer note
+# key: bn_
+# --
+*** Notes                                       :B_note:
+:PROPERTIES:
+:BEAMER_env: note
+:END:
+$0

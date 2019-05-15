@@ -2,7 +2,7 @@
 # name: beamer ignoreheading
 # key: bi_
 # --
-***                                                       :B_ignoreheading:
+*** END OF BLOCK                                             :B_ignoreheading:
 :PROPERTIES:
 :BEAMER_env: ignoreheading
 :END:
