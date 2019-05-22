@@ -1,14 +1,10 @@
 # -*- mode: snippet -*-
-# name: beamer columns
+# name: beamer column
 # key: bc_
 # --
 ***                                     :BMCOL:
 :PROPERTIES:
-:BEAMER_col: 0.4
-:BEAMER_opt: c
+:BEAMER_col: ${1:0.4}
+:BEAMER_opt: ${2:c}
 :END:
 $0
-***                                                       :B_ignoreheading:
-:PROPERTIES:
-:BEAMER_env: ignoreheading
-:END:

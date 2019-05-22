@@ -3,7 +3,10 @@
 # key: ex_
 # --
 #+BEGIN_EXPORT latex
-{\ex. $0
- 
+{\ex.$1
+#+END_EXPORT
+$0
+#+BEGIN_EXPORT latex
+
 }\noindent
 #+END_EXPORT
