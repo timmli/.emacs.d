@@ -8205,7 +8205,7 @@ Hydra for clocking activities in org-mode (taken from https://github.com/abo-abo
 Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and modified:
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-org-table (:color pink :hint nil)
+(defhydra hydra-org-table (:color red :hint nil)
   "
         ^^                  ^^                          ^^                       ^^             ╭───────────┐   
          ^Cell^             ^Table^                  ^Formula^                 ^Navigation^     │ org-table │
@@ -8218,21 +8218,24 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
         _m_ move cell      ^^                        _B_ iterate buffer
       _M-w_ copy cell  
       _C-w_ kill cell
-     ^^                 ^^                          ^^          _q_ quit
+      _C-y_ yank & align   ^^                          ^^          _q_ quit
 "
   ("E" org-table-export :color blue)
   ("s" org-table-sort-lines)
-  ("'" org-table-edit-field)
+  ("'" org-table-edit-field nil :color blue)
   ("e" org-table-eval-formula)
   ("r" org-table-recalculate)
   ("i" org-table-iterate)
-	("m" hydra-org-table-move-cell/body)
+	("m" hydra-org-table-move-cell/body :color blue)
   ("B" org-table-iterate-buffer-tables)
   ("D" org-table-toggle-formula-debugger)
   ("t" org-table-transpose-table-at-point)
   ("?" org-table-field-info)
 	("M-w" tl/org-table-copy-cell-content)
 	("C-w" tl/org-table-kill-cell-content)
+	("C-y" (progn 
+					 (org-yank)
+					 (org-table-align)))
   ("<return>" org-table-wrap-region)
   ("<SPC>" org-table-blank-field)
 	("<up>" previous-line)
@@ -8242,6 +8245,26 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
   ;; ("n" dfeich/org-table-remove-num-sep :color blue) ; _n_ remove number separators
   ("c" org-table-toggle-coordinate-overlays :color blue)
   ("q" nil :color blue))
+#+END_SRC
+
+*** hydra-org-table-move-cell
+
+Uses [[*Tables][org-table-move-single-cell]]:
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-org-table-move-cell (:hint nil
+																					 :idle 0.5)
+	"
+   Move org-table cell
+ ╭─────────────────────╯
+    _<up>_: move up       _<left>_: move left    
+  _<down>_: move down    _<right>_: move left     _q_uit
+	"
+	("<up>" org-table-move-single-cell-up)
+	("<down>" org-table-move-single-cell-down)
+	("<right>" org-table-move-single-cell-right)
+	("<left>" org-table-move-single-cell-left)
+	("q" hydra-org-table/body :color blue))
 #+END_SRC
 
 *** hydra-org-markup
@@ -9182,26 +9205,6 @@ Taken from https://github.com/abo-abo/hydra/wiki/Emacs
 	("C-t" nil nil :color blue)
 	("q" nil "cancel" :color blue))
 (global-set-key (kbd "C-t") 'hydra-transpose/body)
-#+END_SRC
-
-** hydra-org-table-move-cell
-
-Uses [[*Tables][org-table-move-single-cell]]:
-
-#+BEGIN_SRC emacs-lisp
-(defhydra hydra-org-table-move-cell (:hint nil
-																					 :idle 0.5)
-	"
-   Move org-table cell
- ╭─────────────────────╯
-    _<up>_: move up       _<left>_: move left    
-  _<down>_: move down    _<right>_: move left     _q_uit
-	"
-	("<up>" org-table-move-single-cell-up)
-	("<down>" org-table-move-single-cell-down)
-	("<right>" org-table-move-single-cell-right)
-	("<left>" org-table-move-single-cell-left)
-	("q" nil :color blue))
 #+END_SRC
 
 ** TODO hydra-macro
