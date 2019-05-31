@@ -8207,18 +8207,18 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-table (:color red :hint nil)
   "
-        ^^                  ^^                          ^^                       ^^             ╭───────────┐   
-         ^Cell^             ^Table^                  ^Formula^                 ^Navigation^     │ org-table │
-	╭──────^^─────────────────^^────────────────────────^^────────────────────────^^──────────────┴───────────╯ 
+         ^^                   ^^                            ^^                       ^^             ╭───────────┐   
+         ^Cell^               ^Table^                    ^Formula^                 ^Navigation^     │ org-table │
+	╭──────^^───────────────────^^──────────────────────────^^────────────────────────^^──────────────┴───────────╯ 
 
-        _'_ edit cell      _s_ sort lines            _e_ eval formula          _<up>_ above cell
-        _?_ cell info      _t_ transpose             _r_ recalculate         _<down>_ below cell
- _<return>_ wrap region    _E_ export table          _D_ toggle debugger     _<left>_ left cell
-    _<SPC>_ empty cell     _c_ toggle coordinates    _i_ iterate table      _<right>_ right cell
-        _m_ move cell      ^^                        _B_ iterate buffer
-      _M-w_ copy cell  
-      _C-w_ kill cell
-      _C-y_ yank & align   ^^                          ^^          _q_ quit
+        _'_ edit cell        _s_ sort lines              _e_ eval formula          _<up>_ above cell
+        _?_ cell info        _t_ transpose               _r_ recalculate         _<down>_ below cell
+ _<return>_ wrap region      _E_ export table            _D_ toggle debugger     _<left>_ left cell
+    _<SPC>_ empty cell       _c_ toggle coordinates      _i_ iterate table      _<right>_ right cell
+        _m_ move cell    _<tab>_ collapse/expand column  _B_ iterate buffer
+      _M-w_ copy cell        _<_ collapse all columns
+      _C-w_ kill cell        _>_ expand all columns
+      _C-y_ yank & align   ^^                            ^^          _q_ quit
 "
   ("E" org-table-export :color blue)
   ("s" org-table-sort-lines)
@@ -8238,6 +8238,9 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
 					 (org-table-align)))
   ("<return>" org-table-wrap-region)
   ("<SPC>" org-table-blank-field)
+	("<tab>" org-table-toggle-column-width)
+	("<" (org-table-toggle-column-width '(4)))
+	(">" (org-table-toggle-column-width '(16)))
 	("<up>" previous-line)
 	("<down>" org-table-next-row)
 	("<left>" org-table-previous-field)
