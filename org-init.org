@@ -8216,7 +8216,7 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
         _?_ cell info        _t_ transpose               _r_ recalculate         _<down>_ below cell
  _<return>_ wrap region      _E_ export table            _D_ toggle debugger     _<left>_ left cell
     _<SPC>_ empty cell       _c_ toggle coordinates      _i_ iterate table      _<right>_ right cell
-        _m_ move cell    _<tab>_ collapse/expand column  _B_ iterate buffer
+        _m_ move cell...     _-_ collapse/expand column  _B_ iterate buffer
       _M-w_ copy cell        _<_ collapse all columns
       _C-w_ kill cell        _>_ expand all columns
       _C-y_ yank & align   ^^                            ^^          _q_ quit
@@ -8239,7 +8239,9 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
 					 (org-table-align)))
   ("<return>" org-table-wrap-region)
   ("<SPC>" org-table-blank-field)
-	("<tab>" org-table-toggle-column-width)
+	("<tab>" org-cycle)
+	("S-<tab>" org-shifttab)
+	("-" org-table-toggle-column-width)
 	("<" (org-table-toggle-column-width '(4)))
 	(">" (org-table-toggle-column-width '(16)))
 	("<up>" previous-line)
