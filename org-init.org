@@ -5611,15 +5611,16 @@ Not sure whether I want to auto-indent whole files ...
 (use-package aggressive-indent
   :ensure t
   :config
-	(add-hook 'prog-mode-hook #'aggressive-indent-mode)
+	;; (add-hook 'prog-mode-hook #'aggressive-indent-mode) ; Bad: Will also be active in Makefiles
 	;; (dolist (hook '(emacs-lisp-mode-hook
 	;; 								css-mode-hook
 	;; 								clojure-mode))
 	;; 	(add-hook hook #'aggressive-indent-mode))
-  ;; (global-aggressive-indent-mode)
-  ;; (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
-  ;; (add-to-list 'aggressive-indent-excluded-modes 'sql-mode)
-  ;; (add-to-list 'aggressive-indent-excluded-modes 'web-mode)
+  (global-aggressive-indent-mode)
+  (add-to-list 'aggressive-indent-excluded-modes 'html-mode)
+  (add-to-list 'aggressive-indent-excluded-modes 'sql-mode)
+  (add-to-list 'aggressive-indent-excluded-modes 'web-mode)
+	(add-to-list 'aggressive-indent-excluded-modes 'makefile-mode)
 	)
 #+END_SRC
 
