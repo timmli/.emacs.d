@@ -2949,6 +2949,19 @@ Add the class [[https://github.com/langsci/latex][langscibook]] to the set of kn
 							 ))
 #+END_SRC
 
+Add the class [[http://jlm.ipipan.waw.pl/index.php/JLM/index][jlm]] to the set of known classes:
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-latex-classes
+						 '("jlm" 
+							 "\\documentclass{jlm}
+				    		[NO-DEFAULT-PACKAGES]" 
+							 ("\\section{%s}" . "\\section*{%s}") 
+							 ("\\subsection{%s}" . "\\subsection*{%s}") 
+							 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+							 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+							 ))
+#+END_SRC
+
 Use =#+NAME:= field as argument of =\label= during export:
 #+BEGIN_SRC emacs-lisp
 (setq org-latex-prefer-user-labels t)
