@@ -3361,6 +3361,23 @@ Use ID completion when generating ID links:
                          :complete 'org-id-complete-link)
 #+END_SRC
 
+Function to remove all ID properties from buffer:
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-id-remove-from-buffer ()
+	"Remove/delete all ID entries from current buffer and update the databases."
+	(interactive)
+	(save-excursion
+		(beginning-of-buffer)
+		(let ((id-removed-p nil))
+			(when (and
+						 (not (org-next-visible-heading 1))
+						 (org-at-heading-p))
+				(when (org-entry-delete (point) "ID")
+					(setq id-removed-p t)))
+			(when (symbol-value 'id-removed-p)
+				(org-id-update-id-locations)))))
+#+END_SRC
+
 *** Tags
 
 Tags can be set globally as default using the variable =org-tag-alist=. 
