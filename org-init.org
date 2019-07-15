@@ -131,6 +131,7 @@
       - [[#hydra-insert-date][hydra-insert-date]]
       - [[#hydra-insert-file-name][hydra-insert-file-name]]
       - [[#hydra-latex][hydra-latex]]
+      - [[#hydra-macro][hydra-macro]]
       - [[#hydra-markdown][hydra-markdown]]
       - [[#hydra-flycheck][hydra-flycheck]]
       - [[#hydra-flyspell][hydra-flyspell]]
@@ -145,8 +146,6 @@
       - [[#hydra-smerge][hydra-smerge]]
       - [[#hydra-tags][hydra-tags]]
       - [[#hydra-transpose][hydra-transpose]]
-      - [[#hydra-org-table-move-cell][hydra-org-table-move-cell]]
-      - [[#hydra-macro][hydra-macro]]
       - [[#hydra-end][hydra: end]]
 - [[#private-settings][Private settings]]
 
