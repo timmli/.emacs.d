@@ -3227,6 +3227,42 @@ http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
     (setq ad-return-value rlt)))
 #+END_SRC
 
+*** Structure editing
+
+=bjm/org-headline-to-top= is a function that moves the current heading to the top of a section; taken from http://pragmaticemacs.com/emacs/reorder-todo-items-in-your-org-mode-agenda/.
+
+#+BEGIN_SRC emacs-lisp
+(defun bjm/org-headline-to-top ()
+  "Move the current org headline to the top of its section"
+  (interactive)
+  ;; check if we are at the top level
+  (let ((lvl (org-current-level)))
+    (cond
+     ;; above all headlines so nothing to do
+     ((not lvl)
+      (message "No headline to move"))
+     ((= lvl 1)
+      ;; if at top level move current tree to go above first headline
+      (org-cut-subtree)
+      (beginning-of-buffer)
+      ;; test if point is now at the first headline and if not then
+      ;; move to the first headline
+      (unless (looking-at-p "*")
+        (org-next-visible-heading 1))
+      (org-paste-subtree))
+     ((> lvl 1)
+      ;; if not at top level then get position of headline level above
+      ;; current section and refile to that position. Inspired by
+      ;; https://gist.github.com/alphapapa/2cd1f1fc6accff01fec06946844ef5a5
+      (let* ((org-reverse-note-order t)
+             (pos (save-excursion
+                    (outline-up-heading 1)
+                    (point)))
+             (filename (buffer-file-name))
+             (rfloc (list nil filename nil pos)))
+        (org-refile nil nil rfloc))))))
+#+END_SRC
+
 *** Agenda
 
 **** Appearance
@@ -3774,7 +3810,6 @@ https://github.com/rudolfochrist/interleave
     ;; (setq calendar-holidays holiday-german-BW-holidays)
     )
 #+END_SRC
-
 
 *** TODO Calendar import
 :LOGBOOK:
@@ -8062,6 +8097,7 @@ Don't ask for the path when searching for files:
      _t_ set todo keyword        _dl_ delete link
      _:_ set tags                 ^^                         ^^                      ^^      _q_ quit
    _+_/_-_ priority up/down
+     _1_ move to top
 "
 	("a" org-attach)
 	("A" hydra-org-archive/body)
@@ -8091,6 +8127,7 @@ Don't ask for the path when searching for files:
 	(":" org-set-tags-command)
 	("+" org-priority-up :color pink)
 	("-" org-priority-down :color pink)
+	("1" bjm/org-headline-to-top :color pink)
 	("*" org-cycle-list-bullet :color pink)
 	("#" hydra-org-table/body)
 	("v" org-toggle-inline-images)
