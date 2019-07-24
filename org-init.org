@@ -6883,9 +6883,9 @@ Key bindings roughly following the conventions of the Windows habitat.
 						(define-key map (kbd "C-S-s") 'write-file)
 
 						;; search and replace
-						(define-key map (kbd "C-f") 'swiper-helm)
+						;; (define-key map (kbd "C-f") 'swiper-helm)
 						;; (define-key map (kbd "C-f") 'swiper)
-						;; (define-key map (kbd "C-f") 'helm-swoop)
+						(define-key map (kbd "C-f") 'helm-swoop)
 						;; (define-key map (kbd "C-f") 'isearch-search)
 						;; (define-key map (kbd "C-S-f a") 'helm-multi-swoop-all)
 						;; (define-key map (kbd "C-S-f m") 'helm-multi-swoop-current-mode)
