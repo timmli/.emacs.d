@@ -7672,8 +7672,10 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 		(hydra-markdown/body))
 	 ((string-equal (buffer-mode) "smerge-mode")
 		(unpackaged/smerge-hydra/body))
+	 ((string-equal (buffer-mode) "emacs-lisp-mode")
+		(hydra-elisp/body))
 	 ((or t) (message (concat "no hydra defined for major mode"))))
-)
+	)
 #+END_SRC
 
 Function to look up the major mode of a buffer:
@@ -7692,7 +7694,6 @@ For using a hydra within =helm=:
 #+END_SRC
 
 Deprecated:
-
 #+BEGIN_SRC 
 (defvar hydra-f6-menu
 	"
@@ -8074,6 +8075,20 @@ Don't ask for the path when searching for files:
   (interactive "sFind Name (file name wildcard): ")
   (dired-hide-details-mode)
   (find-name-dired "." pattern))
+#+END_SRC
+
+** hydra-elisp
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-elisp (:hint nil :color blue :columns 3)
+	"Elisp mode"
+	("df" edebug-defun "debug function" :color blue)
+	("da" edebug-all-defs "debug all" :color blue)
+	("C-M-x" eval-defun nil :color blue)
+	("ef" eval-defun "evaluate function" :color blue)
+	("eb" eval-buffer "evaluate buffer" :color blue)
+	("q" nil :color blue)
+	)
 #+END_SRC
 
 ** hydra-org
