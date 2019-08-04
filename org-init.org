@@ -8084,10 +8084,11 @@ Don't ask for the path when searching for files:
 	"Elisp mode"
 	("df" edebug-defun "debug function" :color blue)
 	("da" edebug-all-defs "debug all" :color blue)
+	("dd" checkdoc "debug documentation" :color blue)
 	("C-M-x" eval-defun nil :color blue)
 	("ef" eval-defun "evaluate function" :color blue)
 	("eb" eval-buffer "evaluate buffer" :color blue)
-	("q" nil :color blue)
+	("q" nil "quit" :color blue)
 	)
 #+END_SRC
 
