@@ -2278,7 +2278,7 @@ Inspired by: https://emacs.stackexchange.com/a/38367/12336
 	(concat
 	 "^\\([[:blank:]]*\\)\\([0-9]+\)\\|-\\)[[:blank:]]+\\(\\("
 	 cat
-	 "\\)[[:blank:]]*\\(.*?\\)[[:blank:]]+\\(::\\|||\\)\\)"))
+	 "\\)[[:blank:]]*\\(.*?\\)[[:blank:]]+\\(::\\|||\\)\\) "))
 
 (defvar tl/org-minutes-question-regexp
 	"\\(\\?\\(:\\||\\)\\)\\(.*?\\)\\(\\(:\\||\\)\\?\\)")
@@ -2367,7 +2367,7 @@ Inspired by: https://emacs.stackexchange.com/a/38367/12336
 Face for information items:
 
 #+BEGIN_SRC emacs-lisp
-(defface org-minutes-information-face
+(defface tl/org-minutes-information-face
 	'((t (
 				:box t
 						 :foreground "CornflowerBlue"
@@ -2377,14 +2377,14 @@ Face for information items:
 (font-lock-add-keywords 
  'org-mode
  `((,(tl/org-minutes-make-regexp "\\(I:\\)?")
-		(3 '(org-minutes-information-face))
+		(3 '(tl/org-minutes-information-face))
 		)))
 #+END_SRC
 
 Face for agenda items:
 
 #+BEGIN_SRC emacs-lisp
-(defface org-minutes-agenda-face
+(defface tl/org-minutes-agenda-face
 	'((t (
 				:box t
 						 :foreground "red"
@@ -2394,14 +2394,14 @@ Face for agenda items:
 (font-lock-add-keywords 
  'org-mode
  `((,(tl/org-minutes-make-regexp "A:\\|\\[ \\]")
-		(3 '(org-minutes-agenda-face))
+		(3 '(tl/org-minutes-agenda-face))
 	 )))
 #+END_SRC
 
 Face for cleared agenda items:
 
 #+BEGIN_SRC emacs-lisp
-(defface org-minutes-cleared-agenda-face
+(defface tl/org-minutes-cleared-agenda-face
 	'((t (
 				:inherit org-checkbox-done-text
 								 :box t
@@ -2411,14 +2411,14 @@ Face for cleared agenda items:
 (font-lock-add-keywords 
  'org-mode
  `((,(tl/org-minutes-make-regexp "C:")
-		(3 '(org-minutes-cleared-agenda-face))
+		(3 '(tl/org-minutes-cleared-agenda-face))
 		)))
 #+END_SRC
 
 Face for decision items:
 
 #+BEGIN_SRC emacs-lisp
-(defface org-minutes-decision-face
+(defface tl/org-minutes-decision-face
 	'((t (
 				:box t
 						 :foreground "LimeGreen"
@@ -2428,14 +2428,14 @@ Face for decision items:
 (font-lock-add-keywords 
  'org-mode
  `((,(tl/org-minutes-make-regexp "E:")
-		(3 '(org-minutes-decision-face))
+		(3 '(tl/org-minutes-decision-face))
 	 )))
 #+END_SRC
 
 Face for question items:
 
 #+BEGIN_SRC emacs-lisp
-(defface org-minutes-question-face
+(defface tl/org-minutes-question-face
 	'((t (
 				:box t
 						 :foreground "orange"
@@ -2446,7 +2446,7 @@ Face for question items:
  'org-mode
  `((,tl/org-minutes-question-regexp
 		(1 '(font-lock-comment-face))
-		(3 '(org-minutes-question-face))
+		(3 '(tl/org-minutes-question-face))
 		(4 '(font-lock-comment-face))
 		)))
 #+END_SRC
