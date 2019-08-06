@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
-# name: my-itemize				
-# key: item
+# name: itemize				
+# key: item_
 # --
 \begin{itemize}
 \item $0
