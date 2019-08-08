@@ -2251,6 +2251,16 @@ Only unfold current heading and its content:
 
 *** TODO Minutes
 
+**** org-minutes
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-minutes
+	:config
+	(org-minutes-minor-mode))
+#+END_SRC
+
+**** COMMENT Old stuff 
+
 - [ ] add special fields (=#+Minutes_Title=, ...)
 - [ ] activate faces only in headings with minutes?
 - [ ] regression in PDF bookmarks
