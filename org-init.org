@@ -7276,7 +7276,7 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
 
 ** COMMENT emms
 
--[ ] For some reason, =emms= does not correctly use =vlc= under Windows.
+- [ ] For some reason, =emms= does not correctly use =vlc= under Windows.
 
 #+BEGIN_SRC emacs-lisp
 (use-package emms
@@ -7976,7 +7976,12 @@ Global org-mode keys:
 (global-set-key (kbd "C-*") 'hydra-cm-mode/body)
 #+END_SRC
 
-** TODO hydra-clojure 
+** TODO COMMENT hydra-clojure 
+
+Gives raise to the following error: 
+#+BEGIN_QUOTE
+Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or directory, cider-grimoire
+#+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
 (use-package cider-hydra
