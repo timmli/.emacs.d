@@ -2,19 +2,19 @@
 # name: keyword
 # key: #+
 # --
-${1:$$(yas-choose-value
-	'("#+CATEGORY:"
-		"#+DATE:"
-		"#+EMAIL:"
-		"#+EXPORT_FILE_NAME:"
-		"#+FILETAGS:"
-		"#+LANGUAGE:"
-		"#+LATEX_HEADER:"
-		"#+OPTIONS:"
-		"#+PROPERTY:"
-		"#+SETUPFILE:"
-		"#+STARTUP:"
-		"#+TAGS:"
-		"#+TITLE:"
-		"#+TODO:"
+#+${1:$$(yas-choose-value
+	'("CATEGORY:"
+		"DATE:"
+		"EMAIL:"
+		"EXPORT_FILE_NAME:"
+		"FILETAGS:"
+		"LANGUAGE:"
+		"LATEX_HEADER:"
+		"OPTIONS:"
+		"PROPERTY:"
+		"SETUPFILE:"
+		"STARTUP:"
+		"TAGS:"
+		"TITLE:"
+		"TODO:"
 		))} $0
