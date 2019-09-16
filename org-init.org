@@ -8309,8 +8309,8 @@ Hydra for clocking activities in org-mode (taken from https://github.com/abo-abo
     _w_ week view      _C-d_ set deadline
    _vm_ month view     _C-s_ set schedule    _m_ mark
    _vy_ year view      _C-k_ kill            _u_ unmark               ^^           _r_efresh
-      ^^    _M-S-<up>_ earlier date          _B_ action on marked     ^^           _q_uit
-    ^^    _M-S-<down>_ later date        
+      ^^    _M-S-<up>_ earlier date          _B_ action on marked     ^^           _q_uit hydra
+    ^^    _M-S-<down>_ later date            ^^                       ^^           e_x_it agenda 
     _h_ show holidays
     _]_ show inactive timestamps
     _k_ capture with timestamp						  
@@ -8348,6 +8348,7 @@ Hydra for clocking activities in org-mode (taken from https://github.com/abo-abo
 	(">" org-agenda-date-prompt)
 	("<" org-agenda-filter-by-category)
 	("r" org-agenda-redo)
+	("x" org-agenda-exit :color blue)
 	("q" nil :color blue)
 	)
 #+END_SRC
