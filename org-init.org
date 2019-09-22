@@ -3789,17 +3789,6 @@ https://github.com/rudolfochrist/interleave
 	)
 #+END_SRC
 
-*** Commenting
-
-**** scimax-editmarks
-
-- Similar to [[*Critical markup][cm-mode]].
-- Commit: 5e1c03c
-
-#+BEGIN_SRC emacs-lisp
-(org-babel-load-file "lisp/scimax-editmarks.org")
-#+END_SRC
-
 ** Calendar/Diary
 
 *** General settings
@@ -6303,6 +6292,17 @@ Use deer instead plain directory listing:
 	:config
 	(setq-default cm-author user-acronym))
 #+end_src
+
+*** TODO COMMENT scimax-editmarks
+
+- Similar to [[*Critical markup][cm-mode]].
+- Commit: 5e1c03c
+- Issue: "Wrong type argument: keymapp, nil"
+
+#+BEGIN_SRC emacs-lisp
+;; (org-babel-load-file "lisp/scimax-editmarks.org")
+(require 'scimax-editmarks)
+#+END_SRC
 
 ** Line actions
 *** Delete line
