@@ -6297,11 +6297,15 @@ Use deer instead plain directory listing:
 
 - Similar to [[*Critical markup][cm-mode]].
 - Commit: 5e1c03c
-- Issue: "Wrong type argument: keymapp, nil"
+- Issue: Is not loaded with =(require 'scimax-editmarks)=: "Wrong type argument: keymapp, nil"
 
 #+BEGIN_SRC emacs-lisp
-;; (org-babel-load-file "lisp/scimax-editmarks.org")
-(require 'scimax-editmarks)
+;; (require 'scimax-editmarks)
+
+(defun my-sem-hydra-start ()
+	(interactive)
+	(require 'scimax-editmarks)
+	(sem-hydra))
 #+END_SRC
 
 ** Line actions
@@ -8145,8 +8149,8 @@ Don't ask for the path when searching for files:
 	("b" org-tree-to-indirect-buffer)
 	("C" hydra-org-columns/body)
 	("c" hydra-org-clock/body)
-	("E" sem-hydra)
-	("e" sem-hydra)
+	("E" my-sem-hydra-start)
+	("e" my-sem-hydra-start)
 	("i" org-id-get-createq)
 	("j" org-goto :color pink)
 	("l" org-toggle-latex-fragment)
@@ -8447,7 +8451,7 @@ Uses [[*Tables][org-table-move-single-cell]]:
 	("b" (org-emphasize ?*) "bold" :exit t)
 	("c" tl/insert-org-link-color "color" :exit t)
 	("e" tl/insert-org-link-emph "emphasized" :exit t)
-	("E" sem-hydra "editmarks" :exit t)
+	("E" my-sem-hydra-start "editmarks" :exit t)
 	("i" (org-emphasize ?/) "italic" :exit t)
 	("m" tl/insert-org-link-mono "monospaced" :exit t)
 	("s" tl/insert-org-link-smallcaps "small caps" :exit t)
