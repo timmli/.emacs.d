@@ -6310,7 +6310,7 @@ Use deer instead plain directory listing:
 	(setq-default cm-author user-acronym))
 #+end_src
 
-*** TODO COMMENT scimax-editmarks
+*** TODO scimax-editmarks
 
 - Similar to [[*Critical markup][cm-mode]].
 - Commit: 5e1c03c
