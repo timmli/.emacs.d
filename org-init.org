@@ -1649,7 +1649,7 @@ Preserves the first heading of the org-mode file (found in http://orgmode.org/wo
     ad-do-it))
 #+END_SRC
 
-*** babel
+*** org-babel
 
 Preserve indentation in source blocks:
 #+BEGIN_SRC emacs-lisp
@@ -1679,6 +1679,23 @@ See https://www.mail-archive.com/emacs-orgmode@gnu.org/msg30416.html
 	(setq org-babel-default-header-args:gnuplot
 				'((:results . "file")
 					(:exports . "results"))))
+#+END_SRC
+
+**** TODO COMMENT ob-ipython
+:LOGBOOK:
+- State "TODO"       from              [2019-10-02 Wed 16:18]
+:END:
+
+- Sometimes gives rise to =(json-readtable-error)= when using [[id:115490f8-a6d6-4d46-b812-7a7bd30d917c][org-minutes]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package ob-ipython 
+	:ensure t
+	:after (org ob)
+	:config
+	(org-babel-do-load-languages
+	 'org-babel-load-languages
+	 '((ipython . t))))
 #+END_SRC
 
 *** Download
