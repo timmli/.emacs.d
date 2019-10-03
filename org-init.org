@@ -2936,7 +2936,7 @@ Extra function to delete auxiliary files:
 (defun delete-org-latex-aux-files ()
 	"This function deletes auxiliary files that are not deleted by `latexmk` or `TeX-clean`."
 	(interactive)
-	(shell-command "rm -rfv *.fls *.prv preview.fmt .aux .fdb_latexmk"))
+	(shell-command "rm -rfv *.fls *.prv preview.fmt .aux .fdb_latexmk frag-master.tex"))
 #+END_SRC
 
 Add some classes to the set of known classes:
