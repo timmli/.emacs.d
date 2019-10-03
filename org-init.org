@@ -2931,6 +2931,14 @@ Use LaTeXmk:
 ;; https://github.com/fniessen/refcard-org-beamer/commit/9f75e013127940e793e0a925fc4ee222bae0e45c
 #+END_SRC
 
+Extra function to delete auxiliary files:
+#+BEGIN_SRC emacs-lisp
+(defun delete-org-latex-aux-files ()
+	"This function deletes auxiliary files that are not deleted by `latexmk` or `TeX-clean`."
+	(interactive)
+	(shell-command "rm -rfv *.fls *.prv preview.fmt .aux .fdb_latexmk"))
+#+END_SRC
+
 Add some classes to the set of known classes:
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-latex-classes
@@ -8157,8 +8165,8 @@ Don't ask for the path when searching for files:
      _P_ add property-value pair  _v_ toggle images
    _s_/\^ sort                     \\ toggle overlays  
      _t_ set todo keyword        _dl_ delete link
-     _:_ set tags                 _e_ editmarks...      ^^                      ^^      _q_ quit
-   _+_/_-_ priority up/down
+     _:_ set tags                _dt_ delete aux files  ^^                      ^^      _q_ quit
+   _+_/_-_ priority up/down       _e_ editmarks...
      _1_ move to top
 "
 	("a" org-attach)
@@ -8172,6 +8180,7 @@ Don't ask for the path when searching for files:
 	("j" org-goto :color pink)
 	("l" org-toggle-latex-fragment)
 	("dl" afs/org-replace-link-by-link-description)
+	("dt" delete-org-latex-aux-files)
 	("$" org-latex-fragment-toggle-toggle)
 	("m" hydra-org-markup/body)
 	("n" org-add-note)
