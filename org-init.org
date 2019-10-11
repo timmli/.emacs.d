@@ -8166,7 +8166,7 @@ Don't ask for the path when searching for files:
    _s_/\^ sort                     \\ toggle overlays  
      _t_ set todo keyword        _dl_ delete link
      _:_ set tags                _dt_ delete aux files  ^^                      ^^      _q_ quit
-   _+_/_-_ priority up/down       _e_ editmarks...
+   _+_/_-_ priority up/down         _e_ editmarks...
      _1_ move to top
 "
 	("a" org-attach)
