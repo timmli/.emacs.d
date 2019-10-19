@@ -4993,6 +4993,13 @@ Taken from http://cestlaz.github.io/posts/using-emacs-31-elfeed-3/.
 
 ** PDF
 
+*** doc-view
+
+#+BEGIN_SRC emacs-lisp
+(when (eq system-type 'windows-nt)
+	(setq doc-view-ghostscript-program "gswin64c.exe"))
+#+END_SRC
+
 *** COMMENT pdf-tools
 
 The hard part is to generate =epdfinfo.exe= under Windows. Therefore I'm not using it.
