@@ -677,10 +677,15 @@ Smex helps to remember often used commands; used by ido and counsel
 
 *** org-mode
 
-Complete tags with helm when using =org-set-tags=:
+Complete tags with =helm= when using =org-set-tags=:
 
 #+BEGIN_SRC emacs-lisp
-;; (load-library "helm-org-tag-completion")
+(use-package helm-org
+	:ensure t
+	:config
+	(add-to-list 'helm-completing-read-handlers-alist '(org-capture . helm-org-completing-read-tags))
+	(add-to-list 'helm-completing-read-handlers-alist '(org-set-tags . helm-org-completing-read-tags))
+	)
 #+END_SRC
 
 *** helm-swoop
