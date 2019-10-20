@@ -5072,6 +5072,10 @@ https://write.as/dani/notes-on-org-noter
 
 Offlineimap or mbsync? http://pragmaticemacs.com/emacs/migrating-from-offlineimap-to-mbsync-for-mu4e/
 
+*** Interoperability with Thunderbird 
+
+The [[https://github.com/exteditor/exteditor][Exteditor]] plugin can be used in Thunderbird in order to open and edit an email in Emacs.
+
 Open eml-files with =org-mode= turned on:
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'auto-mode-alist '("\\.eml\\'" . org-mode))
