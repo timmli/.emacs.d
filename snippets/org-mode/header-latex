@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: org-latex header
-# key: header
+# key: header_
 # condition: (eq 1 (line-number-at-pos))
 # --
 #+TITLE: ${1:Title}
