@@ -6738,9 +6738,9 @@ Update =org-agenda-files= once a day during start-up.
 #+BEGIN_SRC emacs-lisp
 (use-package rg
   :ensure t
-	:config
+	;; :config
 	;; (rg-enable-default-bindings)
-	(rg-enable-menu)											; Magit-like interface 
+	;; (rg-enable-menu)											; Magit-like interface (not working in v1.8.1) 
 	)
 #+END_SRC
 
