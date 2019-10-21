@@ -6729,6 +6729,19 @@ Update =org-agenda-files= once a day during start-up.
 	(message "org-agenda-files-last-update updated"))
 #+END_SRC
 
+** Search & find
+
+*** ripgrep
+
+#+BEGIN_SRC emacs-lisp
+(use-package rg
+  :ensure t
+	:config
+	;; (rg-enable-default-bindings)
+	(rg-enable-menu)											; Magit-like interface 
+	)
+#+END_SRC
+
 * Project management
 
 ** projectile
@@ -9389,7 +9402,7 @@ I've added this to make it fit into [[*hydra-f3][hydra-f3]]:
    _b_ helm-swoop         _B_ all buffers         _a_ helm-ag          _f_ helm-find
    _s_ isearch forward    _M_ all buffers         _g_ git grep
    _r_ isearch backward   ^^  with current mode   _p_ projectile grep
-   _o_ occur              _O_ all buffers
+   _o_ occur              _O_ all buffers         _R_ ripgrep
 "
 	("a" helm-ag)
 	("b" helm-swoop)
@@ -9401,6 +9414,7 @@ I've added this to make it fit into [[*hydra-f3][hydra-f3]]:
   ("o" occur)
   ("p" projectile-grep)
   ("r" isearch-backward)
+  ("R" rg)
 	("s" isearch-forward)
 	)
 (global-set-key (kbd "C-S-f") 'hydra-search/body)
