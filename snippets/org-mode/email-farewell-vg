@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: email farewell
+# key: vg_
+# --
+${1:$$(yas-choose-value '("Viele Grüße" "Mit freundlichen Grüßen" "Herzliche Grüße" "Mit besten Grüßen" "Beste Grüße"))}
+`user-full-name`$0
