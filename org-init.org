@@ -9039,20 +9039,67 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 ** hydra-markdown
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-markdown (:hint nil :columns 3)
-	"Markdown"
-	("b" markdown-insert-bold "bold" :exit t)
-	("i" markdown-insert-italic "italic" :exit t)
-	("s" markdown-insert-strike-through "strike through" :exit t)
-	("l" markdown-insert-link "link" :exit t)
-	(">" markdown-insert-blockquote "blockquote" :exit t)
-	("`" markdown-insert-code "code" :exit t)
-	("c" markdown-insert-gfm-code-block "code block" :exit t)
-	("<righ>" markdown-demote "demote":exit nil)
-	("<left>" markdown-promote "promote" :exit nil)
-	("<up>" markdown-move-up "move up" :exit nil)
-	("<down>" markdown-move-down "move down" :exit nil)
-	("U" markdown-toc-generate-toc "generate TOC" :exit t)
+(defhydra hydra-markdown (:hint nil :color blue)
+	"
+     ^^                           ^^                    ^^              ╭───────────────┐   
+     ^Heading^                    ^Text^                ^Navigation^    │ markdown-mode │
+	╭──^^───────────────────────────^^────────────────────^^──────────────┴───────────────╯ 
+    _M-<right>_ demote          _b_ bold                  
+     _M-<left>_ promote         _i_ italic                
+       _M-<up>_ move up         _s_ strike through        
+     _M-<down>_ move down       _l_ link                  
+            _T_ generate TOC    _>_ blockquote            
+            ^^                  _`_ code                  
+            ^^                  _c_ code block            
+            ^^                  _#_ table                 
+"
+	("b" markdown-insert-bold)
+	("i" markdown-insert-italic)
+	("s" markdown-insert-strike-through)
+	("l" markdown-insert-link)
+	(">" markdown-insert-blockquote)
+	("`" markdown-insert-code)
+	("c" markdown-insert-gfm-code-block)
+	("#" hydra-markdown-table/body)
+	("M-<right>" markdown-demote :color pink)
+	("M-<left>" markdown-promote :color pink)
+	("M-<up>" markdown-move-up :color pink)
+	("M-<down>" markdown-move-down :color pink)
+	("T" markdown-toc-generate-toc)
+	("q" nil :color blue)
+	)
+#+END_SRC
+
+*** hydra-markdown-table
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-markdown-table (:hint nil :color blue)
+	"
+     ^^                           ^^                          ^^                       ╭─────────────────────┐   
+     ^Navigation^                 ^Insert & Delete^            ^Create & Convert      │ markdown-mode table │
+	╭──^^──────────────────────────^^───────────────────────────^^───────────────────────┴─────────────────────╯ 
+       _<up>_ previous row              _i_ insert table   
+     _<down>_ next row           _M-S-<up>_ delete row         _t_ transpose table  
+     _<left>_ left column      _M-S-<down>_ insert row         _|_ convert region  
+    _<right>_ right column     _M-S-<left>_ delete column      _a_ align table
+    ^^                        _M-S-<right>_ insert column
+"
+	("<up>" previous-line :color pink)
+	("<down>" markdown-table-next-row :color pink)	
+	("<left>" markdown-table-backward-cell :color pink)
+	("<right>" markdown-table-forward-cell :color pink)
+	("M-<right>" markdown-demote :color pink)
+	("M-<left>" markdown-promote :color pink)
+	("M-<up>" markdown-move-up :color pink)
+	("M-<down>" markdown-move-down :color pink)
+	("M-S-<down>" markdown-table-insert-row :color pink)
+	("M-S-<up>" markdown-table-delete-row :color pink)
+	("M-S-<left>" markdown-table-delete-column :color pink)
+	("M-S-<right>" markdown-table-insert-column :color pink)
+	("i" markdown-insert-table)
+	("t" markdown-table-transpose)
+	("|" markdown-table-convert-region)
+	("a" markdown-table-align)
 	("q" nil :color blue)
 	)
 #+END_SRC
