@@ -3463,6 +3463,7 @@ Follow links when pressing =<return>=:
 
 Add some link types:
 #+BEGIN_SRC emacs-lisp
+(require 'org-attach)  ; Might not be autoloaded by org-mode.
 (add-to-list 'org-link-abbrev-alist '("attachment" . org-attach-expand-link))
 (add-to-list 'org-link-abbrev-alist '("att" . org-attach-expand-link))
 #+END_SRC
