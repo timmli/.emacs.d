@@ -6646,15 +6646,21 @@ This solution reuses code from here:
 #+BEGIN_SRC emacs-lisp
 (require 'ps-print)
 
-(defun tl/harden-newlines ()
+(defun tl/harden-newlines-in-buffer ()
 	"Make all the newlines in the buffer hard."
 	(interactive)
 	(save-excursion
 		(goto-char (point-min))
-		(while (search-forward "\n" nil t)
-			(backward-char)
-			(put-text-property (point) (1+ (point)) 'hard t)
-			(forward-char))))
+		(loop-while (= 0 (save-excursion (forward-line)))
+			(when (this-line-empty-p)
+				(forward-line)
+				(loop-continue))
+			(end-of-visual-line)
+			(newline)
+			(when (and (this-line-empty-p)
+								 (= 0 (save-excursion (forward-line))))
+				(kill-line))
+			)))
 
 (when (executable-find "ps2pdf")
 	(defun tl/print-buffer-to-pdf ()
@@ -6668,7 +6674,7 @@ This command depends on the shell command `ps2pdf'."
 				(set-buffer tempbuf)
 				(insert-buffer buf)
 				(visual-line-mode t)
-				(tl/harden-newlines)
+				(tl/harden-newlines-in-buffer)
 				(ps-print-without-faces (point-min) (point-max) (concat filename ".ps"))
 				(kill-buffer tempbuf))
 			(shell-command (concat "ps2pdf " filename ".ps"))
