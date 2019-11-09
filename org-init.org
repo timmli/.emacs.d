@@ -6637,6 +6637,45 @@ Uses [[https://www.powerthesaurus.org/][powerthesaurus.org]] for English.
 	:ensure t)
 #+END_SRC
 
+
+** Printing
+
+This solution reuses code from here:
+- https://stackoverflow.com/a/7401222/6452961
+- https://emacs.stackexchange.com/a/9373/12336
+#+BEGIN_SRC emacs-lisp
+(require 'ps-print)
+
+(defun tl/harden-newlines ()
+	"Make all the newlines in the buffer hard."
+	(interactive)
+	(save-excursion
+		(goto-char (point-min))
+		(while (search-forward "\n" nil t)
+			(backward-char)
+			(put-text-property (point) (1+ (point)) 'hard t)
+			(forward-char))))
+
+(when (executable-find "ps2pdf")
+	(defun tl/print-buffer-to-pdf ()
+		"Print the current buffer to print_buffertitle_timestamp.pdf without faces.
+This command depends on the shell command `ps2pdf'."
+		(interactive)
+		(let* ((tempbuf (generate-new-buffer "*Temporary buffer*"))
+					 (buf (current-buffer))
+					 (filename (concat "print_" (buffer-name buf) "_" (format-time-string "%Y-%m-%d"))))
+			(save-current-buffer
+				(set-buffer tempbuf)
+				(insert-buffer buf)
+				(visual-line-mode t)
+				(tl/harden-newlines)
+				(ps-print-without-faces (point-min) (point-max) (concat filename ".ps"))
+				(kill-buffer tempbuf))
+			(shell-command (concat "ps2pdf " filename ".ps"))
+			(delete-file (concat filename ".ps"))
+			(message (concat "PDF saved to " filename ".pdf")))))
+#+END_SRC
+
 * Files
 
 ** org-agenda files
