@@ -8336,7 +8336,7 @@ A hydra for org-columns.
 	("r" org-columns-redo "refresh")
 	("s" org-columns-edit-attributes "select attribute")
 	("t" org-columns-todo "todo")
-	("2" (org-show-children 2) "Show sublevels up to 2nd level")
+	("2" (org-show-children 2) "Show up to 2 sublevels")
 	("M-S-<left>" org-columns-delete "delete")
 	("M-S-<right>" org-columns-new "new")
 	("M-<right>" org-columns-move-right "move right")
