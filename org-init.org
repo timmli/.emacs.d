@@ -7667,7 +7667,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
           ^^   ↑   ^^           │split [_h_]oriz.   [_Z_] window redo    [_H_] swap horizontally
     _<left>_ ←   → _<right>_    │← _M-<left>_       [_f_] clone frame    [_V_] swap vertically
           ^^   ↓   ^^          ────────^^────────   [_b_] clone buffer      
-          ^^ _<down>_           ↑ _M-<up>_             
+          ^^ _<down>_           ↑ _M-<up>_          [_p_] print buffer to PDF  
           ^^ ^^                 split [_v_]ert.     [_=_] balance windows         [_q_]uit    
           ^^ ^^                 ↓ _M-<down>_
 	"
@@ -7689,6 +7689,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 	("V" flip-frame :exit t)
 	("z" winner-undo)
 	("Z" winner-redo)
+	("p" tl/print-buffer-to-pdf :exit t)
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
 	("<f3>" hydra-f3/body :exit t)
