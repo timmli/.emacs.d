@@ -77,20 +77,25 @@
 (defvar org-directory
 	(expand-file-name "org/" home-directory) ; default value; may be overwritten by private directory settings
 	"Path to private org notes.
-This variable should be changed in private-emacs-settings.el.") 
+This variable should be changed in private-emacs-settings-before.el.") 
 
 (defvar my-deft-dir org-directory ; default value; may be overwritten by private directory settings
 	"Path to the directory that deft observes.
-This variable should be changed in private-emacs-settings.el.")
+This variable should be changed in private-emacs-settings-before.el.")
 
 (defvar authinfo-directory home-directory ; default value; may be overwritten by private directory settings
 	"Path to authinfo.
-This variable should be changed in private-emacs-settings.el.")
+This variable should be changed in private-emacs-settings-before.el.")
 
 (defvar private-emacs-settings-dir
 	(expand-file-name "private-emacs-settings/" user-emacs-directory) ; default value; may be overwritten by system variable PRIVATE_EMACS_SETTINGS
 	"Path to private Emacs settings directory.
-This variable should be changed in private-emacs-settings.el.")
+This variable can be changed with the system variable PRIVATE_EMACS_SETTINGS.")
+
+(defvar my-bbdb-file
+	(expand-file-name "bbdb" user-emacs-directory)
+	"Path to bbdb file.
+This variable should be changed in private-emacs-settings-before.el.")
 
 ;; if system variable exists, use it
 (when (getenv "PRIVATE_EMACS_SETTINGS")
