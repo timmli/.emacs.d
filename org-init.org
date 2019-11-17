@@ -73,6 +73,7 @@
       - [[#buffer-actions][Buffer actions]]
       - [[#charmap][Charmap]]
       - [[#thesauri][Thesauri]]
+      - [[#translation][Translation]]
       - [[#printing][Printing]]
 - [[#files][Files]]
       - [[#org-agenda-files][org-agenda files]]
@@ -536,12 +537,13 @@ Shorten yes/no answers to y/n:
 	)
 #+END_SRC
 
-*** smex
+*** COMMENT smex
 
 Smex helps to remember often used commands; used by ido and counsel
+
 #+BEGIN_SRC emacs-lisp
-;; (use-package smex
-;; 	:ensure t)
+(use-package smex
+	:ensure t)
 #+END_SRC
 
 ** imenu
@@ -791,29 +793,6 @@ Does not work under windows so far. Therefore I commented this out:
 #+BEGIN_SRC emacs-lisp
 (use-package helm-tramp
 	:ensure t)
-#+END_SRC
-
-*** dictcc
-
-#+BEGIN_SRC emacs-lisp
-(use-package dictcc
-	:ensure t
-	:bind
-	(("C-0" . dictcc))
-)
-#+END_SRC
-
-Call dictcc with word under cursor or marked region:
-#+BEGIN_SRC emacs-lisp
-(defun tl/dictcc-at-point ()
-  (interactive)
-	(if (use-region-p)
-			(dictcc (concat "\"" (filter-buffer-substring (region-beginning) (region-end)) "\""))
-		(if (word-at-point)
-				(dictcc (word-at-point))
-      (call-interactively 'dictcc))
-		))
-(global-set-key (kbd "C-0") 'tl/dictcc-at-point)
 #+END_SRC
 
 *** helm-org-rifle 
@@ -6639,6 +6618,31 @@ Uses [[https://www.powerthesaurus.org/][powerthesaurus.org]] for English.
 	:ensure t)
 #+END_SRC
 
+** Translation
+
+*** dictcc
+
+#+BEGIN_SRC emacs-lisp
+(use-package dictcc
+	:ensure t
+	:bind
+	(("C-0" . dictcc))
+)
+#+END_SRC
+
+Call dictcc with word under cursor or marked region:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/dictcc-at-point ()
+  (interactive)
+	(if (use-region-p)
+			(dictcc (concat "\"" (filter-buffer-substring (region-beginning) (region-end)) "\""))
+		(if (word-at-point)
+				(dictcc (word-at-point))
+      (call-interactively 'dictcc))
+		))
+(global-set-key (kbd "C-0") 'tl/dictcc-at-point)
+#+END_SRC
 
 ** Printing
 
@@ -7140,21 +7144,6 @@ TESTING: Let =swiper-helm= behave more like isearch:
 
 https://github.com/publicus/emacs-org-mode-for-the-laity
 
-* COMMENT sr-speedbar
-
-#+BEGIN_SRC emacs-lisp
-(use-package sr-speedbar
-	:ensure t
-	:bind
-	("C-c C-k C-b" . sr-speedbar-toggle)
-	:config
-	(setq sr-speedbar-right-side nil)                          ; always on left side
-	(add-hook 'speedbar-mode-hook '(lambda () (linum-mode 0))) ; disable linum for speedbar
-	(setq speedbar-show-unknown-files t)                       ; show all files
-	(setq sr-speedbar-width 30)                                ; default width
-	)
-#+END_SRC
-
 * Windows and frames
 
 Better keys for closing and switching between windows. The rest is done in [[*hydra-f2][hydra-f2]].
@@ -7176,6 +7165,14 @@ Better keys for closing and switching between windows. The rest is done in [[*hy
 (winner-mode 1)
 #+END_SRC
 
+** Navigation
+
+Goto other window:
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "M-s") 'other-window)
+#+END_SRC
+
 ** COMMENT golden-ratio
 
 #+BEGIN_SRC emacs-lisp
@@ -7195,12 +7192,21 @@ Better keys for closing and switching between windows. The rest is done in [[*hy
 )
 #+END_SRC
 
-** Navigation
+** COMMENT sr-speedbar
 
-Goto other window:
+I don't use this right now.  
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "M-s") 'other-window)
+(use-package sr-speedbar
+	:ensure t
+	:bind
+	("C-c C-k C-b" . sr-speedbar-toggle)
+	:config
+	(setq sr-speedbar-right-side nil)                          ; always on left side
+	(add-hook 'speedbar-mode-hook '(lambda () (linum-mode 0))) ; disable linum for speedbar
+	(setq speedbar-show-unknown-files t)                       ; show all files
+	(setq sr-speedbar-width 30)                                ; default width
+	)
 #+END_SRC
 
 * Bookmarks
@@ -7513,33 +7519,34 @@ On the side of the browser, you need to install an extension such as [[https://g
 http://sachachua.com/notebook/emacs/bbdb-config.el
 
 #+BEGIN_SRC emacs-lisp
-  (use-package bbdb
-    :ensure t
-    :config (progn
-              (bbdb-initialize)
-                                          ;(add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
-                                          ;(add-hook 'gnus-startup-hook 'bbdb-insinuate-message)
-                                          ;(add-hook 'message-setup-hook 'bbdb-define-all-aliases)
+(use-package bbdb
+	:ensure t
+	:config
+	(progn
+		(bbdb-initialize)
+		;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
+		;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-message)
+		;; (add-hook 'message-setup-hook 'bbdb-define-all-aliases)
 
-              (setq bbdb-file "~/Dropbox/bbdb"
-                    bbdb-auto-revert t
-                    bbdb-check-auto-save-file t
-                    bbdb-expand-mail-aliases t
-                    bbdb-phone-style nil
-                    ;; bbdb-pop-up-window-size 10
-                    bbdb-pop-up-target-lines 1 ; The window should be as small as possible
-                    bbdb-use-pop-up nil        ; Show pup-up?
+		(setq bbdb-file my-bbdb-file
+					bbdb-auto-revert t
+					bbdb-check-auto-save-file t
+					bbdb-expand-mail-aliases t
+					bbdb-phone-style nil
+					;; bbdb-pop-up-window-size 10
+					bbdb-pop-up-target-lines 1 ; The window should be as small as possible
+					bbdb-use-pop-up nil        ; Show pup-up?
 
-                                          ;bbdb/news-auto-create-p t
-                    bbdb-complete-name-allow-cycling t
-                    bbdb-complete-mail-allow-cycling t
-                    bbdb-complete-name-full-completion t
-                    bbdb-completion-type 'primary-or-name
-                                          ;bbdb-use-pop-up nil
+																				;bbdb/news-auto-create-p t
+					bbdb-complete-name-allow-cycling t
+					bbdb-complete-mail-allow-cycling t
+					bbdb-complete-name-full-completion t
+					bbdb-completion-type 'primary-or-name
+																				;bbdb-use-pop-up nil
 
-                    bbdb-offer-save 1  ; Always save
-                    bbdb-electric-p t)
-              ))
+					bbdb-offer-save 1  ; Always save
+					bbdb-electric-p t)
+		))
 
   (use-package bbdb-vcard
     :ensure t)
