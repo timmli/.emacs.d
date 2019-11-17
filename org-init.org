@@ -6688,9 +6688,10 @@ This command depends on the shell command `ps2pdf'."
 				(insert-buffer buf)
 				(visual-line-mode t)
 				(tl/harden-newlines-in-buffer)
-				;; (load-theme-buffer-local 'leuven tempbuf) ; FIXME: doesn't seem to take effect
 				(if (y-or-n-p "Print with faces?")
-						(progn (ps-print-with-faces (point-min) (point-max) (concat filename ".ps")))
+						(progn
+							;; (load-theme-buffer-local 'leuven tempbuf) ; FIXME: doesn't seem to take effect
+							(ps-print-with-faces (point-min) (point-max) (concat filename ".ps")))
 					(progn (ps-print-without-faces (point-min) (point-max) (concat filename ".ps"))))
 				(kill-buffer tempbuf))
 			(shell-command (concat "ps2pdf " filename ".ps"))
