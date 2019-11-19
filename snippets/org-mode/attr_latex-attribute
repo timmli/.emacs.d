@@ -3,4 +3,4 @@
 # key: :
 # condition: (save-excursion (beginning-of-line) (looking-at "^\\s-*#\\+ATTR_LATEX:"))
 # --
-${1:$$(yas-choose-value '(":width 0.9\\\\textwidth" ":height 0.9\\\\textheight" ":center nil" ":align c" ":booktabs" ":caption Caption text" ":environment array" ":options angle=90" ":options [Proof of important theorem]" ":options [htp]" ":placement sidewaystable"))} $0
+${1:$$(yas-choose-value '(":width 0.9\\\\textwidth" ":height 0.9\\\\textheight" ":center nil" ":align c" ":booktabs" ":caption Caption text" ":environment array" ":environment longtable" ":options angle=90" ":options [Proof of important theorem]" ":options [htp]" ":placement sidewaystable"))} $0
