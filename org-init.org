@@ -1312,12 +1312,12 @@ Taken from: https://github.com/Fuco1/.emacs.d/blob/master/files/dired-defs.el
 
 #+END_SRC
 
-**** TODO dired-rainbow
+**** dired-rainbow
 
 More customizable highlightning in dired listings.
-Settings inspired by https://github.com/Fuco1/.emacs.d/blob/master/files/dired-defs.el
-
-- [ ] Does not seem to work.
+Settings inspired by
+- https://github.com/Fuco1/.emacs.d/blob/master/files/dired-defs.el
+- https://github.com/Fuco1/dired-hacks#dired-rainbow
 
 #+BEGIN_SRC emacs-lisp
 (defconst my-dired-media-files-extensions '("mp3" "mp4" "MP3" "MP4" "avi" "mpg" "flv" "ogg" "wmv" "mkv" "mov" "wma")
@@ -1370,11 +1370,17 @@ Also used for highlighting.")
 )
 #+END_SRC
 
-**** COMMENT dired-collapse
+**** dired-collapse
+
+Show whole path to contained file or directory if there is only one.
+
+See https://github.com/Fuco1/dired-hacks#dired-collapse.
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired-collapse
-	:ensure t)
+	:ensure t
+	:init
+	(add-hook 'dired-mode-hook #'dired-collapse-mode))
 #+END_SRC
 
 *** dired-efap
