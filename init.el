@@ -97,6 +97,12 @@ This variable can be changed with the system variable PRIVATE_EMACS_SETTINGS.")
 	"Path to bbdb file.
 This variable should be changed in private-emacs-settings-before.el.")
 
+(require 'bookmark)
+(defvar my-bookmarks-file
+	(concat bookmark-default-file)
+	"Path to bookmarks file.
+This variable should be changed in private-emacs-settings-before.el.")
+
 ;; if system variable exists, use it
 (when (getenv "PRIVATE_EMACS_SETTINGS")
 	(setq private-emacs-settings-dir

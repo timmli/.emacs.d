@@ -7220,7 +7220,7 @@ I don't use this right now.
 * Bookmarks
 
 #+BEGIN_SRC emacs-lisp
-(setq bookmark-default-file (concat user-emacs-directory "bookmarks")) ; default bookmark file
+(setq bookmark-default-file my-bookmarks-file) ; default bookmark file
 (setq bookmark-save-flag 1) ; everytime bookmark is changed, automatically save it
 (global-set-key (kbd "C-x C-r") 'helm-bookmarks)
 #+END_SRC
