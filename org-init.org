@@ -5897,10 +5897,7 @@ This is supposed to accelerate cursor movement (https://emacs.stackexchange.com/
 	("C-c SPC" . ace-jump-mode))
 #+end_src
 
-*** TODO dump-jump
-
-- [ ] adjust key bindings
-- [ ] add LaTeX support
+*** dump-jump
 
 Jump to definition without using tags.
 
@@ -6962,7 +6959,7 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 						(define-key org-mode-map (kbd "H-i") 'org-goto) ; otherwise helm-imenu will be used (FIXME)
 						
 						;; miscellaneous actions
-						(define-key map (kbd "C-j") 'ace-jump-mode)
+						(define-key map (kbd "C-j") 'hydra-jump/body)
 						(define-key map (kbd "C-S-j") 'ace-jump-line-mode)
 						(define-key map (kbd "H-i") 'helm-imenu)
 						(define-key map (kbd "C-S-i") 'imenu-list)
@@ -9007,6 +9004,22 @@ then a space, then the current time formatted with
   ("w" (insert (file-name-nondirectory (read-file-name ""))))
 	("q" nil))
 (global-set-key (kbd "C-c i f") 'hydra-insert-file-name/body)
+#+END_SRC
+
+** hydra-jump
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-jump (:color blue :columns 3)
+	"Jump to"
+	("l" goto-line "line number")
+	("g" goto-line)
+	("TAB" move-to-column "column number")
+	("L" ace-jump-line-mode "visible line")
+	("c" ace-jump-mode "visible char")
+	("d" dumb-jump-go "definition")
+	("D" dumb-jump-go-prompt "definition(prompt)")
+	("f" dumb-jump-quick-look "definition (quick look)")
+	("b" dumb-jump-back "definition (back)"))
 #+END_SRC
 
 ** hydra-latex
