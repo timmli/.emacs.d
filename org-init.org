@@ -3438,6 +3438,12 @@ Add the Emacs [[*Calendar/Diary][diary]] (which also stores holidays) to =org-ag
 	(add-hook 'org-agenda-finalize-hook 'org-timeline-insert-timeline :append))
 #+END_SRC
 
+**** org-conflict
+
+=org-conflict= helps to detect and resolve scheduling conflicts.
+
+https://www.mail-archive.com/emacs-orgmode@gnu.org/msg123154.html
+
 *** Images
 
 Only use actual width of image when not specified with =#+ATTR* :width= (requires imagemagick)
