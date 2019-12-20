@@ -3830,9 +3830,6 @@ This adds useful commands to =outline-mode=, e.g. cycling.
 	:ensure t
    :after tex   
 	:config
-	(add-hook 'outline-mode-hook
-	          (lambda ()
-	            (require 'outline-cycle)))
 	(add-hook 'outline-minor-mode-hook
 	          (lambda ()
 	            (require 'outline-magic)
