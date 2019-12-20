@@ -33,6 +33,7 @@
       - [[#javascript][JavaScript]]
       - [[#clojure][Clojure]]
       - [[#org-mode][org-mode]]
+      - [[#outline-mode][outline-mode]]
       - [[#calendardiary][Calendar/Diary]]
       - [[#latex][LaTeX]]
       - [[#ledger][Ledger]]
@@ -84,8 +85,8 @@
 - [[#winkeys-mode][winkeys-mode]]
 - [[#winkeys-starter-mode][winkeys-starter-mode]]
 - [[#windows-and-frames][Windows and frames]]
-      - [[#transpose-frame][transpose-frame]]
       - [[#navigation][Navigation]]
+      - [[#transpose-frame][transpose-frame]]
 - [[#bookmarks][Bookmarks]]
 - [[#git][Git]]
       - [[#magit][magit]]
@@ -133,6 +134,7 @@
       - [[#hydra-image][hydra-image]]
       - [[#hydra-insert-date][hydra-insert-date]]
       - [[#hydra-insert-file-name][hydra-insert-file-name]]
+      - [[#hydra-jump][hydra-jump]]
       - [[#hydra-latex][hydra-latex]]
       - [[#hydra-macro][hydra-macro]]
       - [[#hydra-markdown][hydra-markdown]]
@@ -3814,6 +3816,32 @@ https://github.com/rudolfochrist/interleave
 	;; (if (require 'toc-org nil t)
 	;; 		(add-hook 'org-mode-hook 'toc-org-mode)
 	;; 	(warn "toc-org not found"))
+	)
+#+END_SRC
+
+** outline-mode
+
+*** outline-magic
+
+This adds useful commands to =outline-mode=, e.g. cycling.
+
+#+BEGIN_SRC emacs-lisp
+(use-package outline-magic
+	:ensure t
+   :after tex   
+	:config
+	(add-hook 'outline-mode-hook
+	          (lambda ()
+	            (require 'outline-cycle)))
+	(add-hook 'outline-minor-mode-hook
+	          (lambda ()
+	            (require 'outline-magic)
+	            (define-key outline-minor-mode-map (kbd "S-<tab>") 'outline-cycle)))
+	(add-hook 'LaTeX-mode-hook      ; 'LaTeX-mode-hook for AUCTeX
+						(lambda ()
+							(setq outline-promotion-headings
+										'("\\chapter" "\\section" "\\subsection"
+											"\\subsubsection" "\\paragraph" "\\subparagraph"))))
 	)
 #+END_SRC
 
