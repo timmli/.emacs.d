@@ -3828,7 +3828,6 @@ This adds useful commands to =outline-mode=, e.g. cycling.
 #+BEGIN_SRC emacs-lisp
 (use-package outline-magic
 	:ensure t
-   :after tex   
 	:config
 	(add-hook 'outline-minor-mode-hook
 	          (lambda ()
@@ -9068,26 +9067,48 @@ then a space, then the current time formatted with
 ** hydra-latex
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-latex-main (:hint nil :columns 3)
-	"LaTeX"
-	("<up>" tl/reftex-previous "previous heading" :exit nil)
-	("<down>" tl/reftex-next "next heading" :exit nil)
+(defhydra hydra-latex-main (:hint nil :pre (outline-minor-mode 1))
+	"
+  ^^                          ^^                         ^^                      ^^          ╭────────┐   
+   ^Navigation^               ^Text^                     ^Outline^               ^Compile^   │ LaTeX  │
+╭─^^──────────────────────────^^─────────────────────────^^──────────────────────^^──────────┴────────╯
+   _<up>_ previous heading    _m_ insert macro          _S-<tab>_ cycle all      _c_ compile
+ _<down>_ next heading        _s_ insert section          _<tab>_ cycle at point _l_ show log
+      _=_ table of contents   _e_ insert environment     _M-<up>_ move up        _r_ compile region
+       ^^                    _!e_ change environment   _M-<down>_ move down      _v_ view output
+       ^^                     _d_ delete...            _M-<left>_ promote        ___ set master file
+       ^^                     _f_ font...             _M-<right>_ demote         _b_ generate bib-file
+       ^^                     ^^                              _o_ folding...
+"
+	("<up>" tl/reftex-previous :exit nil)
+	("<down>" tl/reftex-next :exit nil)
 	("p" tl/reftex-previous :exit nil)
 	("n" tl/reftex-next :exit nil)
-	("=" reftex-toc "table of contents" :exit t)
-	("d" hydra-latex-delete/body "delete..." :exit t)
-	("e" LaTeX-environment "insert environment" :exit t)
-	("!e" (lambda () (interactive) (LaTeX-environment '4)) "change environment" :exit t)
-	("m" TeX-insert-macro "insert macro" :exit t)
-	("f" hydra-latex-fonts/body "font..." :exit t)
-	("b" reftex-create-bibtex-file  "generate bib-file" :exit t)
-	("c" TeX-command-master "compile" :exit t)
-	("l" TeX-recenter-output-buffer "show log" :exit t)
-	("r" TeX-command-region "compile region" :exit t)
-	("s" isearch-forward "search" :exit t)
-	("o" hydra-latex-folding/body "folding..." :exit t)
-	("v" TeX-view "view output" :exit t)
-	("_" TeX-master-file-ask "ask for master file" :exit t)
+	("=" reftex-toc :exit t)
+	("S-<tab>" (lambda () (interactive)
+							 (save-excursion
+								 (beginning-of-buffer)
+								 (search-forward "\\begin{document}")
+								 (outline-cycle)
+								 (recenter-top-bottom))) :exit nil)
+	("<tab>" outline-cycle :exit nil)
+	("M-<up>" outline-move-subtree-up :exit nil)
+	("M-<down>" outline-move-subtree-down :exit nil)
+	("M-<left>" outline-promote :exit nil)
+	("M-<right>" outline-demote :exit nil)
+	("d" hydra-latex-delete/body :exit t)
+	("e" LaTeX-environment :exit t)
+	("!e" (lambda () (interactive) (LaTeX-environment '4)) :exit t)
+	("m" TeX-insert-macro :exit t)
+	("f" hydra-latex-fonts/body :exit t)
+	("b" reftex-create-bibtex-file :exit t)
+	("c" TeX-command-master :exit t)
+	("l" TeX-recenter-output-buffer :exit t)
+	("r" TeX-command-region :exit t)
+	("s" LaTeX-section :exit t)
+	("o" hydra-latex-folding/body :exit t)
+	("v" TeX-view :exit t)
+	("_" TeX-master-file-ask :exit t)
 	("q" nil :color blue)
 	)
 #+END_SRC
