@@ -5953,11 +5953,11 @@ Jump to definition without using tags.
 #+begin_src emacs-lisp
 (use-package multiple-cursors
 	:ensure t
-	:bind
-	("C-S-c C-S-c" . mc/edit-lines)
-	("C->" . mc/mark-next-like-this)
-	("C-<" . mc/mark-previous-like-this)
-	("C-c C-<" . mc/mark-all-like-this)
+	;; :bind
+	;; ("C-S-c C-S-c" . mc/edit-lines)
+	;; ("C->" . mc/mark-next-like-this)
+	;; ("C-<" . mc/mark-previous-like-this)
+	;; ("C-c C-<" . mc/mark-all-like-this)
 	)
 #+end_src
 
@@ -7860,6 +7860,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "<f6>") 'hydra-f6/body)
+(global-set-key (kbd "C-S-c") 'hydra-f6/body)
 
 (defun hydra-f6/body () ;hydra-for-major-mode ()
 	(interactive)
@@ -9392,7 +9393,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
     [_S-<up>_] Next      [_S-<down>_] Next         [_l_] Edit lines
       [_<up>_] Skip        [_<down>_] Skip         [_a_] Mark all
     [_M-<up>_] Unmark    [_M-<down>_] Unmark       [_r_] Mark by regexp
-           [_SPC_] Mark region ^^       ^^[C-S-<mouse1>] Mark with mouse    
+            [_SPC_] Mark region ^^      ^^[C-S-<mouse1>] Mark with mouse    
         ^   ^              ^^                      [_q_] Quit hydra     [_Q_] Quit mc-mode
 	"
 	("l" mc/edit-lines :exit t)
@@ -9403,6 +9404,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("S-<down>" mc/mark-next-like-this)
 	("<down>" mc/skip-to-next-like-this)
 	("M-<down>" mc/unmark-next-like-this)
+  ("C-S-<mouse-1>" 'mc/add-cursor-on-click)
 	("p" mc/mark-previous-like-this)
 	("P" mc/skip-to-previous-like-this)
 	("M-p" mc/unmark-previous-like-this)
