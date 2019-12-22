@@ -9079,7 +9079,7 @@ then a space, then the current time formatted with
        ^^                    _!e_ change environment   _M-<down>_ move down      _v_ view output
        ^^                     _d_ delete...            _M-<left>_ promote        ___ set master file
        ^^                     _f_ font...             _M-<right>_ demote         _b_ generate bib-file
-       ^^                     ^^                              _o_ folding...
+       ^^                    _#a_ align                       _o_ folding...
 "
 	("<up>" tl/reftex-previous :exit nil)
 	("<down>" tl/reftex-next :exit nil)
@@ -9102,6 +9102,7 @@ then a space, then the current time formatted with
 	("!e" (lambda () (interactive) (LaTeX-environment '4)) :exit t)
 	("m" TeX-insert-macro :exit t)
 	("f" hydra-latex-fonts/body :exit t)
+	("#a" align-current :exit t)
 	("b" reftex-create-bibtex-file :exit t)
 	("c" TeX-command-master :exit t)
 	("l" TeX-recenter-output-buffer :exit t)
