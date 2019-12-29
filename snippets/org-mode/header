@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: org-mode header
-# key: header_
+# key: <header
 # condition: (eq 1 (line-number-at-pos))
 # --
 #+TITLE: ${1:Notes on research}

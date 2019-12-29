@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
 # name: attr_beamer
-# key: ab_
+# key: <ab
 # --
 #+ATTR_BEAMER: :overlay <+-> $0

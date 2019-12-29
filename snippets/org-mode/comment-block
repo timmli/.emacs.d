@@ -1,5 +1,5 @@
 # -*- mode: snippet -*-
-# name: comment block <
+# name: comment block
 # key: <;
 # --
 #+BEGIN_COMMENT

@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: figure
-# key: fig_
+# key: <fig
 # --
 #+NAME: fig:${1:label}
 #+CAPTION: ${2:caption}

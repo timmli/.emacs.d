@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: beamer ignoreheading
-# key: bi_
+# key: <bi
 # --
 *** END OF BLOCK                                             :B_ignoreheading:
 :PROPERTIES:

@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: latex export
-# key: l_
+# key: <l
 # --
 #+BEGIN_EXPORT latex
 $0

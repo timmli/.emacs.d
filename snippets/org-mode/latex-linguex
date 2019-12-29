@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: linguex blocks
-# key: ex_
+# key: <ex
 # --
 #+BEGIN_EXPORT latex
 {\ex.$1

@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: asset
-# key: a_
+# key: <a
 # condition: (not (looking-back "[[:graph:]].*a_"))
 # expand-env: ((yas-indent-line 'fixed))
 # --

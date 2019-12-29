@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: quote block
-# key: q_
+# key: <q
 # --
 #+BEGIN_QUOTE
 $0

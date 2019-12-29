@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: org-beamer header 
-# key: header_
+# key: <header
 # condition: (eq 1 (line-number-at-pos))
 # --
 #+TITLE: ${1:Beamer slides}

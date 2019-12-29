@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: beamer column
-# key: bc_
+# key: <bc
 # --
 ***                                     :BMCOL:
 :PROPERTIES:

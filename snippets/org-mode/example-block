@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: example block
-# key: e_
+# key: <e
 # --
 #+BEGIN_EXAMPLE
 $0

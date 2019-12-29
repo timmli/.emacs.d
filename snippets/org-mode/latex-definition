@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: org latex definition
-# key: def_
+# key: <def
 # --
 #+NAME: def:${1:definition}
 #+ATTR_LATEX: :options [${2:Definition title}]

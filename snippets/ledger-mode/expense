@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: expense
-# key: o_
+# key: <o
 # condition: (not (looking-back "[[:graph:]].*o_"))
 # expand-env: ((yas-indent-line 'fixed))
 # --

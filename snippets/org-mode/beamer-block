@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: beamer-block
-# key: b_
+# key: <b
 # --
 *** ${1:@@latex:@@}                                       :B_block:
 :PROPERTIES:

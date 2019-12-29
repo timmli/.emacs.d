@@ -1,4 +1,4 @@
-# key: ig_
+# key: <ig
 # name: includegraphics
 # --
 \includegraphics${1:[width=$2]}{`(file-relative-name (read-file-name "") (file-name-directory (buffer-file-name)))`}

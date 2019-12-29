@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: comment
-# key: c_
+# key: <c
 # expand-env: ((yas-indent-line 'fixed) (yas-wrap-around-region t))
 # --
 comment
