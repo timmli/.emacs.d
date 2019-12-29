@@ -8388,7 +8388,7 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
         _m_ move cell...     _-_ collapse/expand column  _B_ iterate buffer
       _M-w_ copy cell        _<_ collapse all columns
       _C-w_ kill cell        _>_ expand all columns
-      _C-y_ yank & align   ^^                            ^^          _q_ quit
+      _C-y_ yank & align     _|_ convert from region                            ^^          _q_ quit
 "
   ("E" org-table-export :color blue)
   ("s" org-table-sort-lines)
@@ -8413,6 +8413,7 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
 	("-" org-table-toggle-column-width)
 	("<" (org-table-toggle-column-width '(4)))
 	(">" (org-table-toggle-column-width '(16)))
+	("|" org-table-convert-region) 
 	("<up>" previous-line)
 	("<down>" org-table-next-row)
 	("<left>" org-table-previous-field)
