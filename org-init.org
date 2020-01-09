@@ -507,7 +507,6 @@ Shorten yes/no answers to y/n:
 ;; 	(if (find-file (ido-completing-read "Find recent file: " recentf-list))
 ;; 			(message "Opening file...")
 ;; 		(message "Aborting")))
-
 #+END_SRC
 
 *** ivy, counsel
@@ -1646,6 +1645,45 @@ Preserves the first heading of the org-mode file (found in http://orgmode.org/wo
            org-archive-location)))
     ad-do-it))
 #+END_SRC
+
+*** org-attach
+
+#+BEGIN_SRC emacs-lisp
+(require 'org-attach)  ; Might not be autoloaded by org-mode.
+#+END_SRC
+
+Note that =org-attach= has been refactored and extended in =org-mode= v9.3 (see https://orgmode.org/Changes.html), adding the following variables:
+
+#+BEGIN_SRC emacs-lisp
+(setq
+ org-attach-use-inheritance t	    ; enable inheritance
+ org-attach-dir-relative t		    ; enable relative paths in DIR property
+ org-attach-preferred-new-method 'dir ; prefered method for attachments (id, dir, ask, nil)
+ )
+#+END_SRC  
+
+Function to rename =ATTACH_DIR= (deprecated) to =DIR=, and to remove =ATTACH_DIR_INHERIT= (deprecated):
+
+#+BEGIN_SRC emacs-lisp
+(defun org-update-attach-properties ()
+    "Change properties for Org-Attach."
+    (interactive)
+    (org-with-point-at 1
+      (while (outline-next-heading)
+        (let ((DIR (org--property-local-values "ATTACH_DIR" nil)))
+          (when DIR
+            (org-set-property "DIR" (car DIR))
+            (org-delete-property "ATTACH_DIR"))))
+      (org-delete-property-globally "ATTACH_DIR_INHERIT")))
+#+END_SRC
+
+Add some link types (deprecated):
+
+#+BEGIN_SRC emacs-lisp
+;; (add-to-list 'org-link-abbrev-alist '("attachment" . org-attach-expand-link)) ; included in `org-attach` since v9.3
+(add-to-list 'org-link-abbrev-alist '("att" . org-attach-expand-link)) ; only for downward compatibility
+#+END_SRC
+
 
 *** org-babel
 
@@ -3258,13 +3296,6 @@ Follow links when pressing =<return>=:
 (setq org-return-follows-link t)
 #+END_SRC
 
-Add some link types:
-#+BEGIN_SRC emacs-lisp
-(require 'org-attach)  ; Might not be autoloaded by org-mode.
-(add-to-list 'org-link-abbrev-alist '("attachment" . org-attach-expand-link))
-(add-to-list 'org-link-abbrev-alist '("att" . org-attach-expand-link))
-#+END_SRC
-
 Links to files are opened in the same window, i.e. the window does not get split:
 #+BEGIN_SRC emacs-lisp
 (setq org-link-frame-setup '((file . find-file)))
@@ -3457,11 +3488,6 @@ Some functions to select and copy columns (http://emacs.stackexchange.com/a/2829
   (save-excursion
     (org-table-copy-region (org-table-goto-col-beginning)
 													 (org-table-goto-col-end))))
-#+END_SRC
-
-Functions to move around single cells:
-#+BEGIN_SRC emacs-lisp
-(require 'org-table-move-single-cell)
 #+END_SRC
 
 A function  for copying the content of a cell:
@@ -8425,7 +8451,7 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
 
 *** hydra-org-table-move-cell
 
-Uses [[*Tables][org-table-move-single-cell]]:
+As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table-move-single-cell=. 
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-table-move-cell (:hint nil
@@ -8436,10 +8462,10 @@ Uses [[*Tables][org-table-move-single-cell]]:
     _<up>_: move up       _<left>_: move left    
   _<down>_: move down    _<right>_: move left     _q_uit
 	"
-	("<up>" org-table-move-single-cell-up)
-	("<down>" org-table-move-single-cell-down)
-	("<right>" org-table-move-single-cell-right)
-	("<left>" org-table-move-single-cell-left)
+	("<up>" org-table-move-cell-up)
+	("<down>" org-table-move-cell-down)
+	("<right>" org-table-move-cell-right)
+	("<left>" org-table-move-cell-left)
 	("q" hydra-org-table/body :color blue))
 #+END_SRC
 
