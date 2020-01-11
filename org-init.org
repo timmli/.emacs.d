@@ -492,39 +492,39 @@ Shorten yes/no answers to y/n:
 ;; 	(setq ido-use-faces nil))
 #+END_SRC
 
-*** Recent files
+*** COMMENT Recent files
 
 #+BEGIN_SRC emacs-lisp
-;; ;; recent files
-;; (require 'recentf)
-;; (recentf-mode 1)
-;; ; 50 files ought to be enough.
-;; (global-set-key (kbd "C-x C-r") 'ido-recentf-open)
-;; (setq recentf-max-saved-items 50)
-;; (defun ido-recentf-open ()
-;; 	"Use `ido-completing-read' to \\[find-file] a recent file"
-;; 	(interactive)
-;; 	(if (find-file (ido-completing-read "Find recent file: " recentf-list))
-;; 			(message "Opening file...")
-;; 		(message "Aborting")))
+;; recent files
+(require 'recentf)
+(recentf-mode 1)
+; 50 files ought to be enough.
+(global-set-key (kbd "C-x C-r") 'ido-recentf-open)
+(setq recentf-max-saved-items 50)
+(defun ido-recentf-open ()
+	"Use `ido-completing-read' to \\[find-file] a recent file"
+	(interactive)
+	(if (find-file (ido-completing-read "Find recent file: " recentf-list))
+			(message "Opening file...")
+		(message "Aborting")))
 #+END_SRC
 
-*** ivy, counsel
+*** COMMENT ivy, counsel
 
 #+BEGIN_SRC emacs-lisp
-;; ;; counsel adds fuzzy search to command completion 
-;; (use-package counsel
-;; 	:ensure t
-;; 	:config
-;; 	(setq ivy-display-style 'fancy)
-;; 	(setq ivy-re-builders-alist ; use flx
-;; 				'((t . ivy--regex-fuzzy)))
-;; 	(setq ivy-initial-inputs-alist nil) ; omit ^
-;; 	(setq ivy-wrap t) ;; cycle through results
-;; 	:bind
-;; 	("M-x" . counsel-M-x)
-;; 	("C-ß" . ivy-imenu-anywhere) ; ivy + imenu
-;; 	)
+;; counsel adds fuzzy search to command completion 
+(use-package counsel
+	:ensure t
+	:config
+	(setq ivy-display-style 'fancy)
+	(setq ivy-re-builders-alist ; use flx
+				'((t . ivy--regex-fuzzy)))
+	(setq ivy-initial-inputs-alist nil) ; omit ^
+	(setq ivy-wrap t) ;; cycle through results
+	:bind
+	("M-x" . counsel-M-x)
+	("C-ß" . ivy-imenu-anywhere) ; ivy + imenu
+	)
 #+END_SRC
 
 *** COMMENT swiper
@@ -3290,6 +3290,35 @@ Only use actual width of image when not specified with =#+ATTR* :width= (require
 #+END_SRC
 
 *** Links
+
+Function to update link syntax that got changed in =org-mode= v9.3 (taken from https://orgmode.org/Changes.html):
+#+BEGIN_SRC emacs-lisp
+(defun org-update-link-syntax (&optional no-query)
+  "Update syntax for links in current buffer.
+Query before replacing a link, unless optional argument NO-QUERY
+is non-nil."
+  (interactive "P")
+  (org-with-point-at 1
+    (let ((case-fold-search t))
+      (while (re-search-forward "\\[\\[[^]]*?%\\(?:2[05]\\|5[BD]\\)" nil t)
+        (let ((object (save-match-data (org-element-context))))
+          (when (and (eq 'link (org-element-type object))
+                     (= (match-beginning 0)
+                        (org-element-property :begin object)))
+            (goto-char (org-element-property :end object))
+            (let* ((uri-start (+ 2 (match-beginning 0)))
+                   (uri-end (save-excursion
+                              (goto-char uri-start)
+                              (re-search-forward "\\][][]" nil t)
+                              (match-beginning 0)))
+                   (uri (buffer-substring-no-properties uri-start uri-end)))
+              (when (or no-query
+                        (y-or-n-p
+                         (format "Possibly obsolete URI syntax: %S.  Fix? "
+                                 uri)))
+                (setf (buffer-substring uri-start uri-end)
+                      (org-link-escape (org-link-decode uri)))))))))))
+#+END_SRC
 
 Follow links when pressing =<return>=:
 #+BEGIN_SRC emacs-lisp
@@ -6113,6 +6142,14 @@ is already narrowed."
             (define-key LaTeX-mode-map "\C-xn"
               nil)))
 #+end_src
+
+The keymap in =org-mode= seems to require a special treatment: 
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook
+          (lambda ()
+            (define-key org-mode-map "\C-xn"
+              nil)))
+#+END_SRC
 
 Taken from https://emacs.stackexchange.com/a/21356/12336:
 
