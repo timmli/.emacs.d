@@ -256,7 +256,7 @@ This variable should be changed in private-emacs-settings.el.")
 
 ;; upgrade org-mode if necessary
 (require 'org)
-(when (version< org-version "9")
+(when (version< org-version "9.3")
 	(when (not package-list-refreshed) 				; package list already refreshed?
 		(package-refresh-contents) ; package list not yet refreshed!
 		(setq package-list-refreshed t))
@@ -267,9 +267,10 @@ This variable should be changed in private-emacs-settings.el.")
 ;; taken from https://github.com/jwiegley/use-package
 (eval-when-compile											
   (require 'use-package))
-(require 'diminish)                ;; if you use :diminish
-(require 'bind-key)               
 (setq use-package-verbose t)
+(use-package diminish										; if you use :diminish
+	:ensure t)
+(require 'bind-key)
 
 
 ;;==========================================================
