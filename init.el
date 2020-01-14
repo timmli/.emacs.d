@@ -17,7 +17,8 @@
 ;; treat clipboard input as UTF-8 string first; compound text next, etc.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 ;; MS Windows clipboard is UTF-16LE 
-(set-clipboard-coding-system 'utf-16le-dos)
+(when (eq system-type 'windows-nt)
+  (set-clipboard-coding-system 'utf-16le-dos))
 
 ;; start emacs server
 ;; (server-start)  ; uncomment this, if you want the server to start on every start-up
