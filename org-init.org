@@ -2397,11 +2397,12 @@ From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywo
 - WAITING: something that cannot be done now, because some prerequisites are not yet met.
 - HOLD: something that cannot be done now, and the prerequisites are unlikely to be fullfilled in the future.
 - SOMEDAY: you are not yet sure whether this needs to be done.
+- DELEGATED: something that has been delegated and is not tracked any more.  
 
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-keywords
       (quote ((sequence "TODO(t!)" "NEXT(n)" "INPROGRESS(p!)" "APPT(a)" "|" "DONE(d)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "SOMEDAY(s)" "|" "CANCELLED(c@/!)"))))
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "SOMEDAY(s)" "|" "DELEGATED(l@/!)" "CANCELLED(c@/!)"))))
 
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
@@ -2411,6 +2412,7 @@ From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywo
               ("WAITING" :foreground "orange" :weight bold)
               ("HOLD" :foreground "magenta" :weight bold)
               ("CANCELLED" :foreground "forest green" :weight bold)
+              ("DELEGATED" :foreground "forest green" :weight bold)
               ("APPT" :foreground "forest green" :weight bold)
 							("SOMEDAY" :foreground "forest green" :weight bold)
 							)))
