@@ -8206,6 +8206,7 @@ Don't ask for the path when searching for files:
      _:_ set tags                _dt_ delete aux files  ^^                      ^^      _q_ quit
    _+_/_-_ priority up/down         _e_ editmarks...
      _1_ move to top
+     _N_ number headings
 "
 	("a" org-attach)
 	("A" hydra-org-archive/body)
@@ -8222,6 +8223,7 @@ Don't ask for the path when searching for files:
 	("$" org-latex-fragment-toggle-toggle)
 	("m" hydra-org-markup/body)
 	("n" org-add-note)
+	("N" org-num-mode)
 	("o" org-open-at-point)
 	("p" org-set-property)
 	("P" org-set-property-and-value)
