@@ -3843,6 +3843,16 @@ Unfortunately, =org-caldav= is not able to handle recurring events created on th
 				 (assq-delete-all 'output-pdf TeX-view-program-selection)
 				 (add-to-list 'TeX-view-program-selection '(output-pdf "Sumatra PDF"))))
 		)
+
+	(when (not (eq system-type 'windows-nt))
+		;; Use pdf-tools to open PDF files
+		(setq TeX-view-program-selection '((output-pdf "PDF Tools"))
+					TeX-source-correlate-start-server t)
+
+		;; Update PDF buffers after successful LaTeX runs
+		(add-hook 'TeX-after-compilation-finished-functions
+							#'TeX-revert-document-buffer)
+		)
 	
 	;; set up engines
 	(setq TeX-engine-alist 
@@ -4888,28 +4898,32 @@ Taken from http://cestlaz.github.io/posts/using-emacs-31-elfeed-3/.
 	(setq doc-view-ghostscript-program "gswin64c.exe"))
 #+END_SRC
 
-*** COMMENT pdf-tools
+*** pdf-tools
 
-The hard part is to generate =epdfinfo.exe= under Windows. Therefore I'm not using it.
+The hard part is to generate =epdfinfo.exe= under Windows, which is why I'm not using it there.
 
 https://github.com/politza/pdf-tools
 
 #+BEGIN_SRC emacs-lisp
-(use-package pdf-tools
-	:ensure t
-	;; :if (executable-find "epdfinfo")
-	:mode (("\\.pdf\\'" . pdf-view-mode))
-	:config
-	(setq-default pdf-view-display-size 'fit-page) ; fit page by default
-	(setq pdf-view-resize-factor 1.10)
-	;; (pdf-tools-install)
-	;; (setq pdf-info-epdfinfo-program (expand-file-name "epdinfo.exe" (concat wemacs-dir "pdftools")))
-)
+(when (not (eq system-type 'windows-nt))
+	(use-package pdf-tools
+		:ensure t
+		;; :if (executable-find "epdfinfo")
+		:mode (("\\.pdf\\'" . pdf-view-mode))
+		:config
+		(setq-default pdf-view-display-size 'fit-page) ; fit page by default
+		(setq pdf-view-resize-factor 1.10)
+		(pdf-tools-install)
+		;; Manually set path to epdfinfo binary
+		;; (setq pdf-info-epdfinfo-program (expand-file-name "epdinfo.exe" (concat wemacs-dir "pdftools")))
+		;; Use normal isearch (does not work with helm-swoop)
+		(define-key pdf-view-mode-map (kbd "C-f") 'isearch-forward)
+	))
 #+END_SRC
 
 *** COMMENT bibliothek
 
-Nice idea, but it currently does not work because of "damaged" PDFs in my collection. 
+Nice idea, but it currently does not work because of "too many open files".
 Depends on =pdf-tools=.
 
 https://github.com/cadadr/elisp#bibliothekel
@@ -4917,7 +4931,7 @@ https://github.com/cadadr/elisp#bibliothekel
 #+BEGIN_SRC emacs-lisp
 (use-package bibliothek
 	:ensure t
-	:if (executable-find "epdfinfo")
+	;;:if (executable-find "epdfinfo")
 	:config
 	(setq bibliothek-path (list user-bibliography-pdf-dir)))
 #+END_SRC
@@ -7761,6 +7775,8 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 		(unpackaged/smerge-hydra/body))
 	 ((string-equal (buffer-mode) "emacs-lisp-mode")
 		(hydra-elisp/body))
+	 ((string-equal (buffer-mode) "pdf-view-mode")
+		(hydra-pdftools/body))
 	 ((or t) (message (concat "no hydra defined for major mode"))))
 	)
 #+END_SRC
@@ -7773,7 +7789,6 @@ If buffer-or-name is nil return current buffer's mode."
   (buffer-local-value 'major-mode
 											(if buffer-or-name (get-buffer buffer-or-name) (current-buffer))))
 #+END_SRC
-
 
 For using a hydra within =helm=:
 #+BEGIN_SRC emacs-lisp
@@ -9346,6 +9361,61 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 			("r" highlight-symbol-query-replace)
 			("l" highlight-symbol-list-all)
 			("q" highlight-symbol-remove-all :color blue))
+#+END_SRC
+
+** hydra-pdftools
+
+Hydra taken from https://github.com/abo-abo/hydra/wiki/PDF-Tools#my-hydra-for-pdf-tools:
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-pdftools (:color blue :hint nil)
+        "
+                                                                      ╭───────────┐
+       Move  History   Scale/Fit     Annotations  Search/Link    Do   │ PDF Tools │
+   ╭──────────────────────────────────────────────────────────────────┴───────────╯
+         ^^_g_^^      _B_    ^↧^    _+_    ^ ^     [_al_] list    [_s_] search    [_u_] revert buffer
+         ^^^↑^^^      ^↑^    _H_    ^↑^  ↦ _W_ ↤   [_am_] markup  [_o_] outline   [_i_] info
+         ^^_p_^^      ^ ^    ^↥^    _0_    ^ ^     [_at_] text    [_F_] link      [_d_] dark mode
+         ^^^↑^^^      ^↓^  ╭─^─^─┐  ^↓^  ╭─^ ^─┐   [_ad_] delete  [_f_] search link
+    _h_ ←pag_e_→ _l_  _N_  │ _P_ │  _-_    _b_     [_aa_] dired
+         ^^^↓^^^      ^ ^  ╰─^─^─╯  ^ ^  ╰─^ ^─╯   [_y_]  yank
+         ^^_n_^^      ^ ^  _r_eset slice box
+         ^^^↓^^^
+         ^^_G_^^
+   --------------------------------------------------------------------------------
+        "
+        ("\\" hydra-master/body "back")
+        ("<ESC>" nil "quit")
+        ("al" pdf-annot-list-annotations)
+        ("ad" pdf-annot-delete)
+        ("aa" pdf-annot-attachment-dired)
+        ("am" pdf-annot-add-markup-annotation)
+        ("at" pdf-annot-add-text-annotation)
+        ("y"  pdf-view-kill-ring-save)
+        ("+" pdf-view-enlarge :color red)
+        ("-" pdf-view-shrink :color red)
+        ("0" pdf-view-scale-reset)
+        ("H" pdf-view-fit-height-to-window)
+        ("W" pdf-view-fit-width-to-window)
+        ("P" pdf-view-fit-page-to-window)
+        ("n" pdf-view-next-page-command :color red)
+        ("p" pdf-view-previous-page-command :color red)
+        ("d" pdf-view-dark-minor-mode)
+        ("b" pdf-view-set-slice-from-bounding-box)
+        ("r" pdf-view-reset-slice)
+        ("g" pdf-view-first-page)
+        ("G" pdf-view-last-page)
+        ("e" pdf-view-goto-page)
+        ("o" pdf-outline)
+        ("s" pdf-occur)
+        ("i" pdf-misc-display-metadata)
+        ("u" pdf-view-revert-buffer)
+        ("F" pdf-links-action-perfom)
+        ("f" pdf-links-isearch-link)
+        ("B" pdf-history-backward :color red)
+        ("N" pdf-history-forward :color red)
+        ("l" image-forward-hscroll :color red)
+        ("h" image-backward-hscroll :color red))
 #+END_SRC
 
 ** hydra-pomidor
