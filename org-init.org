@@ -144,6 +144,7 @@
       - [[#hydra-multiple-cursors][hydra-multiple-cursors]]
       - [[#hydra-highlight-changes][hydra-highlight-changes]]
       - [[#hydra-highlight-symbol][hydra-highlight-symbol]]
+      - [[#hydra-pdftools][hydra-pdftools]]
       - [[#hydra-pomidor][hydra-pomidor]]
       - [[#hydra-position-register][hydra-position-register]]
       - [[#hydra-load-theme][hydra-load-theme]]
