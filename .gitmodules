@@ -4,3 +4,6 @@
 [submodule "templates/reveal/Reveal.js-Title-Footer"]
 	path = templates/reveal/Reveal.js-Title-Footer
 	url = https://github.com/e-gor/Reveal.js-Title-Footer.git
+[submodule "lisp/org-pdftools"]
+	path = lisp/org-pdftools
+	url = https://github.com/fuxialexander/org-pdftools.git

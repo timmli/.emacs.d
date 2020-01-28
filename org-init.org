@@ -4922,6 +4922,17 @@ https://github.com/politza/pdf-tools
 	))
 #+END_SRC
 
+**** COMMENT org-pdftools
+
+This provides =org-links= to single pages of PDFs using =pdf-tools=:
+
+#+BEGIN_SRC emacs-lisp
+(use-package lisp/org-pdftools/org-pdftools
+	;; :config
+	;; (setq org-pdftools-root-dir /path/you/store/pdfs)
+)
+#+END_SRC
+
 *** COMMENT bibliothek
 
 Nice idea, but it currently does not work because of "too many open files".
