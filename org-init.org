@@ -1236,6 +1236,8 @@ Delete with <delete> key.
 
 *** dired-quick-sort
 
+https://gitlab.com/xuhdev/dired-quick-sort
+
 Depends on =ls=, the version of which should support =--group-directories-first=.
 Activated in =dired= with <S-s>.
 
@@ -8096,8 +8098,6 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
 
 ** hydra-dired
 
-https://gitlab.com/xuhdev/dired-quick-sort
-
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-dired-main (:hint nil)
 	"
@@ -8108,8 +8108,8 @@ https://gitlab.com/xuhdev/dired-quick-sort
   ^^            ʌ        ^^             _u_: unmark         _C_: copy to          _/_: filter 
   ^^                     ^^             _U_: unmark all     _D_: delete           _s_: sort		 
   _<left>_  ..     view  _<right>_      _t_: toggle mark    _R_: move to          _(_: details
-  ^^               enter _RET_          _*_: specific       _r_: rename           _z_: size
-  ^^                     ^^             ^^                  ^^                    _)_: collapse
+  ^^               enter _RET_          _*_: specific       _r_: rename           _)_: collapse
+  ^^                     ^^             ^^                  _S_: symlink          _z_: size
   ^^            v        ^^             _w_: copy file name _P_: change property
             _<down>_     ^^             _W_: copy path      _c_/_Z_: compress				  
   ^^                     ^^             ^^                  _=_: diff             _q_: quit dired     
@@ -8149,6 +8149,7 @@ https://gitlab.com/xuhdev/dired-quick-sort
 	("j" dired-goto-file)
 	("r" dired-efap)
 	("s" dired-sort-toggle-or-edit)
+	("s" hydra-dired-quick-sort/lambda-S :color blue)
 	("m" dired-mark)
 	("u" dired-unmark)
 	("U" dired-unmark-all-marks)
