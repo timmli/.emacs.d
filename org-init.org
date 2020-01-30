@@ -8109,7 +8109,7 @@ https://gitlab.com/xuhdev/dired-quick-sort
   ^^                     ^^             _U_: unmark all     _D_: delete           _s_: sort		 
   _<left>_  ..     view  _<right>_      _t_: toggle mark    _R_: move to          _(_: details
   ^^               enter _RET_          _*_: specific       _r_: rename           _z_: size
-  ^^                     ^^             ^^                  ^^
+  ^^                     ^^             ^^                  ^^                    _)_: collapse
   ^^            v        ^^             _w_: copy file name _P_: change property
             _<down>_     ^^             _W_: copy path      _c_/_Z_: compress				  
   ^^                     ^^             ^^                  _=_: diff             _q_: quit dired     
@@ -8138,6 +8138,7 @@ https://gitlab.com/xuhdev/dired-quick-sort
 	("c" dired-do-compress-to)
 	("/" dired-narrow)
 	("(" dired-hide-details-mode)
+	(")" dired-collapse-mode)
 	("$" wdired-change-to-wdired-mode :color blue)
 	("f" helm-find)
 	("." (find-file home-directory))
