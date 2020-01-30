@@ -808,13 +808,14 @@ Quick, comprehensive search on org-mode files.
 #+BEGIN_SRC emacs-lisp
 (use-package helm-org-rifle
 	:ensure t
+	:pin MELPA
   :config
 	(define-key helm-org-rifle-map (kbd "<left>") 'backward-char) ; instead of helm-previous-source
 	(define-key helm-org-rifle-map (kbd "<right>") 'forward-char) ; instead of helm-next-source
 	(define-key helm-org-rifle-map (kbd "C-n") 'helm-next-source)
 	(define-key helm-org-rifle-map (kbd "C-p") 'helm-previous-source)
 	(setq helm-org-rifle-show-path t)
-)
+	)
 #+END_SRC
 
 *** helm-ag
@@ -1744,9 +1745,12 @@ See https://www.mail-archive.com/emacs-orgmode@gnu.org/msg30416.html
 #+BEGIN_SRC emacs-lisp
 (use-package org-download
 	:ensure t
-	:after org
+	:pin MELPA
 	:config
-	(setq org-download-method 'attach))
+	(setq org-download-method 'attach)
+	(when (not (eq system-name 'windows-nt))
+		(setq org-download-screenshot-method "scrot -s %s"))
+  (add-hook 'dired-mode-hook 'org-download-enable))
 #+END_SRC
 
 *** General keys
