@@ -8148,7 +8148,7 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
 	("g" revert-buffer)
 	("j" dired-goto-file)
 	("r" dired-efap)
-	("s" dired-sort-toggle-or-edit)
+	;; ("s" dired-sort-toggle-or-edit)
 	("s" hydra-dired-quick-sort/lambda-S :color blue)
 	("m" dired-mark)
 	("u" dired-unmark)
