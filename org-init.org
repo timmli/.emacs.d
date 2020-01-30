@@ -4925,15 +4925,20 @@ https://github.com/politza/pdf-tools
 		))
 #+END_SRC
 
-**** COMMENT org-pdftools
+**** org-pdftools
 
-This provides =org-links= to single pages of PDFs using =pdf-tools=:
+=org-pdftools provides =org-links= to single pages of PDFs using =pdf-tools=.
+URL: https://github.com/fuxialexander/org-pdftools
+
+- [ ] support of relative paths 
 
 #+BEGIN_SRC emacs-lisp
-(use-package lisp/org-pdftools/org-pdftools
-	;; :config
-	;; (setq org-pdftools-root-dir /path/you/store/pdfs)
-)
+(when (not (eq system-type 'windows-nt))
+	(add-to-list 'load-path (expand-file-name "lisp/org-pdftools" user-emacs-directory))
+	(use-package org-pdftools
+		;; :config
+		;; (setq org-pdftools-root-dir /path/you/store/pdfs)
+		))
 #+END_SRC
 
 *** COMMENT bibliothek
