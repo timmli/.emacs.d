@@ -6756,6 +6756,18 @@ Update =org-agenda-files= once a day during start-up.
 	)
 #+END_SRC
 
+*** pdfgrep
+
+=pdfgrep= enables one to grep through PDFs. 
+URL: https://github.com/jeremy-compostella/pdfgrep
+
+#+BEGIN_SRC emacs-lisp
+(use-package pdfgrep
+	:ensure t
+	:config
+	(pdfgrep-mode))
+#+END_SRC
+
 * Project management
 
 ** projectile
