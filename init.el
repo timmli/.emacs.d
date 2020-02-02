@@ -93,6 +93,10 @@ This variable should be changed in private-emacs-settings-before.el.")
 	"Path to private Emacs settings directory.
 This variable can be changed with the system variable PRIVATE_EMACS_SETTINGS.")
 
+(if (getenv "PRIVATE_EMACS_SETTINGS")
+		(message "Info: PRIVATE_EMACS_SETTINGS=%s" (expand-file-name (getenv "PRIVATE_EMACS_SETTINGS")))
+	(message "Warning: system variabel PRIVATE_EMACS_SETTINGS"))
+
 (defvar my-bbdb-file
 	(expand-file-name "bbdb" user-emacs-directory)
 	"Path to bbdb file.
