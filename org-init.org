@@ -3345,6 +3345,10 @@ Show whether links to files are valid:
 (org-link-set-parameters
  "file"
  :face (lambda (path) (when (not (file-remote-p path))(if (file-exists-p path) 'org-link 'org-warning))))
+
+(org-link-set-parameters
+ "attachment"
+ :face (lambda (path) (when (not (file-remote-p path))(if (file-exists-p (expand-file-name path (org-attach-dir))) 'org-link 'org-warning))))
 #+END_SRC
 
 Use IDs rather than headline names:
