@@ -1747,7 +1747,7 @@ See https://www.mail-archive.com/emacs-orgmode@gnu.org/msg30416.html
 	:pin MELPA
 	:config
 	(setq org-download-method 'attach)
-	(when (not (eq system-name 'windows-nt))
+	(when (not (eq system-type 'windows-nt))
 		(setq org-download-screenshot-method "scrot -s %s"))
   (add-hook 'dired-mode-hook 'org-download-enable))
 #+END_SRC
@@ -5973,7 +5973,9 @@ Helper functions to use the Emacs register interactively.
 	:init
 	(eval-after-load 'image '(require 'image+))
 	:config
-	(setq imagex-convert-command "magick")  ; "convert" does not work on Windows machines 
+	(if (eq system-type 'windows-nt)
+			(setq imagex-convert-command "magick")  ; "convert" does not work on Windows machines
+		(setq imagex-convert-command "convert"))
 	)
 #+END_SRC
 
@@ -8865,8 +8867,9 @@ Automatically open the hydra with ibuffer:
 	("o" imagex-sticky-restore-original "original")
 	;; ("S" imagex-sticky-save-image "save")
 	("r" imagex-sticky-rotate-right "rotate right")
-	("l" imagex-sticky-rotate-left "rotate left"))
-
+	("l" imagex-sticky-rotate-left "rotate left")
+	("n" image-next-file "next image")
+	("p" image-previous-file "previous image"))
 #+END_SRC
 
 ** hydra-insert-date
