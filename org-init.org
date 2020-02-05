@@ -755,8 +755,7 @@ http://sqlite.org/download.html
 	(setq helm-dash-common-docsets			; active in all buffers
 				'())
 	(setq helm-dash-browser-func 'eww)		; use internal web browser
-	(when (eq system-type 'windows-nt)
-		(setq helm-dash-docsets-path docsets-dir)) ; FIXME: under windows, helm-dash does not install docsets here but in ~/AppData/... Because of missing tar command?
+	(setq helm-dash-docsets-path docsets-dir) ; FIXME: under windows, helm-dash does not install docsets here but in ~/AppData/... Because of missing tar command?
 	(add-hook 'latex-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
 	(add-hook 'TeX-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
 	(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Emacs Lisp"))))
