@@ -125,6 +125,12 @@ Using trimmed paths is necessary with some packages, e.g. calfw.
 	"Path to docsets directory.
 This variable should be changed in private-emacs-settings-before.el.")
 
+(defvar music-dir
+	(expand-file-name "Music/" home-directory)
+	"Path to music directory.
+This variable should be changed in private-emacs-settings-before.el.")
+
+
 ;;==========================================================
 ;;      PRIVATE SETTINGS: USER INFO (outside .emacs.d)
 ;;==========================================================

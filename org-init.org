@@ -7388,6 +7388,7 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
 
 ** COMMENT emms
 
+- [ ] takes way to long for scanning my music collection
 - [ ] For some reason, =emms= does not correctly use =vlc= under Windows.
       - Path names are not properly treated wrt. slashes and spaces in filenames.
 
@@ -7398,14 +7399,15 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
 	(require 'emms-setup)
 	(emms-all) 
 	(emms-default-players)
+	(when (executable-find "vlc")
+		(setq emms-player-list '(emms-player-vlc-playlist
+														 emms-player-vlc)))
 	(if (eq system-type 'windows-nt)
 			(setq emms-player-vlc-command-name
 						(expand-file-name "c:/Program Files/VideoLAN/VLC/vlc.exe"))
-		(setq emms-player-vlc-parameters '("--intf=rc"))
-		(setq emms-player-list '(emms-player-vlc-playlist
-														 emms-player-vlc)))
-	(setq emms-source-file-default-directory "~/Music/")
-	(emms-add-directory-tree "~/Music/"))
+		(setq emms-player-vlc-parameters '("--intf=rc")))
+	(setq emms-source-file-default-directory music-dir)
+	(emms-add-directory-tree music-dir))
 #+END_SRC
 
 *** helm-emms
@@ -7413,7 +7415,9 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
 #+BEGIN_SRC emacs-lisp
 (use-package helm-emms
 	:ensure t
-	:after emms)
+	:after emms
+	:config
+	(require 'helm-adaptive))
 #+END_SRC
 
 * Tags
@@ -8663,6 +8667,43 @@ Function to replace a link with its description, taken from https://emacs.stacke
 ("Q" quit-window "quit" :exit t)
 ("q" nil :color blue)
 )
+#+END_SRC
+
+** TODO COMMENT hydra-emms
+
+Siehe https://www.reddit.com/r/emacs/comments/8b0dqx/emms_updates_mpv_backend_opus_orgstyle_bindings/dx43q8h?utm_source=share&utm_medium=web2x
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-media-player (:color amaranth :hint nil)
+  "
+Currently playing: %s(emms-track-description (emms-playlist-current-selected-track)) [TODO loopstate].
+Next up: TODO
+Previous: TODO
+
+^Playback control^      ^^Volume: xxx^^          ^Playlist management^    ^Other^
+--------------------------------------------------------------------------------
+_n_: next               _+_, _=_: louder         _<f11>_: emms list       _q_: quit
+_p_: previous           _-_: quieter^^           ^ ^                      _g_: refresh
+_l_: TODO toggle loop   ^ ^ ^ ^                  ^ ^                      _m_: mute
+_SPC_: %s(if emms-player-paused-p \"unpause\" \"pause  \")
+_s_: stop
+"
+  ("n" emms-next)
+  ("p" emms-previous)
+  ("l" "TODO looping")
+  ("SPC" emms-pause)
+  ("s" emms-stop)
+  ("+" emms-volume-raise)
+  ("=" emms-volume-raise)
+  ("-" emms-volume-lower)
+  ("m" "TODO muting")
+  ("<f11>" emms :color blue)
+  ("q" nil :color blue)
+  ("g" "refresh"))
+
+;;; FIXME if stopped, SPC should show "play", and Currently playing should show "To play" or sth.
+
+(global-set-key (kbd "<f11>") 'hydra-media-player/body)
 #+END_SRC
 
 ** hydra-git-gutter
