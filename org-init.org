@@ -7405,7 +7405,9 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
 	(if (eq system-type 'windows-nt)
 			(setq emms-player-vlc-command-name
 						(expand-file-name "c:/Program Files/VideoLAN/VLC/vlc.exe"))
-		(setq emms-player-vlc-parameters '("--intf=rc")))
+		(setq emms-player-vlc-parameters '("--intf=rc"))
+		(setq emms-player-list '(emms-player-vlc-playlist
+														 emms-player-vlc)))
 	(setq emms-source-file-default-directory music-dir)
 	(emms-add-directory-tree music-dir))
 #+END_SRC
