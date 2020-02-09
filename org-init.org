@@ -8143,17 +8143,17 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
  ^Navigation^            ^^            ^Mark^              ^Actions^             ^View^
 -^----------^------------^^------------^----^--------------^-------^-------------^----^------------
 
-             _<up>_      ^^             _m_: mark           _+_: new						  _g_: refresh              
-  ^^            ʌ        ^^             _u_: unmark         _C_: copy to          _/_: filter 
-  ^^                     ^^             _U_: unmark all     _D_: delete           _s_: sort		 
+             _<up>_      ^^             _m_: mark           _+_: new              _g_: refresh
+  ^^            ʌ        ^^             _u_: unmark         _C_: copy to          _/_: filter
+  ^^                     ^^             _U_: unmark all     _D_: delete           _s_: sort
   _<left>_  ..     view  _<right>_      _t_: toggle mark    _R_: move to          _(_: details
   ^^               enter _RET_          _*_: specific       _r_: rename           _)_: collapse
   ^^                     ^^             ^^                  _S_: symlink          _z_: size
-  ^^            v        ^^             _w_: copy file name _P_: change property
-            _<down>_     ^^             _W_: copy path      _c_/_Z_: compress				  
-  ^^                     ^^             ^^                  _=_: diff             _q_: quit dired     
-   _._: home  _j_: jump  _f_: find        _$_: wdired         _e_: diff on marked   _Q_: quit hydra
-                                                    
+  ^^            v        ^^             _w_: copy file name _P_: change property _ow_: open in other window
+            _<down>_     ^^             _W_: copy path      _c_/_Z_: compress      _of_: open in other frame
+  ^^                     ^^             ^^                  _=_: diff
+   _._: home  _j_: jump  _f_: find        _$_: wdired         _e_: diff on marked  ^^
+   ^^         ^^         ^^             ^^                  ^^                     ^^           _q_: quit hydra 
 -^----------^------------------------^----^---------------^-------^-------------^----^-----------
 "
 
@@ -8186,6 +8186,8 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
 	("e" ora-ediff-files)
 	("g" revert-buffer)
 	("j" dired-goto-file)
+	("ow" dired-find-file-other-window :color blue)
+	("of" diredp-find-file-other-frame :color blue)
 	("r" dired-efap)
 	;; ("s" dired-sort-toggle-or-edit)
 	("s" hydra-dired-quick-sort/lambda-S :color blue)
@@ -8197,8 +8199,8 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
 	("w" dired-copy-filename-as-kill)
 	("W" tl/dired-copy-path-at-point)
 	("z" dired-get-size)
-	("q" quit-window :color blue)
-	("Q" nil :color blue)
+	;; ("q" quit-window :color blue)
+	("q" nil :color blue)
 	)
 
 (defhydra hydra-dired-new (:hint nil )
