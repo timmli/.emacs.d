@@ -216,6 +216,12 @@ Custom settings (https://www.gnu.org/software/emacs/manual/html_mono/widget.html
 	(widget-insert " Use CUA-mode?"))
 #+END_SRC
 
+Show dashboard when also starting a client:
+
+#+BEGIN_SRC emacs-lisp
+(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+#+END_SRC
+
 ** Signals
 
 No beep:
@@ -7628,7 +7634,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 	("s" info-lookup-symbol nil)
 	("v" describe-variable nil)
 	("f" describe-function nil)
-	("S" describe-syntax nil)
+	;; ("S" describe-syntax nil)
 
 	;; Describe
 	("p" describe-package nil)
@@ -7636,7 +7642,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 	("c" (what-cursor-position t) nil)
 
 	;; ^Processes
-	("P" proced nil)
+	("S" proced nil)
 	("E" list-processes nil)
 
 	("<f2>" hydra-f2/body :exit t)
