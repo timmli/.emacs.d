@@ -27,6 +27,7 @@
       - [[#web-mode][web-mode]]
       - [[#graphvizdot][Graphviz/dot]]
       - [[#gnuplot][Gnuplot]]
+      - [[#connll-u][CoNNLL-U]]
       - [[#python][Python]]
       - [[#plantuml][PlantUML]]
       - [[#dired][dired]]
@@ -936,7 +937,7 @@ Quick, comprehensive search on org-mode files.
 	)
 #+END_SRC
 
-** COMMENT CoNNLL-U
+** CoNNLL-U
 
 #+BEGIN_SRC emacs-lisp
 (use-package conllu-mode
