@@ -200,16 +200,18 @@ This variable should be changed in private-emacs-settings.el.")
 ;;      CUSTOM.EL
 ;;=========================================================
 
-;; font
+;; Font
 (defvar custom-default-font "DejaVu Sans Mono" nil)
 (defvar custom-fixed-pitch-font "DejaVu Sans Mono" nil)
-(defvar custom-variable-pitch-font "Segoe UI" nil) 
-(when (not (find-font (font-spec :name "Segoe UI"))) ; Segoe UI might be unavailable on Linux
-	(setq custom-variable-pitch-font "Arial"))
+(defvar custom-variable-pitch-font "Segoe UI" nil)
 
-;; ;; default (can be overridden by custom.el)
-;; (add-to-list 'default-frame-alist
-;;              '(font . "DejaVu Sans Mono-11"))
+;; ;; The following was supposed to check the availability of Segoe UI with a fall-back option.
+;; ;; Unfortunately, `find-font` only works as expected when a frame
+;; ;; is already present, which is not the case when loading the emacs daemon. 
+;; ;; A solution is described here: https://emacs.stackexchange.com/questions/12351/when-to-call-find-font-if-launching-emacs-in-daemon-mode
+;; (when (not (find-font (font-spec :name "Segoe UI"))) ; Segoe UI might be unavailable on Linux
+;; (setq custom-variable-pitch-font "Arial"))
+
 ;; stolen from custom.el (can be overridden by custom.el)
 (custom-set-faces
  `(default ((t (:family ,custom-default-font :foundry "outline" :slant normal :weight normal :height 113 :width normal))))
