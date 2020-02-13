@@ -9512,7 +9512,9 @@ Hydra taken from https://github.com/abo-abo/hydra/wiki/PDF-Tools#my-hydra-for-pd
 	("N" pdf-history-forward :color red)
 	("l" image-forward-hscroll :color red)
 	("h" image-backward-hscroll :color red))
-(define-key pdf-view-mode-map (kbd "C-f") 'pdf-occur)
+
+(when (not (eq system-type 'windows-nt))
+	(define-key pdf-view-mode-map (kbd "C-f") 'pdf-occur))
 #+END_SRC
 
 ** hydra-pomidor
