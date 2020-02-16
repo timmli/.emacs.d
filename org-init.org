@@ -6388,8 +6388,11 @@ Position the cursor at it's beginning, according to the current mode."
 #+end_src
 
 *** Center line
+
+This  comes from vanilla Emacs:
+
 #+begin_src emacs-lisp
-(global-set-key (kbd "C-S-l") 'recenter-top-bottom)
+(global-set-key (kbd "C-l") 'recenter-top-bottom)
 #+end_src
 
 *** Move line
@@ -6538,7 +6541,7 @@ Version 2015-06-12"
 
 Kill buffer:
  #+begin_src emacs-lisp
-(global-set-key (kbd "M-<f4>") 'kill-this-buffer)
+(global-set-key (kbd "M-<f3>") 'kill-this-buffer) ; M-<f4> is bound to killing the application under xfce.
  #+end_src
  
 Revert buffer:
@@ -7710,6 +7713,17 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 	("<f8>" hydra-f8/body :exit t)
 	("<f9>" hydra-f9/body :exit t))
 	(global-set-key (kbd "<f2>") 'hydra-f2/body)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-scroll (:hint nil)
+	"Scroll buffer"
+	("n" (lambda nil (interactive) (scroll-up 3)) :exit nil)
+	("p" (lambda nil (interactive) (scroll-down 3)) :exit nil)
+	("<down>" (lambda nil (interactive) (scroll-up 3)) "scroll down" :exit nil)
+	("<up>" (lambda nil (interactive) (scroll-down 3)) "scroll up" :exit nil)
+	("q" nil :color blue))
+(global-set-key (kbd "C-S-l") 'hydra-scroll/body)
 #+END_SRC
 
 ** hydra-f3

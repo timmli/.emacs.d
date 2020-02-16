@@ -1,7 +1,7 @@
 # name: source block
 # key: <src
 # --
-#+BEGIN_SRC ${1:$$(yas-choose-value '("C" "C++" "D" "R" "asymptote" "calc" "clojure" "css" "ditaa" "dot" "emacs-lisp" "fortran" "gnuplot" "haskell" "java" "js" "latex" "ledger" "lilypond" "lisp" 		 "luaawk" "matlab" "mscgen" "ocaml" "octave" "org" "oz" "perl" "plantuml" "processing" "python" "ruby" "sass" "scheme" "screen" "sed" "sh" "sql" "sqlite" "vala"))} $2
+#+BEGIN_SRC ${1:$$(yas-choose-value '("C" "C++" "D" "R" "asymptote" "bash" "calc" "clojure" "css" "ditaa" "dot" "emacs-lisp" "fortran" "gnuplot" "haskell" "java" "js" "latex" "ledger" "lilypond" "lisp" "luaawk" "matlab" "mscgen" "ocaml" "octave" "org" "oz" "perl" "plantuml" "processing" "python" "ruby" "sass" "scheme" "screen" "sed" "sh" "sql" "sqlite" "vala"))} $2
 $0
 #+END_SRC
 
