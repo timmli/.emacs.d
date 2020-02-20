@@ -7347,6 +7347,14 @@ Version 2017-06-19"
 	(setq w32-quote-process-args t))
 #+END_SRC
 
+** Bash
+
+Bash support in =org-mode=:
+
+ #+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages  'org-babel-load-languages '((shell . t)))
+#+END_SRC
+
 * Encryption
 
 https://www.masteringemacs.org/article/keeping-secrets-in-emacs-gnupg-auth-sources
