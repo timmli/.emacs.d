@@ -3305,7 +3305,7 @@ Only use actual width of image when not specified with =#+ATTR* :width= (require
 (setq org-image-actual-width nil)
 #+END_SRC
 
-*** Links
+*** TODO Links
 
 Function to update link syntax that got changed in =org-mode= v9.3 (taken from https://orgmode.org/Changes.html):
 #+BEGIN_SRC emacs-lisp
@@ -3390,6 +3390,44 @@ Function to remove all ID properties from buffer:
 					(setq id-removed-p t)))
 			(when (symbol-value 'id-removed-p)
 				(org-id-update-id-locations)))))
+#+END_SRC
+
+- [ ] Adopt a function that replaces links by their description using the =org-element= API (see https://emacs.stackexchange.com/a/49068/12336)
+
+Function to replace a link with its description, taken from https://emacs.stackexchange.com/a/10712/12336:
+#+BEGIN_SRC emacs-lisp
+(defun my/org-delete-link ()
+  "Replace an org link of the format [[LINK][DESCRIPTION]] with DESCRIPTION.
+If the link is of the format [[LINK]], delete the whole org link.
+
+In both the cases, save the LINK to the kill-ring.
+
+Execute this command while the point is on or after the hyper-linked org link."
+  (interactive)
+  (when (derived-mode-p 'org-mode)
+    (let ((search-invisible t) start end)
+      (save-excursion
+        (when (re-search-backward "\\[\\[" nil :noerror)
+          (when (re-search-forward "\\[\\[\\(.*?\\)\\(\\]\\[.*?\\)*\\]\\]" nil :noerror)
+            (setq start (match-beginning 0))
+            (setq end   (match-end 0))
+            (kill-new (match-string-no-properties 1)) ; Save the link to kill-ring
+            (replace-regexp "\\[\\[.*?\\(\\]\\[\\(.*?\\)\\)*\\]\\]" "\\2" nil start end)))))))
+#+END_SRC
+
+DEPRECATED: Function to replace a link with its description, taken from https://emacs.stackexchange.com/a/21945/12336:
+#+BEGIN_SRC emacs-lisp
+(defun afs/org-replace-link-by-link-description ()
+  "Replace an org link by its description or if empty its address"
+  (interactive)
+  (if (org-in-regexp org-bracket-link-regexp 1)
+      (save-excursion
+        (let ((remove (list (match-beginning 0) (match-end 0)))
+              (description (if (match-end 3) 
+                               (org-match-string-no-properties 3)
+                             (org-match-string-no-properties 1))))
+          (apply 'delete-region remove)
+          (insert description)))))
 #+END_SRC
 
 *** Tags
@@ -8312,7 +8350,7 @@ Don't ask for the path when searching for files:
 	("i" org-id-get-createq)
 	("j" org-goto :color pink)
 	("l" org-toggle-latex-fragment)
-	("dl" afs/org-replace-link-by-link-description)
+	("dl" my/org-delete-link)
 	("dt" delete-org-latex-aux-files)
 	("$" org-latex-fragment-toggle-toggle)
 	("m" hydra-org-markup/body)
@@ -8620,7 +8658,7 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
 	("t" tl/insert-org-link-term "term" :exit t)
 	("u" (org-emphasize ?_) "underlined" :exit t)
 	("x" tl/insert-org-link-example "example" :exit t)
-	("d" afs/org-replace-link-by-link-description "delete markup" :exit t)
+	("d" my/org-delete-link "delete markup" :exit t)
 	("q" nil :color blue))
 (global-set-key (kbd "C-c m") 'hydra-org-markup/body)
 #+END_SRC
@@ -8666,21 +8704,6 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
 	(tl/insert-org-link
 	 (concat "color:"
 					 (replace-regexp-in-string "[[:space:]]+" "" (helm-colors))))) 
-#+END_SRC
-
-Function to replace a link with its description, taken from https://emacs.stackexchange.com/a/21945/12336:
-#+BEGIN_SRC emacs-lisp
-(defun afs/org-replace-link-by-link-description ()
-  "Replace an org link by its description or if empty its address"
-  (interactive)
-  (if (org-in-regexp org-bracket-link-regexp 1)
-      (save-excursion
-        (let ((remove (list (match-beginning 0) (match-end 0)))
-              (description (if (match-end 3) 
-                               (org-match-string-no-properties 3)
-                             (org-match-string-no-properties 1))))
-          (apply 'delete-region remove)
-          (insert description)))))
 #+END_SRC
 
 ** hydra-deft
