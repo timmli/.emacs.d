@@ -9527,6 +9527,7 @@ Hydra taken from https://github.com/abo-abo/hydra/wiki/PDF-Tools#my-hydra-for-pd
         "
 	("\\" hydra-master/body "back")
 	("<ESC>" nil "quit")
+	("q" nil nil)
 	("al" pdf-annot-list-annotations)
 	("ad" pdf-annot-delete)
 	("aa" pdf-annot-attachment-dired)
