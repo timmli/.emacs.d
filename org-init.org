@@ -7224,6 +7224,19 @@ I don't use this right now.
 	)
 #+END_SRC
 
+** dimmer
+
+#+BEGIN_SRC emacs-lisp
+(use-package dimmer
+	:ensure t
+	:config
+	(dimmer-configure-which-key)
+	(dimmer-configure-helm)
+	(dimmer-configure-hydra)
+	(setq dimmer-adjustment-mode ':foreground) ; possible values are `:foreground', `:background', `:both'
+	(dimmer-mode t))
+#+END_SRC
+
 * Bookmarks
 
 #+BEGIN_SRC emacs-lisp
