@@ -7387,7 +7387,10 @@ See discussion [[https://emacs.stackexchange.com/a/7652/12336][here]].
 (defun open-external-terminal-here ()
   (interactive "@")
   (shell-command (concat "xfce4-terminal --working-directory="
-												 (file-name-directory (or load-file-name buffer-file-name)) 
+												 (file-name-directory
+													(if (string-equal (buffer-mode) "dired-mode")
+															(dired-current-directory)
+														(or load-file-name buffer-file-name))) 
 												 " > /dev/null 2>&1 & disown") nil nil))
 #+END_SRC
 
