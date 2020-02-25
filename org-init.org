@@ -7377,6 +7377,20 @@ Version 2017-06-19"
 (global-set-key (kbd "<f7> e") 'tl/eshell)
  #+END_SRC
 
+** External terminal
+
+Function to open external terminal at point.
+
+See discussion [[https://emacs.stackexchange.com/a/7652/12336][here]].
+
+#+BEGIN_SRC emacs-lisp
+(defun open-external-terminal-here ()
+  (interactive "@")
+  (shell-command (concat "xfce4-terminal --working-directory="
+												 (file-name-directory (or load-file-name buffer-file-name)) 
+												 " > /dev/null 2>&1 & disown") nil nil))
+#+END_SRC
+
 ** COMMENT WSL  bash
 
 #+BEGIN_SRC emacs-lisp
@@ -7969,16 +7983,17 @@ Deprecated:
        [_a_] adress book        [_d_] dired/file browser     [_t_] pomodoro timer
        [_b_] new buffer         [_e_] emacs shell            [_l_] dictionary
        [_i_] buffer overview    [_s_] system shell           [_B_] bookmarks
-       [_c_] calendar          [_gs_] magit status          [_gl_] magit buffer log 
+       [_c_] calendar           [_S_] external shell        [_gl_] magit buffer log 
        [_p_] projectile         [_f_] search files          [_hb_] bibliography     
        [_P_] pandoc             [_r_] elfeed                 [_j_] Jupyter notebook
-       [_o_] open externally    [_R_] R repl                 ^^              [_q_]uit
+       [_o_] open externally    [_R_] R repl                [_gs_] magit status         [_q_]uit
 	" 
 	("a" helm-bbdb :exit t)
 	("c" my-open-calfw :exit t)
 	("d" dired-jump :exit t)
 	("f" hydra-search/body :exit t)
 	("s" shell :exit t)
+	("S" open-external-terminal-here :exit t)
 	("b" xah-new-empty-buffer :exit t)
 	("hb" helm-bibtex :exit t)
 	("i" ibuffer :exit t)
