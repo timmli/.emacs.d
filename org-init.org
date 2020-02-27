@@ -6983,8 +6983,6 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 		)
 	
 	)	
-	;; TODO: make C-d switch to delete-mode?
-	;; http://stackoverflow.com/a/12010437/6452961
 
 	(defun tl/kill-forward-line (N)
 		(interactive)
@@ -7185,6 +7183,7 @@ Better keys for closing and switching between windows. The rest is done in [[*hy
 Goto other window:
 
 #+BEGIN_SRC emacs-lisp
+(define-key dired-mode-map (kbd "M-s") nil)
 (global-set-key (kbd "M-s") 'other-window)
 #+END_SRC
 
