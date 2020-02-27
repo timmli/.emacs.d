@@ -67,7 +67,6 @@
       - [[#save-kill--yank][Save, kill & yank]]
       - [[#switch-between-buffers][Switch between buffers]]
       - [[#narrowing][Narrowing]]
-      - [[#file-browser][File browser]]
       - [[#commenting][Commenting]]
       - [[#line-actions][Line actions]]
       - [[#capitalization][Capitalization]]
@@ -88,6 +87,7 @@
 - [[#windows-and-frames][Windows and frames]]
       - [[#navigation][Navigation]]
       - [[#transpose-frame][transpose-frame]]
+      - [[#dimmer][dimmer]]
 - [[#bookmarks][Bookmarks]]
 - [[#git][Git]]
       - [[#magit][magit]]
@@ -97,7 +97,9 @@
       - [[#better-shell][better-shell]]
       - [[#windows-powershell][Windows powershell]]
       - [[#eshell][eshell]]
+      - [[#external-terminal][External terminal]]
       - [[#windows-cmd][Windows cmd]]
+      - [[#bash][Bash]]
 - [[#encryption][Encryption]]
 - [[#process-monitor][Process monitor]]
       - [[#proced][proced]]
@@ -154,6 +156,7 @@
       - [[#hydra-tags][hydra-tags]]
       - [[#hydra-transpose][hydra-transpose]]
       - [[#hydra-end][hydra: end]]
+- [[#key-bindings][Key bindings]]
 - [[#private-settings][Private settings]]
 
 * Good examples
@@ -1523,6 +1526,19 @@ Copied from https://oremacs.com/2015/01/12/dired-file-size/ and slightly adapted
          (match-string 1))))))
 
 (define-key dired-mode-map (kbd "z") 'dired-get-size)
+#+END_SRC
+
+*** COMMENT ranger, deer
+
+https://github.com/ralesi/ranger.el
+
+Minor mode within [[*dired][dired]] that makes available a hierarchical, column-like view on directories. 
+
+#+BEGIN_SRC emacs-lisp
+(use-package ranger
+	:ensure t
+	:bind
+	("C-x C-d" . deer))
 #+END_SRC
 
 ** JavaScript
@@ -3415,21 +3431,6 @@ Execute this command while the point is on or after the hyper-linked org link."
             (replace-regexp "\\[\\[.*?\\(\\]\\[\\(.*?\\)\\)*\\]\\]" "\\2" nil start end)))))))
 #+END_SRC
 
-DEPRECATED: Function to replace a link with its description, taken from https://emacs.stackexchange.com/a/21945/12336:
-#+BEGIN_SRC emacs-lisp
-(defun afs/org-replace-link-by-link-description ()
-  "Replace an org link by its description or if empty its address"
-  (interactive)
-  (if (org-in-regexp org-bracket-link-regexp 1)
-      (save-excursion
-        (let ((remove (list (match-beginning 0) (match-end 0)))
-              (description (if (match-end 3) 
-                               (org-match-string-no-properties 3)
-                             (org-match-string-no-properties 1))))
-          (apply 'delete-region remove)
-          (insert description)))))
-#+END_SRC
-
 *** Tags
 
 Tags can be set globally as default using the variable =org-tag-alist=. 
@@ -5268,11 +5269,11 @@ When =company= is actively used by browsing completion candidates, =<return>= sh
 
 **** LaTeX
   
-  #+begin_src emacs-lisp
+  #+BEGIN_SRC emacs-lisp
 (use-package company-auctex
 	:ensure t
 	:config (company-auctex-init))
-#+end_src
+#+END_SRC
 
 **** RefTeX
 
@@ -6013,6 +6014,12 @@ Helper functions to use the Emacs register interactively.
 
 ** Images
 
+*** image+
+
+https://github.com/mhayashi1120/Emacs-imagex
+
+Show and modify images within emacs:
+
 #+BEGIN_SRC emacs-lisp
 (use-package image+
 	:ensure t
@@ -6162,6 +6169,10 @@ http://emacs-fu.blogspot.de/2009/05/tracking-changes.html
 
 *** hungry-delete
 
+https://github.com/nflath/hungry-delete
+
+Delete consecutive white space characters in one go.
+
 #+BEGIN_SRC emacs-lisp
 (use-package hungry-delete
   :ensure t 
@@ -6172,7 +6183,7 @@ http://emacs-fu.blogspot.de/2009/05/tracking-changes.html
 
 ** Save, kill & yank
 
-*** TODO easy-kill
+*** SOMEDAY easy-kill
 :LOGBOOK:
 - State "TODO"       from              [2018-11-09 Fri 19:00]
 :END:
@@ -6183,7 +6194,8 @@ https://emacsredux.com/blog/2018/11/09/an-easy-kill/
 ** Switch between buffers
 
 Switching between buffers with C-tab:
-#+begin_src emacs-lisp
+
+#+BEGIN_SRC emacs-lisp
   (use-package iflipb
     :ensure t
     :config
@@ -6191,7 +6203,7 @@ Switching between buffers with C-tab:
     (setq iflipb-ignore-buffers "^ ")     ; include all buffers
     :bind
     ("<C-tab>" . iflipb-next-buffer))
-#+end_src
+#+END_SRC
 
 ** Narrowing
 
@@ -6256,20 +6268,6 @@ Taken from https://emacs.stackexchange.com/a/21356/12336:
      (progn (org-next-visible-heading 1)
             (point)))))
 #+END_SRC
-
-** File browser
-*** ranger, deer
-
-Use deer instead plain directory listing:
-#+begin_src emacs-lisp
-(use-package ranger
-	:ensure t
-	:bind
-	("C-x C-d" . deer))
-
-;; open file from inside a buffer
-(global-set-key (kbd "C-x f") 'find-file-at-point)
-#+end_src
 
 ** Commenting
 
@@ -9781,6 +9779,13 @@ Taken from https://github.com/abo-abo/hydra/wiki/Emacs
   #+BEGIN_SRC emacs-lisp
 		)                   
 #+END_SRC
+
+* TODO Key bindings
+:LOGBOOK:
+- State "TODO"       from              [2020-02-27 Do 23:01]
+:END:
+
+This is to become the place for the global setup of key bindings.
 
 * Private settings 
 
