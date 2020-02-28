@@ -1711,7 +1711,6 @@ Add some link types (deprecated):
 (add-to-list 'org-link-abbrev-alist '("att" . org-attach-expand-link)) ; only for downward compatibility
 #+END_SRC
 
-
 *** org-babel
 
 Preserve indentation in source blocks:
@@ -6822,6 +6821,45 @@ URL: https://github.com/jeremy-compostella/pdfgrep
 	:ensure t
 	:config
 	(pdfgrep-mode))
+#+END_SRC
+
+
+** Backup
+
+https://www.emacswiki.org/emacs/BackupFiles
+http://pragmaticemacs.com/emacs/auto-save-and-backup-every-save/
+
+#+BEGIN_SRC emacs-lisp
+(setq
+ backup-by-copying t     ; don't clobber symlinks
+ kept-new-versions 10    ; keep 10 latest versions
+ kept-old-versions 0     ; don't bother with old versions
+ delete-old-versions t   ; don't ask about deleting old versions
+ version-control t       ; number backups
+ vc-make-backup-files t) ; backup version controlled files
+#+END_SRC
+
+The target directory is to determined by the variable =backup-directory-alist=.
+
+#+BEGIN_SRC emacs-lisp
+;; write backup files to own directory
+(setq backup-directory-alist
+      `(("." . ,backup-dir)))
+#+END_SRC
+
+** Autosave
+
+** Locking files
+
+https://www.gnu.org/software/emacs/manual/html_node/elisp/File-Locks.html
+https://www.emacswiki.org/emacs/LockFiles
+
+By default, Emacs will store a symbolic link with prefix =.#= for every file that is currently being edited in order to "lock" them and prevent collisions.  
+
+However, within Cryptomator volumes under Linux, these symbolic links are not properly handled and =ls= will throw an "Input/output error" when trying to read them. I'm therefore turning off the creation of lock files for the time being:
+
+#+BEGIN_SRC emacs-lisp
+(setq create-lockfiles nil)
 #+END_SRC
 
 * Project management

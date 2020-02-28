@@ -60,11 +60,6 @@
       (expand-file-name "lisp" user-emacs-directory))
 (add-to-list 'load-path lisp-dir)
 
-;; write backup files to own directory
-(setq backup-directory-alist
-      `(("." . ,(expand-file-name
-                 (concat user-emacs-directory "temp")))))
-
 ;; save point position between sessions
 (require 'saveplace)
 (setq-default save-place t)
@@ -130,6 +125,10 @@ This variable should be changed in private-emacs-settings-before.el.")
 	"Path to music directory.
 This variable should be changed in private-emacs-settings-before.el.")
 
+(defvar backup-dir
+	(expand-file-name "backup/" user-emacs-directory)
+	"Path to backup directory.
+This variable should be changed in private-emacs-settings-before.el.")
 
 ;;==========================================================
 ;;      PRIVATE SETTINGS: USER INFO (outside .emacs.d)
