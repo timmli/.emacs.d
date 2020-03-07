@@ -1650,6 +1650,27 @@ http://doc.rix.si/cce/cce-org.html
 Historical remark on taking notes:
 http://takingnotenow.blogspot.com/2008/07/note-keeping-in-1786-blumenbachs-system.html
 
+*** INPROGRESS My GTD setup
+
+| Heading type | Properties                              | Body                                                  | Prupose                                 | Title format     |
+|--------------+-----------------------------------------+-------------------------------------------------------+-----------------------------------------+------------------|
+| area         | non-intersecting with other areas       | topics, projects, ...                                 | group topics, keep overview             |                  |
+| topic        | none                                    | topics, projects, ...                                 | group content, keeping overview         |                  |
+| [[Projects][project]]      | SCHEDULED, DEADLINE, outcome, :project: | todos, notes, events that lead to some common outcome | track progress                          | $outcome: $topic |
+| todo         | SCHEDULED, DEADLINE                     | text, todo, event                                     | track progress, take action             |                  |
+| event        | timestamp, location, :event:            | [[Minutes][minutes]]/notes                                         | store observations, ideas, action items |                  |
+| note         | CREATED, LAST_CHANGED                    | text                                                  | store ideas, concepts, references, ...  |                  |
+
+General structure of an high-level =org-mode= file:
+
+- Inbox
+- Events
+- Projects
+- Topics
+
+Information flow: 
+- Inbox $\Rightarrow$ Events|Projects  $\Rightarrow$ Topics
+
 *** Export
 
 Use a less intrusive export interface:
@@ -2334,6 +2355,11 @@ Only unfold current heading and its content:
 			(org-show-entry)
 			(show-children))))
 #+END_SRC
+
+*** Memacs
+
+https://github.com/novoid/Memacs
+https://arxiv.org/pdf/1304.1332.pdf
 
 *** TODO Minutes
 
@@ -3103,6 +3129,12 @@ http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
 (org-babel-do-load-languages  'org-babel-load-languages '((plantuml . t)))
 #+END_SRC
 
+*** Projects
+
+How to deal with and define projects within =org-mode=: 
+- https://karl-voit.at/2019/11/03/org-projects/
+- http://juanreyero.com/article/emacs/org-teams.html
+
 *** Spell checking
 
 #+BEGIN_SRC emacs-lisp
@@ -3444,59 +3476,41 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 			'((:startgroup . nil)
 				("@work" . ?w)
 				(:grouptags . nil)
-				("management" . ?m)
+				("administration" . ?m)
+				("research" . ?r)
 				("teaching" . ?t)
-				("research" . ?r)
-				("event" . ?e)
 				(:endgroup . nil)
 
 				(:startgroup . nil)
 				("research" . ?r)
-				(:grouptags . nil)
-				("linguistics" . nil)
-				("philosophy" . nil)
-				("logic-maths" . nil)
+				(:grouptags . nil)							; areas of research
+				("cl/nlp" . nil)							  ; computational linguistics & natural language processing
 				("cs" . nil)										; computer science
-				("cl" . nil)										; computational linguistics
+				("linguistics" . nil)
+				("logic/maths" . nil)
+				("philosophy" . nil)
 				(:endgroup . nil)
 
 				(:startgroup . nil)
 				("event" . ?e)
-				(:grouptags . nil)
+				(:grouptags . nil)							; kinds of events
+				("appointment" . ?a)
+				("conference" . nil)
 				("talk" . nil)									
 				("workshop" . nil)
-				("publication" . nil)
-				("conference" . nil)
-				("appointment" . ?a)
 				(:endgroup . nil)
 
 				(:startgroup . nil)
-				("management" . ?m)
-				(:grouptags . nil)
-				("project" . nil)
+				("project" . ?p)
 				(:endgroup . nil)
-
-				;; (:startgroup . nil)
-				;; ("linguistics" . ?h)
-				;; (:grouptags . nil)
-				;; ("syntax" . nil)
-				;; ("semantics" . nil)
-				;; ("pragmatics" . nil)
-				;; ("phonology" . nil)
-				;; ("morphology" . nil)
-				;; ("corpora" . nil)
-				;; (:endgroup . nil)
-
-				;; (:startgroup . nil)
-				;; ("cl" . ?h)
-				;; (:grouptags . nil)
-				;; ("parsing" . nil)
-				;; ("generation" . nil)
-				;; ("formalisms" . nil)
-				;; ("corpora" . nil)
-				;; ("speechRecognition" . nil)
-				;; ("machineLearning" . nil)
-				;; (:endgroup . nil)
+				
+				(:startgroup . nil)
+				("administration" . ?m)					
+				(:grouptags . nil)							;areas of administration
+				("bau" . nil)
+				("personal" . nil)
+				("pr" . nil)
+				(:endgroup . nil)
 
 				(:startgroup . nil)
 				("@home" . ?h)
@@ -3507,9 +3521,10 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 				(:startgroup . nil)
 				("software" . ?h)
 				(:grouptags . nil)
+				("emacs" . nil)
+				("linux" . nil)
 				("programming" . nil)
-				("nlp" . nil)
-				("os" . nil)
+				("windows" . nil)
 				(:endgroup . nil)
 
 				;; (:startgroup . nil)
@@ -3527,6 +3542,14 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 				;; (:endgroup . nil)
 				))
 #+END_SRC
+
+Tags that should not be inherited by children:
+
+#+BEGIN_SRC emacs-lisp
+(setq org-tags-exclude-from-inheritance '("event" "appointment" "conference" "talk" "workshop" "project"))
+#+END_SRC
+
+Key bindings:
 
 #+BEGIN_SRC emacs-lisp
 (define-key org-mode-map (kbd "C-c :") 'org-set-tags-command)
@@ -3708,7 +3731,7 @@ Map scr-block languages to =listings= environments:
 				 "* TODO %?\t%^G\n CREATED: %U\n About region:%i\n %a" :prepend t)
 				("n" "Note" entry (file+datetree (lambda ()(expand-file-name "notes.org" org-directory)))
 				 "* %?\t%^G\n CREATED: %U\n About region:%i\n %a")
-				("c" "Code" entry (file (lambda () (expand-file-name "code.org" org-directory )))
+				("c" "Code" entry (file (lambda () (expand-file-name "captures.org" org-directory )))
 				 "* %?\t%^G\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a" :prepend t)
 				))
 
