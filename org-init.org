@@ -1810,6 +1810,7 @@ See https://www.mail-archive.com/emacs-orgmode@gnu.org/msg30416.html
 	(define-key org-mode-map (kbd "C-c C-t") 'org-todo )
 	(define-key org-mode-map (kbd "C-c C-x C-b") 'org-tree-to-indirect-buffer )
 	(define-key org-mode-map (kbd "C-c C-t") 'org-todo )
+	(define-key org-mode-map (kbd "C-c C-<return>") 'org-ctrl-c-ret )
 	;; With Org-mode v9.2, the explicit mapping of C-a and C-e becomes necessary.
 	;; See http://lists.gnu.org/archive/html/emacs-orgmode/2019-01/msg00253.html
 	(define-key org-mode-map (kbd "C-a") 'org-beginning-of-line )
