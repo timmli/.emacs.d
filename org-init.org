@@ -19,6 +19,7 @@
       - [[#font][Font]]
       - [[#overlays][Overlays]]
 - [[#minibuffer][Minibuffer]]
+      - [[#general][General]]
       - [[#ido-ivy][ido, ivy]]
       - [[#imenu][imenu]]
       - [[#helm][helm]]
@@ -79,6 +80,9 @@
 - [[#files][Files]]
       - [[#org-agenda-files][org-agenda files]]
       - [[#search--find][Search & find]]
+      - [[#backup][Backup]]
+      - [[#autosave][Autosave]]
+      - [[#locking-files][Locking files]]
 - [[#project-management][Project management]]
       - [[#projectile][projectile]]
 - [[#underi-mode][underi-mode]]
@@ -208,15 +212,16 @@ Custom settings (https://www.gnu.org/software/emacs/manual/html_mono/widget.html
 (defun dashboard-insert-custom-settings (&rest ignore)
 	(interactive)
   (widget-insert "Custom settings:\n\t\t")
-	(widget-create 'checkbox
-								 :notify (lambda (&rest ignore)
-													 (if (bound-and-true-p cua-mode)
-															 (progn (cua-mode nil)
-																			(customize-save-variable 'cua-mode nil))
-														 (cua-mode t)
-														 (customize-save-variable 'cua-mode t)
-														 ))
-								 (bound-and-true-p cua-mode))
+	(widget-create
+	 'checkbox
+	 :notify (lambda (&rest ignore)
+						 (if (bound-and-true-p cua-mode)
+								 (progn (cua-mode nil)
+												(customize-save-variable 'cua-mode nil))
+							 (cua-mode t)
+							 (customize-save-variable 'cua-mode t)
+							 ))
+	 (bound-and-true-p cua-mode))
 	(widget-insert " Use CUA-mode?"))
 #+END_SRC
 
@@ -472,7 +477,10 @@ Replace LaTeX commands by UTF8 symbols:
 
 * Minibuffer
 
+** General
+
 Shorten yes/no answers to y/n:
+
 #+BEGIN_SRC emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
