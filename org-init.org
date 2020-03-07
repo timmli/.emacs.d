@@ -1679,177 +1679,6 @@ General structure of an high-level =org-mode= file:
 Information flow: 
 - Inbox $\Rightarrow$ Events|Projects  $\Rightarrow$ Topics
 
-*** Export
-
-Use a less intrusive export interface:
-
-#+BEGIN_SRC emacs-lisp
-(setq org-export-dispatch-use-expert-ui t)
-#+END_SRC
-
-Note that the last export command on the current buffer can be reused with =C-u C-c C-e=. 
-
-*** Archive
-
-Preserves the first heading of the org-mode file (found in http://orgmode.org/worg/org-hacks.html#orgheadline59):
-
-#+BEGIN_SRC emacs-lisp
-(defadvice org-archive-subtree (around my-org-archive-subtree activate)
-  (let ((org-archive-location
-         (if (save-excursion (org-back-to-heading)
-                             (> (org-outline-level) 1))
-             (concat (car (split-string org-archive-location "::"))
-                     "::* "
-                     (car (org-get-outline-path)))
-           org-archive-location)))
-    ad-do-it))
-#+END_SRC
-
-*** org-attach
-
-#+BEGIN_SRC emacs-lisp
-(require 'org-attach)  ; Might not be autoloaded by org-mode.
-#+END_SRC
-
-Note that =org-attach= has been refactored and extended in =org-mode= v9.3 (see https://orgmode.org/Changes.html), adding the following variables:
-
-#+BEGIN_SRC emacs-lisp
-(setq
- org-attach-use-inheritance t	    ; enable inheritance
- org-attach-dir-relative t		    ; enable relative paths in DIR property
- org-attach-preferred-new-method 'dir ; prefered method for attachments (id, dir, ask, nil)
- )
-#+END_SRC  
-
-Function to rename =ATTACH_DIR= (deprecated) to =DIR=, and to remove =ATTACH_DIR_INHERIT= (deprecated):
-
-#+BEGIN_SRC emacs-lisp
-(defun org-update-attach-properties ()
-    "Change properties for Org-Attach."
-    (interactive)
-    (org-with-point-at 1
-      (while (outline-next-heading)
-        (let ((DIR (org--property-local-values "ATTACH_DIR" nil)))
-          (when DIR
-            (org-set-property "DIR" (car DIR))
-            (org-delete-property "ATTACH_DIR"))))
-      (org-delete-property-globally "ATTACH_DIR_INHERIT")))
-#+END_SRC
-
-Add some link types (deprecated):
-
-#+BEGIN_SRC emacs-lisp
-;; (add-to-list 'org-link-abbrev-alist '("attachment" . org-attach-expand-link)) ; included in `org-attach` since v9.3
-(add-to-list 'org-link-abbrev-alist '("att" . org-attach-expand-link)) ; only for downward compatibility
-#+END_SRC
-
-*** org-babel
-
-Preserve indentation in source blocks:
-#+BEGIN_SRC emacs-lisp
-(setq org-src-preserve-indentation t)
-#+END_SRC
-
-Don't ask for confirmation when evaluating source blocks:
-#+BEGIN_SRC emacs-lisp
-(setq org-confirm-babel-evaluate nil)
-#+END_SRC
-
-Fontify source blocks as defined for the  enclosed language: 
-#+BEGIN_SRC emacs-lisp
-(setq org-src-fontify-natively t)
-#+END_SRC
-
-Use tab key as defined for the enclosed language:
-#+BEGIN_SRC emacs-lisp
-(setq org-src-tab-acts-natively t)
-#+END_SRC
-
-The following fixes a problem with gnuplot-mode under windows.
-Alternatively, one could add `:session none` to every source block. 
-See https://www.mail-archive.com/emacs-orgmode@gnu.org/msg30416.html
-#+BEGIN_SRC emacs-lisp
-(when (eq system-type 'windows-nt)
-	(setq org-babel-default-header-args:gnuplot
-				'((:results . "file")
-					(:exports . "results"))))
-#+END_SRC
-
-**** TODO COMMENT ob-ipython
-:LOGBOOK:
-- State "TODO"       from              [2019-10-02 Wed 16:18]
-:END:
-
-- Sometimes gives rise to =(json-readtable-error)= when using [[id:115490f8-a6d6-4d46-b812-7a7bd30d917c][org-minutes]].
-
-#+BEGIN_SRC emacs-lisp
-(use-package ob-ipython 
-	:ensure t
-	:after (org ob)
-	:config
-	(org-babel-do-load-languages
-	 'org-babel-load-languages
-	 '((ipython . t))))
-#+END_SRC
-
-*** Download
-
-****  org-download
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-download
-	:ensure t
-	:pin MELPA
-	:config
-	(setq org-download-method 'attach)
-	(when (not (eq system-type 'windows-nt))
-		(setq org-download-screenshot-method "scrot -s %s"))
-  (add-hook 'dired-mode-hook 'org-download-enable))
-#+END_SRC
-
-*** General keys
-
-#+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "<f9> c") 'org-goto-calendar)
-(global-set-key (kbd "<f9> a") 'org-agenda-list)
-(global-set-key (kbd "<f9> t") 'org-todo-list)
-(global-set-key (kbd "C-<f9>") 'org-cycle-agenda-files)
-(global-set-key (kbd "<f9> s") 'org-search-view)
-(global-set-key (kbd "<f9> f") 'org-search-view)
-(global-set-key (kbd "<f9> l") 'org-tags-view)
-(global-set-key (kbd "<f9> r") 'org-reload)
-(global-set-key (kbd "<f9> w")
-								(lambda() (interactive)(find-file (concat org-notes-dir "/work/work.org"))))
-(global-set-key (kbd "<f9> n")
-								(lambda() (interactive)(find-file (concat org-notes-dir "/notes.org"))))
-(global-set-key (kbd "C-c a") 'org-agenda)
-(global-set-key (kbd "C-c l") 'org-store-link)
-
-(with-eval-after-load 'org
-	(define-key org-mode-map (kbd "C-<tab>") nil )
-	(define-key org-mode-map (kbd "S-<up>") nil )
-	(define-key org-mode-map (kbd "S-<down>") nil )
-	(define-key org-mode-map (kbd "S-<left>") nil )
-	(define-key org-mode-map (kbd "S-<right>") nil )
-	(define-key org-mode-map (kbd "C-n") 'org-next-visible-heading )
-	(define-key org-mode-map (kbd "C-p") 'org-previous-visible-heading )
-	(define-key org-mode-map (kbd "C-S-p") 'org-backward-heading-same-level)
-	(define-key org-mode-map (kbd "C-S-n") '(lambda () (interactive) (org-backward-heading-same-level -1)))
-	(define-key org-mode-map (kbd "C-c C-f") 'org-footnote-action )
-	(define-key org-mode-map (kbd "C-c C-t") 'org-todo )
-	(define-key org-mode-map (kbd "C-c C-x C-b") 'org-tree-to-indirect-buffer )
-	(define-key org-mode-map (kbd "C-c C-t") 'org-todo )
-	(define-key org-mode-map (kbd "C-c C-<return>") 'org-ctrl-c-ret )
-	;; With Org-mode v9.2, the explicit mapping of C-a and C-e becomes necessary.
-	;; See http://lists.gnu.org/archive/html/emacs-orgmode/2019-01/msg00253.html
-	(define-key org-mode-map (kbd "C-a") 'org-beginning-of-line )
-	(define-key org-mode-map (kbd "C-e") 'org-end-of-line )
-	)
-
-;; (with-eval-after-load 'org-agenda
-;;   (bind-key "i" 'org-agenda-clock-in org-agenda-mode-map))
-#+END_SRC
-
 *** General appearence
 
 **** Lists
@@ -2364,48 +2193,47 @@ Only unfold current heading and its content:
 			(show-children))))
 #+END_SRC
 
-*** Memacs
-
-https://github.com/novoid/Memacs
-https://arxiv.org/pdf/1304.1332.pdf
-
-*** TODO Minutes
-
-**** org-minutes
+*** General keys
 
 #+BEGIN_SRC emacs-lisp
-(use-package org-minutes
-	:config
-	(org-minutes-minor-mode))
-#+END_SRC
+(global-set-key (kbd "<f9> c") 'org-goto-calendar)
+(global-set-key (kbd "<f9> a") 'org-agenda-list)
+(global-set-key (kbd "<f9> t") 'org-todo-list)
+(global-set-key (kbd "C-<f9>") 'org-cycle-agenda-files)
+(global-set-key (kbd "<f9> s") 'org-search-view)
+(global-set-key (kbd "<f9> f") 'org-search-view)
+(global-set-key (kbd "<f9> l") 'org-tags-view)
+(global-set-key (kbd "<f9> r") 'org-reload)
+(global-set-key (kbd "<f9> w")
+								(lambda() (interactive)(find-file (concat org-notes-dir "/work/work.org"))))
+(global-set-key (kbd "<f9> n")
+								(lambda() (interactive)(find-file (concat org-notes-dir "/notes.org"))))
+(global-set-key (kbd "C-c a") 'org-agenda)
+(global-set-key (kbd "C-c l") 'org-store-link)
 
-*** Modules
+(with-eval-after-load 'org
+	(define-key org-mode-map (kbd "C-<tab>") nil )
+	(define-key org-mode-map (kbd "S-<up>") nil )
+	(define-key org-mode-map (kbd "S-<down>") nil )
+	(define-key org-mode-map (kbd "S-<left>") nil )
+	(define-key org-mode-map (kbd "S-<right>") nil )
+	(define-key org-mode-map (kbd "C-n") 'org-next-visible-heading )
+	(define-key org-mode-map (kbd "C-p") 'org-previous-visible-heading )
+	(define-key org-mode-map (kbd "C-S-p") 'org-backward-heading-same-level)
+	(define-key org-mode-map (kbd "C-S-n") '(lambda () (interactive) (org-backward-heading-same-level -1)))
+	(define-key org-mode-map (kbd "C-c C-f") 'org-footnote-action )
+	(define-key org-mode-map (kbd "C-c C-t") 'org-todo )
+	(define-key org-mode-map (kbd "C-c C-x C-b") 'org-tree-to-indirect-buffer )
+	(define-key org-mode-map (kbd "C-c C-t") 'org-todo )
+	(define-key org-mode-map (kbd "C-c C-<return>") 'org-ctrl-c-ret )
+	;; With Org-mode v9.2, the explicit mapping of C-a and C-e becomes necessary.
+	;; See http://lists.gnu.org/archive/html/emacs-orgmode/2019-01/msg00253.html
+	(define-key org-mode-map (kbd "C-a") 'org-beginning-of-line )
+	(define-key org-mode-map (kbd "C-e") 'org-end-of-line )
+	)
 
-See http://orgmode.org/worg/org-contrib/
-
-#+BEGIN_SRC emacs-lisp
-;; (setq org-modules '( ;; org-bbdb
-;;                       ;; org-gnus
-;;                       ;; org-drill
-;;                       ;; org-info
-;;                       ;; org-jsinfo
-;;                       ;; org-habit
-;;                       ;; org-irc
-;;                       ;; org-mouse
-;;                       ;; org-protocol
-;;                       ;; org-annotate-file
-;;                       ;; org-eval
-;;                       ;; org-expiry
-;;                       ;; org-interactive-query
-;;                       ;; org-man
-;;                       ;; org-collector
-;;                       ;; org-panel
-;;                       ;; org-screen
-;;                       ;; org-toc
-;; 											))
-;; (eval-after-load 'org
-;;  '(org-load-modules-maybe t))
-;; (setq org-expiry-inactive-timestamps t)
+;; (with-eval-after-load 'org-agenda
+;;   (bind-key "i" 'org-agenda-clock-in org-agenda-mode-map))
 #+END_SRC
 
 *** Miscellaneous settings
@@ -2448,66 +2276,196 @@ Jump
       org-goto-max-level 10)
 #+END_SRC
 
-*** Todo keywords
+*** Agenda
 
-(Must appear before =org-agenda= settings. Otherwise =org-todo-keywords= may not get updated buffer locally.)
+**** Appearance
 
-From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywords):
-#+BEGIN_QUOTE
-"WAIT(w@/!)".  "@" means to add a note (with time), "!" means to record only the time of the state change.  With X and Y being either "@" or "!", "X/Y" means use X when entering the state, and use Y when leaving the state if and only if the *target* state does not define X.  You may omit any of the fast-selection key or X or /Y, so WAIT(w@), WAIT(w/@) and WAIT(@/@) are all valid.
-#+END_QUOTE
-
-- TODO: something that needs to be done, maybe now, maybe later. 
-- NEXT: something that can be done /now/. There's everything you need to start doing it.
-- INPROGRESS: something that is being done right now.
-- APPT: appointment (meeting, phone call etc.) with a fixed date.
-- WAITING: something that cannot be done now, because some prerequisites are not yet met.
-- HOLD: something that cannot be done now, and the prerequisites are unlikely to be fullfilled in the future.
-- SOMEDAY: you are not yet sure whether this needs to be done.
-- DELEGATED: something that has been delegated and is not tracked any more.  
-
+Don't split window when opening agenda:
 #+BEGIN_SRC emacs-lisp
-(setq org-todo-keywords
-      (quote ((sequence "TODO(t!)" "NEXT(n)" "INPROGRESS(p!)" "APPT(a)" "|" "DONE(d)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "SOMEDAY(s)" "|" "DELEGATED(l@/!)" "CANCELLED(c@/!)"))))
-
-(setq org-todo-keyword-faces
-      (quote (("TODO" :foreground "red" :weight bold)
-              ("NEXT" :foreground "blue" :weight bold)
-              ("INPROGRESS" :foreground "gold" :weight bold)
-              ("DONE" :foreground "forest green" :weight bold)
-              ("WAITING" :foreground "orange" :weight bold)
-              ("HOLD" :foreground "magenta" :weight bold)
-              ("CANCELLED" :foreground "forest green" :weight bold)
-              ("DELEGATED" :foreground "forest green" :weight bold)
-              ("APPT" :foreground "forest green" :weight bold)
-							("SOMEDAY" :foreground "forest green" :weight bold)
-							)))
+(setq org-agenda-window-setup "current-window")
 #+END_SRC
 
-Fast TODO selection:
+Show notifications of agenda events:
 #+BEGIN_SRC emacs-lisp
-(setq org-use-fast-todo-selection t)
+(use-package org-alert
+	:ensure t
+	)
 #+END_SRC
 
-Insert timestamp when task is marked as DONE:
+Customize agenda view:
 #+BEGIN_SRC emacs-lisp
-(setq org-log-done 'time)
+(setq org-agenda-custom-commands
+			'(("w" "Work-related agenda and tasks"
+				 ((tags "PRIORITY=\"A\""
+                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+								 (org-agenda-overriding-header "High-priority tasks:")))
+					(agenda "")
+					(todo "INPROGRESS"
+								((org-agenda-overriding-header "Normal-priority tasks:")))
+					(todo "NEXT" ((org-agenda-overriding-header "")
+												(org-agenda-block-separator nil)))
+					(todo "WAITING" ((org-agenda-overriding-header "")
+													 (org-agenda-block-separator nil)))
+					(todo "TODO" ((org-agenda-overriding-header "")
+												(org-agenda-block-separator nil)))
+					(todo "SOMEDAY" ((org-agenda-overriding-header "")
+													 (org-agenda-block-separator nil)))
+					;; (tags-todo "@work"
+					;; 					 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("NEXT")))
+					;; 						(org-agenda-overriding-header "")
+					;; 						(org-agenda-block-separator nil)))
+					)
+				 ((org-agenda-tag-filter-preset '("+@work"))))
+
+				("h" "Home-related agenda and tasks"
+				 ((tags "PRIORITY=\"A\""
+								((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+								 (org-agenda-overriding-header "High-priority tasks:")))
+					(agenda "")
+					(todo "INPROGRESS"
+								((org-agenda-overriding-header "Normal-priority tasks:")))
+					(todo "NEXT" ((org-agenda-overriding-header "")
+												(org-agenda-block-separator nil)))
+					(todo "WAITING" ((org-agenda-overriding-header "")
+													 (org-agenda-block-separator nil)))
+					(todo "TODO" ((org-agenda-overriding-header "")
+												(org-agenda-block-separator nil)))
+					(todo "SOMEDAY" ((org-agenda-overriding-header "")
+													 (org-agenda-block-separator nil)))
+					)
+				 ((org-agenda-tag-filter-preset '("+@home"))))
+
+				("c" "Complete list of agenda and tasks"
+				 ((tags "PRIORITY=\"A\""
+								((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+								 (org-agenda-overriding-header "High-priority tasks:")))
+					(agenda "")
+					(todo "INPROGRESS"
+								((org-agenda-overriding-header "Normal-priority tasks:")))
+					(todo "NEXT" ((org-agenda-overriding-header "")
+												(org-agenda-block-separator nil)))
+					(todo "WAITING" ((org-agenda-overriding-header "")
+													 (org-agenda-block-separator nil)))
+					(todo "TODO" ((org-agenda-overriding-header "")
+												(org-agenda-block-separator nil)))
+					(todo "SOMEDAY" ((org-agenda-overriding-header "")
+													 (org-agenda-block-separator nil)))
+					)
+				 ;; ((org-agenda-tag-filter-preset '("+@home")))
+				 )
+				))
+
+(defun org-agenda-list-work ()
+	(interactive)
+	(org-agenda nil "w"))
+
+(defun org-agenda-list-home ()
+	(interactive)
+	(org-agenda nil "h"))
+
+(defun org-agenda-list-complete ()
+	(interactive)
+	(org-agenda nil "c"))
+
+(define-key org-agenda-mode-map (kbd "W") 'org-agenda-list-work)
+(define-key org-agenda-mode-map (kbd "H") 'org-agenda-list-home)
+(define-key org-agenda-mode-map (kbd "C") 'org-agenda-list-complete)
 #+END_SRC
 
-Insert timestamp when changing deadline:
+Sort agenda TODOs with =org-agenda-sorting-strategy=.
+
+Make the block agenda more compact:
 #+BEGIN_SRC emacs-lisp
-(setq org-log-redeadline 'time)
+(setq org-agenda-compact-blocks nil)
 #+END_SRC
 
-Insert timestamp when changing schedule:
+Change the separator between blocks in agenda:
 #+BEGIN_SRC emacs-lisp
-(setq org-log-reschedule 'time)
+(setq org-agenda-block-separator ?\-)
 #+END_SRC
 
-Observe dependencies between TODOs:
+Start the weekly agenda today:
 #+BEGIN_SRC emacs-lisp
-(setq org-enforce-todo-dependencies t)
+(setq org-agenda-start-on-weekday nil)
+#+END_SRC
+
+Agenda remains open in background. No need to recompile it every time you call it:
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-sticky t)
+#+END_SRC
+
+Show tags at the right edge of the screen:
+#+BEGIN_SRC emacs-lisp
+;; (setq org-agenda-tags-column (- (- (window-total-width) 3)))
+
+;; taken from https://lists.gnu.org/archive/html/emacs-orgmode/2010-12/msg00410.html
+(add-hook 'org-finalize-agenda-hook 'place-agenda-tags)
+(defun place-agenda-tags ()
+  "Put the agenda tags by the right border of the agenda window."
+  (setq org-agenda-tags-column (- 4 (window-width)))
+  (org-agenda-align-tags))
+#+END_SRC
+
+Add the Emacs [[*Calendar/Diary][diary]] (which also stores holidays) to =org-agenda=:
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-include-diary t) 
+#+END_SRC
+
+**** COMMENT org-timeline
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-timeline
+	:ensure t
+  :after org
+  :config
+	(add-hook 'org-agenda-finalize-hook 'org-timeline-insert-timeline :append))
+#+END_SRC
+
+**** org-conflict
+
+=org-conflict= helps to detect and resolve scheduling conflicts.
+
+https://www.mail-archive.com/emacs-orgmode@gnu.org/msg123154.html
+
+*** Archive
+
+Preserves the first heading of the org-mode file (found in http://orgmode.org/worg/org-hacks.html#orgheadline59):
+
+#+BEGIN_SRC emacs-lisp
+(defadvice org-archive-subtree (around my-org-archive-subtree activate)
+  (let ((org-archive-location
+         (if (save-excursion (org-back-to-heading)
+                             (> (org-outline-level) 1))
+             (concat (car (split-string org-archive-location "::"))
+                     "::* "
+                     (car (org-get-outline-path)))
+           org-archive-location)))
+    ad-do-it))
+#+END_SRC
+
+*** Capture templates
+
+- Template expansions: http://orgmode.org/manual/Template-expansion.html
+
+#+BEGIN_SRC emacs-lisp
+(setq org-capture-templates
+			'(
+				;; uses appointment tag
+				("a" "Appointment" entry (file (lambda () (expand-file-name "captures.org" org-directory)))
+				 "* %?\t%^G:appointment:\n\n%^T\n\n" :prepend t)
+				;; ;; used for org-gcal
+				;; ("a" "Appointment" entry (file (concat org-directory "/gcal.org"))
+				;;  "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
+				("t" "Todo" entry (file (lambda () (expand-file-name "captures.org" org-directory)))
+				 "* TODO %?\t%^G\n CREATED: %U\n About region:%i\n %a" :prepend t)
+				("n" "Note" entry (file+datetree (lambda ()(expand-file-name "notes.org" org-directory)))
+				 "* %?\t%^G\n CREATED: %U\n About region:%i\n %a")
+				("c" "Code" entry (file (lambda () (expand-file-name "captures.org" org-directory )))
+				 "* %?\t%^G\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a" :prepend t)
+				))
+
+	;; (global-set-key (kbd "<f9> <f9>") 'org-capture)
+	;; (global-set-key (kbd "<f9> <f9> t") (lambda () (interactive) (org-capture nil "t")))
 #+END_SRC
 
 *** Clocking and logging
@@ -2537,6 +2495,396 @@ This is a useful function for adding to `kill-emacs-query-functions'."
 Only use hours and minutes as duration format in clocktables:
 #+BEGIN_SRC emacs-lisp
 (setq org-duration-format (quote h:mm))
+#+END_SRC
+
+*** Download
+
+****  org-download
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-download
+	:ensure t
+	:pin MELPA
+	:config
+	(setq org-download-method 'attach)
+	(when (not (eq system-type 'windows-nt))
+		(setq org-download-screenshot-method "scrot -s %s"))
+  (add-hook 'dired-mode-hook 'org-download-enable))
+#+END_SRC
+
+*** Export
+
+Use a less intrusive export interface:
+
+#+BEGIN_SRC emacs-lisp
+(setq org-export-dispatch-use-expert-ui t)
+#+END_SRC
+
+Note that the last export command on the current buffer can be reused with =C-u C-c C-e=. 
+
+**** ox-hugo
+
+https://ox-hugo.scripter.co/
+
+Export to Hugo-compatible markdown.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ox-hugo
+  :ensure t
+  :after ox)
+#+END_SRC
+
+*** TODO Gnuplot support
+
+- [ ] compiling Gnuplot source blocks crashes Emacs
+
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((gnuplot . t)))
+#+END_SRC
+
+*** Graphviz/dot support
+
+ #+BEGIN_SRC emacs-lisp
+(add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
+(org-babel-do-load-languages  'org-babel-load-languages '((dot . t)))
+#+END_SRC
+
+*** Images
+
+Only use actual width of image when not specified with =#+ATTR* :width= (requires imagemagick)
+#+BEGIN_SRC emacs-lisp
+(setq org-image-actual-width nil)
+#+END_SRC
+
+*** LaTeX support
+
+Load export module for LaTeX:
+#+BEGIN_SRC emacs-lisp
+(require 'ox-latex)
+#+END_SRC
+
+Headlines with =:ignore:= tag are ignored during export, but not their body:
+#+BEGIN_SRC emacs-lisp
+(require 'ox-extra)
+(ox-extras-activate '(ignore-headlines))
+#+END_SRC
+
+Support from org-babel:
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
+(setq org-highlight-latex-and-related '(latex script entities)) ; inline sytax highlighting
+;; (add-to-list 'org-latex-packages-alist '("" "tikz" t))					; unfortunately this breaks the color of fonts in inline previews
+;; (add-to-list 'org-latex-packages-alist '("" "forest" t))
+#+END_SRC
+
+Scale LaTeX previews:
+#+BEGIN_SRC emacs-lisp
+;; static
+;; (plist-put org-format-latex-options :scale 2) ; scale inline PNGs
+
+;; dynamic (http://emacs.stackexchange.com/a/13032/12336)
+(defun update-org-latex-fragment-scale ()
+  (let ((text-scale-factor (expt text-scale-mode-step text-scale-mode-amount)))
+    (plist-put org-format-latex-options :scale (* 2.3 text-scale-factor)))
+)
+(add-hook 'text-scale-mode-hook 'update-org-latex-fragment-scale)
+#+END_SRC
+
+Use LaTeXmk:
+#+BEGIN_SRC emacs-lisp
+(setq org-latex-pdf-process (list "latexmk -f -pdf %f -cd %o"))
+;; The option "-cd %o" is needed when executing babel source blocks, 
+;; during which the auxiliary files are moved to some temporary directory.
+;; Instead of "-cd %o", one could also use "-outdir=%o". 
+;; See the discussion here:
+;; https://github.com/fniessen/refcard-org-beamer/commit/9f75e013127940e793e0a925fc4ee222bae0e45c
+#+END_SRC
+
+Extra function to delete auxiliary files:
+#+BEGIN_SRC emacs-lisp
+(defun delete-org-latex-aux-files ()
+	"This function deletes auxiliary files that are not deleted by `latexmk` or `TeX-clean`."
+	(interactive)
+	(shell-command "rm -rfv *.fls *.prv preview.fmt .aux .fdb_latexmk frag-master.tex"))
+#+END_SRC
+
+Add some classes to the set of known classes:
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-latex-classes
+         '("tl-abstract" 
+						"\\documentclass{article}
+						[NO-DEFAULT-PACKAGES]"
+            ("\\paragraph{%s}" . "\\paragraph*{%s}")
+            ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+
+(add-to-list 'org-latex-classes
+         '("tl-article" 
+						"\\documentclass{scrartcl}
+						[NO-DEFAULT-PACKAGES]"
+						("\\section{%s}" . "\\section*{%s}") 
+						("\\subsection{%s}" . "\\subsection*{%s}") 
+						("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+						("\\paragraph{%s}" . "\\paragraph*{%s}")))
+#+END_SRC
+
+Add the class [[https://github.com/langsci/latex][langscibook]] to the set of known classes:
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-latex-classes
+						 '("langscibook" 
+							 "\\documentclass{langsci/langscibook}
+				    		[NO-DEFAULT-PACKAGES]" 
+							 ("\\part{%s}" . "\\part*{%s}") 
+							 ("\\chapter{%s}" . "\\chapter*{%s}") 
+							 ("\\section{%s}" . "\\section*{%s}") 
+							 ("\\subsection{%s}" . "\\subsection*{%s}") 
+							 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+							 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+							 ))
+
+(add-to-list 'org-latex-classes
+						 '("langscibook-paper" 
+							 "\\documentclass[output=paper]{langsci/langscibook}
+				    		[NO-DEFAULT-PACKAGES]" 
+							 ("\\section{%s}" . "\\section*{%s}") 
+							 ("\\subsection{%s}" . "\\subsection*{%s}") 
+							 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+							 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+							 ))
+#+END_SRC
+
+Add the class [[http://jlm.ipipan.waw.pl/index.php/JLM/index][jlm]] to the set of known classes:
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-latex-classes
+						 '("jlm" 
+							 "\\documentclass{jlm}
+				    		[NO-DEFAULT-PACKAGES]" 
+							 ("\\section{%s}" . "\\section*{%s}") 
+							 ("\\subsection{%s}" . "\\subsection*{%s}") 
+							 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+							 ("\\paragraph{%s}" . "\\paragraph*{%s}")
+							 ))
+#+END_SRC
+
+Use =#+NAME:= field as argument of =\label= during export:
+#+BEGIN_SRC emacs-lisp
+(setq org-latex-prefer-user-labels t)
+#+END_SRC
+
+Put =\label= outside and after =\caption= (see https://emacs.stackexchange.com/a/51397/12336):
+#+BEGIN_SRC emacs-lisp
+(defun org-latex--caption/label-string (element info)
+  "Return caption and label LaTeX string for ELEMENT.
+
+INFO is a plist holding contextual information.  If there's no
+caption nor label, return the empty string.
+
+For non-floats, see `org-latex--wrap-label'."
+  (let* ((label (org-latex--label element info nil t))
+				 (main (org-export-get-caption element))
+				 (attr (org-export-read-attribute :attr_latex element))
+				 (type (org-element-type element))
+				 (nonfloat (or (and (plist-member attr :float)
+														(not (plist-get attr :float))
+														main)
+											 (and (eq type 'src-block)
+														(not (plist-get attr :float))
+														(null (plist-get info :latex-listings)))))
+				 (short (org-export-get-caption element t))
+				 (caption-from-attr-latex (plist-get attr :caption)))
+    (cond
+     ((org-string-nw-p caption-from-attr-latex)
+      (concat caption-from-attr-latex "\n"))
+     ((and (not main) (equal label "")) "")
+     ((not main) label)
+     ;; Option caption format with short name.
+     (t
+      (format (if nonfloat "\\captionof{%s}%s{%s}\n%s"
+								"\\caption%s%s{%s}\n%s")
+							(let ((type* (if (eq type 'latex-environment)
+															 (org-latex--environment-type element)
+														 type)))
+								(if nonfloat
+										(cl-case type*
+											(paragraph "figure")
+											(image "figure")
+											(special-block "figure")
+											(src-block (if (plist-get info :latex-listings)
+																		 "listing"
+																	 "figure"))
+											(t (symbol-name type*)))
+									""))
+							(if short (format "[%s]" (org-export-data short info)) "")
+							(org-export-data main info)
+							label)))))
+#+END_SRC
+
+*** TODO Links
+
+Function to update link syntax that got changed in =org-mode= v9.3 (taken from https://orgmode.org/Changes.html):
+#+BEGIN_SRC emacs-lisp
+(defun org-update-link-syntax (&optional no-query)
+  "Update syntax for links in current buffer.
+Query before replacing a link, unless optional argument NO-QUERY
+is non-nil."
+  (interactive "P")
+  (org-with-point-at 1
+    (let ((case-fold-search t))
+      (while (re-search-forward "\\[\\[[^]]*?%\\(?:2[05]\\|5[BD]\\)" nil t)
+        (let ((object (save-match-data (org-element-context))))
+          (when (and (eq 'link (org-element-type object))
+                     (= (match-beginning 0)
+                        (org-element-property :begin object)))
+            (goto-char (org-element-property :end object))
+            (let* ((uri-start (+ 2 (match-beginning 0)))
+                   (uri-end (save-excursion
+                              (goto-char uri-start)
+                              (re-search-forward "\\][][]" nil t)
+                              (match-beginning 0)))
+                   (uri (buffer-substring-no-properties uri-start uri-end)))
+              (when (or no-query
+                        (y-or-n-p
+                         (format "Possibly obsolete URI syntax: %S.  Fix? "
+                                 uri)))
+                (setf (buffer-substring uri-start uri-end)
+                      (org-link-escape (org-link-decode uri)))))))))))
+#+END_SRC
+
+Follow links when pressing =<return>=:
+#+BEGIN_SRC emacs-lisp
+(setq org-return-follows-link t)
+#+END_SRC
+
+Links to files are opened in the same window, i.e. the window does not get split:
+#+BEGIN_SRC emacs-lisp
+(setq org-link-frame-setup '((file . find-file)))
+#+END_SRC
+
+Show whether links to files are valid:
+#+BEGIN_SRC emacs-lisp
+;; taken from https://emacs.stackexchange.com/a/33078/12336
+(org-link-set-parameters
+ "file"
+ :face (lambda (path) (when (not (file-remote-p path))(if (file-exists-p path) 'org-link 'org-warning))))
+
+(org-link-set-parameters
+ "attachment"
+ :face (lambda (path) (when (not (file-remote-p path))(if (file-exists-p (expand-file-name path (org-attach-dir))) 'org-link 'org-warning))))
+#+END_SRC
+
+Use IDs rather than headline names:
+#+BEGIN_SRC emacs-lisp
+(setq org-id-link-to-org-use-id t)
+#+END_SRC
+
+Use ID completion when generating ID links:
+#+BEGIN_SRC emacs-lisp
+;; taken from https://emacs.stackexchange.com/a/12434/12336
+(defun org-id-complete-link (&optional arg)
+  "Create an id: link using completion"
+  (concat "id:"
+          (org-id-get-with-outline-path-completion)))
+
+(org-link-set-parameters "id"
+                         :complete 'org-id-complete-link)
+#+END_SRC
+
+Function to remove all ID properties from buffer:
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-id-remove-from-buffer ()
+	"Remove/delete all ID entries from current buffer and update the databases."
+	(interactive)
+	(save-excursion
+		(beginning-of-buffer)
+		(let ((id-removed-p nil))
+			(when (and
+						 (not (org-next-visible-heading 1))
+						 (org-at-heading-p))
+				(when (org-entry-delete (point) "ID")
+					(setq id-removed-p t)))
+			(when (symbol-value 'id-removed-p)
+				(org-id-update-id-locations)))))
+#+END_SRC
+
+- [ ] Adopt a function that replaces links by their description using the =org-element= API (see https://emacs.stackexchange.com/a/49068/12336)
+
+Function to replace a link with its description, taken from https://emacs.stackexchange.com/a/10712/12336:
+#+BEGIN_SRC emacs-lisp
+(defun my/org-delete-link ()
+  "Replace an org link of the format [[LINK][DESCRIPTION]] with DESCRIPTION.
+If the link is of the format [[LINK]], delete the whole org link.
+
+In both the cases, save the LINK to the kill-ring.
+
+Execute this command while the point is on or after the hyper-linked org link."
+  (interactive)
+  (when (derived-mode-p 'org-mode)
+    (let ((search-invisible t) start end)
+      (save-excursion
+        (when (re-search-backward "\\[\\[" nil :noerror)
+          (when (re-search-forward "\\[\\[\\(.*?\\)\\(\\]\\[.*?\\)*\\]\\]" nil :noerror)
+            (setq start (match-beginning 0))
+            (setq end   (match-end 0))
+            (kill-new (match-string-no-properties 1)) ; Save the link to kill-ring
+            (replace-regexp "\\[\\[.*?\\(\\]\\[\\(.*?\\)\\)*\\]\\]" "\\2" nil start end)))))))
+#+END_SRC
+
+*** Listings
+
+Use the =listings= package:
+#+BEGIN_SRC emacs-lisp
+(setq org-latex-listings 'listings)
+#+END_SRC
+
+Map scr-block languages to =listings= environments:
+#+BEGIN_SRC emacs-lisp
+;; (setq org-latex-custom-lang-environments
+;; 			'((org-babel-language "listings-environment")))
+#+END_SRC
+
+*** Memacs
+
+https://github.com/novoid/Memacs
+https://arxiv.org/pdf/1304.1332.pdf
+
+*** TODO Minutes
+
+**** org-minutes
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-minutes
+	:config
+	(org-minutes-minor-mode))
+#+END_SRC
+
+*** Modules
+
+See http://orgmode.org/worg/org-contrib/
+
+#+BEGIN_SRC emacs-lisp
+;; (setq org-modules '( ;; org-bbdb
+;;                       ;; org-gnus
+;;                       ;; org-drill
+;;                       ;; org-info
+;;                       ;; org-jsinfo
+;;                       ;; org-habit
+;;                       ;; org-irc
+;;                       ;; org-mouse
+;;                       ;; org-protocol
+;;                       ;; org-annotate-file
+;;                       ;; org-eval
+;;                       ;; org-expiry
+;;                       ;; org-interactive-query
+;;                       ;; org-man
+;;                       ;; org-collector
+;;                       ;; org-panel
+;;                       ;; org-screen
+;;                       ;; org-toc
+;; 											))
+;; (eval-after-load 'org
+;;  '(org-load-modules-maybe t))
+;; (setq org-expiry-inactive-timestamps t)
 #+END_SRC
 
 *** Newline/<return>
@@ -2790,166 +3138,133 @@ Here's my own version, which uses =org-table-wrap-region=. This was superseded b
   )
 #+END_SRC
 
-*** LaTeX support
+*** org-attach
 
-Load export module for LaTeX:
 #+BEGIN_SRC emacs-lisp
-(require 'ox-latex)
+(require 'org-attach)  ; Might not be autoloaded by org-mode.
 #+END_SRC
 
-Headlines with =:ignore:= tag are ignored during export, but not their body:
+Note that =org-attach= has been refactored and extended in =org-mode= v9.3 (see https://orgmode.org/Changes.html), adding the following variables:
+
 #+BEGIN_SRC emacs-lisp
-(require 'ox-extra)
-(ox-extras-activate '(ignore-headlines))
+(setq
+ org-attach-use-inheritance t	    ; enable inheritance
+ org-attach-dir-relative t		    ; enable relative paths in DIR property
+ org-attach-preferred-new-method 'dir ; prefered method for attachments (id, dir, ask, nil)
+ )
+#+END_SRC  
+
+Function to rename =ATTACH_DIR= (deprecated) to =DIR=, and to remove =ATTACH_DIR_INHERIT= (deprecated):
+
+#+BEGIN_SRC emacs-lisp
+(defun org-update-attach-properties ()
+    "Change properties for Org-Attach."
+    (interactive)
+    (org-with-point-at 1
+      (while (outline-next-heading)
+        (let ((DIR (org--property-local-values "ATTACH_DIR" nil)))
+          (when DIR
+            (org-set-property "DIR" (car DIR))
+            (org-delete-property "ATTACH_DIR"))))
+      (org-delete-property-globally "ATTACH_DIR_INHERIT")))
 #+END_SRC
 
-Support from org-babel:
+Add some link types (deprecated):
+
 #+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
-(setq org-highlight-latex-and-related '(latex script entities)) ; inline sytax highlighting
-;; (add-to-list 'org-latex-packages-alist '("" "tikz" t))					; unfortunately this breaks the color of fonts in inline previews
-;; (add-to-list 'org-latex-packages-alist '("" "forest" t))
+;; (add-to-list 'org-link-abbrev-alist '("attachment" . org-attach-expand-link)) ; included in `org-attach` since v9.3
+(add-to-list 'org-link-abbrev-alist '("att" . org-attach-expand-link)) ; only for downward compatibility
 #+END_SRC
 
-Scale LaTeX previews:
-#+BEGIN_SRC emacs-lisp
-;; static
-;; (plist-put org-format-latex-options :scale 2) ; scale inline PNGs
+*** org-babel
 
-;; dynamic (http://emacs.stackexchange.com/a/13032/12336)
-(defun update-org-latex-fragment-scale ()
-  (let ((text-scale-factor (expt text-scale-mode-step text-scale-mode-amount)))
-    (plist-put org-format-latex-options :scale (* 2.3 text-scale-factor)))
-)
-(add-hook 'text-scale-mode-hook 'update-org-latex-fragment-scale)
+Preserve indentation in source blocks:
+#+BEGIN_SRC emacs-lisp
+(setq org-src-preserve-indentation t)
 #+END_SRC
 
-Use LaTeXmk:
+Don't ask for confirmation when evaluating source blocks:
 #+BEGIN_SRC emacs-lisp
-(setq org-latex-pdf-process (list "latexmk -f -pdf %f -cd %o"))
-;; The option "-cd %o" is needed when executing babel source blocks, 
-;; during which the auxiliary files are moved to some temporary directory.
-;; Instead of "-cd %o", one could also use "-outdir=%o". 
-;; See the discussion here:
-;; https://github.com/fniessen/refcard-org-beamer/commit/9f75e013127940e793e0a925fc4ee222bae0e45c
+(setq org-confirm-babel-evaluate nil)
 #+END_SRC
 
-Extra function to delete auxiliary files:
+Fontify source blocks as defined for the  enclosed language: 
 #+BEGIN_SRC emacs-lisp
-(defun delete-org-latex-aux-files ()
-	"This function deletes auxiliary files that are not deleted by `latexmk` or `TeX-clean`."
-	(interactive)
-	(shell-command "rm -rfv *.fls *.prv preview.fmt .aux .fdb_latexmk frag-master.tex"))
+(setq org-src-fontify-natively t)
 #+END_SRC
 
-Add some classes to the set of known classes:
+Use tab key as defined for the enclosed language:
+#+BEGIN_SRC emacs-lisp
+(setq org-src-tab-acts-natively t)
+#+END_SRC
+
+The following fixes a problem with gnuplot-mode under windows.
+Alternatively, one could add `:session none` to every source block. 
+See https://www.mail-archive.com/emacs-orgmode@gnu.org/msg30416.html
+#+BEGIN_SRC emacs-lisp
+(when (eq system-type 'windows-nt)
+	(setq org-babel-default-header-args:gnuplot
+				'((:results . "file")
+					(:exports . "results"))))
+#+END_SRC
+
+**** TODO COMMENT ob-ipython
+:LOGBOOK:
+- State "TODO"       from              [2019-10-02 Wed 16:18]
+:END:
+
+- Sometimes gives rise to =(json-readtable-error)= when using [[id:115490f8-a6d6-4d46-b812-7a7bd30d917c][org-minutes]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package ob-ipython 
+	:ensure t
+	:after (org ob)
+	:config
+	(org-babel-do-load-languages
+	 'org-babel-load-languages
+	 '((ipython . t))))
+#+END_SRC
+
+*** org-beamer
+
+Documentation:
+- https://github.com/fniessen/refcard-org-beamer
+- http://orgmode.org/tmp/worg/org-tutorials/org-latex-export.html
+
+Load support for exporting LaTeX beamer presentations:
+#+BEGIN_SRC emacs-lisp
+(require 'ox-beamer)
+#+END_SRC
+
+Add virtual beamer class (=tl-beamer=) to the known LaTeX classes:
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-latex-classes
-         '("tl-abstract" 
-						"\\documentclass{article}
+         '("tl-beamer" 
+						"\\documentclass{beamer}
 						[NO-DEFAULT-PACKAGES]"
+            ("\\section{%s}" . "\\section*{%s}")
+            ("\\subsection{%s}" . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
             ("\\paragraph{%s}" . "\\paragraph*{%s}")
             ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-
-(add-to-list 'org-latex-classes
-         '("tl-article" 
-						"\\documentclass{scrartcl}
-						[NO-DEFAULT-PACKAGES]"
-						("\\section{%s}" . "\\section*{%s}") 
-						("\\subsection{%s}" . "\\subsection*{%s}") 
-						("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-						("\\paragraph{%s}" . "\\paragraph*{%s}")))
 #+END_SRC
 
-Add the class [[https://github.com/langsci/latex][langscibook]] to the set of known classes:
+Change export of bold font:
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'org-latex-classes
-						 '("langscibook" 
-							 "\\documentclass{langsci/langscibook}
-				    		[NO-DEFAULT-PACKAGES]" 
-							 ("\\part{%s}" . "\\part*{%s}") 
-							 ("\\chapter{%s}" . "\\chapter*{%s}") 
-							 ("\\section{%s}" . "\\section*{%s}") 
-							 ("\\subsection{%s}" . "\\subsection*{%s}") 
-							 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-							 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-							 ))
+(defun my-beamer-bold (contents backend info)
+  (when (eq backend 'beamer)
+    (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textbf" contents)))
 
-(add-to-list 'org-latex-classes
-						 '("langscibook-paper" 
-							 "\\documentclass[output=paper]{langsci/langscibook}
-				    		[NO-DEFAULT-PACKAGES]" 
-							 ("\\section{%s}" . "\\section*{%s}") 
-							 ("\\subsection{%s}" . "\\subsection*{%s}") 
-							 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-							 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-							 ))
+(add-to-list 'org-export-filter-bold-functions 'my-beamer-bold)
 #+END_SRC
 
-Add the class [[http://jlm.ipipan.waw.pl/index.php/JLM/index][jlm]] to the set of known classes:
+Change export of italic font:
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'org-latex-classes
-						 '("jlm" 
-							 "\\documentclass{jlm}
-				    		[NO-DEFAULT-PACKAGES]" 
-							 ("\\section{%s}" . "\\section*{%s}") 
-							 ("\\subsection{%s}" . "\\subsection*{%s}") 
-							 ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-							 ("\\paragraph{%s}" . "\\paragraph*{%s}")
-							 ))
-#+END_SRC
+(defun my-beamer-italic (contents backend info)
+  (when (eq backend 'beamer)
+    (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textit" contents)))
 
-Use =#+NAME:= field as argument of =\label= during export:
-#+BEGIN_SRC emacs-lisp
-(setq org-latex-prefer-user-labels t)
-#+END_SRC
-
-Put =\label= outside and after =\caption= (see https://emacs.stackexchange.com/a/51397/12336):
-#+BEGIN_SRC emacs-lisp
-(defun org-latex--caption/label-string (element info)
-  "Return caption and label LaTeX string for ELEMENT.
-
-INFO is a plist holding contextual information.  If there's no
-caption nor label, return the empty string.
-
-For non-floats, see `org-latex--wrap-label'."
-  (let* ((label (org-latex--label element info nil t))
-				 (main (org-export-get-caption element))
-				 (attr (org-export-read-attribute :attr_latex element))
-				 (type (org-element-type element))
-				 (nonfloat (or (and (plist-member attr :float)
-														(not (plist-get attr :float))
-														main)
-											 (and (eq type 'src-block)
-														(not (plist-get attr :float))
-														(null (plist-get info :latex-listings)))))
-				 (short (org-export-get-caption element t))
-				 (caption-from-attr-latex (plist-get attr :caption)))
-    (cond
-     ((org-string-nw-p caption-from-attr-latex)
-      (concat caption-from-attr-latex "\n"))
-     ((and (not main) (equal label "")) "")
-     ((not main) label)
-     ;; Option caption format with short name.
-     (t
-      (format (if nonfloat "\\captionof{%s}%s{%s}\n%s"
-								"\\caption%s%s{%s}\n%s")
-							(let ((type* (if (eq type 'latex-environment)
-															 (org-latex--environment-type element)
-														 type)))
-								(if nonfloat
-										(cl-case type*
-											(paragraph "figure")
-											(image "figure")
-											(special-block "figure")
-											(src-block (if (plist-get info :latex-listings)
-																		 "listing"
-																	 "figure"))
-											(t (symbol-name type*)))
-									""))
-							(if short (format "[%s]" (org-export-data short info)) "")
-							(org-export-data main info)
-							label)))))
+(add-to-list 'org-export-filter-italic-functions 'my-beamer-italic)
 #+END_SRC
 
 *** org-edit-latex
@@ -3050,84 +3365,9 @@ See https://github.com/jkitchin/jmax/blob/master/org/org-show.org for more infor
 (require 'org-show) 
 #+END_SRC
 
-*** org-beamer
+*** PDF interaction
 
-Documentation:
-- https://github.com/fniessen/refcard-org-beamer
-- http://orgmode.org/tmp/worg/org-tutorials/org-latex-export.html
-
-Load support for exporting LaTeX beamer presentations:
-#+BEGIN_SRC emacs-lisp
-(require 'ox-beamer)
-#+END_SRC
-
-Add virtual beamer class (=tl-beamer=) to the known LaTeX classes:
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'org-latex-classes
-         '("tl-beamer" 
-						"\\documentclass{beamer}
-						[NO-DEFAULT-PACKAGES]"
-            ("\\section{%s}" . "\\section*{%s}")
-            ("\\subsection{%s}" . "\\subsection*{%s}")
-            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-            ("\\paragraph{%s}" . "\\paragraph*{%s}")
-            ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-#+END_SRC
-
-Change export of bold font:
-#+BEGIN_SRC emacs-lisp
-(defun my-beamer-bold (contents backend info)
-  (when (eq backend 'beamer)
-    (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textbf" contents)))
-
-(add-to-list 'org-export-filter-bold-functions 'my-beamer-bold)
-#+END_SRC
-
-Change export of italic font:
-#+BEGIN_SRC emacs-lisp
-(defun my-beamer-italic (contents backend info)
-  (when (eq backend 'beamer)
-    (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textit" contents)))
-
-(add-to-list 'org-export-filter-italic-functions 'my-beamer-italic)
-#+END_SRC
-
-*** Graphviz/dot support
-
- #+BEGIN_SRC emacs-lisp
-(add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
-(org-babel-do-load-languages  'org-babel-load-languages '((dot . t)))
-#+END_SRC
-
-*** TODO Gnuplot support
-
-- [ ] compiling Gnuplot source blocks crashes Emacs
-
-#+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((gnuplot . t)))
-#+END_SRC
-
-*** TODO COMMENT R support
-
-- [ ] as of Org 9.1, this throws =(invalid-function org-babel-header-args-safe-fn)= due to =org-babel-R-command=
-
-#+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages 'org-babel-load-languages '((R . t)))
-(setq org-babel-R-command "R --slave --no-save")
-#+END_SRC
-
-*** Refile
-
-Following this excellent blog post: https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
-
-#+BEGIN_SRC emacs-lisp
-(setq org-refile-targets '((org-agenda-files :maxlevel . 3))
-			org-refile-use-outline-path 'file
-			org-outline-path-complete-in-steps nil
-			org-refile-allow-creating-parent-nodes 'confirm)
-#+END_SRC
+https://github.com/rudolfochrist/interleave
 
 *** Plantuml
 
@@ -3142,6 +3382,26 @@ http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
 How to deal with and define projects within =org-mode=: 
 - https://karl-voit.at/2019/11/03/org-projects/
 - http://juanreyero.com/article/emacs/org-teams.html
+
+*** Refile
+
+Following this excellent blog post: https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html
+
+#+BEGIN_SRC emacs-lisp
+(setq org-refile-targets '((org-agenda-files :maxlevel . 3))
+			org-refile-use-outline-path 'file
+			org-outline-path-complete-in-steps nil
+			org-refile-allow-creating-parent-nodes 'confirm)
+#+END_SRC
+
+*** TODO COMMENT R support
+
+- [ ] as of Org 9.1, this throws =(invalid-function org-babel-header-args-safe-fn)= due to =org-babel-R-command=
+
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages 'org-babel-load-languages '((R . t)))
+(setq org-babel-R-command "R --slave --no-save")
+#+END_SRC
 
 *** Spell checking
 
@@ -3206,272 +3466,73 @@ How to deal with and define projects within =org-mode=:
         (org-refile nil nil rfloc))))))
 #+END_SRC
 
-*** Agenda
+*** Tables
 
-**** Appearance
-
-Don't split window when opening agenda:
+Some functions to select and copy columns (http://emacs.stackexchange.com/a/28298/12336)
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-window-setup "current-window")
-#+END_SRC
-
-Show notifications of agenda events:
-#+BEGIN_SRC emacs-lisp
-(use-package org-alert
-	:ensure t
-	)
-#+END_SRC
-
-Customize agenda view:
-#+BEGIN_SRC emacs-lisp
-(setq org-agenda-custom-commands
-			'(("w" "Work-related agenda and tasks"
-				 ((tags "PRIORITY=\"A\""
-                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-								 (org-agenda-overriding-header "High-priority tasks:")))
-					(agenda "")
-					(todo "INPROGRESS"
-								((org-agenda-overriding-header "Normal-priority tasks:")))
-					(todo "NEXT" ((org-agenda-overriding-header "")
-												(org-agenda-block-separator nil)))
-					(todo "WAITING" ((org-agenda-overriding-header "")
-													 (org-agenda-block-separator nil)))
-					(todo "TODO" ((org-agenda-overriding-header "")
-												(org-agenda-block-separator nil)))
-					(todo "SOMEDAY" ((org-agenda-overriding-header "")
-													 (org-agenda-block-separator nil)))
-					;; (tags-todo "@work"
-					;; 					 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("NEXT")))
-					;; 						(org-agenda-overriding-header "")
-					;; 						(org-agenda-block-separator nil)))
-					)
-				 ((org-agenda-tag-filter-preset '("+@work"))))
-
-				("h" "Home-related agenda and tasks"
-				 ((tags "PRIORITY=\"A\""
-								((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-								 (org-agenda-overriding-header "High-priority tasks:")))
-					(agenda "")
-					(todo "INPROGRESS"
-								((org-agenda-overriding-header "Normal-priority tasks:")))
-					(todo "NEXT" ((org-agenda-overriding-header "")
-												(org-agenda-block-separator nil)))
-					(todo "WAITING" ((org-agenda-overriding-header "")
-													 (org-agenda-block-separator nil)))
-					(todo "TODO" ((org-agenda-overriding-header "")
-												(org-agenda-block-separator nil)))
-					(todo "SOMEDAY" ((org-agenda-overriding-header "")
-													 (org-agenda-block-separator nil)))
-					)
-				 ((org-agenda-tag-filter-preset '("+@home"))))
-
-				("c" "Complete list of agenda and tasks"
-				 ((tags "PRIORITY=\"A\""
-								((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-								 (org-agenda-overriding-header "High-priority tasks:")))
-					(agenda "")
-					(todo "INPROGRESS"
-								((org-agenda-overriding-header "Normal-priority tasks:")))
-					(todo "NEXT" ((org-agenda-overriding-header "")
-												(org-agenda-block-separator nil)))
-					(todo "WAITING" ((org-agenda-overriding-header "")
-													 (org-agenda-block-separator nil)))
-					(todo "TODO" ((org-agenda-overriding-header "")
-												(org-agenda-block-separator nil)))
-					(todo "SOMEDAY" ((org-agenda-overriding-header "")
-													 (org-agenda-block-separator nil)))
-					)
-				 ;; ((org-agenda-tag-filter-preset '("+@home")))
-				 )
-				))
-
-(defun org-agenda-list-work ()
-	(interactive)
-	(org-agenda nil "w"))
-
-(defun org-agenda-list-home ()
-	(interactive)
-	(org-agenda nil "h"))
-
-(defun org-agenda-list-complete ()
-	(interactive)
-	(org-agenda nil "c"))
-
-(define-key org-agenda-mode-map (kbd "W") 'org-agenda-list-work)
-(define-key org-agenda-mode-map (kbd "H") 'org-agenda-list-home)
-(define-key org-agenda-mode-map (kbd "C") 'org-agenda-list-complete)
-#+END_SRC
-
-Sort agenda TODOs with =org-agenda-sorting-strategy=.
-
-Make the block agenda more compact:
-#+BEGIN_SRC emacs-lisp
-(setq org-agenda-compact-blocks nil)
-#+END_SRC
-
-Change the separator between blocks in agenda:
-#+BEGIN_SRC emacs-lisp
-(setq org-agenda-block-separator ?\-)
-#+END_SRC
-
-Start the weekly agenda today:
-#+BEGIN_SRC emacs-lisp
-(setq org-agenda-start-on-weekday nil)
-#+END_SRC
-
-Agenda remains open in background. No need to recompile it every time you call it:
-#+BEGIN_SRC emacs-lisp
-(setq org-agenda-sticky t)
-#+END_SRC
-
-Show tags at the right edge of the screen:
-#+BEGIN_SRC emacs-lisp
-;; (setq org-agenda-tags-column (- (- (window-total-width) 3)))
-
-;; taken from https://lists.gnu.org/archive/html/emacs-orgmode/2010-12/msg00410.html
-(add-hook 'org-finalize-agenda-hook 'place-agenda-tags)
-(defun place-agenda-tags ()
-  "Put the agenda tags by the right border of the agenda window."
-  (setq org-agenda-tags-column (- 4 (window-width)))
-  (org-agenda-align-tags))
-#+END_SRC
-
-Add the Emacs [[*Calendar/Diary][diary]] (which also stores holidays) to =org-agenda=:
-#+BEGIN_SRC emacs-lisp
-(setq org-agenda-include-diary t) 
-#+END_SRC
-
-**** COMMENT org-timeline
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-timeline
-	:ensure t
-  :after org
-  :config
-	(add-hook 'org-agenda-finalize-hook 'org-timeline-insert-timeline :append))
-#+END_SRC
-
-**** org-conflict
-
-=org-conflict= helps to detect and resolve scheduling conflicts.
-
-https://www.mail-archive.com/emacs-orgmode@gnu.org/msg123154.html
-
-*** Images
-
-Only use actual width of image when not specified with =#+ATTR* :width= (requires imagemagick)
-#+BEGIN_SRC emacs-lisp
-(setq org-image-actual-width nil)
-#+END_SRC
-
-*** TODO Links
-
-Function to update link syntax that got changed in =org-mode= v9.3 (taken from https://orgmode.org/Changes.html):
-#+BEGIN_SRC emacs-lisp
-(defun org-update-link-syntax (&optional no-query)
-  "Update syntax for links in current buffer.
-Query before replacing a link, unless optional argument NO-QUERY
-is non-nil."
-  (interactive "P")
-  (org-with-point-at 1
-    (let ((case-fold-search t))
-      (while (re-search-forward "\\[\\[[^]]*?%\\(?:2[05]\\|5[BD]\\)" nil t)
-        (let ((object (save-match-data (org-element-context))))
-          (when (and (eq 'link (org-element-type object))
-                     (= (match-beginning 0)
-                        (org-element-property :begin object)))
-            (goto-char (org-element-property :end object))
-            (let* ((uri-start (+ 2 (match-beginning 0)))
-                   (uri-end (save-excursion
-                              (goto-char uri-start)
-                              (re-search-forward "\\][][]" nil t)
-                              (match-beginning 0)))
-                   (uri (buffer-substring-no-properties uri-start uri-end)))
-              (when (or no-query
-                        (y-or-n-p
-                         (format "Possibly obsolete URI syntax: %S.  Fix? "
-                                 uri)))
-                (setf (buffer-substring uri-start uri-end)
-                      (org-link-escape (org-link-decode uri)))))))))))
-#+END_SRC
-
-Follow links when pressing =<return>=:
-#+BEGIN_SRC emacs-lisp
-(setq org-return-follows-link t)
-#+END_SRC
-
-Links to files are opened in the same window, i.e. the window does not get split:
-#+BEGIN_SRC emacs-lisp
-(setq org-link-frame-setup '((file . find-file)))
-#+END_SRC
-
-Show whether links to files are valid:
-#+BEGIN_SRC emacs-lisp
-;; taken from https://emacs.stackexchange.com/a/33078/12336
-(org-link-set-parameters
- "file"
- :face (lambda (path) (when (not (file-remote-p path))(if (file-exists-p path) 'org-link 'org-warning))))
-
-(org-link-set-parameters
- "attachment"
- :face (lambda (path) (when (not (file-remote-p path))(if (file-exists-p (expand-file-name path (org-attach-dir))) 'org-link 'org-warning))))
-#+END_SRC
-
-Use IDs rather than headline names:
-#+BEGIN_SRC emacs-lisp
-(setq org-id-link-to-org-use-id t)
-#+END_SRC
-
-Use ID completion when generating ID links:
-#+BEGIN_SRC emacs-lisp
-;; taken from https://emacs.stackexchange.com/a/12434/12336
-(defun org-id-complete-link (&optional arg)
-  "Create an id: link using completion"
-  (concat "id:"
-          (org-id-get-with-outline-path-completion)))
-
-(org-link-set-parameters "id"
-                         :complete 'org-id-complete-link)
-#+END_SRC
-
-Function to remove all ID properties from buffer:
-#+BEGIN_SRC emacs-lisp
-(defun tl/org-id-remove-from-buffer ()
-	"Remove/delete all ID entries from current buffer and update the databases."
-	(interactive)
-	(save-excursion
-		(beginning-of-buffer)
-		(let ((id-removed-p nil))
-			(when (and
-						 (not (org-next-visible-heading 1))
-						 (org-at-heading-p))
-				(when (org-entry-delete (point) "ID")
-					(setq id-removed-p t)))
-			(when (symbol-value 'id-removed-p)
-				(org-id-update-id-locations)))))
-#+END_SRC
-
-- [ ] Adopt a function that replaces links by their description using the =org-element= API (see https://emacs.stackexchange.com/a/49068/12336)
-
-Function to replace a link with its description, taken from https://emacs.stackexchange.com/a/10712/12336:
-#+BEGIN_SRC emacs-lisp
-(defun my/org-delete-link ()
-  "Replace an org link of the format [[LINK][DESCRIPTION]] with DESCRIPTION.
-If the link is of the format [[LINK]], delete the whole org link.
-
-In both the cases, save the LINK to the kill-ring.
-
-Execute this command while the point is on or after the hyper-linked org link."
+(defun org-table-goto-col-beginning ()
+  "Go to beginning of current column and return `point'."
   (interactive)
-  (when (derived-mode-p 'org-mode)
-    (let ((search-invisible t) start end)
-      (save-excursion
-        (when (re-search-backward "\\[\\[" nil :noerror)
-          (when (re-search-forward "\\[\\[\\(.*?\\)\\(\\]\\[.*?\\)*\\]\\]" nil :noerror)
-            (setq start (match-beginning 0))
-            (setq end   (match-end 0))
-            (kill-new (match-string-no-properties 1)) ; Save the link to kill-ring
-            (replace-regexp "\\[\\[.*?\\(\\]\\[\\(.*?\\)\\)*\\]\\]" "\\2" nil start end)))))))
+  (assert (org-table-p) "Not in org-table.")
+  (org-table-align)
+  (let ((col (org-table-current-column)))
+    (goto-char (org-table-begin))
+    (org-table-goto-column col))
+  (point))
+
+(defun org-table-col-beginning ()
+  "Return beginning position of current column."
+  (save-excursion
+    (org-table-goto-col-beginning)))
+
+(defun org-table-goto-col-end ()
+  "Goto end of current column and return `point'."
+  (interactive)
+  (assert (org-table-p) "Not in org-table.")
+  (org-table-align)
+  (let ((col (org-table-current-column)))
+    (goto-char (1- (org-table-end)))
+    (org-table-goto-column col)
+    (skip-chars-forward "^|"))
+  (point))
+
+(defun org-table-col-end ()
+  "Return end position of current column."
+  (save-excursion
+    (org-table-goto-col-end)))
+
+(defun org-table-select-col ()
+  "Select current column."
+  (interactive)
+  (set-mark (org-table-col-beginning))
+  (org-table-goto-col-end))
+
+(defun org-table-copy-col ()
+  "Copy current column."
+  (interactive)
+  (save-excursion
+    (org-table-copy-region (org-table-goto-col-beginning)
+													 (org-table-goto-col-end))))
+#+END_SRC
+
+A function  for copying the content of a cell:
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-table-copy-cell-content ()
+	(interactive)
+	(require 's)
+	(if (org-table-p)
+			(let ((cell-content (s-trim (substring-no-properties (org-table-get-field))))) 
+				(kill-new cell-content)
+				(message "Copied cell content to kill ring."))
+		(message "Not inside org-mode table.")))
+#+END_SRC
+
+A function for killing the content of a cell:
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-table-kill-cell-content ()
+	(interactive)
+	(tl/org-table-copy-cell-content)
+	(org-table-blank-field))
 #+END_SRC
 
 *** Tags
@@ -3563,75 +3624,6 @@ Key bindings:
 (define-key org-mode-map (kbd "C-c :") 'org-set-tags-command)
 #+END_SRC
 
-*** Tables
-
-Some functions to select and copy columns (http://emacs.stackexchange.com/a/28298/12336)
-#+BEGIN_SRC emacs-lisp
-(defun org-table-goto-col-beginning ()
-  "Go to beginning of current column and return `point'."
-  (interactive)
-  (assert (org-table-p) "Not in org-table.")
-  (org-table-align)
-  (let ((col (org-table-current-column)))
-    (goto-char (org-table-begin))
-    (org-table-goto-column col))
-  (point))
-
-(defun org-table-col-beginning ()
-  "Return beginning position of current column."
-  (save-excursion
-    (org-table-goto-col-beginning)))
-
-(defun org-table-goto-col-end ()
-  "Goto end of current column and return `point'."
-  (interactive)
-  (assert (org-table-p) "Not in org-table.")
-  (org-table-align)
-  (let ((col (org-table-current-column)))
-    (goto-char (1- (org-table-end)))
-    (org-table-goto-column col)
-    (skip-chars-forward "^|"))
-  (point))
-
-(defun org-table-col-end ()
-  "Return end position of current column."
-  (save-excursion
-    (org-table-goto-col-end)))
-
-(defun org-table-select-col ()
-  "Select current column."
-  (interactive)
-  (set-mark (org-table-col-beginning))
-  (org-table-goto-col-end))
-
-(defun org-table-copy-col ()
-  "Copy current column."
-  (interactive)
-  (save-excursion
-    (org-table-copy-region (org-table-goto-col-beginning)
-													 (org-table-goto-col-end))))
-#+END_SRC
-
-A function  for copying the content of a cell:
-#+BEGIN_SRC emacs-lisp
-(defun tl/org-table-copy-cell-content ()
-	(interactive)
-	(require 's)
-	(if (org-table-p)
-			(let ((cell-content (s-trim (substring-no-properties (org-table-get-field))))) 
-				(kill-new cell-content)
-				(message "Copied cell content to kill ring."))
-		(message "Not inside org-mode table.")))
-#+END_SRC
-
-A function for killing the content of a cell:
-#+BEGIN_SRC emacs-lisp
-(defun tl/org-table-kill-cell-content ()
-	(interactive)
-	(tl/org-table-copy-cell-content)
-	(org-table-blank-field))
-#+END_SRC
-
 *** Timestamps/Dates
 
 #+BEGIN_SRC emacs-lisp
@@ -3709,48 +3701,6 @@ Use Alt-Shift+cursor key chords to quickly change timestamps:
 	)
 #+END_SRC
 
-*** Listings
-
-Use the =listings= package:
-#+BEGIN_SRC emacs-lisp
-(setq org-latex-listings 'listings)
-#+END_SRC
-
-Map scr-block languages to =listings= environments:
-#+BEGIN_SRC emacs-lisp
-;; (setq org-latex-custom-lang-environments
-;; 			'((org-babel-language "listings-environment")))
-#+END_SRC
-
-*** Capture templates
-
-- Template expansions: http://orgmode.org/manual/Template-expansion.html
-
-#+BEGIN_SRC emacs-lisp
-(setq org-capture-templates
-			'(
-				;; uses appointment tag
-				("a" "Appointment" entry (file (lambda () (expand-file-name "captures.org" org-directory)))
-				 "* %?\t%^G:appointment:\n\n%^T\n\n" :prepend t)
-				;; ;; used for org-gcal
-				;; ("a" "Appointment" entry (file (concat org-directory "/gcal.org"))
-				;;  "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
-				("t" "Todo" entry (file (lambda () (expand-file-name "captures.org" org-directory)))
-				 "* TODO %?\t%^G\n CREATED: %U\n About region:%i\n %a" :prepend t)
-				("n" "Note" entry (file+datetree (lambda ()(expand-file-name "notes.org" org-directory)))
-				 "* %?\t%^G\n CREATED: %U\n About region:%i\n %a")
-				("c" "Code" entry (file (lambda () (expand-file-name "captures.org" org-directory )))
-				 "* %?\t%^G\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a" :prepend t)
-				))
-
-	;; (global-set-key (kbd "<f9> <f9>") 'org-capture)
-	;; (global-set-key (kbd "<f9> <f9> t") (lambda () (interactive) (org-capture nil "t")))
-#+END_SRC
-
-*** PDF interaction
-
-https://github.com/rudolfochrist/interleave
-
 *** TOC
 
 **** toc-org
@@ -3763,6 +3713,68 @@ https://github.com/rudolfochrist/interleave
 	;; 		(add-hook 'org-mode-hook 'toc-org-mode)
 	;; 	(warn "toc-org not found"))
 	)
+#+END_SRC
+
+*** Todo keywords
+
+(Must appear before =org-agenda= settings. Otherwise =org-todo-keywords= may not get updated buffer locally.)
+
+From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywords):
+#+BEGIN_QUOTE
+"WAIT(w@/!)".  "@" means to add a note (with time), "!" means to record only the time of the state change.  With X and Y being either "@" or "!", "X/Y" means use X when entering the state, and use Y when leaving the state if and only if the *target* state does not define X.  You may omit any of the fast-selection key or X or /Y, so WAIT(w@), WAIT(w/@) and WAIT(@/@) are all valid.
+#+END_QUOTE
+
+- TODO: something that needs to be done, maybe now, maybe later. 
+- NEXT: something that can be done /now/. There's everything you need to start doing it.
+- INPROGRESS: something that is being done right now.
+- APPT: appointment (meeting, phone call etc.) with a fixed date.
+- WAITING: something that cannot be done now, because some prerequisites are not yet met.
+- HOLD: something that cannot be done now, and the prerequisites are unlikely to be fullfilled in the future.
+- SOMEDAY: you are not yet sure whether this needs to be done.
+- DELEGATED: something that has been delegated and is not tracked any more.  
+
+#+BEGIN_SRC emacs-lisp
+(setq org-todo-keywords
+      (quote ((sequence "TODO(t!)" "NEXT(n)" "INPROGRESS(p!)" "APPT(a)" "|" "DONE(d)")
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "SOMEDAY(s)" "|" "DELEGATED(l@/!)" "CANCELLED(c@/!)"))))
+
+(setq org-todo-keyword-faces
+      (quote (("TODO" :foreground "red" :weight bold)
+              ("NEXT" :foreground "blue" :weight bold)
+              ("INPROGRESS" :foreground "gold" :weight bold)
+              ("DONE" :foreground "forest green" :weight bold)
+              ("WAITING" :foreground "orange" :weight bold)
+              ("HOLD" :foreground "magenta" :weight bold)
+              ("CANCELLED" :foreground "forest green" :weight bold)
+              ("DELEGATED" :foreground "forest green" :weight bold)
+              ("APPT" :foreground "forest green" :weight bold)
+							("SOMEDAY" :foreground "forest green" :weight bold)
+							)))
+#+END_SRC
+
+Fast TODO selection:
+#+BEGIN_SRC emacs-lisp
+(setq org-use-fast-todo-selection t)
+#+END_SRC
+
+Insert timestamp when task is marked as DONE:
+#+BEGIN_SRC emacs-lisp
+(setq org-log-done 'time)
+#+END_SRC
+
+Insert timestamp when changing deadline:
+#+BEGIN_SRC emacs-lisp
+(setq org-log-redeadline 'time)
+#+END_SRC
+
+Insert timestamp when changing schedule:
+#+BEGIN_SRC emacs-lisp
+(setq org-log-reschedule 'time)
+#+END_SRC
+
+Observe dependencies between TODOs:
+#+BEGIN_SRC emacs-lisp
+(setq org-enforce-todo-dependencies t)
 #+END_SRC
 
 ** outline-mode
