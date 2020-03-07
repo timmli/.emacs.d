@@ -9580,13 +9580,13 @@ Hydra taken from https://github.com/abo-abo/hydra/wiki/PDF-Tools#my-hydra-for-pd
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-pdftools (:color blue :hint nil)
 	"
-                                                                      ╭───────────┐
-       Move  History   Scale/Fit     Annotations  Search/Link    Do   │ PDF Tools │
-   ╭──────────────────────────────────────────────────────────────────┴───────────╯
-         ^^_g_^^      _B_    ^↧^    _+_    ^ ^     [_al_] list    [_f_] search    [_u_] revert buffer
-         ^^^↑^^^      ^↑^    _H_    ^↑^  ↦ _W_ ↤   [_am_] markup  [_o_] outline   [_i_] info
-         ^^_p_^^      ^ ^    ^↥^    _0_    ^ ^     [_at_] text    [_F_] link      [_d_] dark mode
-         ^^^↑^^^      ^↓^  ╭─^─^─┐  ^↓^  ╭─^ ^─┐   [_ad_] delete  [_f_] search link
+                                                                         ╭───────────┐
+       Move  History   Scale/Fit     Annotations     Search/Link    Do   │ PDF Tools │
+   ╭─────────────────────────────────────────────────────────────────────┴───────────╯
+         ^^_g_^^      _B_    ^↧^    _+_    ^ ^     [_al_] list       [_f_] search     [_u_] revert buffer
+         ^^^↑^^^      ^↑^    _H_    ^↑^  ↦ _W_ ↤   [_am_] markup...  [_o_] outline    [_i_] info
+         ^^_p_^^      ^ ^    ^↥^    _0_    ^ ^     [_at_] text       [_F_] link       [_d_] dark mode
+         ^^^↑^^^      ^↓^  ╭─^─^─┐  ^↓^  ╭─^ ^─┐   [_ad_] delete     [_f_] search link
     _h_ ←pag_e_→ _l_  _N_  │ _P_ │  _-_    _b_     [_aa_] dired
          ^^^↓^^^      ^ ^  ╰─^─^─╯  ^ ^  ╰─^ ^─╯   [_y_]  yank
          ^^_n_^^      ^ ^  _r_eset slice box
@@ -9600,7 +9600,7 @@ Hydra taken from https://github.com/abo-abo/hydra/wiki/PDF-Tools#my-hydra-for-pd
 	("al" pdf-annot-list-annotations)
 	("ad" pdf-annot-delete)
 	("aa" pdf-annot-attachment-dired)
-	("am" pdf-annot-add-markup-annotation)
+	("am" hydra-pdftools-markup/body)
 	("at" pdf-annot-add-text-annotation)
 	("y"  pdf-view-kill-ring-save)
 	("+" pdf-view-enlarge :color red)
@@ -9631,6 +9631,17 @@ Hydra taken from https://github.com/abo-abo/hydra/wiki/PDF-Tools#my-hydra-for-pd
 
 (when (not (eq system-type 'windows-nt))
 	(define-key pdf-view-mode-map (kbd "C-f") 'pdf-occur))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-pdftools-markup (:color blue)
+	"PDFTools Markup"
+	("h" pdf-annot-add-highlight-markup-annotation "highlight")
+	("s" pdf-annot-add-squiggly-markup-annotation "squiggly")
+	("u" pdf-annot-add-underline-markup-annotation "underline")
+	("o" pdf-annot-add-strikeout-markup-annotation "strikeout")
+	("*" pdf-annot-add-markup-annotation "free choice")
+	)
 #+END_SRC
 
 ** hydra-pomidor
