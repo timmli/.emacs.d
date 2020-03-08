@@ -6371,15 +6371,13 @@ Taken from https://emacs.stackexchange.com/a/21356/12336:
 	(setq-default cm-author user-acronym))
 #+end_src
 
-*** TODO scimax-editmarks
+*** scimax-editmarks
 
 - Similar to [[*Critical markup][cm-mode]].
-- Commit: 5e1c03c
-- Issue: Is not loaded with =(require 'scimax-editmarks)=: "Wrong type argument: keymapp, nil"
+- Commit: e72be97
 
 #+BEGIN_SRC emacs-lisp
-;; (require 'scimax-editmarks)
-
+(org-babel-load-file "lisp/scimax-editmarks.org")
 (defun my-sem-hydra-start ()
 	(interactive)
 	(require 'scimax-editmarks)

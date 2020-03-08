@@ -34,11 +34,26 @@ This document is the manual.
 
 There are things to do. Check them out here: [[elisp:(org-agenda nil "t" "<")]]
 
-1. Residual text properties sometimes when editmarks are removed?
+** TODO Residual text properties sometimes when editmarks are removed?
 
 I have some concerns about using text properties exclusively for this project. It is appealing because they are stored where the changes should be. As long as font-lock manages the properties correctly it seems like it should work. Searching by property change is a little tricky sometimes though. The alternative is a regexp based search. I don't currently store the regexps though, and on an edit mark would need a regexp based way to identify what kind of editmark you are on.
 
-1. Need to disable editmark keymaps when in track change mode? It limits what you can type. Or, I need a prefix on all of them so that we don't collide with typing.
+This note is about the fact that sometimes it seems like there are residual properties that mess up the fontification and addition of subsequent editmarks.
+
+** TODO Need to disable editmark keymaps when in track change mode? It limits what you can type. Or, I need a prefix on all of them so that we don't collide with typing.
+
+* Features I would like to implement one day
+
+** TODO Metadata in editmarks
+
+It would be nice to have some metadata e.g. a timestamp, or who should be responsible for a task, for example. This is most likely to look like a sexp plist. E.g. like this:
+
+{>*(:due-date [2019-06-16 Sun] :assigned-to user) Some task to be done*<}
+
+This should be general so it works with all editmarks.
+
+Note this is a partial feature in the file and audio editmarks.
+
 
 * Examples
   :PROPERTIES:
@@ -72,31 +87,54 @@ comment <<}
 
 {>~ @author comment~<}
 
+** Replys
+
+{r> @replier A reply<r}
+
 ** Task
 
 {>* This is something you should do. *<}
 
 ** Typos
 
-{>$tpyo$<} Type 4 on the open marker to spell check and replace this.
+{>.tpyo.<} Type 4 on the open marker to spell check and replace this.
+
+- sem-editmark-spellcheck-typo :: to spell check and fix the typo.
 
 ** Highlights
 
-These don't really do anything but provide visual highlighting.
+These don't really do anything but provide visual, persistent highlighting.
 
 {b>blue highlight<b}
 {g>green highlight<g}
 {y>yellow highlight<y}
 {p>pink highlight<p}
 
-** Tasks
 
-{>*This is a task editmark.*<}
+** File
+
+This is a variation of the notebook link in scimax-notebook.el. It allows you to link to files in projects, as well as to lines and columns in the file.
+
+{>|:file scimax-editmarks.org :project scimax :line 113 :column 0 |<}
+
+A tooltip should tell you how to open the editmark.
+
+- sem-store-file-editmark :: saves information about where the point is.
+- sem-insert-file-editmark :: inserts an editmark from the last stored file
+
+This editmark has some limitations:
+1. If it points to a location, and if you change the file, the location will not be the same as it was when you saved the link.
+
+** Audio
+
+This is an audio annotation. {a> :file 2019-08-24-15-46-15.mp3 <a} It relies on http://sox.sourceforge.net/ to record and play the file.
+
+- sem-audio-insert :: will start a recording and insert the editmark when you are done. A local file will be saved as an mp3.
+- sem-audio-listen :: will play the editmark.
+
+This code was inspired by and adapted from https://gnu.support/gnu-emacs/emacs-lisp/Emacs-Lisp-Record-voice-notes-within-GNU-Emacs.html.
 
 * The code
-:PROPERTIES:
-:ID:       b425d27c-c4da-45f6-8dc7-5b17e4fa1f52
-:END:
 
 #+BEGIN_SRC emacs-lisp
 ;;; scimax-editmarks.el --- Editmarks for scimax
@@ -114,9 +152,6 @@ These don't really do anything but provide visual highlighting.
 #+RESULTS:
 
 ** Menu and keymaps
-:PROPERTIES:
-:ID:       12d05b67-ff5c-4095-91a7-5af2e3f971d2
-:END:
 
 We create a popup menu and keymaps for the markers and content here.
 
@@ -148,6 +183,8 @@ We create a popup menu and keymaps for the markers and content here.
 (defvar sem-editmark-content-map
   (let ((map (copy-keymap org-mode-map)))
     (define-key map (kbd "<mouse-3>") 'sem-popup-command)
+    (define-key map (kbd "s-<mouse-1>") 'sem-popup-command)
+    (define-key map (kbd "s-o") (lambda () (interactive) (popup-menu (append '("sem") sem-menu-items))))
     (define-key map (kbd "C-a") (lambda ()
 				  (interactive)
 				  (goto-char (car (sem-editmark-bounds)))))
@@ -199,7 +236,8 @@ I thought having speed keys was a nice idea, but in track-change mode, it interf
 
  #+END_SRC
 
-** The editmarks
+
+* The editmarks
     :PROPERTIES:
     :ID:       6ABCE6EF-7106-4E80-AEA7-66B1F3CDB5DD
     :END:
@@ -210,11 +248,11 @@ Export functions should take one argument, the backend as a symbol, and they are
 
  #+BEGIN_SRC emacs-lisp
 (defvar sem-editmarks
-  '((delete :open-marker "{>-" :close-marker "-<}"
+  `((delete :open-marker "{>-" :close-marker "-<}"
 	    :marker-face (:foreground "red" :weight ultra-light :strike-through t)
 	    :face (:foreground "red" :weight bold :strike-through t)
 	    :keymap sem-editmark-content-map
-	    :help-echo "Deletion. Right click for menu"
+	    :help-echo "Deletion. Right-click, s-click or s-o for menu."
 	    :accept-func sem-delete-editmark
 	    :reject-func sem-clear-editmark
 	    :export sem-export-delete )
@@ -223,7 +261,7 @@ Export functions should take one argument, the backend as a symbol, and they are
 	    :marker-face (:foreground "blue" :weight ultra-light)
 	    :face (:foreground "blue" :weight bold)
 	    :keymap sem-editmark-content-map
-	    :help-echo "Insertion. Right click for menu"
+	    :help-echo "Insertion. Right-click, s-click or s-o for menu."
 	    :accept-func sem-clear-editmark
 	    :reject-func sem-delete-editmark
 	    :export sem-export-insert)
@@ -232,66 +270,290 @@ Export functions should take one argument, the backend as a symbol, and they are
 	     :marker-face (:foreground "DarkOrange"  :weight ultra-light)
 	     :face (:foreground "DarkOrange" :weight bold)
 	     :keymap sem-editmark-content-map
-	     :help-echo "Comment. Right click for menu"
+	     :help-echo "Comment. Right-click, s-click or s-o for menu."
 	     :accept-func sem-delete-editmark
 	     :reject-func sem-delete-editmark
 	     :include-author t
 	     :export sem-export-comment)
 
     (reply :open-marker "{r>" :close-marker "<r}"
-	     :marker-face (:foreground "DarkOrange3"  :weight ultra-light)
-	     :face (:foreground "DarkOrange3" :weight bold)
-	     :keymap sem-editmark-content-map
-	     :help-echo "Reply. Right click for menu"
-	     :accept-func sem-delete-editmark
-	     :reject-func sem-delete-editmark
-	     :include-author t
-	     :export sem-export-comment)
+	   :marker-face (:foreground "DarkOrange3"  :weight ultra-light)
+	   :face (:foreground "DarkOrange3" :weight bold)
+	   :keymap sem-editmark-content-map
+	   :help-echo "Reply. Right-click, s-click or s-o for menu."
+	   :accept-func sem-delete-editmark
+	   :reject-func sem-delete-editmark
+	   :include-author t
+	   :export sem-export-comment)
 
     (task :open-marker "{>*" :close-marker "*<}"
 	  :marker-face (:foreground "SteelBlue4" :weight ultra-light)
 	  :face (:foreground "SteelBlue4" :weight bold)
 	  :keymap sem-editmark-content-map
-	  :help-echo "Task. Right click for menu"
+	  :help-echo "Task. Right-click, s-click or s-o for menu."
 	  :accept-func sem-delete-editmark
 	  :export sem-export-task)
 
     (typo :open-marker "{>." :close-marker ".<}"
 	  :marker-face (:foreground "Magenta3"  :weight ultra-light)
 	  :face (:foreground "Magenta3" :weight bold)
-	  :keymap sem-editmark-content-map
-	  :help-echo "Typo. Right click for menu")
+	  :keymap ,(let ((map (make-sparse-keymap)))
+		     (define-key map (kbd "4") 'sem-editmark-spellcheck-typo)
+		     (define-key map (kbd "<return>") 'sem-editmark-spellcheck-typo)
+		     map)
+
+	  :help-echo "Typo. Type 4 to fix this.")
 
     (blue-highlight :open-marker "{b>" :close-marker "<b}"
 		    :marker-face (:background "SkyBlue1"  :weight ultra-light)
 		    :face (:background "SkyBlue1")
 		    :keymap sem-editmark-content-map
-		    :help-echo "Blue highlight. Right click for menu")
+		    :help-echo "Blue highlight. Right-click, s-click or s-o for menu.")
 
     (green-highlight :open-marker "{g>" :close-marker "<g}"
 		     :marker-face (:background "Darkolivegreen1"  :weight ultra-light)
 		     :face (:background "Darkolivegreen1")
 		     :keymap sem-editmark-content-map
-		     :help-echo "green highlight. Right click for menu")
+		     :help-echo "green highlight. Right-click, s-click or s-o for menu.")
 
     (pink-highlight :open-marker "{p>" :close-marker "<p}"
 		    :marker-face (:background "pink1"  :weight ultra-light)
 		    :face (:background "pink1" )
 		    :keymap sem-editmark-content-map
-		    :help-echo "pink highlight. Right click for menu")
+		    :help-echo "pink highlight. Right-click, s-click or s-o for menu.")
 
     (yellow-highlight :open-marker "{y>" :close-marker "<y}"
 		      :marker-face (:background "Yellow1" :weight ultra-light)
 		      :face (:background "Yellow1")
 		      :keymap sem-editmark-content-map
-		      :help-echo "yellow highlight. Right click for menu"))
+		      :help-echo "yellow highlight. Right-click, s-click or s-o for menu.")
+
+    (audio :open-marker "{a>" :close-marker "<a}"
+	   :marker-face (:foreground "violet" :weight ultra-light)
+	   :face (:foreground "violet" :weight bold)
+	   :mouse-face highlight
+	   :keymap sem-editmark-audio-map
+	   :help-echo sem-audio-tooltip
+	   :accept-func sem-delete-editmark
+	   :reject-func sem-clear-editmark)
+
+    (file :open-marker "{>|"
+	  :close-marker "|<}"
+	  :marker-face (:foreground "cadet blue" :weight ultra-light)
+	  :face (:foreground "cadet blue" :weight bold)
+	  :help-echo "File location. s-↓ to open. s-→ to open in other window."
+	  :include-author nil
+	  :export sem-file-export
+	  :keymap ,(let ((map (make-sparse-keymap)))
+		     (define-key map (kbd "s-<down>") 'sem-follow-file)
+		     (define-key map (kbd "s-<right>") (lambda ()
+							 (interactive)
+							 (sem-follow-file t)))
+		     (define-key map (kbd "C-n") 'sem-next-editmark)
+		     (define-key map (kbd "C-p") 'sem-previous-editmark)
+		     map)))
   "The default editmarks")
-
-
  #+END_SRC
 
  #+RESULTS:
  : sem-editmarks
+
+Some editmarks can have a plist in them containing metadata. Here we define how to read these. For now we assume that the content of an editmark is all a plist.
+
+
+#+BEGIN_SRC emacs-lisp
+(defun sem-editmark-plist ()
+  "Read a plist in an editmark.
+Converts the content into a plist. If the contents are not a
+plist, this may not do what you want.
+
+I assume the content of the edit mark is all a plist like this
+
+:keyword some values :next-keyword more values
+
+This way it is not necessary to put quotes on the values, so the
+plist above will end up as:
+ (:keyword \"some values\" :next-keyword \"more values\")
+
+Then, this gets read by elisp to make the plist. The downside of
+this is it is not feasible to have a key without a value."
+  (let* ((bounds (sem-editmark-bounds))
+	 (content-bounds (sem-content-bounds))
+	 (content (s-trim (buffer-substring-no-properties
+			   (car content-bounds) (cdr content-bounds))))
+	 (splits (split-string content ":" t "\s+"))
+	 ;; This nonsense is so I don't have to quote these in text. It might be a bad idea.
+	 (data (mapcar (lambda (pair)
+			 (let ((fields (split-string pair " " t "\s+")))
+			   (if (= 1 (length (cdr fields)))
+			       (cond
+				;; number
+				((string-match "^[0-9]+$" (cadr fields))
+				 (list
+				  (format ":%s" (car fields))
+				  (cadr fields)))
+				(t
+				 (list
+				  (format ":%s" (car fields))
+				  (format "\"%s\"" (cadr fields)))))
+			     ;; it has to be quoted
+			     (list
+			      (format ":%s" (car fields))
+			      (format "\"%s\"" (s-join " " (cdr fields)))))))
+		       splits)))
+    (read (format "%s" (-flatten data)))))
+#+END_SRC
+
+
+** audio editmark
+
+This editmark points to an audio file.
+
+#+BEGIN_SRC emacs-lisp
+(defvar sem-editmark-audio-map
+  (let ((map (copy-keymap org-mode-map)))
+    (define-key map (kbd "M-o") 'sem-audio-listen)
+    (define-key map (kbd "<return>") 'sem-audio-listen)
+    (define-key map (kbd "<s-mouse-1>") 'sem-audio-listen)
+    map)
+  "Map for actions on editmark audio.")
+
+
+(defun sem-audio-listen ()
+  "Play the editmark."
+  (interactive)
+  (let ((plist (sem-editmark-plist)))
+    (start-process "*listen*" nil
+		   "sox"
+		   (plist-get plist :file)
+		   "-d" )))
+
+
+(defun sem-audio-tooltip (window object position)
+  "Tooltip for audio editmarks."
+  "Audio editmark. use M-o or s-mouse-1 to listen.")
+
+
+(defun sem-audio-insert ()
+  "Insert an audio mark"
+  (interactive)
+  (let* ((cb (current-buffer))
+	 (buffer "*record*")
+	 (fname (format-time-string "%Y-%m-%d-%H-%M-%S.mp3"))
+	 (process (start-process buffer buffer "sox" "-d" fname)))
+    (pop-to-buffer buffer)
+    (setq-local header-line-format "press q to quit.")
+    (use-local-map (copy-keymap org-mode-map))
+    (local-set-key "q" (lambda ()
+			 (interactive)
+			 ;; short pause to let the recording finish.
+			 (sleep-for 1)
+			 (let ((kill-buffer-query-functions nil))
+			   (kill-process "*record*")
+			   (kill-buffer buffer))
+			 (pop-to-buffer cb)
+			 (insert (format "{a> :file %s <a}" fname))))
+    (recursive-edit)))
+#+END_SRC
+
+#+RESULTS:
+: sem-audio-insert
+
+** file editmark
+
+File editmarks are a different way to link to a file than an org-link. There is a finer resolution in these, where you can store the line and column number.
+
+One day maybe I will try storing some context, e.g. for org files. There is a placeholder now, but it isn't great, just the characters around the point.
+
+Another potential idea is an md5 hash, so you can tell if the file has changed since the link was made.
+
+#+BEGIN_SRC emacs-lisp
+(defvar sem-saved-file nil
+  "plist for saved files.")
+
+(defun sem-store-file-editmark ()
+  "Store a file editmark."
+  (interactive)
+  (setq sem-saved-file (list
+			:file (buffer-file-name)
+			:project-root (projectile-project-root)
+			:project (file-name-nondirectory
+				  (directory-file-name (projectile-project-root)))
+			:context (buffer-substring-no-properties
+				  (max (- (point) 10) (point-min))
+				  (min (+ (point) 10) (point-max)))
+			:line (line-number-at-pos)
+			:column (current-column))))
+
+
+(defun sem-insert-file-editmark ()
+  "Insert a previously stored file editmark."
+  (interactive)
+  (when (plist-get sem-saved-file :project)
+    (plist-put sem-saved-file :file (file-relative-name
+				     (plist-get sem-saved-file :file)
+				     (plist-get sem-saved-file :project-root))))
+  ;; I don't think we need this in the editmark
+  (setq sem-saved-file (org-plist-delete sem-saved-file :project-root))
+  ;; I am not sure what to do with this for now, so I am going to just delete it.
+  (setq sem-saved-file (org-plist-delete sem-saved-file :context))
+  (insert (format "{>|%s|<}"
+		  (cl-loop for (k v) on sem-saved-file by (function cddr)
+			   when v
+			   concat (format "%s %s " k v)))))
+
+
+(defun sem-follow-file (&optional other)
+  "Function for following the editmark to its destination."
+  (interactive "P")
+  (org-mark-ring-push)
+  (let* ((plist (sem-editmark-plist))
+	 (fname (plist-get plist :file)))
+    ;; I should add a :project option here
+    (when-let (project (plist-get plist :project))
+      ;; we need to build the path so we can open it.
+      (let*
+	  ((projects (remove nil (append (projectile-relevant-known-projects)
+					 (list
+					  (when (projectile-project-p)
+					    (projectile-project-root))))))
+	   ;; These are projects that match the project spec
+	   (project-candidates (-filter (lambda (p)
+					  (string-match (concat project "/\\'") p))
+					projects))
+	   ;; These are projects that match the spec, and that have the file we want.
+	   (candidates (-filter (lambda (p)
+				  (file-exists-p (expand-file-name fname p)))
+				project-candidates)))
+	(if (and (= 1 (length candidates))
+		 (file-exists-p (expand-file-name fname (car candidates))))
+	    (setq fname (expand-file-name fname (car candidates))))))
+
+    (if other
+	(find-file-other-window fname)
+      (find-file fname))
+    (goto-line (plist-get plist :line))
+    (when-let  (col (plist-get plist :column))
+      (move-to-column col))))
+
+
+(defun sem-file-export (backend)
+  "Export function for file editmarks."
+  (let ((bounds (sem-editmark-bounds))
+	(content-bounds (sem-content-bounds))
+	(plist (sem-editmark-plist)))
+    (cond
+     ((eq 'latex backend)
+      (setf (buffer-substring (car bounds) (cdr bounds))
+	    (format "@@latex:Line %s in \\href{file://%s}{%s}@@"
+		    (plist-get plist :line)
+		    (plist-get plist :file)
+		    (file-name-nondirectory (plist-get plist :file))))))))
+#+END_SRC
+
+#+RESULTS:
+: sem-file-export
+
 
 ** Export functions
    :PROPERTIES:
@@ -464,10 +726,7 @@ we go with the font color."
 #+RESULTS:
 : sem-export-default
 
-** Fontlock
-:PROPERTIES:
-:ID:       f7b08d67-86c1-4424-a645-b3fac71792c7
-:END:
+** Font-lock
 
 The workhorse for fontification and property setting of editmarks is the font-lock engine.
 
@@ -494,6 +753,7 @@ The standard font-lock uses regexps for font-locking. We construct the regexp an
 	    (properties (cdr editmark))
 	    (open-marker (plist-get properties :open-marker))
 	    (close-marker (plist-get properties :close-marker))
+	    (map (or (plist-get properties :keymap) sem-editmark-content-map))
 	    (regexp (eval `(rx
 			    (group-n 1 ,open-marker)
 			    ;; this is an author
@@ -501,6 +761,8 @@ The standard font-lock uses regexps for font-locking. We construct the regexp an
 			    ;; the content
 			    (group-n 2 (+? (or ascii nonascii)))
 			    (group-n 3 ,close-marker)))))
+       (if (symbolp map)
+	   (setq map (symbol-value map)))
        (list regexp
 	     `(0 ',(list 'face nil 'sem-editmark t 'sem-type type 'font-lock-multiline t))
 	     ;; open-marker
@@ -511,8 +773,9 @@ The standard font-lock uses regexps for font-locking. We construct the regexp an
 			 'help-echo (plist-get properties :help-echo)))
 	     ;; content
 	     `(2 ',(list 'face (plist-get properties :face)
+			 'mouse-face (plist-get properties :mouse-face)
 			 'sem-content t
-			 'local-map (or (plist-get properties :keymap) sem-editmark-content-map)
+			 'local-map map
 			 'help-echo (plist-get properties :help-echo)))
 	     ;; close-marker
 	     `(3 ',(list 'face (plist-get properties :marker-face)
@@ -533,11 +796,8 @@ The standard font-lock uses regexps for font-locking. We construct the regexp an
  : sem-font-lock-keywords
 
 ** Minor-mode for editmarks
-:PROPERTIES:
-:ID:       6ae62803-ef08-4091-8ffa-c67d0ace00b8
-:END:
 
-A minor mode is an easy way to turn font-locking on and off. All we do here is turn fontification on and off.
+A minor mode is an easy way to turn font-locking on and off. All we do here is turn fontification on and off. Note that if the editmarks conflict with pdf export (usually because of the color package), you can turn off sem-mode to prevent the export.
 
  #+BEGIN_SRC emacs-lisp
 (define-minor-mode sem-mode
@@ -548,7 +808,7 @@ A minor mode is an easy way to turn font-locking on and off. All we do here is t
 	(font-lock-remove-keywords
 	 nil
 	 (sem-font-lock-keywords))
-	(remove-hook 'org-export-before-processing-hook 'sem-editmarks-to-org))
+	(remove-hook 'org-export-before-processing-hook 'sem-editmarks-to-org t))
     (font-lock-add-keywords
      nil
      (sem-font-lock-keywords))
@@ -561,9 +821,6 @@ A minor mode is an easy way to turn font-locking on and off. All we do here is t
  #+RESULTS:
 
 ** Scimax menu
-:PROPERTIES:
-:ID:       2a722eec-e005-4717-a00a-e8d0daf192aa
-:END:
 
 This adds a menu to scimax for the editmarks.
 
@@ -575,9 +832,6 @@ This adds a menu to scimax for the editmarks.
 
 ** Convenience functions
 *** Utilities
-:PROPERTIES:
-:ID:       0c2041a3-6e48-4904-bfd7-0826d6cc1762
-:END:
 
  Two utilities that will be helpful are to get the bounds of the current editmark, and the bounds of the content in an editmark. These will be used later for acting on them. This code is surprisingly complex to me, it handles a number of corner cases that seem to result from using property changes to delineate boundaries. One day it might be a good idea to simplify this if it is possible.
 
@@ -619,7 +873,7 @@ Return nil if not on an editmark."
   (when (get-text-property (point) 'sem-editmark)
     (cond
      ;; At the very beginning
-     ((not (get-text-property (- (point) 1) 'sem-editmark))
+     ((bobp)
       (cons (point) (next-single-property-change (point) 'sem-editmark)))
      (t
       (cons (or (previous-single-property-change (point) 'sem-editmark) (point))
@@ -663,9 +917,6 @@ content: ${content}"
  : sem-editmark-info
 
 *** Inserting editmarks
-:PROPERTIES:
-:ID:       8c4d0a34-f4cf-4d52-b29d-38ffdc22eb26
-:END:
 
  This generates the insert commands. This trys to be a dwim type of command.
 
@@ -709,6 +960,9 @@ TYPE should be a symbol corresponding to the car of an entry in `sem-editmarks'.
     ;; editmarks when editing editmarks.
     (sem-without-following-changes
       (cond
+       ;; this is a special case
+       ((eq type 'audio)
+	(sem-audio-insert))
        ;; We have an active region we want to apply
        ((region-active-p)
 	(let* ((bounds (list (region-beginning) (region-end)))
@@ -779,7 +1033,22 @@ TYPE should be a symbol corresponding to the car of an entry in `sem-editmarks'.
 	(backward-char (length (plist-get (cdr entry) :close-marker)))))))
   ;; Should we add a local variable so the file opens in sem-mode?
   (hack-local-variables)
-  (when (not (-contains?  file-local-variables-alist '(eval sem-mode)))
+  ;; This is more complicated than I thought it should be. When I try to just
+  ;; add a file-local variable, it often fails on new files because of some
+  ;; weird issue in comment-region. I hacked this together, and it seems more
+  ;; reliable.
+  (when (null file-local-variables-alist)
+    (let ((mode major-mode))
+      (save-excursion
+	(save-restriction
+	  (widen)
+	  (goto-char (point-max))
+	  (insert (with-temp-buffer
+		    (funcall mode)
+		    (insert "Local Variables:\nEnd:\n")
+		    (comment-region (point-min) (point-max))
+		    (buffer-string)))))))
+  (when (not (member '(eval sem-mode) file-local-variables-alist))
     (save-excursion
       (add-file-local-variable 'eval '(sem-mode)))))
 #+END_SRC
@@ -788,9 +1057,6 @@ TYPE should be a symbol corresponding to the car of an entry in `sem-editmarks'.
 : sem-insert
 
 *** Delete/Clear a editmark
-:PROPERTIES:
-:ID:       99a25392-7f74-4cd1-b2a5-7ce9568b0074
-:END:
 
 These two functions will probably meet most accept/reject needs. I think most of the time you either want to delete the editmark completely, e.g. you have resolved it, or you want to just clear the markers, e.g. to accept the change, or reject the deletion.
 
@@ -878,9 +1144,6 @@ For convenience, we create functions to clear or delete all marks in the buffer.
  These functions look up the functions to call from `sem-editmarks' and then call them.
 
 **** Accept functions
-:PROPERTIES:
-:ID:       a66f6903-07fc-4f34-94ce-5fcd27763223
-:END:
 
 You can "accept" an editmark, which means you agree with its intention and want to modify it so that the text reflects it. For example accepting an insertion means remove the markers and keep the content, whereas accepting a deletion means remove the whole editmark.
 
@@ -919,9 +1182,6 @@ Other editmarks can have other meanings for accept, you just have to define the 
  : sem-accept-all-editmarks
 
 **** Reject functions
-:PROPERTIES:
-:ID:       b12802e4-68db-4a1a-8eb9-e3481d788609
-:END:
 
 You can also reject an editmark. For an insertion this means delete the markers and the content. For a deletion, rejection means delete the markers and keep the content.
 
@@ -960,9 +1220,6 @@ Other editmarks may have other meanings for reject, you just have to define the 
  : sem-reject-all-editmarks
 
 *** Navigation
-:PROPERTIES:
-:ID:       98c45a63-a607-4996-9fce-8b2e54f1a7b2
-:END:
 
  These make it easy to go back and forth on the editmarks.
 
@@ -1048,9 +1305,6 @@ Finally, you might want to jump to any editmark in the buffer using completion f
 : sem-jump-to-editmark
 
 *** List editmarks
-:PROPERTIES:
-:ID:       0c2488ce-2fd5-4741-bd28-9652558068d8
-:END:
 
 It is helpful to have an overview of all the editmarks in a tabular list form. Here we make that possible.  First, we need a function that gets all the editmarks.
 
@@ -1064,6 +1318,12 @@ editmark is the full text including the markers."
     (let ((editmarks '())
 	  bounds
 	  cem)
+      (when (get-text-property (point) 'sem-type)
+	(push (list (get-text-property (point) 'sem-type)
+		    (current-buffer)
+		    (setq bounds (sem-editmark-bounds))
+		    (buffer-substring-no-properties (car bounds) (cdr bounds)))
+	      editmarks))
       (while (setq cem (sem-next-editmark))
 	(setq bounds (sem-editmark-bounds))
 	(push (list (get-text-property (point) 'sem-type)
@@ -1222,9 +1482,6 @@ Finally we define a minor mode for the list view.
  : sem-editmark-list-mode
 
 *** Spell-check editmark
-:PROPERTIES:
-:ID:       2e654246-290e-4c71-8b50-5305cc50aa53
-:END:
 
  Especially for typo editmarks, we should have an easy way to fix them. Here are two options. One spell checks the content, and one is really intended for typo editmarks.
 
@@ -1258,19 +1515,18 @@ Finally we define a minor mode for the list view.
  : sem-editmark-spellcheck-typo
 
 *** The scimax-editmarks hydra
-:PROPERTIES:
-:ID:       f908d09d-8598-48d9-9536-8e6a3835094a
-:END:
 
  I never remember all the things that are possible. Hydra menus solve that, and here we provide a context aware hydra menu that inserts editmarks when you are not on one, and provides actions for editmarks when you are on one. I bind it to H-m.
 
  #+BEGIN_SRC emacs-lisp
 (defhydra sem-insert (:color blue :hint nil :columns 3)
   "Editmark insert"
+  ("u" (sem-audio-insert) "audio")
   ("m" (sem-insert 'comment) "comment")
   ("r" (sem-insert 'reply) "reply")
   ("i" (sem-insert 'insert) "insert")
   ("d" (sem-insert 'delete) "delete")
+  ("f" (sem-insert 'file) "file")
   ("t" (sem-insert 'typo) "typo")
   ("k" (sem-insert 'task) "task")
   ("c" (insert "✓") "checkmark")
@@ -1329,9 +1585,6 @@ On an editmark open the action menu, otherwise the insert menu."
  The editmarks are primarily intended for use in org-mode, but it is sometimes nice to convert them to a PDF for visualization or sharing with others. This section makes this possible.
 
 *** org-export
-:PROPERTIES:
-:ID:       7c8f8dcb-6cdd-42ee-bf9b-fa75573ace30
-:END:
 
 It appears that org-export--generate-copy-script makes a copy of the buffer with no properties, which breaks finding the editmarks. A solution I worked out is to temporarily redefine buffer-substring-no-properties to just be buffer-substring for that command. That seems to be the least intrusive.
 
@@ -1380,9 +1633,6 @@ in a copy of the buffer."
  : sem-editmarks-to-org
 
 ** Generation
-:PROPERTIES:
-:ID:       cb1dc605-508f-422c-ab04-03349b765028
-:END:
 
  It is also helpful to see how the current document has changed from some reference state. Two useful reference states are:
 
@@ -1403,9 +1653,6 @@ in a copy of the buffer."
  : sem-wdiff-cmd
 
 *** From disk copy
-:PROPERTIES:
-:ID:       6e2f0db7-7691-44d7-9553-588bf9cc9ae8
-:END:
 
  Say you have been editing along and want to see how the /unsaved/ buffer differs from what is on the disk. This command will show the marked up diff in a new buffer.
 
@@ -1438,9 +1685,6 @@ For line-based diff use `diff-buffer-with-file'."
  : sem-wdiff-buffer-with-file
 
 *** From git diff
-:PROPERTIES:
-:ID:       4c09a955-8549-40ec-8515-7ce4fce63669
-:END:
 
  This is lightly tested. It should show changes from the current version to some version in a past git commit. Note if you have existing sem-editmarks in the old version, you might get confusing results.
 
@@ -1505,9 +1749,6 @@ the current version. Returns the buffer."
  : sem-wdiff-git
 
 *** TODO Saving the generated wdiff buffer back
-:PROPERTIES:
-:ID:       6c2a6664-7fc7-4960-bf4b-570331d48926
-:END:
 
  The idea here is you you can do accept/reject in the temporary buffer, and then save it back. If you mess up badly, just delete the temp buffer. This needs to be tested.
 
@@ -1841,9 +2082,6 @@ of the affected text."
  : sem-without-following-changes
 
 * The end
-:PROPERTIES:
-:ID:       fd77c030-8714-4251-bb1e-09cbeab3e36a
-:END:
 
 #+BEGIN_SRC emacs-lisp
 (provide 'scimax-editmarks)
