@@ -6317,6 +6317,10 @@ Taken from https://emacs.stackexchange.com/a/21356/12336:
 
 ** Commenting
 
+*** Keys
+
+=C-;= is used to insert inline comments across major modes.
+
 #+begin_src emacs-lisp
 (global-set-key (kbd "C-;") 'comment-or-uncomment-region-or-line)
 (eval-after-load "LaTeX-mode"
@@ -6380,6 +6384,13 @@ Taken from https://emacs.stackexchange.com/a/21356/12336:
 	(interactive)
 	(require 'scimax-editmarks)
 	(sem-hydra))
+#+END_SRC
+
+*** ov-highlight
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path (expand-file-name "lisp/ov-highlight" user-emacs-directory))
+(use-package ov-highlight)
 #+END_SRC
 
 ** Line actions
@@ -8133,7 +8144,7 @@ This presupposes a running Jupyter server on localhost."
       [_r_] mark rectangular         [_s_] highlight same symbols   [_p_] position register
       [_e_] edit same symbol         [_g_] git gutter               [_t_] tags                      
       [_s_] highlight same symbols   [_w_] show/hide whitespaces                                       
-      [_(_] key macro
+      [_(_] key macro                [_o_] highlight with overlays
       [_*_] critic markup                                                     [_q_]uit
 	"
 	("a" mark-whole-buffer :exit t)
@@ -8142,6 +8153,7 @@ This presupposes a running Jupyter server on localhost."
 	("r" rectangle-mark-mode :exit t)
 	("b" bookmark-set :exit t)
 	("e" iedit-mode :exit t)
+	("o" ov-highlight/body :exit t)
   ("p" hydra-position-register/body :exit t)
 	("s" hydra-highlight-symbol/body :exit t)
 	("t" hydra-tags/body :exit t)

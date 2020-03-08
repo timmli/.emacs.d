@@ -7,3 +7,6 @@
 [submodule "lisp/org-pdftools"]
 	path = lisp/org-pdftools
 	url = https://github.com/fuxialexander/org-pdftools.git
+[submodule "lisp/ov-highlight"]
+	path = lisp/ov-highlight
+	url = https://github.com/jkitchin/ov-highlight.git
