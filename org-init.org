@@ -2384,9 +2384,9 @@ Change the separator between blocks in agenda:
 (setq org-agenda-block-separator ?\-)
 #+END_SRC
 
-Start the weekly agenda today:
+Set the start day of the weekly agenda:
 #+BEGIN_SRC emacs-lisp
-(setq org-agenda-start-on-weekday nil)
+(setq org-agenda-start-on-weekday 1)	; nil --> today, 0 --> Sunday, 1 --> Monday
 #+END_SRC
 
 Agenda remains open in background. No need to recompile it every time you call it:
