@@ -5022,6 +5022,8 @@ https://github.com/politza/pdf-tools
 		;; (setq pdf-info-epdfinfo-program (expand-file-name "epdinfo.exe" (concat wemacs-dir "pdftools")))
 		;; Use normal isearch (does not work with helm-swoop)
 		(define-key pdf-view-mode-map (kbd "C-f") 'isearch-forward)
+		(define-key pdf-view-mode-map (kbd "M-<left>") 'pdf-history-backward)
+		(define-key pdf-view-mode-map (kbd "M-<right>") 'pdf-history-forward)
 		))
 #+END_SRC
 
