@@ -2288,8 +2288,7 @@ Don't split window when opening agenda:
 Show notifications of agenda events:
 #+BEGIN_SRC emacs-lisp
 (use-package org-alert
-	:ensure t
-	)
+	:ensure t)
 #+END_SRC
 
 Customize agenda view:
@@ -2426,6 +2425,15 @@ Add the Emacs [[*Calendar/Diary][diary]] (which also stores holidays) to =org-ag
 =org-conflict= helps to detect and resolve scheduling conflicts.
 
 https://www.mail-archive.com/emacs-orgmode@gnu.org/msg123154.html
+
+
+**** Keys
+
+Open heading with double-click:
+
+#+BEGIN_SRC emacs-lisp
+(define-key org-agenda-mode-map [double-mouse-1] 'org-agenda-switch-to)
+#+END_SRC
 
 *** Archive
 
