@@ -2858,6 +2858,9 @@ https://arxiv.org/pdf/1304.1332.pdf
 
 *** TODO Minutes
 
+Blog posts:
+- https://egli.dev/posts/using-org-mode-for-meeting-minutes/
+
 **** org-minutes
 
 #+BEGIN_SRC emacs-lisp
@@ -5035,12 +5038,16 @@ https://github.com/politza/pdf-tools
 		))
 #+END_SRC
 
-**** org-pdftools
+**** TODO org-pdftools
+:LOGBOOK:
+- State "TODO"       from              [2020-03-30 Mo 11:07]
+:END:
 
 =org-pdftools provides =org-links= to single pages of PDFs using =pdf-tools=.
 URL: https://github.com/fuxialexander/org-pdftools
 
-- [ ] support of relative paths 
+- [ ] support of relative paths
+- [ ] install with MELPA 
 
 #+BEGIN_SRC emacs-lisp
 (when (not (eq system-type 'windows-nt))
@@ -7676,6 +7683,23 @@ Edit text areas of the browser in Emacs.
 #+END_SRC
 
 On the side of the browser, you need to install an extension such as [[https://github.com/GhostText/GhostText][GhostText]].
+
+** TODO xah-lookup
+:LOGBOOK:
+- State "TODO"       from              [2020-04-01 Mi 10:51]
+:END:
+
+- [ ] change keybindings
+- [ ] add German Wikipedia
+
+http://ergoemacs.org/emacs/xah-lookup.html
+
+Look up information about words and phrases in online databases such as Wikpedia, Google Search etc.  
+ 
+#+BEGIN_SRC emacs-lisp
+(use-package xah-lookup
+	:ensure t)
+#+END_SRC
 
 * bbdb
 
