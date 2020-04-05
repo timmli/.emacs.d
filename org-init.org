@@ -6256,6 +6256,8 @@ https://emacsredux.com/blog/2018/11/09/an-easy-kill/
 
 ** Switch between buffers
 
+*** iflipb
+
 Switching between buffers with C-tab:
 
 #+BEGIN_SRC emacs-lisp
@@ -6266,6 +6268,22 @@ Switching between buffers with C-tab:
     (setq iflipb-ignore-buffers "^ ")     ; include all buffers
     :bind
     ("<C-tab>" . iflipb-next-buffer))
+#+END_SRC
+
+*** COMMENT bufler
+
+- [ ]  Symbol’s value as variable is void: magit-section-mode-map
+
+https://github.com/alphapapa/bufler.el
+
+#+BEGIN_SRC emacs-lisp
+(use-package bufler
+	:ensure t
+	:after magit-section)
+
+(use-package helm-bufler
+	:ensure t
+	:after magit-section)
 #+END_SRC
 
 ** Narrowing
