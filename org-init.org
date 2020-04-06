@@ -6277,9 +6277,17 @@ https://github.com/alphapapa/bufler.el
 #+BEGIN_SRC emacs-lisp
 (use-package bufler
 	:ensure t)
+#+END_SRC
 
+Fuzzy search in [[helm]].
+
+#+BEGIN_SRC emacs-lisp
 (use-package helm-bufler
-	:ensure t)
+	:ensure t
+	:config
+	(defun helm-bufler-go ()
+		(interactive)
+		(helm :sources '(helm-bufler-source))))
 #+END_SRC
 
 ** Narrowing
@@ -9127,7 +9135,7 @@ Automatically open the hydra with ibuffer:
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'ibuffer-hook #'hydra-ibuffer-main/body)
-(global-set-key (kbd "C-x b") 'ibuffer)
+;; (global-set-key (kbd "C-x b") 'ibuffer)
 #+END_SRC
 
 ** hydra-image
@@ -9944,6 +9952,11 @@ Taken from https://github.com/abo-abo/hydra/wiki/Emacs
 :END:
 
 This is to become the place for the global setup of key bindings.
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x b") 'bufler)
+(global-set-key (kbd "C-x C-b") 'helm-bufler-go)
+#+END_SRC
 
 * Private settings 
 
