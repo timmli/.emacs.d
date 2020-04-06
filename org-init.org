@@ -6270,20 +6270,16 @@ Switching between buffers with C-tab:
     ("<C-tab>" . iflipb-next-buffer))
 #+END_SRC
 
-*** COMMENT bufler
-
-- [ ]  Symbol’s value as variable is void: magit-section-mode-map
+*** bufler
 
 https://github.com/alphapapa/bufler.el
 
 #+BEGIN_SRC emacs-lisp
 (use-package bufler
-	:ensure t
-	:after magit-section)
+	:ensure t)
 
 (use-package helm-bufler
-	:ensure t
-	:after magit-section)
+	:ensure t)
 #+END_SRC
 
 ** Narrowing
@@ -7381,6 +7377,7 @@ I don't use this right now.
 #+BEGIN_SRC emacs-lisp
 (use-package magit
 	:ensure t
+	:pin MELPA
 	:bind
 	("C-x g" . magit-status)
 	;; ("C-x C-g" . magit-status)
