@@ -6960,6 +6960,62 @@ However, within Cryptomator volumes under Linux, these symbolic links are not pr
 (setq create-lockfiles nil)
 #+END_SRC
 
+** TODO Line encodings
+:LOGBOOK:
+- State "TODO"       from              [2020-04-16 Do 23:20]
+:END:
+
+- [ ] plug it into hydra-dired
+
+Living in both OS worlds, different line endings may be encountered in files that need to be unified. Here is a function to do that for several files which also works in =dired=.
+
+#+BEGIN_SRC emacs-lisp
+(defun xah-change-file-line-ending-style (@files @style)
+  "Change current file or dired marked file's newline convention.
+
+When called non-interactively, *style is one of 'unix 'dos 'mac or any of accepted emacs coding system. See `list-coding-systems'.
+
+URL `http://ergoemacs.org/emacs/elisp_convert_line_ending.html'
+Version 2016-10-16"
+  (interactive
+   (list
+    (if (eq major-mode 'dired-mode )
+        (dired-get-marked-files)
+      (list (buffer-file-name)))
+    (ido-completing-read "Line ending:" '("Linux/MacOSX/Unix" "MacOS9" "Windows") "PREDICATE" "REQUIRE-MATCH")))
+  (let* (
+         ($codingSystem
+          (cond
+           ((equal @style "Linux/MacOSX/Unix") 'unix)
+           ((equal @style "MacOS9") 'mac)
+           ((equal @style "Windows") 'dos)
+           (t (error "code logic error 65327. Expect one of it." )))))
+    (mapc
+     (lambda (x) (xah-convert-file-coding-system x $codingSystem))
+     @files)))
+
+(defun xah-convert-file-coding-system (@fpath @coding-system)
+  "Convert file's encoding.
+ *fpath is full path to file.
+ *coding-system is one of 'unix 'dos 'mac or any of accepted emacs coding system. See `list-coding-systems'.
+
+If the file is already opened, it will be saved after this command.
+
+URL `http://ergoemacs.org/emacs/elisp_convert_line_ending.html'
+Version 2015-07-24"
+  (let ($buffer
+        ($bufferOpened-p (get-file-buffer @fpath)))
+    (if $bufferOpened-p
+        (with-current-buffer $bufferOpened-p
+          (set-buffer-file-coding-system @coding-system)
+          (save-buffer))
+      (progn
+        (setq $buffer (find-file @fpath))
+        (set-buffer-file-coding-system @coding-system)
+        (save-buffer)
+        (kill-buffer $buffer)))))
+#+END_SRC
+
 * Project management
 
 ** projectile
