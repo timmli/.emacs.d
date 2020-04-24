@@ -2547,9 +2547,7 @@ Export to Hugo-compatible markdown.
 - [ ] compiling Gnuplot source blocks crashes Emacs
 
 #+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages
- 'org-babel-load-languages
- '((gnuplot . t)))
+(org-babel-do-load-languages 'org-babel-load-languages '((gnuplot . t)))
 #+END_SRC
 
 *** Graphviz/dot support
@@ -2849,6 +2847,13 @@ Map scr-block languages to =listings= environments:
 #+BEGIN_SRC emacs-lisp
 ;; (setq org-latex-custom-lang-environments
 ;; 			'((org-babel-language "listings-environment")))
+#+END_SRC
+
+
+*** Makefile support
+
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages 'org-babel-load-languages '((makefile . t)))
 #+END_SRC
 
 *** Memacs
