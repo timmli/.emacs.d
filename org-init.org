@@ -83,6 +83,7 @@
       - [[#backup][Backup]]
       - [[#autosave][Autosave]]
       - [[#locking-files][Locking files]]
+      - [[#line-encodings][Line encodings]]
 - [[#project-management][Project management]]
       - [[#projectile][projectile]]
 - [[#underi-mode][underi-mode]]
@@ -113,6 +114,7 @@
 - [[#chat][Chat]]
 - [[#web-browsing][Web browsing]]
       - [[#atomic-chrome][atomic-chrome]]
+      - [[#xah-lookup][xah-lookup]]
 - [[#bbdb][bbdb]]
 - [[#remote-connections][Remote connections]]
       - [[#tramp][tramp]]
@@ -161,6 +163,7 @@
       - [[#hydra-transpose][hydra-transpose]]
       - [[#hydra-end][hydra: end]]
 - [[#key-bindings][Key bindings]]
+      -  [[#keystroke-visualizer][Keystroke visualizer]]
 - [[#private-settings][Private settings]]
 
 * Good examples
@@ -10023,6 +10026,10 @@ This is to become the place for the global setup of key bindings.
 (global-set-key (kbd "C-x b") 'bufler)
 (global-set-key (kbd "C-x C-b") 'helm-bufler-go)
 #+END_SRC
+
+**  Keystroke visualizer
+
+https://github.com/chuntaro/emacs-keypression
 
 * Private settings 
 
