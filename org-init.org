@@ -5048,18 +5048,21 @@ https://github.com/politza/pdf-tools
 - State "TODO"       from              [2020-03-30 Mo 11:07]
 :END:
 
-=org-pdftools provides =org-links= to single pages of PDFs using =pdf-tools=.
+=org-pdftools provides =org-links= with prefix =pdf:= to single pages of PDFs using =pdf-tools=.
 URL: https://github.com/fuxialexander/org-pdftools
 
-- [ ] support of relative paths
-- [ ] install with MELPA 
+- [ ] Links relative to attachment directory?
+      - https://github.com/fuxialexander/org-pdftools/issues/34
 
 #+BEGIN_SRC emacs-lisp
 (when (not (eq system-type 'windows-nt))
-	(add-to-list 'load-path (expand-file-name "lisp/org-pdftools" user-emacs-directory))
 	(use-package org-pdftools
-		;; :config
-		;; (setq org-pdftools-root-dir /path/you/store/pdfs)
+		:ensure t
+		;; :hook (org-load . org-pdftools-setup-link) ; recommended but does not work 
+		:config
+		(with-eval-after-load 'org
+			(org-pdftools-setup-link))
+		;; (setq org-pdftools-root-dir user-bibliography-pdf-dir) ; not supported anymore?
 		))
 #+END_SRC
 
@@ -6440,6 +6443,7 @@ Taken from https://emacs.stackexchange.com/a/21356/12336:
 
 ** Line actions
 *** Delete line
+
 #+begin_src emacs-lisp
 ;; (global-set-key (kbd "C-d C-o") 'delete-blank-lines) ; not allowed here, see underi-mode.el
 ;; (global-set-key (kbd "C-d C-m") 'delete-blank-lines)
