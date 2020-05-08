@@ -2413,7 +2413,19 @@ Add the Emacs [[*Calendar/Diary][diary]] (which also stores holidays) to =org-ag
 (setq org-agenda-include-diary t) 
 #+END_SRC
 
+Recenter buffer when coming from the agenda: 
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-agenda-after-show-hook 'recenter-top-bottom)
+#+END_SRC 
+
 **** COMMENT org-timeline
+
+https://github.com/Fuco1/org-timeline/
+
+Add horizontal timeline of current day to agenda.
+
+[[https://github.com/Fuco1/org-timeline/blob/master/img/timeline1.png]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-timeline
