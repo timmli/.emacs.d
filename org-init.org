@@ -2872,6 +2872,7 @@ Blog posts:
 **** org-minutes
 
 #+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path (expand-file-name "org-minutes-dev" lisp-dir))
 (use-package org-minutes
 	:config
 	(org-minutes-minor-mode))
