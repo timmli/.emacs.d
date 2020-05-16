@@ -3398,6 +3398,7 @@ I don't use =org-gcal= any more.
 ;; (setq org-ref-completion-library 'org-ref-ivy-cite) ; must appear before org-ref
 (use-package org-ref
 	:ensure t
+	:pin MELPA
 	:after org
 	:init
 	(require 'org-ref) 										; don't know why I need this
@@ -4593,6 +4594,7 @@ Search through your BibTeX bibliography with helm.
 #+BEGIN_SRC emacs-lisp
 (use-package helm-bibtex
 	:ensure t
+	:pin MELPA
 	:config
 	(setq bibtex-completion-bibliography (list user-bibliography-file))
 	(setq bibtex-completion-additional-search-fields '(bibtexkey))
