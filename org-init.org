@@ -2501,7 +2501,6 @@ Add horizontal timeline of current day to agenda.
 
 https://www.mail-archive.com/emacs-orgmode@gnu.org/msg123154.html
 
-
 **** Keys
 
 Open heading with double-click:
@@ -5249,6 +5248,17 @@ https://www.gnu.org/software/gtypist/doc/gtypist.html
 Unfortunately, there doesn't seem to be an easy way to run this within Emacs (at least under Windows).
 
 * Minor modes
+** literal-calc-mode
+
+https://github.com/sulami/literate-calc-mode.el
+
+Displays inline results for calculations, which are triggered by using "=".
+
+#+BEGIN_SRC emacs-lisp
+(use-package literate-calc-mode
+  :ensure t)
+#+END_SRC
+
 ** pandoc-mode
 
 [[http://joostkremers.github.io/pandoc-mode/][pandoc-mode]] allows one to use =pandoc= from within Emacs. =pandoc= is a very rich transducer for text formats. Note that =pandoc= needs to be installed separately.
@@ -5261,7 +5271,6 @@ Unfortunately, there doesn't seem to be an easy way to run this within Emacs (at
   ;; (add-hook 'org-mode-hook 'pandoc-mode)
   (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings))
 #+END_SRC
-
 * Buffer
 
 ** General configuration
@@ -5323,6 +5332,7 @@ Show vertical line per indentation level:
 #+end_src
 
 *** auto-complete
+
 Sequence is important!
 
 #+begin_src emacs-lisp
@@ -8150,9 +8160,9 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 ** hydra-f4
 
 #+BEGIN_SRC emacs-lisp
-	(defhydra hydra-f4
-		(:hint nil
-					 :idle 0.2)
+(defhydra hydra-f4
+	(:hint nil
+				 :idle 0.2)
 	"
          ^^         ^^         ^^  ╭─────┐       
      _<f1>_   _<f2>_     _<f3>_    │<f4> │  _<f5>_      _<f6>_   _<f7>_   _<f8>_   _<f9>_ 
@@ -8160,12 +8170,13 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
    ╭─────^^─────────^^─────────^^──╯     └─────────^^───^^───────^^───────^^───────^^─────╯
  
       [_e_] compilation errors      [_c_] code checking     [_s_] spell checking 
-      [_#_] count words             [_r_] recover file                            [_q_]uit
+      [_#_] count words             [_r_] recover file      [_=_] inline calculator       [_q_]uit
 	"
 	("e" hydra-compilation-error/body :exit t)
 	("c" hydra-flycheck/body :exit t)
 	("r" recover-this-file :exit t)
 	("s" hydra-flyspell/body :exit t)
+	("=" literate-calc-minor-mode :exit t)
 	("#" count-words :exit t)
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
@@ -8175,9 +8186,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 	("<f6>" hydra-f6/body :exit t)
 	("<f7>" hydra-f7/body :exit t)
 	("<f8>" hydra-f8/body :exit t)
-	("<f9>" hydra-f9/body :exit t)
-
-)
+	("<f9>" hydra-f9/body :exit t))
 (global-set-key (kbd "<f4>") 'hydra-f4/body)
 #+END_SRC
 
