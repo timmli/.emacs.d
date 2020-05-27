@@ -6357,14 +6357,21 @@ https://emacsredux.com/blog/2018/11/09/an-easy-kill/
 Switching between buffers with C-tab:
 
 #+BEGIN_SRC emacs-lisp
-  (use-package iflipb
-    :ensure t
-    :config
-    (setq iflipb-wrap-around t)
-    (setq iflipb-ignore-buffers "^ ")     ; include all buffers
-    :bind
-    ("<C-tab>" . iflipb-next-buffer))
+(use-package iflipb
+	:ensure t
+	:config
+	(setq iflipb-wrap-around t)
+	(setq iflipb-ignore-buffers "^ ")     ; include all buffers
+	:bind
+	("<C-tab>" . iflipb-next-buffer)
+	("<C-iso-lefttab>" . iflipb-previous-buffer))
 #+END_SRC
+
+*** buffer-flip
+
+https://github.com/killdash9/buffer-flip.el
+
+Flip through Emacs buffers Alt-Tab style. 
 
 *** bufler
 
