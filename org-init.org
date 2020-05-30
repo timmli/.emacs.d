@@ -50,6 +50,7 @@
       - [[#email][Email]]
       - [[#gtypist][gtypist]]
 - [[#minor-modes][Minor modes]]
+      - [[#literal-calc-mode][literal-calc-mode]]
       - [[#pandoc-mode][pandoc-mode]]
 - [[#buffer][Buffer]]
       - [[#general-configuration][General configuration]]
@@ -64,6 +65,7 @@
       - [[#context-menu][Context menu]]
       - [[#cursor-actions][Cursor actions]]
       - [[#images][Images]]
+      - [[#keystroke-visualizer][Keystroke visualizer]]
       - [[#undo--remove][Undo & remove]]
       - [[#save-kill--yank][Save, kill & yank]]
       - [[#switch-between-buffers][Switch between buffers]]
@@ -86,9 +88,6 @@
       - [[#line-encodings][Line encodings]]
 - [[#project-management][Project management]]
       - [[#projectile][projectile]]
-- [[#underi-mode][underi-mode]]
-- [[#winkeys-mode][winkeys-mode]]
-- [[#winkeys-starter-mode][winkeys-starter-mode]]
 - [[#windows-and-frames][Windows and frames]]
       - [[#navigation][Navigation]]
       - [[#transpose-frame][transpose-frame]]
@@ -163,7 +162,10 @@
       - [[#hydra-transpose][hydra-transpose]]
       - [[#hydra-end][hydra: end]]
 - [[#key-bindings][Key bindings]]
-      -  [[#keystroke-visualizer][Keystroke visualizer]]
+      - [[#tlkeys-mode][tlkeys-mode]]
+      - [[#underi-mode][underi-mode]]
+      - [[#winkeys-mode][winkeys-mode]]
+      - [[#winkeys-starter-mode][winkeys-starter-mode]]
 - [[#private-settings][Private settings]]
 
 * Good examples
@@ -5106,17 +5108,18 @@ https://github.com/politza/pdf-tools
 		:ensure t
 		;; :if (executable-find "epdfinfo")
 		:mode (("\\.pdf\\'" . pdf-view-mode))
-		:bind ("M-w" . pdf-view-kill-ring-save)
+		:bind ("M-w" . pdf-view-kill-ring-save) ; does not work
 		:config
 		(setq-default pdf-view-display-size 'fit-page) ; fit page by default
 		(setq pdf-view-resize-factor 1.10)
 		(pdf-tools-install)
 		;; Manually set path to epdfinfo binary
 		;; (setq pdf-info-epdfinfo-program (expand-file-name "epdinfo.exe" (concat wemacs-dir "pdftools")))
-		;; Use normal isearch (does not work with helm-swoop)
-		(define-key pdf-view-mode-map (kbd "C-f") 'isearch-forward)
+		(define-key pdf-view-mode-map (kbd "M-w") 'pdf-view-kill-ring-save)
+		(define-key pdf-view-mode-map (kbd "C-w") 'pdf-view-kill-ring-save)
 		(define-key pdf-view-mode-map (kbd "M-<left>") 'pdf-history-backward)
 		(define-key pdf-view-mode-map (kbd "M-<right>") 'pdf-history-forward)
+		(add-hook 'pdf-occur-buffer-mode-hook 'next-error-follow-minor-mode) ; activate follow mode in `pdf-occur'
 		))
 #+END_SRC
 
@@ -6191,6 +6194,10 @@ Show and modify images within emacs:
 	)
 #+END_SRC
 
+** Keystroke visualizer
+
+https://github.com/chuntaro/emacs-keypression
+
 ** Undo & remove
 
 *** undo-tree
@@ -6353,6 +6360,8 @@ https://emacsredux.com/blog/2018/11/09/an-easy-kill/
 ** Switch between buffers
 
 *** iflipb
+
+https://github.com/jrosdahl/iflipb
 
 Switching between buffers with C-tab:
 
@@ -6788,7 +6797,9 @@ Revert buffer:
 
 ** Charmap
 
-For showing the character map and letting one select a special symbol:
+https://github.com/lateau/charmap
+
+=charmap= shows the character map and lets one select a special symbol.
 
 #+BEGIN_SRC emacs-lisp
 (use-package charmap
@@ -7025,7 +7036,6 @@ URL: https://github.com/jeremy-compostella/pdfgrep
 	(pdfgrep-mode))
 #+END_SRC
 
-
 ** Backup
 
 https://www.emacswiki.org/emacs/BackupFiles
@@ -7155,301 +7165,6 @@ Use helm for completions.
 				 ("C-x p s" . helm-projectile-grep))
 	)
 #+END_SRC
-
-* underi-mode
-
-Key bindings for more ergonomic cursor movement: the cursor movement keys are under the <i> key and get activated with the Meta/Alt key. 
-
-Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
-
-#+BEGIN_SRC emacs-lisp
-(define-minor-mode underi-mode
-	"Key bindings for more ergonomic cursor movement: the cursor movement keys are under the <i> key and get activated with the Meta/Alt key. 
-	Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
-	:lighter " ui"
-	;; :global "t"
-	:init-value t
-	:keymap (let ((map (make-keymap)))
-						
-						(define-key input-decode-map (kbd "C-i") (kbd "H-i"))  ; to disentangle <tab> and C-i
-
-						;; disentangle keys when using Emacs server
-						;; local-function-key-map or input-decode-map are terminal-local
-						(defun my-disentangled-keys (&optional frame)
-							(with-selected-frame frame
-								(define-key input-decode-map (kbd "C-i") (kbd "H-i"))  ; to disentangle <tab> and C-i
-								))
-						(add-hook 'after-make-frame-functions #'my-disentangled-keys)
-
-						;; cursor keys
-						(define-key key-translation-map (kbd "M-i") (kbd "<up>"))
-						(define-key key-translation-map (kbd "M-k") (kbd "<down>"))
-						(define-key key-translation-map (kbd "M-j") (kbd "<left>"))		
-						(define-key key-translation-map (kbd "M-l") (kbd "<right>"))
-						(define-key key-translation-map (kbd "M-I") (kbd "S-<up>"))
-						(define-key key-translation-map (kbd "M-K") (kbd "S-<down>"))
-						(define-key key-translation-map (kbd "M-J") (kbd "S-<left>"))		
-						(define-key key-translation-map (kbd "M-L") (kbd "S-<right>"))
-
-						;; more cursor keys
-						(define-key map (kbd "M-n") 'scroll-up-command)
-						(define-key map (kbd "M-p") 'scroll-down-command)
-						(define-key map (kbd "C-M-n") '(lambda () (interactive) (scroll-up 3)))
-						(define-key map (kbd "C-M-p") '(lambda () (interactive) (scroll-down 3)))
-						(define-key map (kbd "M-o") 'point-redo)
-						(define-key map (kbd "M-u") 'point-undo)
-						(define-key map (kbd "M-z") 'goto-last-change)
-						(define-key map (kbd "C-M-i") 'backward-paragraph)
-						(define-key map (kbd "C-M-k") 'forward-paragraph)
-						(define-key map (kbd "C-M-j") 'left-word)
-						(define-key map (kbd "C-M-l") 'right-word)
-
-						(define-key map (kbd "M-s-j")  'windmove-left)
-						(define-key map (kbd "M-s-l") 'windmove-right)
-						(define-key map (kbd "M-s-i")   'windmove-up)
-						(define-key map (kbd "M-s-k")  'windmove-down)
-
-						;; delete 
-						(define-key map (kbd "C-d") nil)
-						(define-key map (kbd "C-d C-k") 'kill-line)
-						(define-key map (kbd "C-d <up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
-						(define-key map (kbd "C-d <left>") 'delete-backward-char)
-						(define-key map (kbd "C-d <right>") 'delete-forward-char)
-						(define-key map (kbd "C-d <down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
-						(define-key map (kbd "C-d C-<up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
-						(define-key map (kbd "C-d C-<left>") 'delete-backward-char)
-						(define-key map (kbd "C-d C-<right>") 'delete-forward-char)
-						(define-key map (kbd "C-d C-<down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
-						(define-key map (kbd "C-d C-o") 'delete-blank-lines)
-						(define-key map (kbd "C-d C-m") 'remove-newlines-or-blank-lines-dwim)
-						(define-key map (kbd "C-d C-<return>") 'remove-newlines-or-blank-lines-dwim)
-						(define-key map (kbd "C-d C-a") '(lambda () (interactive) (kill-line 0)))
-						(define-key map (kbd "C-d C-e") 'kill-line)
-						(define-key map (kbd "C-S-d") 'kill-whole-line)
-						(define-key map (kbd "C-d SPC") 'tl/remove-extra-spaces-dwim)
-						(define-key map (kbd "C-d C-SPC") 'tl/remove-extra-spaces-dwim)
-						(define-key map (kbd "C-d TAB") 'tl/delete-indentation)
-						(define-key map (kbd "C-d C-TAB") 'tl/delete-indentation)
-						(define-key map (kbd "C-d [") 'sp-unwrap-sexp)
-						(define-key map (kbd "C-d ]") 'sp-unwrap-sexp)
-						(define-key map (kbd "C-d {") 'sp-unwrap-sexp)
-						(define-key map (kbd "C-d }") 'sp-unwrap-sexp)
-						(define-key map (kbd "C-d (") 'sp-unwrap-sexp)
-						(define-key map (kbd "C-d )") 'sp-unwrap-sexp)
-						(define-key map (kbd "C-d DEL") 'hungry-delete-backward)
-						(define-key map (kbd "C-d <deletechar>") 'hungry-delete-forward)
-
-						;; LaTeX
-						(define-key LaTeX-mode-map (kbd "C-d m") 'TeX-delete-macro)
-						(define-key LaTeX-mode-map (kbd "C-d e") 'TeX-delete-environment)
-						(define-key LaTeX-mode-map (kbd "C-d t") 'TeX-clean)
-
-						;; return
-						(define-key input-decode-map (kbd "C-m") (kbd "H-o")) ; to disentangle <return> and C-m
-						(define-key key-translation-map (kbd "H-o") (kbd "RET"))
-						(define-key map (kbd "C-S-m") 'smart-open-line)
-
-						;; org-mode
-						(define-key org-mode-map (kbd "C-d r") 'org-babel-remove-result)
-						(define-key org-mode-map (kbd "C-d f") 'embrace-delete) ; delete emphasis/font
-						(define-key org-mode-map (kbd "C-d (") 'embrace-delete)
-						(define-key org-mode-map (kbd "C-d *") 'tl/embrace-delete-*)
-						(define-key org-mode-map (kbd "C-d /") 'tl/embrace-delete-/)
-						(define-key org-mode-map (kbd "C-d +") 'tl/embrace-delete-+)
-						(define-key org-mode-map (kbd "C-d _") 'tl/embrace-delete-_)
-						(define-key org-mode-map (kbd "C-d =") 'tl/embrace-delete-=)
-						(define-key org-mode-map (kbd "C-d ~") 'tl/embrace-delete-~) 
-						(define-key org-mode-map (kbd "C-c f") 'embrace-add)
-						(define-key org-mode-map (kbd "H-i") 'org-goto) ; otherwise helm-imenu will be used (FIXME)
-						
-						;; miscellaneous actions
-						(define-key map (kbd "C-j") 'hydra-jump/body)
-						(define-key map (kbd "C-S-j") 'ace-jump-line-mode)
-						(define-key map (kbd "H-i") 'helm-imenu)
-						(define-key map (kbd "C-S-i") 'imenu-list)
-
-						map
-						)
-	(add-hook 'minibuffer-setup-hook 'underi-minibuffer)
-	(with-eval-after-load 'org
-		(define-key org-mode-map (kbd "C-d c") 'org-table-delete-column)
-		(define-key org-mode-map (kbd "C-d C-c") 'org-table-delete-column)
-		)
-	
-	)	
-
-	(defun tl/kill-forward-line (N)
-		(interactive)
-		(save-excursion
-			(when (= (forward-line N) 0)
-				(kill-whole-line))))
-
-	(defun underi-minibuffer ()
-		"Keymap for the minibuffer."
-		(let ((map minibuffer-local-map))
-
-			;; move cursor
-			(define-key map (kbd "M-n") 'scroll-up-command)
-			(define-key map (kbd "M-p") 'scroll-down-command)
-			(define-key map (kbd "M-o") 'point-redo)
-			(define-key map (kbd "M-u") 'point-undo)
-			(define-key map (kbd "M-z") 'goto-last-change)
-			(define-key map (kbd "C-M-i") 'backward-paragraph)
-			(define-key map (kbd "C-M-k") 'forward-paragraph)
-			(define-key map (kbd "C-M-j") 'left-word)
-			(define-key map (kbd "C-M-l") 'right-word)
-
-			;; delete 
-			(define-key map (kbd "C-d") nil)
-			(define-key map (kbd "C-d C-k") 'kill-line)
-			(define-key map (kbd "C-d <up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
-			(define-key map (kbd "C-d <left>") 'delete-backward-char)
-			(define-key map (kbd "C-d <right>") 'delete-forward-char)
-			(define-key map (kbd "C-d <down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
-			(define-key map (kbd "C-d C-<up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
-			(define-key map (kbd "C-d C-<left>") 'delete-backward-char)
-			(define-key map (kbd "C-d C-<right>") 'delete-forward-char)
-			(define-key map (kbd "C-d C-<down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
-			(define-key map (kbd "C-d C-a") '(lambda () (interactive) (kill-line 0)))
-			(define-key map (kbd "C-S-d") 'kill-whole-line)
-			(define-key map (kbd "C-d [") 'sp-unwrap-sexp)
-			(define-key map (kbd "C-d ]") 'sp-unwrap-sexp)
-			(define-key map (kbd "C-d {") 'sp-unwrap-sexp)
-			(define-key map (kbd "C-d }") 'sp-unwrap-sexp)
-			(define-key map (kbd "C-d (") 'sp-unwrap-sexp)
-			(define-key map (kbd "C-d )") 'sp-unwrap-sexp)
-			))
-
-(define-key helm-map (kbd "H-i") 'helm-select-action) ; show actions (default is <tab>)
-
-	;; (add-hook 'text-mode-hook 'underi-mode) ; superseded by :init-value t
-	;; (add-hook 'prog-mode-hook 'underi-mode) ; superseded by :init-value t
-#+END_SRC
-
-* winkeys-mode
-
-Key bindings roughly following the conventions of the Windows habitat.
-
-#+BEGIN_SRC emacs-lisp
-(define-minor-mode winkeys-mode
-	"Key bindings roughly following the conventions of the Windows habitat."
-	:init-value t
-	:global t
-	:lighter " wk"
-	:keymap (let ((map (make-keymap)))
-						
-						;; save
-						(define-key map (kbd "C-s") 'save-buffer)
-						(define-key map (kbd "C-S-s") 'write-file)
-
-						;; search and replace
-						;; (define-key map (kbd "C-f") 'swiper-helm)
-						;; (define-key map (kbd "C-f") 'swiper)
-						(define-key map (kbd "C-f") 'helm-swoop)
-						;; (define-key map (kbd "C-f") 'isearch-search)
-						;; (define-key map (kbd "C-S-f a") 'helm-multi-swoop-all)
-						;; (define-key map (kbd "C-S-f m") 'helm-multi-swoop-current-mode)
-						;; (define-key map (kbd "C-S-f s") 'isearch-forward)
-						;; (define-key map (kbd "C-S-f C-s") 'isearch-forward)
-						;; (define-key map (kbd "C-S-f r") 'isearch-backward)
-						;; (define-key map (kbd "C-S-f C-r") 'isearch-backward)
-						(define-key map (kbd "C-r") 'query-replace)
-						(define-key map (kbd "C-S-r") 'query-replace-regexp)
-						(define-key map (kbd "C-o") 'helm-find-files)
-
-						;; mark all
-						(define-key map (kbd "C-x C-a") 'mark-whole-buffer)
-						
-						;; quit
-						(define-key key-translation-map (kbd "M-q") (kbd "C-g"))
-
-						;; undo/redo
-						(define-key map (kbd "C-z") 'undo-tree-undo)
-						(define-key map (kbd "C-S-z") 'undo-tree-redo)
-
-						;; yank
-						(define-key map (kbd "C-v") 'yank)						
-
-						;; press ESC only once
-						(define-key map (kbd "<escape>") 'keyboard-escape-quit)
-						
-						map
-						)
-
-	;; body 
-
-	(add-hook 'minibuffer-setup-hook 'winkeys-minibuffer)
-
-	(with-eval-after-load 'helm-swoop
-		(define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
-		(define-key helm-swoop-map (kbd "C-f") 'tl/helm-swoop-C-s) 
-		(define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
-		(define-key helm-multi-swoop-map (kbd "C-f") 'helm-next-line)
-		(define-key helm-swoop-map (kbd "C-S-f a") 'helm-multi-swoop-all-from-helm-swoop)
-		(define-key helm-swoop-map (kbd "C-S-f m") 'helm-multi-swoop-current-mode-from-helm-swoop)
-		(define-key helm-swoop-map (kbd "M-a") 'helm-multi-swoop-all-from-helm-swoop))
-
-	(with-eval-after-load 'swiper-helm
-		(define-key swiper-helm-keymap (kbd "C-r") 'helm-previous-line)
-		(define-key swiper-helm-keymap (kbd "C-f") 'tl/swiper-helm-C-s))
-
-	(with-eval-after-load 'company
-		(define-key company-active-map (kbd "C-s") 'save-buffer))
-
-	;; ;; Maybe this is not needed any more 	
-	;; (add-hook 'org-src-mode-hook
-	;; 					(lambda ()((define-key org-src-mode-map (kbd "C-s") 'org-edit-src-save))))
-	;; (with-eval-after-load 'org-mode
-	;; 	(define-key org-src-mode-map (kbd "C-s") 'org-edit-src-save))
-
-	;; (define-key key-translation-map (kbd "C-v") (kbd "C-y")) ; unfortunately this interferes with key chords using C-v
-	)
-
-(winkeys-mode)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(defun winkeys-minibuffer ()
-	"Keymap for the minibuffer."
-	(let ((map minibuffer-local-map))
-
-		;; undo/redo
-		(define-key map (kbd "C-z") 'undo-tree-undo)
-		(define-key map (kbd "C-S-z") 'undo-tree-redo)
-		
-		))
-#+END_SRC
-
-Let =helm-swoop= behave more like isearch:
-
-#+BEGIN_SRC emacs-lisp
-	;; FIXME: does not follow search hits; helm-action-follow-forward does not work here
-	(defun tl/helm-swoop-C-s ()
-		(interactive)
-		(if (boundp 'helm-swoop-pattern)
-				(if (equal helm-swoop-pattern "")
-						(previous-history-element 1)
-					(helm-next-line))
-			(helm-next-line)
-			))
-#+END_SRC
-
-TESTING: Let =swiper-helm= behave more like isearch:
-
-#+BEGIN_SRC emacs-lisp
-	(defun tl/swiper-helm-C-s ()
-		(interactive)
-		(if (boundp 'helm-pattern)
-				(if (equal helm-pattern "")
-						(previous-history-element 1)
-					(helm-next-line))
-			(helm-next-line)
-			))
-#+END_SRC
-
-* TODO winkeys-starter-mode
-
-https://github.com/publicus/emacs-org-mode-for-the-laity
 
 * Windows and frames
 
@@ -10111,16 +9826,349 @@ Taken from https://github.com/abo-abo/hydra/wiki/Emacs
 - State "TODO"       from              [2020-02-27 Do 23:01]
 :END:
 
-This is to become the place for the global setup of key bindings.
+** tlkeys-mode
+
+Opinionated Emacs key bindings just for this init file.
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x b") 'bufler)
-(global-set-key (kbd "C-x C-b") 'helm-bufler-go)
+(define-minor-mode tlkeys-mode
+	"Opinionated Emacs key bindings just for this init file."
+	:lighter nil
+	:global t
+	:init-value t
+	:keymap (let ((map (make-keymap)))
+
+						(define-key input-decode-map (kbd "C-i") (kbd "H-i"))  ; to disentangle <tab> and C-i
+
+						;; disentangle keys when using Emacs server
+						;; local-function-key-map or input-decode-map are terminal-local
+						(defun my-disentangled-keys (&optional frame)
+							(with-selected-frame frame
+								(define-key input-decode-map (kbd "C-i") (kbd "H-i"))  ; to disentangle <tab> and C-i
+								))
+						(add-hook 'after-make-frame-functions #'my-disentangled-keys)
+
+						;; delete 
+						(define-key map (kbd "C-d") nil)
+						(define-key map (kbd "C-d C-k") 'kill-line)
+						(define-key map (kbd "C-d <up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
+						(define-key map (kbd "C-d <left>") 'delete-backward-char)
+						(define-key map (kbd "C-d <right>") 'delete-forward-char)
+						(define-key map (kbd "C-d <down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
+						(define-key map (kbd "C-d C-<up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
+						(define-key map (kbd "C-d C-<left>") 'delete-backward-char)
+						(define-key map (kbd "C-d C-<right>") 'delete-forward-char)
+						(define-key map (kbd "C-d C-<down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
+						(define-key map (kbd "C-d C-o") 'delete-blank-lines)
+						(define-key map (kbd "C-d C-m") 'remove-newlines-or-blank-lines-dwim)
+						(define-key map (kbd "C-d C-<return>") 'remove-newlines-or-blank-lines-dwim)
+						(define-key map (kbd "C-d C-a") '(lambda () (interactive) (kill-line 0)))
+						(define-key map (kbd "C-d C-e") 'kill-line)
+						(define-key map (kbd "C-S-d") 'kill-whole-line)
+						(define-key map (kbd "C-d SPC") 'tl/remove-extra-spaces-dwim)
+						(define-key map (kbd "C-d C-SPC") 'tl/remove-extra-spaces-dwim)
+						(define-key map (kbd "C-d TAB") 'tl/delete-indentation)
+						(define-key map (kbd "C-d C-TAB") 'tl/delete-indentation)
+						(define-key map (kbd "C-d [") 'sp-unwrap-sexp)
+						(define-key map (kbd "C-d ]") 'sp-unwrap-sexp)
+						(define-key map (kbd "C-d {") 'sp-unwrap-sexp)
+						(define-key map (kbd "C-d }") 'sp-unwrap-sexp)
+						(define-key map (kbd "C-d (") 'sp-unwrap-sexp)
+						(define-key map (kbd "C-d )") 'sp-unwrap-sexp)
+						(define-key map (kbd "C-d DEL") 'hungry-delete-backward)
+						(define-key map (kbd "C-d <deletechar>") 'hungry-delete-forward)
+
+						;; LaTeX
+						(define-key LaTeX-mode-map (kbd "C-d m") 'TeX-delete-macro)
+						(define-key LaTeX-mode-map (kbd "C-d e") 'TeX-delete-environment)
+						(define-key LaTeX-mode-map (kbd "C-d t") 'TeX-clean)
+
+						;; return
+						(define-key input-decode-map (kbd "C-m") (kbd "H-o")) ; to disentangle <return> and C-m
+						(define-key key-translation-map (kbd "H-o") (kbd "RET"))
+						(define-key map (kbd "C-S-m") 'smart-open-line)
+
+						;; org-mode
+						(define-key org-mode-map (kbd "C-d r") 'org-babel-remove-result)
+						(define-key org-mode-map (kbd "C-d f") 'embrace-delete) ; delete emphasis/font
+						(define-key org-mode-map (kbd "C-d (") 'embrace-delete)
+						(define-key org-mode-map (kbd "C-d *") 'tl/embrace-delete-*)
+						(define-key org-mode-map (kbd "C-d /") 'tl/embrace-delete-/)
+						(define-key org-mode-map (kbd "C-d +") 'tl/embrace-delete-+)
+						(define-key org-mode-map (kbd "C-d _") 'tl/embrace-delete-_)
+						(define-key org-mode-map (kbd "C-d =") 'tl/embrace-delete-=)
+						(define-key org-mode-map (kbd "C-d ~") 'tl/embrace-delete-~) 
+						(define-key org-mode-map (kbd "C-c f") 'embrace-add)
+						(define-key org-mode-map (kbd "C-d c") 'org-table-delete-column)
+						(define-key org-mode-map (kbd "C-d C-c") 'org-table-delete-column)
+						
+						;; navigation
+						(define-key map (kbd "C-j") 'hydra-jump/body)
+						(define-key map (kbd "C-S-j") 'ace-jump-line-mode)
+						(define-key map (kbd "H-i") '(lambda ()
+																					 (interactive)
+																					 (if (string= (buffer-mode) "org-mode")
+																							 (org-goto)
+																						 (helm-imenu))))
+						(define-key helm-map (kbd "H-i") 'helm-select-action) ; show actions (default is <tab>)
+						(define-key map (kbd "C-S-i") 'imenu-list)
+
+						;; buffers
+						(define-key map (kbd "C-x b") 'bufler)
+						(define-key map (kbd "C-x C-b") 'helm-bufler-go)
+
+						map)
+	;; body
+	(add-hook 'minibuffer-setup-hook 'tlkeys-minibuffer)
+	)
 #+END_SRC
 
-**  Keystroke visualizer
+Key bindings in the minibuffer:
 
-https://github.com/chuntaro/emacs-keypression
+#+BEGIN_SRC emacs-lisp
+(defun tlkeys-minibuffer ()
+	"Keymap for the minibuffer."
+	(let ((map minibuffer-local-map))
+
+		;; delete 
+		(define-key map (kbd "C-d") nil)
+		(define-key map (kbd "C-d C-k") 'kill-line)
+		(define-key map (kbd "C-d <up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
+		(define-key map (kbd "C-d <left>") 'delete-backward-char)
+		(define-key map (kbd "C-d <right>") 'delete-forward-char)
+		(define-key map (kbd "C-d <down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
+		(define-key map (kbd "C-d C-<up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
+		(define-key map (kbd "C-d C-<left>") 'delete-backward-char)
+		(define-key map (kbd "C-d C-<right>") 'delete-forward-char)
+		(define-key map (kbd "C-d C-<down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
+		(define-key map (kbd "C-d C-a") '(lambda () (interactive) (kill-line 0)))
+		(define-key map (kbd "C-S-d") 'kill-whole-line)
+		(define-key map (kbd "C-d [") 'sp-unwrap-sexp)
+		(define-key map (kbd "C-d ]") 'sp-unwrap-sexp)
+		(define-key map (kbd "C-d {") 'sp-unwrap-sexp)
+		(define-key map (kbd "C-d }") 'sp-unwrap-sexp)
+		(define-key map (kbd "C-d (") 'sp-unwrap-sexp)
+		(define-key map (kbd "C-d )") 'sp-unwrap-sexp)
+		))
+#+END_SRC
+
+Start mode:
+
+#+BEGIN_SRC emacs-lisp
+;; (add-hook 'text-mode-hook 'tlkeys-mode) ; superseded by :init-value t
+;; (add-hook 'prog-mode-hook 'tlkeys-mode) ; superseded by :init-value t
+#+END_SRC
+
+Helper functions:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/kill-forward-line (N)
+	(interactive)
+	(save-excursion
+		(when (= (forward-line N) 0)
+			(kill-whole-line))))
+#+END_SRC
+
+** underi-mode
+
+Key bindings for more ergonomic cursor movement: the cursor movement keys are under the <i> key and get activated with the Meta/Alt key. 
+
+Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
+
+#+BEGIN_SRC emacs-lisp
+(define-minor-mode underi-mode
+	"Key bindings for more ergonomic cursor movement: the cursor movement keys are under the <i> key and get activated with the Meta/Alt key. 
+	Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html"
+	:lighter " ui"
+	:global t
+	:init-value t
+	:keymap (let ((map (make-keymap)))
+						
+						;; cursor keys
+						(define-key key-translation-map (kbd "M-i") (kbd "<up>"))
+						(define-key key-translation-map (kbd "M-k") (kbd "<down>"))
+						(define-key key-translation-map (kbd "M-j") (kbd "<left>"))		
+						(define-key key-translation-map (kbd "M-l") (kbd "<right>"))
+						(define-key key-translation-map (kbd "M-I") (kbd "S-<up>"))
+						(define-key key-translation-map (kbd "M-K") (kbd "S-<down>"))
+						(define-key key-translation-map (kbd "M-J") (kbd "S-<left>"))		
+						(define-key key-translation-map (kbd "M-L") (kbd "S-<right>"))
+
+						;; more cursor keys
+						(define-key map (kbd "M-n") 'scroll-up-command)
+						(define-key map (kbd "M-p") 'scroll-down-command)
+						(define-key map (kbd "C-M-n") '(lambda () (interactive) (scroll-up 3)))
+						(define-key map (kbd "C-M-p") '(lambda () (interactive) (scroll-down 3)))
+						(define-key map (kbd "M-o") 'point-redo)
+						(define-key map (kbd "M-u") 'point-undo)
+						(define-key map (kbd "M-z") 'goto-last-change)
+						(define-key map (kbd "C-M-i") 'backward-paragraph)
+						(define-key map (kbd "C-M-k") 'forward-paragraph)
+						(define-key map (kbd "C-M-j") 'left-word)
+						(define-key map (kbd "C-M-l") 'right-word)
+
+						(define-key map (kbd "M-s-j")  'windmove-left)
+						(define-key map (kbd "M-s-l") 'windmove-right)
+						(define-key map (kbd "M-s-i")   'windmove-up)
+						(define-key map (kbd "M-s-k")  'windmove-down)
+
+						map)
+	;; body
+	(add-hook 'minibuffer-setup-hook 'underi-minibuffer)
+	)	
+#+END_SRC
+
+Key bindings in the minibuffer:
+
+#+BEGIN_SRC emacs-lisp
+(defun underi-minibuffer ()
+	"Keymap for the minibuffer."
+	(let ((map minibuffer-local-map))
+
+		;; move cursor
+		(define-key map (kbd "M-n") 'scroll-up-command)
+		(define-key map (kbd "M-p") 'scroll-down-command)
+		(define-key map (kbd "M-o") 'point-redo)
+		(define-key map (kbd "M-u") 'point-undo)
+		(define-key map (kbd "M-z") 'goto-last-change)
+		(define-key map (kbd "C-M-i") 'backward-paragraph)
+		(define-key map (kbd "C-M-k") 'forward-paragraph)
+		(define-key map (kbd "C-M-j") 'left-word)
+		(define-key map (kbd "C-M-l") 'right-word)
+		
+		))
+#+END_SRC
+
+Start mode:
+
+#+BEGIN_SRC emacs-lisp
+	;; (add-hook 'text-mode-hook 'underi-mode) ; superseded by :init-value t
+	;; (add-hook 'prog-mode-hook 'underi-mode) ; superseded by :init-value t
+#+END_SRC
+
+** winkeys-mode
+
+Key bindings roughly following the conventions of the Windows habitat.
+
+#+BEGIN_SRC emacs-lisp
+(define-minor-mode winkeys-mode
+	"Key bindings roughly following the conventions of the Windows habitat."
+	:init-value t
+	:global t
+	:lighter " wk"
+	:keymap (let ((map (make-keymap)))
+						
+						;; save
+						(define-key map (kbd "C-s") 'save-buffer)
+						(define-key map (kbd "C-S-s") 'write-file)
+
+						;; search and replace
+						(define-key map (kbd "C-f") '(lambda () 
+																					 (interactive)
+																					 (if (string= (buffer-mode) "pdf-view-mode")
+																							 ;; helm-swoop does not work here
+																							 (call-interactively 'pdf-occur) ; `call-interactively' is needed by occur
+																						 (helm-swoop))))
+						;; (define-key map (kbd "C-S-f a") 'helm-multi-swoop-all)
+						;; (define-key map (kbd "C-S-f m") 'helm-multi-swoop-current-mode)
+						;; (define-key map (kbd "C-f") 'swiper-helm)
+						;; (define-key map (kbd "C-f") 'swiper)
+						;; (define-key map (kbd "C-f") 'isearch-search)
+						;; (define-key map (kbd "C-S-f s") 'isearch-forward)
+						;; (define-key map (kbd "C-S-f C-s") 'isearch-forward)
+						;; (define-key map (kbd "C-S-f r") 'isearch-backward)
+						;; (define-key map (kbd "C-S-f C-r") 'isearch-backward)
+						(define-key map (kbd "C-r") 'query-replace)
+						(define-key map (kbd "C-S-r") 'query-replace-regexp)
+						(define-key map (kbd "C-o") 'helm-find-files)
+
+						;; mark all
+						(define-key map (kbd "C-x C-a") 'mark-whole-buffer)
+						
+						;; quit
+						(define-key key-translation-map (kbd "M-q") (kbd "C-g"))
+
+						;; undo/redo
+						(define-key map (kbd "C-z") 'undo-tree-undo)
+						(define-key map (kbd "C-S-z") 'undo-tree-redo)
+
+						;; yank
+						(define-key map (kbd "C-v") 'yank)						
+
+						;; press ESC only once
+						(define-key map (kbd "<escape>") 'keyboard-escape-quit)
+						
+						map
+						)
+
+	;; body 
+
+	(add-hook 'minibuffer-setup-hook 'winkeys-minibuffer)
+
+	(with-eval-after-load 'helm-swoop
+		(define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
+		(define-key helm-swoop-map (kbd "C-f") 'tl/helm-swoop-C-s) 
+		(define-key helm-multi-swoop-map (kbd "C-r") 'helm-previous-line)
+		(define-key helm-multi-swoop-map (kbd "C-f") 'helm-next-line)
+		(define-key helm-swoop-map (kbd "C-S-f a") 'helm-multi-swoop-all-from-helm-swoop)
+		(define-key helm-swoop-map (kbd "C-S-f m") 'helm-multi-swoop-current-mode-from-helm-swoop)
+		(define-key helm-swoop-map (kbd "M-a") 'helm-multi-swoop-all-from-helm-swoop))
+
+	(with-eval-after-load 'swiper-helm
+		(define-key swiper-helm-keymap (kbd "C-r") 'helm-previous-line)
+		(define-key swiper-helm-keymap (kbd "C-f") 'tl/swiper-helm-C-s))
+
+	(with-eval-after-load 'company
+		(define-key company-active-map (kbd "C-s") 'save-buffer))
+
+	;; (define-key key-translation-map (kbd "C-v") (kbd "C-y")) ; unfortunately this interferes with key chords using C-v
+	)
+#+END_SRC
+
+Key bindings in the minibuffer:
+
+#+BEGIN_SRC emacs-lisp
+(defun winkeys-minibuffer ()
+	"Keymap for the minibuffer."
+	(let ((map minibuffer-local-map))
+
+		;; undo/redo
+		(define-key map (kbd "C-z") 'undo-tree-undo)
+		(define-key map (kbd "C-S-z") 'undo-tree-redo)
+		
+		))
+#+END_SRC
+
+Let =helm-swoop= behave more like isearch:
+
+#+BEGIN_SRC emacs-lisp
+	;; FIXME: does not follow search hits; helm-action-follow-forward does not work here
+	(defun tl/helm-swoop-C-s ()
+		(interactive)
+		(if (boundp 'helm-swoop-pattern)
+				(if (equal helm-swoop-pattern "")
+						(previous-history-element 1)
+					(helm-next-line))
+			(helm-next-line)
+			))
+#+END_SRC
+
+TESTING: Let =swiper-helm= behave more like isearch:
+
+#+BEGIN_SRC emacs-lisp
+	(defun tl/swiper-helm-C-s ()
+		(interactive)
+		(if (boundp 'helm-pattern)
+				(if (equal helm-pattern "")
+						(previous-history-element 1)
+					(helm-next-line))
+			(helm-next-line)
+			))
+#+END_SRC
+
+** TODO winkeys-starter-mode
+
+https://github.com/publicus/emacs-org-mode-for-the-laity
 
 * Private settings 
 
