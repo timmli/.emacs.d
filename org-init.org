@@ -2929,13 +2929,13 @@ https://arxiv.org/pdf/1304.1332.pdf
 Blog posts:
 - https://egli.dev/posts/using-org-mode-for-meeting-minutes/
 
-**** org-minutes
+**** org-fm
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path (expand-file-name "org-minutes-dev" lisp-dir))
-(use-package org-minutes
+(add-to-list 'load-path (expand-file-name "org-fm-dev" lisp-dir))
+(use-package org-fm
 	:config
-	(org-minutes-minor-mode))
+	(org-fm-minor-mode))
 #+END_SRC
 
 *** Modules
@@ -9808,10 +9808,7 @@ Taken from https://github.com/abo-abo/hydra/wiki/Emacs
 		)                   
 #+END_SRC
 
-* TODO Key bindings
-:LOGBOOK:
-- State "TODO"       from              [2020-02-27 Do 23:01]
-:END:
+* Key bindings
 
 ** tlkeys-mode
 

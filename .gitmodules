@@ -10,6 +10,6 @@
 [submodule "lisp/ov-highlight"]
 	path = lisp/ov-highlight
 	url = https://github.com/jkitchin/ov-highlight.git
-[submodule "lisp/org-minutes-dev"]
-	path = lisp/org-minutes-dev
-	url = https://github.com/timmli/org-minutes-dev.git
+[submodule "lisp/org-fm-dev"]
+	path = lisp/org-fm-dev
+	url = https://github.com/timmli/org-fm-dev.git
