@@ -5207,7 +5207,7 @@ Open eml-files with =org-mode= turned on:
 			mu4e-maildir (expand-file-name "Maildir" home-directory)) 
 #+END_SRC
 
-*** COMMENT notmuch
+*** COMMENT notmuch under Windows
 
 Idea: offlineimap and notmuch are running in a WSL where also the maildir is located. Emacs calls notmuch from outside to search and obtain mails from the WSL maildir.
 
@@ -7373,7 +7373,12 @@ Version 2017-06-19"
 (global-set-key (kbd "<f7> e") 'tl/eshell)
  #+END_SRC
 
-** External terminal
+** TODO External terminal
+:LOGBOOK:
+- State "TODO"       from              [2020-06-06 Sa 11:11]
+:END:
+
+- [ ] currently only works for xfce
 
 Function to open external terminal at point.
 
