@@ -2601,6 +2601,7 @@ Export to Hugo-compatible markdown.
 
 #+BEGIN_SRC emacs-lisp
 (use-package ox-hugo
+	:pin MELPA
   :ensure t
   :after ox)
 #+END_SRC
@@ -2924,12 +2925,16 @@ Map scr-block languages to =listings= environments:
 https://github.com/novoid/Memacs
 https://arxiv.org/pdf/1304.1332.pdf
 
-*** TODO Minutes
+*** Minutes
 
 Blog posts:
 - https://egli.dev/posts/using-org-mode-for-meeting-minutes/
 
 **** org-fm
+
+https://github.com/timmli/org-fm-dev
+
+Fast minutes with =org-fm=.
 
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path (expand-file-name "org-fm-dev" lisp-dir))
