@@ -2649,6 +2649,15 @@ Support from org-babel:
 ;; (add-to-list 'org-latex-packages-alist '("" "forest" t))
 #+END_SRC
 
+LaTeX source blocks should be executed with the following header arguments:
+#+BEGIN_EXAMPLE
+#+PROPERTY: header-args:latex+ :dir graphics  :packages '(("" "../text-template/packages/tikz-settings")("" "times")) :headers '("\\input{../text-template/myMacros}")
+...
+#+BEGIN_SRC latex :results file raw :file tikz2006081732.pdf :border 0em :noweb yes :eval no-export
+...
+#+END_SRC
+#+END_EXAMPLE
+
 Scale LaTeX previews:
 #+BEGIN_SRC emacs-lisp
 ;; static
@@ -2664,7 +2673,7 @@ Scale LaTeX previews:
 
 Use LaTeXmk:
 #+BEGIN_SRC emacs-lisp
-(setq org-latex-pdf-process (list "latexmk -f -pdf %f -cd %o"))
+(setq org-latex-pdf-process (list "latexmk -f -pdf %f -outdir=%o"))
 ;; The option "-cd %o" is needed when executing babel source blocks, 
 ;; during which the auxiliary files are moved to some temporary directory.
 ;; Instead of "-cd %o", one could also use "-outdir=%o". 
