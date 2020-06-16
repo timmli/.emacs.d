@@ -105,8 +105,9 @@
       - [[#windows-cmd][Windows cmd]]
       - [[#bash][Bash]]
 - [[#encryption][Encryption]]
-- [[#process-monitor][Process monitor]]
+- [[#system-management][System management]]
       - [[#proced][proced]]
+      - [[#helm-system-packages][helm-system-packages]]
 - [[#media-player][Media player]]
 - [[#tags][Tags]]
       - [[#etags][etags]]
@@ -7466,7 +7467,7 @@ Function to look up password:
                       :secret)))
 #+END_SRC
 
-* Process monitor
+* System management
 
 ** proced
 
@@ -7483,6 +7484,18 @@ See https://www.masteringemacs.org/article/displaying-interacting-processes-proc
 (add-hook 'proced-mode-hook 'proced-settings)
 
 (global-set-key (kbd "C-x P") 'proced)
+#+END_SRC
+
+** helm-system-packages
+
+https://github.com/emacs-helm/helm-system-packages
+
+A Helm interface to the package manager of your operating system.
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-system-packages
+	:ensure t
+	:pin MELPA)
 #+END_SRC
 
 * Media player
@@ -7849,7 +7862,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
  
          [_i_] init file           [_p_] package manager      [_m_] macros
          [_d_] .emacs.d            [_u_] upgrade packages     [_fp_] proportional font
-         [_c_] customize emacs     [_t_] load theme           
+         [_c_] customize emacs     [_t_] load theme           [_s_] system packages
         [_lv_] visual line mode   [_ln_] line numbers         
         [_lt_] truncate lines     [_lr_] toggle relative line numbers        [_q_]uit
 	"
@@ -7858,6 +7871,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 	("fp" toggle-proportional :exit t)
 	("c" customize :exit t)
 	("p" paradox-list-packages :exit t)
+	("s" helm-system-packages :exit t)
 	("u" paradox-upgrade-packages :exit t)
 	("m" hydra-macro/body :exit t)
 	("t" hydra-load-theme/body :exit t)
