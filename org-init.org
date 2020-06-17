@@ -9103,7 +9103,8 @@ Copied from https://github.com/cmcmahan/elisp/blob/master/emacs-misc.el:
   (let ((tformat (or time-format insert-time-format)))
 		(when (use-region-p)
 			(delete-region (region-beginning) (region-end)))
-    (insert (concat (format-time-string tformat (current-time)) " "))))
+    (insert (concat (format-time-string tformat (current-time)) ; " " ; removed by TL
+										))))
 
 (defun insert-date (&optional date-format)
   "Insert the current date. Option format defaults to  `insert-date-format'."
