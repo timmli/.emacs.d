@@ -3638,14 +3638,42 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 
 #+BEGIN_SRC emacs-lisp
 (setq org-tag-persistent-alist
-			'((:startgroup . nil)
+			'(
+				
+				;; ontology
+				
+				(:startgroup . nil)
+				("project" . ?p)
+				(:endgroup . nil)
+				
+				(:startgroup . nil)
+				("event" . ?e)
+				(:grouptags . nil)							; kinds of events
+				("appointment" . ?a)
+				("conference" . nil)
+				("talk" . nil)									
+				("workshop" . nil)
+				(:endgroup . nil)
+
+				(:startgroup . nil)
+				("media" . ?m)
+				(:grouptags . nil)							; kinds of content
+				("text" . ?x)
+				("video" . nil)
+				("talk" . nil)
+				("poster" . nil)																		
+				(:endgroup . nil)
+
+				;; topics
+				
+				(:startgroup . nil)
 				("@work" . ?w)
 				(:grouptags . nil)
-				("administration" . ?m)
+				("administration" . ?d)
 				("research" . ?r)
 				("teaching" . ?t)
 				(:endgroup . nil)
-
+				
 				(:startgroup . nil)
 				("research" . ?r)
 				(:grouptags . nil)							; areas of research
@@ -3657,20 +3685,7 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 				(:endgroup . nil)
 
 				(:startgroup . nil)
-				("event" . ?e)
-				(:grouptags . nil)							; kinds of events
-				("appointment" . ?a)
-				("conference" . nil)
-				("talk" . nil)									
-				("workshop" . nil)
-				(:endgroup . nil)
-
-				(:startgroup . nil)
-				("project" . ?p)
-				(:endgroup . nil)
-				
-				(:startgroup . nil)
-				("administration" . ?m)					
+				("administration" . ?d)					
 				(:grouptags . nil)							;areas of administration
 				("bau" . nil)
 				("personal" . nil)
@@ -3692,19 +3707,6 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 				("windows" . nil)
 				(:endgroup . nil)
 
-				;; (:startgroup . nil)
-				;; ("programming" . ?p)
-				;; (:grouptags . nil)
-				;; ("xmg" . nil)											
-				;; ("emacs" . ?m)
-				;; ("latex" . ?x)
-				;; ("langsci" . ?l)
-				;; ("python" . ?y)
-				;; ("javascript" . ?j)
-				;; ("perl" . nil)
-				;; ("php" . nil)
-				;; ("shellscript" . nil)											
-				;; (:endgroup . nil)
 				))
 #+END_SRC
 
