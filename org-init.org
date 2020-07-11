@@ -8174,10 +8174,10 @@ Global org-mode keys:
      Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^   Mark^^  │Org │
    ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^───────^^───────^^──╯    ╵
  
-     ^^  [_a_] agenda  ^^    [_n_] notes   ^^  ^^   ^^  ^^  ^^   [_r_] reload org       	
-     ^^  [_d_] deft    ^^    [_t_] todos   ^^  ^^   ^^  ^^  ^^   [_u_] update agenda files
-     ^^  [_c_] capture ^^    [_w_/_h_] work/home notes ^^  ^^[_C_] clocking...       
-     ^^  [_f_] search  ^^    [_:_] tags ^^  ^^  ^^  ^^  ^^                      [_q_]uit
+     ^^  [_a_] agenda  ^^    [_n_] show notes   ^^  ^^   ^^  ^^  ^^   [_r_] reload org       	
+     ^^  [_d_] deft    ^^    [_t_] show todos   ^^  ^^   ^^  ^^  ^^   [_u_] update agenda files
+     ^^  [_c_] capture ^^    [_w_/_h_] work/home notes ^^ ^^ ^^  ^^   [_C_] clocking...       
+     ^^  [_f_] search  ^^    [_:_] filter by tags ^^  ^^  ^^  ^^  ^^          [_q_]uit
 
 	"
 	("a" org-agenda-list-complete :exit t)
@@ -8443,7 +8443,7 @@ Don't ask for the path when searching for files:
      _i_ add ID                   _._ timestamp         _<right>_ show subtree     _C-<up>_ previous heading same level
      _n_ add note                 _*_ cycle list type  _C-<left>_ hide sublevels        _o_ open link/timestamp/...
      _p_ add property             _#_ table...        _C-<right>_ show sublevels        _j_ jump to heading
-     _P_ add property-value pair  _v_ toggle images            ^^                       _B_ jump to named block
+     _P_ add property-value pair  _v_ toggle images       ^<f9>:^ filter tags globally  _B_ jump to named block
    _s_/\^ sort                     \\ toggle overlays  
      _t_ set todo keyword        _dl_ delete link
      _:_ set tags                _dt_ delete aux files  ^^                      ^^      _q_ quit
