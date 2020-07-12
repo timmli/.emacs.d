@@ -1711,19 +1711,20 @@ http://doc.rix.si/cce/cce-org.html
 Historical remark on taking notes:
 http://takingnotenow.blogspot.com/2008/07/note-keeping-in-1786-blumenbachs-system.html
 
-*** INPROGRESS My GTD setup
+*** INPROGRESS My GTD setup in org-mode
 
-| Heading type | Properties                              | Body                                                  | Prupose                                 | Title format     |
+**** General structure
+
+| Heading type | Properties                              | Body                                                  | Purpose                                 | Title format     |
 |--------------+-----------------------------------------+-------------------------------------------------------+-----------------------------------------+------------------|
 | area         | non-intersecting with other areas       | topics, projects, ...                                 | group topics, keep overview             |                  |
 | topic        | none                                    | topics, projects, ...                                 | group content, keeping overview         |                  |
 | [[Projects][project]]      | SCHEDULED, DEADLINE, outcome, :project: | todos, notes, events that lead to some common outcome | track progress                          | $outcome: $topic |
 | todo         | SCHEDULED, DEADLINE                     | text, todo, event                                     | track progress, take action             |                  |
-| event        | timestamp, location, :event:            | [[Minutes][minutes]]/notes                                         | store observations, ideas, action items |                  |
+| event        | timestamp, location, participants, :event: | [[Minutes][minutes]]/notes                                         | store observations, ideas, action items | $topic/$participants $timestamp |
 | note         | CREATED, LAST_CHANGED                    | text                                                  | store ideas, concepts, references, ...  |                  |
 
 General structure of an high-level =org-mode= file:
-
 - Inbox
 - Events
 - Projects
@@ -1731,6 +1732,21 @@ General structure of an high-level =org-mode= file:
 
 Information flow: 
 - Inbox $\Rightarrow$ Events|Projects  $\Rightarrow$ Topics
+
+**** Teaching
+
+| Heading type  | Properties                                   | Title format                                 | Body                   |
+|---------------+----------------------------------------------+----------------------------------------------+------------------------|
+| course        | semester, :project:                          | (Semester) Title of course                   | list of sessions       |
+| session       | timestamp, :even:                            | Nth session Shorttitle of course <timestamp> | list of teaching units |
+| teaching unit | presenter, literature, material, attachments | Title of teaching unit                       | notes                  |
+
+- [ ] add example
+
+**** TODO Literature
+:LOGBOOK:
+- State "TODO"       from              [2020-07-12 Sun 11:25]
+:END:
 
 *** General appearence
 
