@@ -3122,7 +3122,7 @@ Shift-return:
   (cond
 	 ;; in org-table
 	 ((org-table-p)
-		(org-return))
+		(org-table-copy-down 1))
 	 ;; else
 	 (t (smart-open-line))
 	 )
@@ -3645,6 +3645,24 @@ A function for killing the content of a cell:
 	(interactive)
 	(tl/org-table-copy-cell-content)
 	(org-table-blank-field))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-table-number-rows ()
+	"Number rows in an org-mode table by replacing the cells of the first column with consecutive numbers."
+	(interactive)
+	(when (org-table-p)
+		(save-excursion
+			(org-edit-special)
+			(beginning-of-buffer)
+			(when (not
+						 (or (search-forward "$1=@#-1" nil t)
+								 (search-forward "$1 = @#-1" nil t)))
+				(move-end-of-line nil)
+				(newline)
+				(insert "$1=@#-1"))
+			(org-table-fedit-finish)
+			(org-table-recalculate 'iterate))))
 #+END_SRC
 
 *** Tags
@@ -8708,14 +8726,15 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
          ^Cell^               ^Table^                    ^Formula^                 ^Navigation^     │ org-table │
 	╭──────^^───────────────────^^──────────────────────────^^────────────────────────^^──────────────┴───────────╯ 
 
-        _'_ edit cell        _s_ sort lines              _e_ eval formula          _<up>_ above cell
-        _?_ cell info        _t_ transpose               _r_ recalculate         _<down>_ below cell
- _<return>_ wrap region      _E_ export table            _D_ toggle debugger     _<left>_ left cell
-    _<SPC>_ empty cell       _c_ toggle coordinates      _i_ iterate table      _<right>_ right cell
-        _m_ move cell...     _-_ collapse/expand column  _B_ iterate buffer
-      _M-w_ copy cell        _<_ collapse all columns
-      _C-w_ kill cell        _>_ expand all columns
-      _C-y_ yank & align     _|_ convert from region                            ^^          _q_ quit
+         _'_ edit cell        _s_ sort lines              _e_ eval formula          _<up>_ above cell
+         _?_ cell info        _t_ transpose               _r_ recalculate         _<down>_ below cell
+  _<return>_ wrap region      _E_ export table            _D_ toggle debugger     _<left>_ left cell
+     _<SPC>_ empty cell       _c_ toggle coordinates      _i_ iterate table      _<right>_ right cell
+         _m_ move cell...     _-_ collapse/expand column  _B_ iterate buffer
+       _M-w_ copy cell        _<_ collapse all columns    _+_ sum column
+       _C-w_ kill cell        _>_ expand all columns      _N_ number rows
+       _C-y_ yank & align     _|_ convert from region
+_S-<return>_ copy cell down   ^^                                                 ^^          _q_ quit
 "
   ("E" org-table-export :color blue)
   ("s" org-table-sort-lines)
@@ -8724,6 +8743,7 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
   ("r" org-table-recalculate)
   ("i" org-table-iterate)
 	("m" hydra-org-table-move-cell/body :color blue)
+	("N" tl/org-table-number-rows)
   ("B" org-table-iterate-buffer-tables)
   ("D" org-table-toggle-formula-debugger)
   ("t" org-table-transpose-table-at-point)
@@ -8734,10 +8754,12 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
 					 (org-yank)
 					 (org-table-align)))
   ("<return>" org-table-wrap-region)
+  ("S-<return>" org-table-copy-down)
   ("<SPC>" org-table-blank-field)
 	("<tab>" org-cycle)
 	("S-<tab>" org-shifttab)
 	("-" org-table-toggle-column-width)
+	("+" org-table-sum)
 	("<" (org-table-toggle-column-width '(4)))
 	(">" (org-table-toggle-column-width '(16)))
 	("|" org-table-convert-region) 
