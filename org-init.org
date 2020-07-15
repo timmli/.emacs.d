@@ -1715,14 +1715,14 @@ http://takingnotenow.blogspot.com/2008/07/note-keeping-in-1786-blumenbachs-syste
 
 **** General structure
 
-| Heading type | Properties                              | Body                                                  | Purpose                                 | Title format     |
-|--------------+-----------------------------------------+-------------------------------------------------------+-----------------------------------------+------------------|
-| area         | non-intersecting with other areas       | topics, projects, ...                                 | group topics, keep overview             |                  |
-| topic        | none                                    | topics, projects, ...                                 | group content, keeping overview         |                  |
-| [[Projects][project]]      | SCHEDULED, DEADLINE, outcome, :project: | todos, notes, events that lead to some common outcome | track progress                          | $outcome: $topic |
-| todo         | SCHEDULED, DEADLINE                     | text, todo, event                                     | track progress, take action             |                  |
-| event        | timestamp, location, participants, :event: | [[Minutes][minutes]]/notes                                         | store observations, ideas, action items | $topic/$participants $timestamp |
-| note         | CREATED, LAST_CHANGED                    | text                                                  | store ideas, concepts, references, ...  |                  |
+| Heading type | Properties                                   | Body                                                  | Purpose                                 | Title format                    |
+|--------------+----------------------------------------------+-------------------------------------------------------+-----------------------------------------+---------------------------------|
+| area         | non-intersecting with other areas            | topics, projects, ...                                 | group topics, keep overview             |                                 |
+| topic        | none                                         | topics, projects, ...                                 | group content, keeping overview         |                                 |
+| [[Projects][project]]      | SCHEDULED, DEADLINE, outcome, :project:, DIR | todos, notes, events that lead to some common outcome | track progress                          | $outcome: $topic                |
+| todo         | SCHEDULED, DEADLINE                          | text, todo, event                                     | track progress, take action             |                                 |
+| event        | timestamp, location, participants, :event:   | [[Minutes][minutes]]/notes                                         | store observations, ideas, action items | $topic/$participants $timestamp |
+| note         | CREATED, LAST_CHANGED                        | text                                                  | store ideas, concepts, references, ...  |                                 |
 
 General structure of an high-level =org-mode= file:
 - Inbox
@@ -1737,16 +1737,27 @@ Information flow:
 
 | Heading type  | Properties                                   | Title format                                 | Body                   |
 |---------------+----------------------------------------------+----------------------------------------------+------------------------|
-| course        | semester, :project:                          | (Semester) Title of course                   | list of sessions       |
-| session       | timestamp, :even:                            | Nth session Shorttitle of course <timestamp> | list of teaching units |
+| course        | semester, :project:, DIR                     | (Semester) Title of course                   | list of sessions       |
+| session       | timestamp, :event:                           | Nth session Shorttitle of course <timestamp> | list of teaching units |
 | teaching unit | presenter, literature, material, attachments | Title of teaching unit                       | notes                  |
 
 - [ ] add example
 
-**** TODO Literature
-:LOGBOOK:
-- State "TODO"       from              [2020-07-12 Sun 11:25]
-:END:
+Every course is linked with a directory (via DIR property) including the following subdirectories depending on the type of event:
+- slides (by me)
+- presentations (by students)
+- term papers (by students)
+- literature
+- exercises (instructions & submissions) 
+
+**** Notes on texts, videos etc.
+
+Notes regarding texts, videos etc. are handled in the following way:
+- one heading per piece
+- tags: media > text, video, audio, live
+- properties: ID
+- body: URL or [[org-ref]] citation link
+- When available, an electronic copy (usually as PDF) is stored as regular attachment based on the heading's ID. As far as PDFs are concerned, notes can be left there with [[pdf-tools]].
 
 *** General appearence
 
