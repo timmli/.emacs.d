@@ -1711,19 +1711,20 @@ http://doc.rix.si/cce/cce-org.html
 Historical remark on taking notes:
 http://takingnotenow.blogspot.com/2008/07/note-keeping-in-1786-blumenbachs-system.html
 
-*** INPROGRESS My GTD setup
+*** INPROGRESS My GTD setup in org-mode
 
-| Heading type | Properties                              | Body                                                  | Prupose                                 | Title format     |
-|--------------+-----------------------------------------+-------------------------------------------------------+-----------------------------------------+------------------|
-| area         | non-intersecting with other areas       | topics, projects, ...                                 | group topics, keep overview             |                  |
-| topic        | none                                    | topics, projects, ...                                 | group content, keeping overview         |                  |
-| [[Projects][project]]      | SCHEDULED, DEADLINE, outcome, :project: | todos, notes, events that lead to some common outcome | track progress                          | $outcome: $topic |
-| todo         | SCHEDULED, DEADLINE                     | text, todo, event                                     | track progress, take action             |                  |
-| event        | timestamp, location, :event:            | [[Minutes][minutes]]/notes                                         | store observations, ideas, action items |                  |
-| note         | CREATED, LAST_CHANGED                    | text                                                  | store ideas, concepts, references, ...  |                  |
+**** General structure
+
+| Heading type | Properties                                   | Body                                                  | Purpose                                 | Title format                    |
+|--------------+----------------------------------------------+-------------------------------------------------------+-----------------------------------------+---------------------------------|
+| area         | non-intersecting with other areas            | topics, projects, ...                                 | group topics, keep overview             |                                 |
+| topic        | none                                         | topics, projects, ...                                 | group content, keeping overview         |                                 |
+| [[Projects][project]]      | SCHEDULED, DEADLINE, outcome, :project:, DIR | todos, notes, events that lead to some common outcome | track progress                          | $outcome: $topic                |
+| todo         | SCHEDULED, DEADLINE                          | text, todo, event                                     | track progress, take action             |                                 |
+| event        | timestamp, location, participants, :event:   | [[Minutes][minutes]]/notes                                         | store observations, ideas, action items | $topic/$participants $timestamp |
+| note         | CREATED, LAST_CHANGED                        | text                                                  | store ideas, concepts, references, ...  |                                 |
 
 General structure of an high-level =org-mode= file:
-
 - Inbox
 - Events
 - Projects
@@ -1731,6 +1732,32 @@ General structure of an high-level =org-mode= file:
 
 Information flow: 
 - Inbox $\Rightarrow$ Events|Projects  $\Rightarrow$ Topics
+
+**** Teaching
+
+| Heading type  | Properties                                   | Title format                                 | Body                   |
+|---------------+----------------------------------------------+----------------------------------------------+------------------------|
+| course        | semester, :project:, DIR                     | (Semester) Title of course                   | list of sessions       |
+| session       | timestamp, :event:                           | Nth session Shorttitle of course <timestamp> | list of teaching units |
+| teaching unit | presenter, literature, material, attachments | Title of teaching unit                       | notes                  |
+
+- [ ] add example
+
+Every course is linked with a directory (via DIR property) including the following subdirectories depending on the type of event:
+- slides (by me)
+- presentations (by students)
+- term papers (by students)
+- literature
+- exercises (instructions & submissions) 
+
+**** Notes on texts, videos etc.
+
+Notes regarding texts, videos etc. are handled in the following way:
+- one heading per piece
+- tags: media > text, video, audio, live
+- properties: ID
+- body: URL or [[org-ref]] citation link
+- When available, an electronic copy (usually as PDF) is stored as regular attachment based on the heading's ID. As far as PDFs are concerned, notes can be left there with [[pdf-tools]].
 
 *** General appearence
 
@@ -3106,7 +3133,7 @@ Shift-return:
   (cond
 	 ;; in org-table
 	 ((org-table-p)
-		(org-return))
+		(org-table-copy-down 1))
 	 ;; else
 	 (t (smart-open-line))
 	 )
@@ -3631,6 +3658,24 @@ A function for killing the content of a cell:
 	(org-table-blank-field))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-table-number-rows ()
+	"Number rows in an org-mode table by replacing the cells of the first column with consecutive numbers."
+	(interactive)
+	(when (org-table-p)
+		(save-excursion
+			(org-edit-special)
+			(beginning-of-buffer)
+			(when (not
+						 (or (search-forward "$1=@#-1" nil t)
+								 (search-forward "$1 = @#-1" nil t)))
+				(move-end-of-line nil)
+				(newline)
+				(insert "$1=@#-1"))
+			(org-table-fedit-finish)
+			(org-table-recalculate 'iterate))))
+#+END_SRC
+
 *** Tags
 
 Tags can be set globally as default using the variable =org-tag-alist=. 
@@ -3638,14 +3683,42 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 
 #+BEGIN_SRC emacs-lisp
 (setq org-tag-persistent-alist
-			'((:startgroup . nil)
+			'(
+				
+				;; ontology
+				
+				(:startgroup . nil)
+				("project" . ?p)
+				(:endgroup . nil)
+				
+				(:startgroup . nil)
+				("event" . ?e)
+				(:grouptags . nil)							; kinds of events
+				("appointment" . ?a)
+				("conference" . nil)
+				("talk" . nil)									
+				("workshop" . nil)
+				(:endgroup . nil)
+
+				(:startgroup . nil)
+				("media" . ?m)
+				(:grouptags . nil)							; kinds of content
+				("text" . ?x)
+				("video" . nil)
+				("talk" . nil)
+				("poster" . nil)																		
+				(:endgroup . nil)
+
+				;; topics
+				
+				(:startgroup . nil)
 				("@work" . ?w)
 				(:grouptags . nil)
-				("administration" . ?m)
+				("administration" . ?d)
 				("research" . ?r)
 				("teaching" . ?t)
 				(:endgroup . nil)
-
+				
 				(:startgroup . nil)
 				("research" . ?r)
 				(:grouptags . nil)							; areas of research
@@ -3657,20 +3730,7 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 				(:endgroup . nil)
 
 				(:startgroup . nil)
-				("event" . ?e)
-				(:grouptags . nil)							; kinds of events
-				("appointment" . ?a)
-				("conference" . nil)
-				("talk" . nil)									
-				("workshop" . nil)
-				(:endgroup . nil)
-
-				(:startgroup . nil)
-				("project" . ?p)
-				(:endgroup . nil)
-				
-				(:startgroup . nil)
-				("administration" . ?m)					
+				("administration" . ?d)					
 				(:grouptags . nil)							;areas of administration
 				("bau" . nil)
 				("personal" . nil)
@@ -3692,19 +3752,6 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 				("windows" . nil)
 				(:endgroup . nil)
 
-				;; (:startgroup . nil)
-				;; ("programming" . ?p)
-				;; (:grouptags . nil)
-				;; ("xmg" . nil)											
-				;; ("emacs" . ?m)
-				;; ("latex" . ?x)
-				;; ("langsci" . ?l)
-				;; ("python" . ?y)
-				;; ("javascript" . ?j)
-				;; ("perl" . nil)
-				;; ("php" . nil)
-				;; ("shellscript" . nil)											
-				;; (:endgroup . nil)
 				))
 #+END_SRC
 
@@ -8172,10 +8219,10 @@ Global org-mode keys:
      Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^   Mark^^  │Org │
    ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^───────^^───────^^──╯    ╵
  
-     ^^  [_a_] agenda  ^^    [_n_] notes   ^^  ^^   ^^  ^^  ^^   [_r_] reload org       	
-     ^^  [_d_] deft    ^^    [_t_] todos   ^^  ^^   ^^  ^^  ^^   [_u_] update agenda files
-     ^^  [_c_] capture ^^    [_w_/_h_] work/home notes ^^  ^^[_C_] clocking...       
-     ^^  [_f_] search  ^^    [_:_] tags ^^  ^^  ^^  ^^  ^^                      [_q_]uit
+     ^^  [_a_] agenda  ^^    [_n_] show notes   ^^  ^^   ^^  ^^  ^^   [_r_] reload org       	
+     ^^  [_d_] deft    ^^    [_t_] show todos   ^^  ^^   ^^  ^^  ^^   [_u_] update agenda files
+     ^^  [_c_] capture ^^    [_w_/_h_] work/home notes ^^ ^^ ^^  ^^   [_C_] clocking...       
+     ^^  [_f_] search  ^^    [_:_] filter by tags ^^  ^^  ^^  ^^  ^^          [_q_]uit
 
 	"
 	("a" org-agenda-list-complete :exit t)
@@ -8441,7 +8488,7 @@ Don't ask for the path when searching for files:
      _i_ add ID                   _._ timestamp         _<right>_ show subtree     _C-<up>_ previous heading same level
      _n_ add note                 _*_ cycle list type  _C-<left>_ hide sublevels        _o_ open link/timestamp/...
      _p_ add property             _#_ table...        _C-<right>_ show sublevels        _j_ jump to heading
-     _P_ add property-value pair  _v_ toggle images            ^^                       _B_ jump to named block
+     _P_ add property-value pair  _v_ toggle images       ^<f9>:^ filter tags globally  _B_ jump to named block
    _s_/\^ sort                     \\ toggle overlays  
      _t_ set todo keyword        _dl_ delete link
      _:_ set tags                _dt_ delete aux files  ^^                      ^^      _q_ quit
@@ -8690,14 +8737,15 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
          ^Cell^               ^Table^                    ^Formula^                 ^Navigation^     │ org-table │
 	╭──────^^───────────────────^^──────────────────────────^^────────────────────────^^──────────────┴───────────╯ 
 
-        _'_ edit cell        _s_ sort lines              _e_ eval formula          _<up>_ above cell
-        _?_ cell info        _t_ transpose               _r_ recalculate         _<down>_ below cell
- _<return>_ wrap region      _E_ export table            _D_ toggle debugger     _<left>_ left cell
-    _<SPC>_ empty cell       _c_ toggle coordinates      _i_ iterate table      _<right>_ right cell
-        _m_ move cell...     _-_ collapse/expand column  _B_ iterate buffer
-      _M-w_ copy cell        _<_ collapse all columns
-      _C-w_ kill cell        _>_ expand all columns
-      _C-y_ yank & align     _|_ convert from region                            ^^          _q_ quit
+         _'_ edit cell        _s_ sort lines              _e_ eval formula          _<up>_ above cell
+         _?_ cell info        _t_ transpose               _r_ recalculate         _<down>_ below cell
+  _<return>_ wrap region      _E_ export table            _D_ toggle debugger     _<left>_ left cell
+     _<SPC>_ empty cell       _c_ toggle coordinates      _i_ iterate table      _<right>_ right cell
+         _m_ move cell...     _-_ collapse/expand column  _B_ iterate buffer
+       _M-w_ copy cell        _<_ collapse all columns    _+_ sum column
+       _C-w_ kill cell        _>_ expand all columns      _N_ number rows
+       _C-y_ yank & align     _|_ convert from region
+_S-<return>_ copy cell down   ^^                                                 ^^          _q_ quit
 "
   ("E" org-table-export :color blue)
   ("s" org-table-sort-lines)
@@ -8706,6 +8754,7 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
   ("r" org-table-recalculate)
   ("i" org-table-iterate)
 	("m" hydra-org-table-move-cell/body :color blue)
+	("N" tl/org-table-number-rows)
   ("B" org-table-iterate-buffer-tables)
   ("D" org-table-toggle-formula-debugger)
   ("t" org-table-transpose-table-at-point)
@@ -8716,10 +8765,12 @@ Taken from https://gist.github.com/dfeich/1df4e174d45f05fb5798ca514d28c68a and m
 					 (org-yank)
 					 (org-table-align)))
   ("<return>" org-table-wrap-region)
+  ("S-<return>" org-table-copy-down)
   ("<SPC>" org-table-blank-field)
 	("<tab>" org-cycle)
 	("S-<tab>" org-shifttab)
 	("-" org-table-toggle-column-width)
+	("+" org-table-sum)
 	("<" (org-table-toggle-column-width '(4)))
 	(">" (org-table-toggle-column-width '(16)))
 	("|" org-table-convert-region) 
