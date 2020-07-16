@@ -9179,12 +9179,13 @@ then a space, then the current time formatted with
 
       Insert File Name
     ╭──────────────────╯
-      [_._] ../relative/path      [_w_] file namew
+      [_._] ../relative/path      [_w_] file name
       [_/_] /absolute/path   
       ^^                                          [_q_] quit
    "
 	("/" (insert (read-file-name "")))
-	("." (insert (file-relative-name (read-file-name "") (file-name-directory (buffer-file-name)))))
+	("." (insert (file-relative-name (read-file-name "")
+																	 (file-name-directory (buffer-file-name)))))
   ("w" (insert (file-name-nondirectory (read-file-name ""))))
 	("q" nil))
 (global-set-key (kbd "C-c i f") 'hydra-insert-file-name/body)
