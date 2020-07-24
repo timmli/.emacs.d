@@ -3758,7 +3758,7 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 Tags that should not be inherited by children:
 
 #+BEGIN_SRC emacs-lisp
-(setq org-tags-exclude-from-inheritance '("event" "appointment" "conference" "talk" "workshop" "project"))
+(setq org-tags-exclude-from-inheritance '("event" "appointment" "conference" "talk" "workshop" "project" "text" "media" "video" "poster"))
 #+END_SRC
 
 Key bindings:
