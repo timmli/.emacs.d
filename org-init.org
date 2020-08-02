@@ -658,12 +658,12 @@ Smex helps to remember often used commands; used by ido and counsel
 				(apply orig-fun args)))
 		(advice-add 'helm-ff-delete-char-backward :around #'fu/helm-find-files-navigate-back)
 
-		;; https://redd.it/3f55nm
-		;; remove . and .. from helm-find-files
-		(advice-add 'helm-ff-filter-candidate-one-by-one
-								:around (lambda (fcn file)
-													(unless (string-match "\\(?:/\\|\\`\\)\\.\\{1,2\\}\\'" file)
-														(funcall fcn file))))
+		;; ;; https://redd.it/3f55nm
+		;; ;; Remove . and .. from helm-find-files
+		;; (advice-add 'helm-ff-filter-candidate-one-by-one
+		;; 						:around (lambda (fcn file)
+		;; 											(unless (string-match "\\(?:/\\|\\`\\)\\.\\{1,2\\}\\'" file)
+		;; 												(funcall fcn file))))
 
 		)
   :bind (("M-y" . helm-mini)
@@ -690,18 +690,21 @@ Smex helps to remember often used commands; used by ido and counsel
 )
 (ido-mode -1)														; turn off ido mode, just in case
 
-;; helm-flx: improves fuzzy matching
+;; ;; helm-flx: improves fuzzy matching
+;; ;; https://github.com/PythonNut/helm-flx
 (use-package helm-flx
 	:ensure t
 	:after helm
 	:config
 	(helm-flx-mode +1))
-;; helm-fuzzier: improves fuzzy matching even more by taking more candidates into account
-(use-package helm-fuzzier
-	:ensure t
-	:after helm
-	:config
-	(helm-fuzzier-mode +1))
+
+;; ;; helm-fuzzier: improves fuzzy matching even more by taking more candidates into account
+;; ;; With helm v3.6.4, `helm-fuzzier' breaks the display of candidates in `helm-find-files'.
+;; (use-package helm-fuzzier
+;; 	:ensure t
+;; 	:after helm
+;; 	:config
+;; 	(helm-fuzzier-mode +1))
 
 ;; list active key bindings 
 (use-package helm-descbinds
