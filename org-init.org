@@ -968,23 +968,26 @@ Prerequisites as for Python:
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-	(use-package elpy
-		:ensure t
-		:defer 2
-		:config
-		(progn
-			;; Use Flycheck instead of Flymake
-			(when (require 'flycheck nil t)
-				(remove-hook 'elpy-modules 'elpy-module-flymake)
-				(remove-hook 'elpy-modules 'elpy-module-yasnippet)
-				(remove-hook 'elpy-mode-hook 'elpy-module-highlight-indentation)
-				(add-hook 'elpy-mode-hook 'flycheck-mode))
-			(elpy-enable)
-			(define-key python-mode-map (kbd "C-h f") 'python-eldoc-at-point)
-			;; highlight-indentation is ugly
-			(add-hook 'elpy-mode-hook '(lambda () (highlight-indentation-mode -1)))
-			;; jedi is great
-			(setq elpy-rpc-backend "jedi")))
+(use-package elpy
+	:ensure t
+	:defer 2
+	:config
+	(progn
+		;; Use Flycheck instead of Flymake
+		(when (require 'flycheck nil t)
+			(remove-hook 'elpy-modules 'elpy-module-flymake)
+			(remove-hook 'elpy-modules 'elpy-module-yasnippet)
+			(remove-hook 'elpy-mode-hook 'elpy-module-highlight-indentation)
+			(add-hook 'elpy-mode-hook 'flycheck-mode))
+		(elpy-enable)
+		(define-key python-mode-map (kbd "C-h f") 'python-eldoc-at-point)
+		;; highlight-indentation is ugly
+		(add-hook 'elpy-mode-hook '(lambda () (highlight-indentation-mode -1)))
+		;; jedi is great
+		(setq elpy-rpc-backend "jedi")
+		;; tell elpy to use python3 (or install python-is-python3 under GNU/Linux)
+		(setq elpy-rpc-python-command "python3")
+		))
 #+END_SRC
 
 *** company-jedi
@@ -1013,6 +1016,8 @@ Procedure to open a notebook:
 	:config
 	(setq ein:completion-backend 'ein:use-ac-jedi-backend))
 #+END_SRC
+
+*** [[emacs-jupyter]]
 
 ** PlantUML
 
@@ -2637,21 +2642,6 @@ Export to Hugo-compatible markdown.
   :after ox)
 #+END_SRC
 
-*** TODO Gnuplot support
-
-- [ ] compiling Gnuplot source blocks crashes Emacs
-
-#+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages 'org-babel-load-languages '((gnuplot . t)))
-#+END_SRC
-
-*** Graphviz/dot support
-
- #+BEGIN_SRC emacs-lisp
-(add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
-(org-babel-do-load-languages  'org-babel-load-languages '((dot . t)))
-#+END_SRC
-
 *** Images
 
 Only use actual width of image when not specified with =#+ATTR* :width= (requires imagemagick)
@@ -2952,7 +2942,6 @@ Map scr-block languages to =listings= environments:
 ;; (setq org-latex-custom-lang-environments
 ;; 			'((org-babel-language "listings-environment")))
 #+END_SRC
-
 
 *** Makefile support
 
@@ -3333,10 +3322,50 @@ See https://www.mail-archive.com/emacs-orgmode@gnu.org/msg30416.html
 					(:exports . "results"))))
 #+END_SRC
 
-**** TODO COMMENT ob-ipython
+**** TODO Gnuplot support
+
+- [ ] compiling Gnuplot source blocks crashes Emacs
+
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages 'org-babel-load-languages '((gnuplot . t)))
+#+END_SRC
+
+**** Graphviz/dot support
+
+ #+BEGIN_SRC emacs-lisp
+(add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
+(org-babel-do-load-languages  'org-babel-load-languages '((dot . t)))
+#+END_SRC
+
+**** Python support
+
+***** emacs-jupyter
+
+https://github.com/nnicandro/emacs-jupyter
+
+Provides an API for creating Jupyter kernel frontends in Emacs and also provides REPL and org-mode source block based frontends.
+
+#+BEGIN_SRC emacs-lisp
+(use-package jupyter
+  :ensure t
+  :defer t
+  :init
+  (setq org-babel-default-header-args:jupyter-python
+				'((:async . "yes")
+					(:session . "py")
+					(:kernel . "python3")))
+	(org-babel-do-load-languages 'org-babel-load-languages
+															 '((emacs-lisp . t)
+																 (python . t)
+																 (jupyter . t))))
+#+END_SRC
+
+***** COMMENT ob-ipython
 :LOGBOOK:
 - State "TODO"       from              [2019-10-02 Wed 16:18]
 :END:
+
+https://github.com/gregsexton/ob-ipython
 
 - Sometimes gives rise to =(json-readtable-error)= when using [[id:115490f8-a6d6-4d46-b812-7a7bd30d917c][org-minutes]].
 
@@ -8034,6 +8063,9 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 		(hydra-latex-main/body))
 	 ((string-equal (buffer-mode) "bibtex-mode")
 		(hydra-bibtex/body))
+	 ;; Must appear before entry for org-mode
+	 ((string-equal (car (org-babel-get-src-block-info)) "jupyter-python")
+		(jupyter-org-hydra/body))
 	 ((string-equal (buffer-mode) "org-mode")
 		(hydra-org-main/body))
 	 ((string-equal (buffer-mode) "org-agenda-mode")
@@ -8042,7 +8074,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 		(hydra-pomidor/body))
 	 ((or (string-equal (buffer-mode) "markdown-mode")
 				(string-equal (buffer-mode) "gfm-mode"))
-				(hydra-markdown/body))
+		(hydra-markdown/body))
 	 ((string-equal (buffer-mode) "smerge-mode")
 		(unpackaged/smerge-hydra/body))
 	 ((string-equal (buffer-mode) "emacs-lisp-mode")
