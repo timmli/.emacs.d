@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: jupyter-python source
+# key: <jp
+# --
+#+BEGIN_SRC jupyter-python
+$0
+#+END_SRC
