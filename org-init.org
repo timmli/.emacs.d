@@ -2875,8 +2875,22 @@ Show whether links to files are valid:
 
 Use IDs rather than headline names:
 #+BEGIN_SRC emacs-lisp
-(setq org-id-link-to-org-use-id t)
+(setq org-id-link-to-org-use-id "create-if-interactive")
 #+END_SRC
+
+=create-if-interactive= is chosen, because, with =t,= unwanted ID properties would be inserted when tangling [[org-babel]] source blocks. From the description:
+#+BEGIN_QUOTE
+create-if-interactive
+      If ‘org-store-link’ is called directly (interactively, as a user
+      command), do create an ID to support the link.  But when doing the
+      job for capture, only use the ID if it already exists.  The
+      purpose of this setting is to avoid proliferation of unwanted
+      IDs, just because you happen to be in an Org file when you
+      call ‘org-capture’ that automatically and preemptively creates a
+      link.  If you do want to get an ID link in a capture template to
+      an entry not having an ID, create it first by explicitly creating
+      a link to it, using ‘C-c l’ first.
+#+END_QUOTE
 
 Use ID completion when generating ID links:
 #+BEGIN_SRC emacs-lisp
