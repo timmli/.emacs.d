@@ -3640,6 +3640,11 @@ Following this excellent blog post: https://blog.aaronbieber.com/2017/03/19/orga
 
 *** Tables
 
+Activate =org-table-header-line-mode= by default:
+#+BEGIN_SRC emacs-lisp
+(setq org-table-header-line-p t)
+#+END_SRC
+
 Some functions to select and copy columns (http://emacs.stackexchange.com/a/28298/12336)
 #+BEGIN_SRC emacs-lisp
 (defun org-table-goto-col-beginning ()
