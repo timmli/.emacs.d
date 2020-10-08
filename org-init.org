@@ -3435,7 +3435,10 @@ Change export of italic font:
 (add-to-list 'org-export-filter-italic-functions 'my-beamer-italic)
 #+END_SRC
 
-*** org-edit-latex
+*** COMMENT org-edit-latex
+
+As of org-mode 9.4, this functionality is built in.
+See https://orgmode.org/Changes.html#org685f215.
 
 =org-edit-latex= lets you edit inline math equations in a separate buffer.
 
