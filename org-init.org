@@ -2875,7 +2875,7 @@ Show whether links to files are valid:
 
 Use IDs rather than headline names:
 #+BEGIN_SRC emacs-lisp
-(setq org-id-link-to-org-use-id "create-if-interactive")
+(setq org-id-link-to-org-use-id 'create-if-interactive)
 #+END_SRC
 
 =create-if-interactive= is chosen, because, with =t,= unwanted ID properties would be inserted when tangling [[org-babel]] source blocks. From the description:
@@ -5673,6 +5673,8 @@ Flycheck integration for [[https://github.com/errata-ai/vale][vale]], a natural 
 	:config (flycheck-vale-setup))
 #+END_SRC
 ** Spell checking
+
+https://200ok.ch/posts/2020-08-22_setting_up_spell_checking_with_multiple_dictionaries.html
 
 *** flyspell
 
