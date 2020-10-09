@@ -3301,7 +3301,7 @@ Add some link types (deprecated):
 
 #+BEGIN_SRC emacs-lisp
 ;; (add-to-list 'org-link-abbrev-alist '("attachment" . org-attach-expand-link)) ; included in `org-attach` since v9.3
-(add-to-list 'org-link-abbrev-alist '("att" . org-attach-expand-link)) ; only for downward compatibility
+;; (add-to-list 'org-link-abbrev-alist '("att" . org-attach-expand-link)) ; only for downward compatibility and not supported any longer since v9.4
 #+END_SRC
 
 *** org-babel
