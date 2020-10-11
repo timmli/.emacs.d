@@ -2013,13 +2013,6 @@ General settings:
 	(setq org-hide-emphasis-markers t)
 #+end_src
 
-Modify some faces:
-
-#+BEGIN_SRC emacs-lisp
-(face-spec-set 'org-todo '((t (:overline t))))
-(face-spec-set 'org-done '((t (:overline t))))
-#+END_SRC
-
 Overwrite some faces:
 
 #+begin_src emacs-lisp
@@ -2037,6 +2030,21 @@ Overwrite some faces:
 #+end_src
 
 Further attributes: =:background=, =:height=
+
+**** Todo keywords
+
+Modify some faces:
+
+#+BEGIN_SRC emacs-lisp
+(face-spec-set 'org-todo '((t (:overline t))))
+(face-spec-set 'org-done '((t (:overline t))))
+#+END_SRC
+
+Do not change the face of a headline if it is marked DONE.
+
+#+BEGIN_SRC emacs-lisp
+(setq org-fontify-done-headline nil)
+#+END_SRC
 
 **** Bullets, folding symbols, HTML and LaTeX symbols
 
@@ -2259,7 +2267,7 @@ Show current header in first line of buffer.
 
 **** Outline
 
-Only unfold current heading and its content:
+Function to only unfold current heading and its content:
 
 #+BEGIN_SRC emacs-lisp
 ;; Taken from https://stackoverflow.com/a/28031539/6452961
