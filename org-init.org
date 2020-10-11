@@ -2469,6 +2469,12 @@ Customize agenda view:
 
 Sort agenda TODOs with =org-agenda-sorting-strategy=.
 
+Skip scheduled items and items with deadline when they are DONE:
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-skip-scheduled-if-done t
+			org-agenda-skip-deadline-if-done t)
+#+END_SRC 
+
 Make the block agenda more compact:
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-compact-blocks nil)
@@ -2507,7 +2513,6 @@ Add the Emacs [[*Calendar/Diary][diary]] (which also stores holidays) to =org-ag
 #+END_SRC
 
 Recenter buffer when coming from the agenda: 
-
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-agenda-after-show-hook 'recenter-top-bottom)
 #+END_SRC 
