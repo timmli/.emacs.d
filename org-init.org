@@ -10093,10 +10093,12 @@ Opinionated Emacs key bindings just for this init file.
 						(define-key map (kbd "H-i") '(lambda ()
 																					 (interactive)
 																					 (if (string= (buffer-mode) "org-mode")
-																							 (org-goto)
+																							 (progn
+																								 (org-goto)
+																								 (recenter-top-bottom))
 																						 (helm-imenu))))
 						(define-key helm-map (kbd "H-i") 'helm-select-action) ; show actions (default is <tab>)
-						(define-key map (kbd "C-S-i") 'imenu-list)
+						; (define-key map (kbd "C-S-i") 'imenu-list) ; disabled because it will break org-edit-special
 
 						;; buffers
 						(define-key map (kbd "C-x b") 'bufler)
