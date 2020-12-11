@@ -4,7 +4,7 @@
 #+STARTUP: indent
 #+STARTUP: hideblocks content
 
-* Table of contents                                                     :TOC_2_gh:
+* Table of contents                                                :TOC_2_gh:
 - [[#good-examples][Good examples]]
 - [[#general-appearence][General appearence]]
       - [[#toolbar][Toolbar]]
@@ -92,6 +92,7 @@
       - [[#navigation][Navigation]]
       - [[#transpose-frame][transpose-frame]]
       - [[#dimmer][dimmer]]
+      - [[#burly][Burly]]
 - [[#bookmarks][Bookmarks]]
 - [[#git][Git]]
       - [[#magit][magit]]
@@ -7392,6 +7393,17 @@ I don't use this right now.
 	(dimmer-configure-hydra)
 	(setq dimmer-adjustment-mode ':foreground) ; possible values are `:foreground', `:background', `:both'
 	(dimmer-mode t))
+#+END_SRC
+
+** Burly
+
+https://github.com/alphapapa/burly.el
+
+From the prject decription: This package provides tools to save and restore frame and window configurations in Emacs, including buffers that may not be live anymore. 
+
+#+BEGIN_SRC emacs-lisp
+(use-package burly
+	:ensure t)
 #+END_SRC
 
 * Bookmarks
