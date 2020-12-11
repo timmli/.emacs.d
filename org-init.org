@@ -8265,7 +8265,7 @@ This presupposes a running Jupyter server on localhost."
 	("g" hydra-git-gutter/body :exit t)
 	("c" hydra-highlight-changes/body :exit t)
 	("r" rectangle-mark-mode :exit t)
-	("b" bookmark-set :exit t)
+	("b" hydra-add-bookmark/body :exit t)
 	("e" iedit-mode :exit t)
 	("o" ov-highlight/body :exit t)
   ("p" hydra-position-register/body :exit t)
@@ -8389,6 +8389,17 @@ Global org-mode keys:
   ("t" bibtex-Thesis "Thesis")
   ("u" bibtex-Unpublished "Unpublished")
   ("q" nil "quit"))
+#+END_SRC
+
+** hydra-bookmarks
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-add-bookmark (:hint nil)
+	"Add bookmark"
+	("b" bookmark-set "buffer" :exit t)
+	("f" burly-bookmark-frames "frames" :exit t)
+	("w" burly-bookmark-windows "windows" :exit t)
+	("q" nil :exit t))
 #+END_SRC
 
 ** hydra-cm-mode
