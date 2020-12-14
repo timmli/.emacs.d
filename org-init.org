@@ -1741,6 +1741,7 @@ General structure of an high-level =org-mode= file:
 
 Information flow: 
 - Inbox $\Rightarrow$ Events|Projects  $\Rightarrow$ Topics
+- [[https://karl-voit.at/2020/05/03/current-org-files/][Karl Voit's setup]]
 
 **** Teaching
 
