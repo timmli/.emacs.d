@@ -3958,7 +3958,6 @@ From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywo
 - TODO: something that needs to be done, maybe now, maybe later. 
 - NEXT: something that can be done /now/. There's everything you need to start doing it.
 - INPROGRESS: something that is being done right now.
-- APPT: appointment (meeting, phone call etc.) with a fixed date.
 - WAITING: something that cannot be done now, because some prerequisites are not yet met.
 - HOLD: something that cannot be done now, and the prerequisites are unlikely to be fullfilled in the future.
 - SOMEDAY: you are not yet sure whether this needs to be done.
@@ -3966,7 +3965,7 @@ From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywo
 
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-keywords
-      (quote ((sequence "TODO(t!)" "NEXT(n!)" "INPROGRESS(p!)" "APPT(a)" "|" "DONE(d)")
+      (quote ((sequence "TODO(t!)" "NEXT(n!)" "INPROGRESS(p!)" "|" "DONE(d)")
               (sequence "WAITING(w@/!)" "HOLD(h@/!)" "SOMEDAY(s)" "|" "DELEGATED(l@/!)" "CANCELLED(c@/!)"))))
 
 (setq org-todo-keyword-faces
@@ -3978,7 +3977,6 @@ From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywo
               ("HOLD" :foreground "magenta" :weight bold)
               ("CANCELLED" :foreground "forest green" :weight bold)
               ("DELEGATED" :foreground "forest green" :weight bold)
-              ("APPT" :foreground "forest green" :weight bold)
 							("SOMEDAY" :foreground "goldenrod" :weight bold)
 							)))
 #+END_SRC
