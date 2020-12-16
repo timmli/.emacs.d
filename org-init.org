@@ -1731,7 +1731,7 @@ http://takingnotenow.blogspot.com/2008/07/note-keeping-in-1786-blumenbachs-syste
 | [[Projects][project]]      | SCHEDULED, DEADLINE, outcome, :project:, DIR | todos, notes, events that lead to some common outcome | track progress                          | $outcome: $topic                |
 | todo         | SCHEDULED, DEADLINE                          | text, todo, event                                     | track progress, take action             |                                 |
 | event        | timestamp, location, participants, :event:   | [[Minutes][minutes]]/notes                                         | store observations, ideas, action items | $topic/$participants $timestamp |
-| note         | CREATED, LAST_CHANGED                        | text                                                  | store ideas, concepts, references, ...  |                                 |
+| note         | CREATED, LAST_CHANGED                         | text                                                  | store ideas, concepts, references, ...  |                                 |
 
 General structure of an high-level =org-mode= file:
 - Inbox
@@ -3743,6 +3743,19 @@ A function for killing the content of a cell:
 				(insert "$1=@#-1"))
 			(org-table-fedit-finish)
 			(org-table-recalculate 'iterate))))
+#+END_SRC
+
+**** valign
+
+https://github.com/casouri/valign
+
+Pixel-perfect visual alignment for Org and Markdown tables.
+
+#+BEGIN_SRC emacs-lisp
+(use-package valign
+	:ensure t
+	:config
+	(add-hook 'org-mode-hook #'valign-mode))
 #+END_SRC
 
 *** Tags
