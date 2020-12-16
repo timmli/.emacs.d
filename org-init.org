@@ -3974,12 +3974,12 @@ From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywo
               ("NEXT" :foreground "blue" :weight bold)
               ("INPROGRESS" :foreground "gold" :weight bold)
               ("DONE" :foreground "forest green" :weight bold)
-              ("WAITING" :foreground "orange" :weight bold)
+              ("WAITING" :foreground "cyan" :weight bold)
               ("HOLD" :foreground "magenta" :weight bold)
               ("CANCELLED" :foreground "forest green" :weight bold)
               ("DELEGATED" :foreground "forest green" :weight bold)
               ("APPT" :foreground "forest green" :weight bold)
-							("SOMEDAY" :foreground "forest green" :weight bold)
+							("SOMEDAY" :foreground "goldenrod" :weight bold)
 							)))
 #+END_SRC
 
