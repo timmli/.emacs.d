@@ -5375,7 +5375,14 @@ Open eml-files with =org-mode= turned on:
 (add-to-list 'auto-mode-alist '("\\.eml\\'" . org-mode))
 #+END_SRC
 
-*** COMMENT mu4e
+*** INPROGRESS mu4e 
+:LOGBOOK:
+- State "INPROGRESS" from              [2020-12-18 Fri 00:21]
+:END:
+
+
+
+*** COMMENT mu4e under Windows
 
 - incompatible with windows?
   - Drafts are saved with incompatible file names (including colons).
@@ -6826,36 +6833,36 @@ This  comes from vanilla Emacs:
 
 Toggle letter case:
  #+begin_src emacs-lisp
-(global-set-key (kbd "C-9") 'xah-toggle-letter-case) 
+(global-set-key (kbd "C-7") 'xah-toggle-letter-case)
+
 (defun xah-toggle-letter-case ()
   "Toggle the letter case of current word or text selection.
 Always cycle in this order: Init Caps, ALL CAPS, all lower.
 
 URL `http://ergoemacs.org/emacs/modernization_upcase-word.html'
-Version 2016-01-08"
+Version 2020-06-26"
   (interactive)
   (let (
         (deactivate-mark nil)
-        -p1 -p2)
+        $p1 $p2)
     (if (use-region-p)
-        (setq -p1 (region-beginning)
-              -p2 (region-end))
+        (setq $p1 (region-beginning) $p2 (region-end))
       (save-excursion
-        (skip-chars-backward "[:alnum:]")
-        (setq -p1 (point))
-        (skip-chars-forward "[:alnum:]")
-        (setq -p2 (point))))
+        (skip-chars-backward "[:alpha:]")
+        (setq $p1 (point))
+        (skip-chars-forward "[:alpha:]")
+        (setq $p2 (point))))
     (when (not (eq last-command this-command))
       (put this-command 'state 0))
     (cond
      ((equal 0 (get this-command 'state))
-      (upcase-initials-region -p1 -p2)
+      (upcase-initials-region $p1 $p2)
       (put this-command 'state 1))
-     ((equal 1  (get this-command 'state))
-      (upcase-region -p1 -p2)
+     ((equal 1 (get this-command 'state))
+      (upcase-region $p1 $p2)
       (put this-command 'state 2))
      ((equal 2 (get this-command 'state))
-      (downcase-region -p1 -p2)
+      (downcase-region $p1 $p2)
       (put this-command 'state 0)))))
 #+end_src
 
@@ -7083,6 +7090,37 @@ This command depends on the shell command `ps2pdf'."
 			(shell-command (concat "ps2pdf " filename ".ps"))
 			(delete-file (concat filename ".ps"))
 			(message (concat "PDF saved to " filename ".pdf")))))
+#+END_SRC
+
+** Integers
+
+*** increment-number-at-point
+
+=andy/increment-number-at-point= is taken from https://gist.github.com/argherna/6392696.
+
+#+BEGIN_SRC emacs-lisp
+(defun andy/increment-number-at-point ()
+  (interactive)
+  (skip-chars-backward "0123456789")
+  (or (looking-at "[0123456789]+")
+    (error "No number at point"))
+    (replace-match (number-to-string (1+ (string-to-number (match-string 0))))))
+
+(defun tl/increment-number-at-point ()
+	(interactive)
+	(save-excursion
+		(andy/increment-number-at-point)))
+
+(defun tl/decrement-number-at-point ()
+	(interactive)
+	(save-excursion
+		(skip-chars-backward "0123456789")
+		(or (looking-at "[0123456789]+")
+				(error "No number at point"))
+		(replace-match (number-to-string (1- (string-to-number (match-string 0)))))))
+
+(global-set-key (kbd "C-8") 'tl/decrement-number-at-point)
+(global-set-key (kbd "C-9") 'tl/increment-number-at-point)  
 #+END_SRC
 
 * Files
