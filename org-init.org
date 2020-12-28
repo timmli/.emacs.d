@@ -5431,6 +5431,9 @@ See https://github.com/munen/emacs.d/#mu4e for an elaborate example configuratio
 )
 ;; Leave sent message
 (setq message-kill-buffer-on-exit t)
+
+;; Show images inline
+(setq mu4e-view-show-images t)
 #+END_SRC
 
 **** Compose messages
