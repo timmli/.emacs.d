@@ -5446,6 +5446,11 @@ See https://github.com/munen/emacs.d/#mu4e for an elaborate example configuratio
 ;; Each paragraph is a single long line; at sending, emacs will add the special line continuation characters.
 (setq mu4e-compose-format-flowed t)
 (setq fill-flowed-encode-column 998)
+
+;; Only complete with mail addresses that have been used recently
+(setq mu4e-compose-complete-only-after (format-time-string
+                                        "%Y-%m-%d"
+                                        (time-subtract (current-time) (days-to-time 300))))
 #+END_SRC
 
 **** COMMENT Multiple accounts 
