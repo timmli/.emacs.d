@@ -5380,7 +5380,177 @@ Open eml-files with =org-mode= turned on:
 - State "INPROGRESS" from              [2020-12-18 Fri 00:21]
 :END:
 
+https://www.djcbsoftware.nl/code/mu/mu4e/index.html
 
+See https://github.com/munen/emacs.d/#mu4e for an elaborate example configuration.
+
+#+BEGIN_SRC emacs-lisp
+(require 'mu4e)
+(require 'org-mu4e)
+(setq send-mail-function 'smtpmail-send-it)
+
+;; Default account on startup
+(setq mu4e-maildir  "~/Maildir"
+      mu4e-sent-folder "/Sent"
+      mu4e-drafts-folder "/Drafts"
+      mu4e-trash-folder "/Trash")
+
+(setq smtpmail-debug-info t
+      mu4e-get-mail-command "mbsync -c ~/SOME_PATH/.mbsyncrc work"
+      ;; mu4e-attachment-dir "~/SOME_PATH/attachements"
+)
+
+;; show full addresses in view message (instead of just names)
+;; toggle per name with M-RET
+(setq mu4e-view-show-addresses t)
+
+;; Update mails every 5 minutes and in the background
+(setq mu4e-update-interval (* 5 60))
+(setq mu4e-index-update-in-background t)
+
+;; Always sign outgoing emails
+;; (setq mu4e-compose-crypto-reply-plain-policy 'sign)
+
+;; Automatic line breaks when reading mail
+(add-hook 'mu4e-view-mode-hook 'visual-line-mode)
+
+;; Store link to message if in header view, not to header query.
+(setq org-mu4e-link-query-in-headers-mode nil)
+
+;; Customize header fields to show in mu4e-view. This only adds :bcc.
+(setq mu4e-view-fields '(:from :to :cc :bcc :subject :flags :date :maildir :mailing-list :tags :attachments :signature :decryption))
+
+;; Close mu4e without asking.
+(setq mu4e-confirm-quit nil)
+
+;; Set a sane ISO 8601 date format.
+(setq mu4e-headers-date-format "%+4Y-%m-%d")
+
+;; This allows for using 'helm' to select mailboxes
+(setq mu4e-completing-read-function 'completing-read
+)
+;; Leave sent message
+(setq message-kill-buffer-on-exit t)
+#+END_SRC
+
+**** Compose messages
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'mu4e-compose-mode-hook
+					(defun my-do-compose-stuff ()
+						"My settings for message composition."
+						(org-mu4e-compose-org-mode)
+						(flyspell-mode)
+						))
+
+;; Each paragraph is a single long line; at sending, emacs will add the special line continuation characters.
+(setq mu4e-compose-format-flowed t)
+(setq fill-flowed-encode-column 998)
+#+END_SRC
+
+**** COMMENT Multiple accounts 
+
+From https://www.djcbsoftware.nl/code/mu/mu4e/Multiple-accounts.html#Multiple-accounts.
+
+#+BEGIN_SRC emacs-lisp
+(defvar my-mu4e-account-alist
+  '(("Account1"													; must be identical to the account’s directory name
+     (mu4e-sent-folder "/Account1/Saved Items")
+     (mu4e-drafts-folder "/Account1/Drafts")
+     (user-mail-address "my.address@account1.example.com")
+     (smtpmail-default-smtp-server "smtp.account1.example.com")
+     (smtpmail-local-domain "account1.example.com")
+     (smtpmail-smtp-user "username1")
+     (smtpmail-smtp-server "smtp.account1.example.com")
+     (smtpmail-stream-type 'starttls)
+     (smtpmail-smtp-service 25))
+    ("Account2"
+     (mu4e-sent-folder "/Account2/Saved Items")
+     (mu4e-drafts-folder "/Account2/Drafts")
+     (user-mail-address "my.address@account2.example.com")
+     (smtpmail-default-smtp-server "smtp.account2.example.com")
+     (smtpmail-local-domain "account2.example.com")
+     (smtpmail-smtp-user "username2")
+     (smtpmail-smtp-server "smtp.account2.example.com")
+     (smtpmail-stream-type 'starttls)
+     (smtpmail-smtp-service 587))))
+
+(defun my-mu4e-set-account ()
+  "Set the account for composing a message."
+  (let* ((account
+          (if mu4e-compose-parent-message
+              (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
+                (string-match "/\\(.*?\\)/" maildir)
+                (match-string 1 maildir))
+            (completing-read (format "Compose with account: (%s) "
+                                     (mapconcat #'(lambda (var) (car var))
+                                                my-mu4e-account-alist "/"))
+                             (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
+                             nil t nil nil (caar my-mu4e-account-alist))))
+         (account-vars (cdr (assoc account my-mu4e-account-alist))))
+    (if account-vars
+        (mapc #'(lambda (var)
+                  (set (car var) (cadr var)))
+              account-vars)
+      (error "No email account found"))))
+
+(add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
+#+END_SRC
+
+**** mu4e-alert
+
+https://github.com/iqbalansari/mu4e-alert
+
+Example image:
+https://raw.githubusercontent.com/iqbalansari/mu4e-alert/master/screenshots/mu4e-alert-in-action.png
+
+#+BEGIN_SRC emacs-lisp
+(use-package mu4e-alert
+	:ensure t
+	:after mu4e
+	:config
+
+	;; Choose the style you prefer for desktop notifications
+	;; If you are on Linux you can use
+	;; 1. notifications - Emacs lisp implementation of the Desktop Notifications API
+	;; 2. libnotify     - Notifications using the `notify-send' program, requires `notify-send' to be in PATH
+	;;
+	;; On Mac OSX you can set style to
+	;; 1. notifier      - Notifications using the `terminal-notifier' program, requires `terminal-notifier' to be in PATH
+	;; 1. growl         - Notifications using the `growl' program, requires `growlnotify' to be in PATH
+	(mu4e-alert-set-default-style 'libnotify)
+	(add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+
+	;; Mode Line display of unread emails
+	(add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
+	)
+#+END_SRC
+
+**** mu4e-maildirs-extension
+
+https://github.com/agpchil/mu4e-maildirs-extension
+
+Show the structure of the maildir in =mu4e-main-view=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package mu4e-maildirs-extension
+  :ensure t
+	:after mu4e)
+#+END_SRC
+
+**** COMMENT mu4e-conversation
+
+https://gitlab.com/ambrevar/mu4e-conversation
+
+Show an email thread in a single buffer.
+
+#+BEGIN_SRC emacs-lisp
+(use-package mu4e-conversation
+	:ensure t
+	:after mu4e
+	:config (global-mu4e-conversation-mode)
+)
+#+END_SRC
 
 *** COMMENT mu4e under Windows
 
@@ -7657,6 +7827,8 @@ Bash support in =org-mode=:
 
 * Encryption
 
+** GnuPG
+
 https://www.masteringemacs.org/article/keeping-secrets-in-emacs-gnupg-auth-sources
 
 Emacs uses =epa-file= by default. Everything should be set up and running already. 
@@ -7883,13 +8055,13 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 ** tramp
 
 #+BEGIN_SRC emacs-lisp
-  (require 'tramp)
-  (if (eq system-type 'windows-nt) 
-      (progn
-				(setq ange-ftp-ftp-program-name "ftp.exe")
-				(setq tramp-default-method "plink"))
-    (setq tramp-default-method "ssh"))
-  ;; (setq tramp-default-user "")
+(require 'tramp)
+(if (eq system-type 'windows-nt) 
+    (progn
+			(setq ange-ftp-ftp-program-name "ftp.exe")
+			(setq tramp-default-method "plink"))
+  (setq tramp-default-method "ssh"))
+;; (setq tramp-default-user "")
 #+END_SRC
 
 ** emacs-ssh-deploy

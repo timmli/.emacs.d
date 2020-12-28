@@ -130,6 +130,12 @@ This variable should be changed in private-emacs-settings-before.el.")
 	"Path to backup directory.
 This variable should be changed in private-emacs-settings-before.el.")
 
+(defvar mail-dir
+	(expand-file-name "Maildir/" home-directory)
+	"Path to mail directory.
+This variable should be changed in private-emacs-settings-before.el.")
+
+
 ;;==========================================================
 ;;      PRIVATE SETTINGS: USER INFO (outside .emacs.d)
 ;;==========================================================
