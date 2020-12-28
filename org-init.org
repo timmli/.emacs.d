@@ -7842,7 +7842,7 @@ to the top.
 Look for authinfo file in =authinfo-directory=:
 #+BEGIN_SRC emacs-lisp
 (setq auth-sources
-    (list (expand-file-name (concat authinfo-directory ".authinfo.gpg"))))
+    (list (expand-file-name ".authinfo.gpg" authinfo-directory)))
 #+END_SRC
 
 Function to look up password:
