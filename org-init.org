@@ -8419,7 +8419,7 @@ Deprecated:
      Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^  │Open│  Mark^^  Org^^
    ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^──╯    └──────^^────────╯
  
-       [_a_] adress book        [_d_] dired/file browser     [_t_] pomodoro timer
+       [_a_] address book       [_d_] dired/file browser     [_t_] pomodoro timer      [m] mail
        [_b_] new buffer         [_e_] emacs shell            [_l_] dictionary
        [_i_] buffer overview    [_s_] system shell           [_B_] bookmarks
        [_c_] calendar           [_S_] external shell        [_gl_] magit buffer log 
@@ -8438,6 +8438,7 @@ Deprecated:
 	("i" ibuffer :exit t)
 	("j" tl/open-jupyter-notebook :exit t)
 	("l" dictcc :exit t)
+	("m" mu4e :exit t)
 	("gs" magit-status :exit t)
 	("gl" magit-log-buffer-file :exit t)
 	("e" tl/eshell :exit t)
