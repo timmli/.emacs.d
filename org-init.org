@@ -5498,6 +5498,29 @@ See https://github.com/munen/emacs.d/#mu4e for an elaborate example configuratio
 ;; (setq  message-citation-line-format "On %Y-%m-%d at %R %Z, %f wrote...")
 #+END_SRC
 
+Attachments can be included directly from [[*dired][=dired=]] with the help of =gnus=. 
+
+Taken from https://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired.
+
+#+BEGIN_SRC emacs-lisp
+(require 'gnus-dired)
+;; make the `gnus-dired-mail-buffers' function also work on
+;; message-mode derived modes, such as mu4e-compose-mode
+(defun gnus-dired-mail-buffers ()
+  "Return a list of active message buffers."
+  (let (buffers)
+    (save-current-buffer
+      (dolist (buffer (buffer-list t))
+	(set-buffer buffer)
+	(when (and (derived-mode-p 'message-mode)
+		(null message-sent-message-via))
+	  (push (buffer-name buffer) buffers))))
+    (nreverse buffers)))
+
+(setq gnus-dired-mail-mode 'mu4e-user-agent)
+(add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
+#+END_SRC
+
 **** COMMENT Multiple accounts 
 
 From https://www.djcbsoftware.nl/code/mu/mu4e/Multiple-accounts.html#Multiple-accounts.
@@ -5585,7 +5608,9 @@ Show the structure of the maildir in =mu4e-main-view=.
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e-maildirs-extension
   :ensure t
-	:after mu4e)
+	:after mu4e
+	:init
+	(mu4e-maildirs-extension))
 #+END_SRC
 
 **** COMMENT mu4e-conversation
@@ -8745,10 +8770,9 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
             _<down>_     ^^             _W_: copy path      _c_/_Z_: compress      _of_: open in other frame
   ^^                     ^^             ^^                  _=_: diff
    _._: home  _j_: jump  _f_: find        _$_: wdired         _e_: diff on marked  ^^
-   ^^         ^^         ^^             ^^                  ^^                     ^^           _q_: quit hydra 
+   ^^         ^^         ^^             ^^                    _a_: attach to mail  ^^        _q_: quit hydra 
 -^----------^------------------------^----^---------------^-------^-------------^----^-----------
 "
-
 	("<left>" (lambda () (interactive) (find-alternate-file "..")))
 	("<up>" diredp-previous-line)
 	("<down>" diredp-next-line)
@@ -8757,6 +8781,7 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
 	("+" hydra-dired-new/body :color blue)
 	("*" hydra-dired-mark/body :color blue)
 	("P" hydra-dired-properties/body :color blue)
+	("a" gnus-dired-attach :color blue)
 	("O" dired-do-chown)
 	("M" dired-do-chmod)
 	("G" dired-do-chgrp)
