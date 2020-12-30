@@ -5494,6 +5494,8 @@ See https://github.com/munen/emacs.d/#mu4e for an elaborate example configuratio
     (newline)
     (newline)))
 (setq message-citation-line-function 'tl/message-insert-citation-line)
+;; Alternatively, see https://www.djcbsoftware.nl/code/mu/mu4e/Writing-messages.html
+;; (setq  message-citation-line-format "On %Y-%m-%d at %R %Z, %f wrote...")
 #+END_SRC
 
 **** COMMENT Multiple accounts 
