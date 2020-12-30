@@ -5434,6 +5434,29 @@ See https://github.com/munen/emacs.d/#mu4e for an elaborate example configuratio
 
 ;; Show images inline
 (setq mu4e-view-show-images t)
+
+;; Allow fancy (Unicode) characters for marks/threads
+(setq mu4e-use-fancy-chars t)
+
+;; to view selected message in the browser, no signin, just html mail
+(add-to-list 'mu4e-view-actions
+  '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+
+;; How to show messages / headers.
+;; A symbol which is either:
+;;  * ‘horizontal’:    split horizontally (headers on top)
+;;  * ‘vertical’:      split vertically (headers on the left).
+;;  * ‘single-window’: view and headers in one window (mu4e will try not to
+;; 		    touch your window layout), main view in minibuffer
+;;  * anything else:   don’t split (show either headers or messages,
+;; 		    not both)
+(setq mu4e-split-view 'horizontal)
+;; (mu4e-headers-split-view-grow 50)
+
+(add-hook 'mu4e-headers-mode-hook
+					#'(lambda ()
+							(setq-local truncate-lines t)
+							(mu4e-headers-split-view-grow 50)))
 #+END_SRC
 
 **** Compose messages
@@ -5454,6 +5477,23 @@ See https://github.com/munen/emacs.d/#mu4e for an elaborate example configuratio
 (setq mu4e-compose-complete-only-after (format-time-string
                                         "%Y-%m-%d"
                                         (time-subtract (current-time) (days-to-time 300))))
+
+;; Compose email in separate frame
+(setq mu4e-compose-in-new-frame nil)
+
+;; Automatically include a message-signature in new messages (if it is set).
+(setq mu4e-compose-signature-auto-include t)
+
+;; Format of the first line of citations
+(defun tl/message-insert-citation-line ()
+  "Based on `message-insert-citation-line`."
+  (when message-reply-headers
+    (insert "On " 
+						(format-time-string "%a, %Y-%m-%d, at %H:%M:%S" (date-to-time (mail-header-date message-reply-headers))) " ")
+    (insert (mail-header-from message-reply-headers) " wrote:")
+    (newline)
+    (newline)))
+(setq message-citation-line-function 'tl/message-insert-citation-line)
 #+END_SRC
 
 **** COMMENT Multiple accounts 
