@@ -5457,6 +5457,11 @@ See https://github.com/munen/emacs.d/#mu4e for an elaborate example configuratio
 					#'(lambda ()
 							(setq-local truncate-lines t)
 							(mu4e-headers-split-view-grow 50)))
+
+;; Keybindings
+(define-key mu4e-headers-mode-map (kbd "M") #'mu4e)
+(define-key mu4e-view-mode-map (kbd "M") #'mu4e)
+(define-key mu4e-compose-mode-map (kbd "M") #'mu4e)
 #+END_SRC
 
 **** Compose messages
@@ -5925,6 +5930,8 @@ Execute when all backends added to =company-backends=.
   #+end_src
 
 *** academic-phrases
+
+https://github.com/nashamri/academic-phrases
 
 #+BEGIN_SRC emacs-lisp
 (use-package academic-phrases
