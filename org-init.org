@@ -1338,7 +1338,6 @@ Activated in =dired= with <S-s>.
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired+
-  :ensure t
   :config
   (require 'dired+)
   (setq diredp-hide-details-initially-flag nil)
@@ -1443,6 +1442,12 @@ Also used for highlighting.")
 #+END_SRC
 
 **** dired-ranger
+
+https://github.com/Fuco1/dired-hacks#dired-ranger
+
+Adds conventional copy & paste behaviour to =dired=.
+
+See blog post at http://pragmaticemacs.com/emacs/copy-and-paste-files-with-dired-ranger/.
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired-ranger
@@ -1563,6 +1568,8 @@ Copied from https://fuco1.github.io/2017-05-01-Support-for-imenu-in-dired.html
 - [ ] I would like to be able to browse the dired history. =helm-dired-history= could be useful for this, but I don't know how to use it to this end.
 
 **** COMMENT helm-dired-history
+
+https://github.com/jixiuf/helm-dired-history
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-dired-history
