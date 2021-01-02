@@ -2972,6 +2972,11 @@ Execute this command while the point is on or after the hyper-linked org link."
             (replace-regexp "\\[\\[.*?\\(\\]\\[\\(.*?\\)\\)*\\]\\]" "\\2" nil start end)))))))
 #+END_SRC
 
+Open file types with specific programs:
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-file-apps '("\\.xopp\\'" . "xournalpp %s"))
+#+END_SRC
+
 *** Listings
 
 Use the =listings= package:
@@ -3330,6 +3335,24 @@ Add some link types (deprecated):
 #+BEGIN_SRC emacs-lisp
 ;; (add-to-list 'org-link-abbrev-alist '("attachment" . org-attach-expand-link)) ; included in `org-attach` since v9.3
 ;; (add-to-list 'org-link-abbrev-alist '("att" . org-attach-expand-link)) ; only for downward compatibility and not supported any longer since v9.4
+#+END_SRC
+
+Handling attachments of =xournalpp= files:
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-add-or-open-xournal-attachment ()
+	"Start `xournalpp' in attachment directory and open notes file, if available.
+
+If no attachment directory can be found, the user is asked to create one."
+	(interactive)
+	(if (derived-mode-p 'org-mode)
+			(progn (when (and (not (org-attach-dir))
+												(y-or-n-p "No attachment directory found.  Create one? "))
+							 (org-attach-dir t))
+						 (if (org-attach-dir)
+								 (start-process "xournalpp" nil
+																"xournalpp" (expand-file-name "hand-notes.xapp" (org-attach-dir)))
+							 (start-process "xournalpp" nil "xournalpp")))
+		(message "Not in org-mode")))
 #+END_SRC
 
 *** org-babel
@@ -8909,6 +8932,7 @@ Don't ask for the path when searching for files:
    _+_/_-_ priority up/down         _e_ editmarks...
      _1_ move to top
      _N_ number headings
+     _x_ add/open hand notes
 "
 	("a" org-attach)
 	("A" hydra-org-archive/body)
@@ -8932,6 +8956,7 @@ Don't ask for the path when searching for files:
 	("P" org-set-property-and-value)
 	("r" org-ref)
 	("s" org-sort)
+	("x" tl/org-add-or-open-xournal-attachment)
 	("/" org-sparse-tree)
 	("." tl/org-timestamp-dwim)
 	("<tab>" org-show-current-heading-tidily)
