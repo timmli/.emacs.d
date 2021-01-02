@@ -1336,6 +1336,10 @@ Activated in =dired= with <S-s>.
 
 *** dired+
 
+https://www.emacswiki.org/emacs/DiredPlus
+
+Downloaded from here: https://github.com/emacsmirror/emacswiki.org/blob/master/dired%2b.el
+
 #+BEGIN_SRC emacs-lisp
 (use-package dired+
   :config
@@ -7762,6 +7766,10 @@ I don't use this right now.
 
 ** dimmer
 
+https://github.com/gonewest818/dimmer.el
+
+Visually highlight the selected buffer.
+
 #+BEGIN_SRC emacs-lisp
 (use-package dimmer
 	:ensure t
@@ -7770,6 +7778,7 @@ I don't use this right now.
 	(dimmer-configure-helm)
 	(dimmer-configure-hydra)
 	(setq dimmer-adjustment-mode ':foreground) ; possible values are `:foreground', `:background', `:both'
+	(setq dimmer-fraction 0.3) ; between 0 and 1; larger means more dimmed
 	(dimmer-mode t))
 #+END_SRC
 
