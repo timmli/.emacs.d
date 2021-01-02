@@ -294,6 +294,9 @@ This variable should be changed in private-emacs-settings.el.")
 	:ensure t)
 (require 'bind-key)
 
+;; quelpa: a tool to compile and install Emacs Lisp packages
+(use-package quelpa
+	:ensure t)
 
 ;;==========================================================
 ;;      LOAD REMAINING SETTINGS
