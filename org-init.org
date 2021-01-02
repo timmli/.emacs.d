@@ -5392,6 +5392,45 @@ https://write.as/dani/notes-on-org-noter
 	)
 #+END_SRC
 
+** DjVu
+
+http://djvu.sourceforge.net/
+
+Starting from GNU Emacs 26, =doc-view= supports DjVu documents. Both =doc-view= and =djvu-view= depend on the package =djvulibre=, which includes =djvused=.
+
+Open DjVu files with =doc-view= or =djvu=.
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.djvu\\'" . doc-view-mode))
+;; (add-to-list 'auto-mode-alist '("\\.djvu\\'" . djvu-dummy-mode))
+#+END_SRC
+
+Issues with =doc-view=:
+- [ ] Copying text from within DocView is not possible.
+- [ ] Searching within DocView ist not possible
+
+*** djvu
+
+https://elpa.gnu.org/packages/djvu.html
+
+Package for reading an editing DjVu files.
+ 
+#+BEGIN_SRC emacs-lisp
+(use-package djvu
+	:ensure t)
+#+END_SRC
+
+*** COMMENT djvu2
+
+https://github.com/dalanicolai/djvu2.el
+
+Read and annotate djvu with Emacs. Builds on [[djvu]].
+
+#+BEGIN_SRC emacs-lisp
+(quelpa '(djvu :fetcher git :url "git@github.com:dalanicolai/djvu2.el.git"))
+(require 'djvu)
+#+END_SRC
+
 ** Email
 
 Offlineimap or mbsync? http://pragmaticemacs.com/emacs/migrating-from-offlineimap-to-mbsync-for-mu4e/
