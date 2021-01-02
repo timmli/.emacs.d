@@ -3357,9 +3357,9 @@ If no attachment directory can be found, the user is asked to create one."
 												(y-or-n-p "No attachment directory found.  Create one? "))
 							 (org-attach-dir t))
 						 (if (org-attach-dir)
-								 (start-process "xournalpp" nil
-																"xournalpp" (expand-file-name "hand-notes.xapp" (org-attach-dir)))
-							 (start-process "xournalpp" nil "xournalpp")))
+								 (start-process "" nil
+																"xournalpp" (expand-file-name "hand-notes.xopp" (org-attach-dir)))
+							 (start-process "" nil "xournalpp")))
 		(message "Not in org-mode")))
 #+END_SRC
 
