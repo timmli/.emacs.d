@@ -2600,15 +2600,12 @@ Preserves the first heading of the org-mode file (found in http://orgmode.org/wo
 				;; ("a" "Appointment" entry (file (concat org-directory "/gcal.org"))
 				;;  "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
 				("t" "Todo" entry (file (lambda () (expand-file-name "captures.org" org-directory)))
-				 "* TODO %?\t%^G\n CREATED: %U\n About region:%i\n %a" :prepend t)
+				 "* TODO %?\t%^G\n :LOGBOOK:\n - CREATED: %U\n :END:\n\n About region:%i\n %a" :prepend t)
 				("n" "Note" entry (file+datetree (lambda ()(expand-file-name "notes.org" org-directory)))
 				 "* %?\t%^G\n CREATED: %U\n About region:%i\n %a")
 				("c" "Code" entry (file (lambda () (expand-file-name "captures.org" org-directory )))
 				 "* %?\t%^G\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a" :prepend t)
 				))
-
-	;; (global-set-key (kbd "<f9> <f9>") 'org-capture)
-	;; (global-set-key (kbd "<f9> <f9> t") (lambda () (interactive) (org-capture nil "t")))
 #+END_SRC
 
 *** Clocking and logging
@@ -3896,6 +3893,9 @@ Key bindings:
 
 *** Timestamps/Dates
 
+**** General
+
+Insert timestamp or change type depending on region or point: 
 #+BEGIN_SRC emacs-lisp
 (defun tl/org-timestamp-dwim ()
 	(interactive)
@@ -3904,13 +3904,11 @@ Key bindings:
 		(tl/org-read-date-and-insert-timestamp))
 	 ((eq (org-at-timestamp-p 'inactive) 'bracket)
 		(org-toggle-timestamp-type))
-	 ((not (eq (org-at-timestamp-p 'inactive) 'bracket))
+	 (t
 		(org-time-stamp nil))))
 
 (define-key org-mode-map (kbd "C-c .") 'tl/org-timestamp-dwim)
-#+END_SRC
 
-#+BEGIN_SRC emacs-lisp
 (defun tl/org-read-date-and-insert-timestamp ()
 	"Replace date in region with active timestamp"
 	(interactive)
@@ -3969,6 +3967,28 @@ Use Alt-Shift+cursor key chords to quickly change timestamps:
 	(define-key org-agenda-mode-map (kbd "M-S-<left>") 'org-agenda-date-earlier)
 	(define-key org-agenda-mode-map (kbd "M-S-<right>") 'org-agenda-date-later)
 	)
+#+END_SRC
+
+**** CREATED timstamp in properties drawer
+
+See https://emacs.stackexchange.com/a/21302/12336
+
+#+BEGIN_SRC emacs-lisp
+(defvar org-created-property-name "CREATED"
+  "The name of the org-mode property that stores the creation date of the entry")
+
+(defun org-set-created-property (&optional active NAME)
+  "Set a property on the entry giving the creation time.
+
+By default the property is called CREATED. If given the `NAME'
+argument will be used instead. If the property already exists, it
+will not be modified."
+  (interactive)
+  (let* ((created (or NAME org-created-property-name))
+         (fmt (if active "<%s>" "[%s]"))
+         (now  (format fmt (format-time-string "%Y-%m-%d %a %H:%M"))))
+    (unless (org-entry-get (point) created nil)
+      (org-set-property created now))))
 #+END_SRC
 
 *** TOC
