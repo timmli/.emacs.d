@@ -3595,6 +3595,8 @@ See https://github.com/jkitchin/jmax/blob/master/org/org-show.org for more infor
 
 *** PDF interaction
 
+**** interleave
+
 https://github.com/rudolfochrist/interleave
 
 *** Plantuml
@@ -3625,7 +3627,7 @@ Following this excellent blog post: https://blog.aaronbieber.com/2017/03/19/orga
 *** TODO COMMENT R support
 
 - [ ] as of Org 9.1, this throws =(invalid-function org-babel-header-args-safe-fn)= due to =org-babel-R-command=
-
+  
 #+BEGIN_SRC emacs-lisp
 (org-babel-do-load-languages 'org-babel-load-languages '((R . t)))
 (setq org-babel-R-command "R --slave --no-save")
@@ -3768,6 +3770,7 @@ A function for killing the content of a cell:
 	(org-table-blank-field))
 #+END_SRC
 
+A function to automatically number rows:
 #+BEGIN_SRC emacs-lisp
 (defun tl/org-table-number-rows ()
 	"Number rows in an org-mode table by replacing the cells of the first column with consecutive numbers."
@@ -3994,6 +3997,13 @@ will not be modified."
 *** TOC
 
 **** toc-org
+
+https://github.com/snosov1/toc-org
+
+Insert or update a Github-compatible table of contents under a heading with tag =:TOC:=. 
+
+- =:TOC_2:= sets the max depth of the headlines in the table of contents to 2 (the default)
+- =:TOC_2_gh:= sets the max depth as in above and also uses GitHub-style hrefs in the table of contents (this style is default). The other supported href style is ‘org’, which is the default org style.
 
 #+BEGIN_SRC emacs-lisp
 (use-package toc-org
