@@ -79,6 +79,10 @@ This variable should be changed in private-emacs-settings-before.el.")
 	"Path to the directory that deft observes.
 This variable should be changed in private-emacs-settings-before.el.")
 
+(defvar my-org-roam-directory org-directory ; default value; may be overwritten by private directory settings
+	"Path to the directory that org-roam uses.
+This variable should be changed in private-emacs-settings-before.el.")
+
 (defvar authinfo-directory home-directory ; default value; may be overwritten by private directory settings
 	"Path to authinfo.
 This variable should be changed in private-emacs-settings-before.el.")

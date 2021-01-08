@@ -3584,6 +3584,31 @@ TODO: Change format entry string with =org-ref-formatted-citation-formats=:
 	:ensure t)
 #+END_SRC
 
+*** org-roam
+
+https://github.com/org-roam/org-roam
+
+Knowledge management system based similar to Roam and Zettelkästen.
+
+Example how it works: https://blog.jethro.dev/posts/how_to_take_smart_notes_org/
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-roam
+  :ensure t
+  :hook
+  (after-init . org-roam-mode)
+  :custom
+  (org-roam-directory my-org-roam-directory)
+	(org-roam-db-location (expand-file-name "org-roam.db" my-org-roam-directory))
+  :bind (:map org-roam-mode-map
+              (("C-c n l" . org-roam)
+               ("C-c n f" . org-roam-find-file)
+               ("C-c n g" . org-roam-graph))
+              :map org-mode-map
+              (("C-c n i" . org-roam-insert))
+              (("C-c n I" . org-roam-insert-immediate))))
+#+END_SRC
+
 *** org-show
 
 Simple interactive presentations from within Emacs.
@@ -8727,16 +8752,18 @@ Global org-mode keys:
      Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^   Mark^^  │Org │
    ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^───────^^───────^^──╯    ╵
  
-     ^^  [_a_] agenda  ^^    [_n_] show notes   ^^  ^^   ^^  ^^  ^^   [_r_] reload org       	
-     ^^  [_d_] deft    ^^    [_t_] show todos   ^^  ^^   ^^  ^^  ^^   [_u_] update agenda files
-     ^^  [_c_] capture ^^    [_w_/_h_] work/home notes ^^ ^^ ^^  ^^   [_C_] clocking...       
-     ^^  [_f_] search  ^^    [_:_] filter by tags ^^  ^^  ^^  ^^  ^^          [_q_]uit
+     ^^  [_a_] agenda  ^^    [_j_] show journal   ^^  ^^   ^^  ^^  ^^  [_r_] reload org       	
+     ^^  [_d_] deft    ^^    [_t_] show todos   ^^  ^^   ^^  ^^  ^^    [_u_] update agenda files
+     ^^  [_c_] capture ^^    [_w_/_h_] work/home notes ^^ ^^ ^^  ^^    [_C_] clocking...       
+     ^^  [_f_] search  ^^    [_:_] filter by tags ^^  ^^  ^^  ^^  ^^   [_n_] show notes      
+     ^^                ^^                         ^^  ^^  ^^  ^^  ^^   [_q_]uit
 
 	"
 	("a" org-agenda-list-complete :exit t)
 	("d" deft :exit t)
-	("n" (lambda nil (interactive)
+	("j" (lambda nil (interactive)
 				 (find-file (concat org-directory "/notes.org"))) :exit t)
+	("n" hydra-org-roam/body :exit t)
 	("o" deft :exit t)
 	("c" org-capture :exit t)
 	("C" hydra-org-clock/body :exit t)
@@ -9387,6 +9414,23 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
 	(tl/insert-org-link
 	 (concat "color:"
 					 (replace-regexp-in-string "[[:space:]]+" "" (helm-colors))))) 
+#+END_SRC
+
+*** hydra-org-roam
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-org-roam (:color teal
+			     :hint nil)
+  "
+  Org-roam:   _f_:ind file  _i_:nsert  _I_:ndex  _g_:raph _c_:apture  _s_:erver       _q_:uit
+  "
+  ("q" nil)
+  ("f" org-roam-find-file)
+  ("i" org-roam-insert)
+  ("I" org-roam-jump-to-index)
+  ("g" org-roam-graph)
+  ("c" org-roam-capture)
+  ("s" org-roam-server-mode))
 #+END_SRC
 
 ** hydra-deft
