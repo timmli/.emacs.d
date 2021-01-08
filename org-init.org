@@ -3306,12 +3306,12 @@ Here's my own version, which uses =org-table-wrap-region=. This was superseded b
 
 *** org-attach
 
+=org-attach= might not be autoloaded by org-mode.
 #+BEGIN_SRC emacs-lisp
-(require 'org-attach)  ; Might not be autoloaded by org-mode.
+(require 'org-attach)  
 #+END_SRC
 
 Note that =org-attach= has been refactored and extended in =org-mode= v9.3 (see https://orgmode.org/Changes.html), adding the following variables:
-
 #+BEGIN_SRC emacs-lisp
 (setq
  org-attach-use-inheritance t	    ; enable inheritance
@@ -3321,7 +3321,6 @@ Note that =org-attach= has been refactored and extended in =org-mode= v9.3 (see 
 #+END_SRC  
 
 Function to rename =ATTACH_DIR= (deprecated) to =DIR=, and to remove =ATTACH_DIR_INHERIT= (deprecated):
-
 #+BEGIN_SRC emacs-lisp
 (defun org-update-attach-properties ()
     "Change properties for Org-Attach."
@@ -3336,7 +3335,6 @@ Function to rename =ATTACH_DIR= (deprecated) to =DIR=, and to remove =ATTACH_DIR
 #+END_SRC
 
 Add some link types (deprecated):
-
 #+BEGIN_SRC emacs-lisp
 ;; (add-to-list 'org-link-abbrev-alist '("attachment" . org-attach-expand-link)) ; included in `org-attach` since v9.3
 ;; (add-to-list 'org-link-abbrev-alist '("att" . org-attach-expand-link)) ; only for downward compatibility and not supported any longer since v9.4
@@ -3358,6 +3356,11 @@ If no attachment directory can be found, the user is asked to create one."
 																"xournalpp" (expand-file-name "hand-notes.xopp" (org-attach-dir)))
 							 (start-process "" nil "xournalpp")))
 		(message "Not in org-mode")))
+#+END_SRC
+
+Note that one can specify the name of attachment directories per file with
+#+BEGIN_SRC emacs-lisp :tangle no
+# -*- org-attach-id-dir: "my-fancy-dir-name" -*-
 #+END_SRC
 
 *** org-babel
