@@ -3591,12 +3591,13 @@ TODO: Change format entry string with =org-ref-formatted-citation-formats=:
 
 https://github.com/org-roam/org-roam
 
-Knowledge management system based similar to Roam and Zettelkästen.
+Knowledge management system similar to Roam and Zettelkästen.
 
 Example how it works: https://blog.jethro.dev/posts/how_to_take_smart_notes_org/
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-roam
+  :diminish org-roam-mode
   :ensure t
   :hook
   (after-init . org-roam-mode)
