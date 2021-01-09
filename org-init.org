@@ -1123,6 +1123,11 @@ Move to trash can (recycle bin under windows) when deleting:
 (setq delete-by-moving-to-trash t)
 #+END_SRC
 
+<mouse-1> opens file/directory in the same window:
+#+BEGIN_SRC emacs-lisp
+(define-key dired-mode-map (kbd "<mouse-2>") 'dired-mouse-find-file)
+#+END_SRC
+
 *** Mark/Unmark 
 
 Use shift-up and shift-down in the usual way.
@@ -1353,11 +1358,6 @@ Downloaded from here: https://github.com/emacsmirror/emacswiki.org/blob/master/d
   ;; Keep dired buffers updated when the file system changes.
   (setq global-auto-revert-non-file-buffers t)
   (setq auto-revert-verbose nil))
-#+END_SRC
-
-<mouse-1> opens file/directory in the same window:
-#+BEGIN_SRC emacs-lisp
-(define-key dired-mode-map (kbd "<mouse-2>") 'dired-mouse-find-file)
 #+END_SRC
 
 *** dired-hacks
