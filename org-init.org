@@ -1357,7 +1357,7 @@ Downloaded from here: https://github.com/emacsmirror/emacswiki.org/blob/master/d
 
 <mouse-1> opens file/directory in the same window:
 #+BEGIN_SRC emacs-lisp
-(define-key dired-mode-map (kbd "<mouse-2>") 'diredp-mouse-find-file)
+(define-key dired-mode-map (kbd "<mouse-2>") 'dired-mouse-find-file)
 #+END_SRC
 
 *** dired-hacks
