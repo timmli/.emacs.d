@@ -3633,7 +3633,36 @@ Example how it works: https://blog.jethro.dev/posts/how_to_take_smart_notes_org/
                ("C-c n g" . org-roam-graph))
               :map org-mode-map
               (("C-c n i" . org-roam-insert))
-              (("C-c n I" . org-roam-insert-immediate))))
+              (("C-c n I" . org-roam-insert-immediate)))
+	:config
+	(require 'org-roam-protocol))
+#+END_SRC
+
+=org-roam-protocol= requires few extra steps in order to properly work:
+
+https://www.orgroam.com/manual.html#Roam-Protocol
+
+**** org-roam-server
+
+https://github.com/org-roam/org-roam-server
+
+Depends on =org-roam-protocol=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-roam-server
+  :ensure t
+  :config
+  (setq org-roam-server-host "127.0.0.1"
+        org-roam-server-port 8080
+        org-roam-server-authenticate nil
+        org-roam-server-export-inline-images t
+        org-roam-server-serve-files nil
+        org-roam-server-served-file-extensions '("pdf" "mp4" "ogv")
+        org-roam-server-network-poll t
+        org-roam-server-network-arrows nil
+        org-roam-server-network-label-truncate t
+        org-roam-server-network-label-truncate-length 60
+        org-roam-server-network-label-wrap-length 20))
 #+END_SRC
 
 *** org-show
