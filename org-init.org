@@ -3527,6 +3527,13 @@ I don't use =org-gcal= any more.
 		))
 #+END_SRC
 
+*** TODO org-krita
+:LOGBOOK:
+- State "TODO"       from              [2021-01-06 Wed 09:38]
+:END:
+
+https://github.com/lepisma/org-krita
+
 *** org-ref
 
 - [X] =org-ref-prefer-bracket-links= does not work?
