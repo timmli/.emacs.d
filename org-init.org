@@ -5811,11 +5811,13 @@ https://www.gnu.org/software/gtypist/doc/gtypist.html
 Unfortunately, there doesn't seem to be an easy way to run this within Emacs (at least under Windows).
 
 * Minor modes
-** literal-calc-mode
+** COMMENT literal-calc-mode
 
 https://github.com/sulami/literate-calc-mode.el
 
 Displays inline results for calculations, which are triggered by using "=".
+
+There is a =literate-calc-minor-mode=, which slows down Emacs tremendously, however. 
 
 #+BEGIN_SRC emacs-lisp
 (use-package literate-calc-mode
@@ -5834,6 +5836,7 @@ Displays inline results for calculations, which are triggered by using "=".
   ;; (add-hook 'org-mode-hook 'pandoc-mode)
   (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings))
 #+END_SRC
+
 * Buffer
 
 ** General configuration
