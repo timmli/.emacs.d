@@ -6499,12 +6499,11 @@ Not sure whether I want to auto-indent whole files ...
 
 ** Selection
 
-*** TODO expand-region
-:LOGBOOK:
-- State "TODO"       from              [2017-12-06 Mi 19:01]
-:END:
+*** expand-region
 
-- [ ] add better support for AUCTeX
+https://github.com/magnars/expand-region.el
+
+Expand region increases the selected region by semantic units. I've bound it to =C-+=.
 
 #+begin_src emacs-lisp
 (use-package expand-region
@@ -6522,12 +6521,13 @@ Copy mouse selection to kill-ring:
 
 *** iedit
 
+https://github.com/victorhge/iedit
+
 Edit regions with identical content in the same way simultaneously. 
 
 #+BEGIN_SRC emacs-lisp
 (use-package iedit
-	:ensure t
-)
+	:ensure t)
 #+END_SRC
 
 ** Code folding
@@ -6577,12 +6577,6 @@ Unfortunately, =ctxmenu= lets my Emacs crash.
 	(define-key global-map [mouse-3] 'ctxmenu:show)
 	)
 #+END_SRC
-
-*** discover
-
-Maybe an option in the future. 
-
-https://github.com/mickeynp/discover.el
 
 *** lacarte
 
@@ -6691,7 +6685,7 @@ Cursor position history (LOCAL)
 *** goto-last-change
 
 Cursor position undo history:
-
+ 
 #+begin_src emacs-lisp
 (use-package goto-last-change
 	:ensure t
