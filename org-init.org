@@ -1357,7 +1357,9 @@ Downloaded from here: https://github.com/emacsmirror/emacswiki.org/blob/master/d
   (set-face-foreground 'diredp-file-name nil)
   ;; Keep dired buffers updated when the file system changes.
   (setq global-auto-revert-non-file-buffers t)
-  (setq auto-revert-verbose nil))
+  (setq auto-revert-verbose nil)
+  (define-key dired-mode-map (kbd "<mouse-2>") 'dired-mouse-find-file) ; Just a reminder for dired+ ;-)
+)
 #+END_SRC
 
 *** dired-hacks
