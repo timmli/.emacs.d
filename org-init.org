@@ -1739,7 +1739,20 @@ http://takingnotenow.blogspot.com/2008/07/note-keeping-in-1786-blumenbachs-syste
 
 *** INPROGRESS My GTD setup in org-mode
 
-**** General structure
+**** Directories & files
+
+- =~/org/attachements/=
+- =~/org/calendar/=
+- =~/org/captures.org=
+- =~/org/contacts.org=
+- =~/org/elfeed.org=
+- =~/org/home/home.org=
+- =~/org/journal.org=
+- =~/org/work/work.org=
+- =~/org/zettel/=
+
+**** General structure of files
+
 
 | Heading type | Properties                                   | Body                                                  | Purpose                                 | Title format                    |
 |--------------+----------------------------------------------+-------------------------------------------------------+-----------------------------------------+---------------------------------|
@@ -1760,7 +1773,7 @@ Information flow:
 - Inbox $\Rightarrow$ Events|Projects  $\Rightarrow$ Topics
 - [[https://karl-voit.at/2020/05/03/current-org-files/][Karl Voit's setup]]
 
-**** Teaching
+**** Structure of files for teaching
 
 | Heading type  | Properties                                   | Title format                                 | Body                   |
 |---------------+----------------------------------------------+----------------------------------------------+------------------------|
@@ -1777,7 +1790,7 @@ Every course is linked with a directory (via DIR property) including the followi
 - literature
 - exercises (instructions & submissions) 
 
-**** Notes on texts, videos etc.
+**** Structure of notes on texts, videos etc. in one big file
 
 Notes regarding texts, videos etc. are handled in the following way:
 - one heading per piece
