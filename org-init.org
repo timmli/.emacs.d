@@ -2621,6 +2621,14 @@ Preserves the first heading of the org-mode file and the inherited tags (found i
 				 "* %?\t%^G\n CREATED: %U\n About region:%i\n %a")
 				("c" "Code" entry (file (lambda () (expand-file-name "captures.org" org-directory )))
 				 "* %?\t%^G\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a" :prepend t)
+				("p" "Protocol" entry (file+headline
+															 (lambda () (expand-file-name "captures.org" org-directory ))
+															 "Inbox")
+         "* [[%:link][%:description]]\nCREATED: %U\n\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n%?" :prepend t)
+				("L" "Protocol Link" entry (file+headline
+																		(lambda () (expand-file-name "captures.org" org-directory ))
+																		"Inbox")
+         "* [[%:link][%:description]] \nCREATED: %U\n\n%?" :prepend t)
 				))
 #+END_SRC
 
@@ -3549,6 +3557,14 @@ I don't use =org-gcal= any more.
 :END:
 
 https://github.com/lepisma/org-krita
+
+*** org-protocol
+
+https://orgmode.org/worg/org-contrib/org-protocol.html
+
+#+BEGIN_SRC emacs-lisp
+(require 'org-protocol)
+#+END_SRC
 
 *** org-ref
 
