@@ -3634,6 +3634,8 @@ Knowledge management system similar to Roam and Zettelkästen.
 
 Example how it works: https://blog.jethro.dev/posts/how_to_take_smart_notes_org/
 
+**** Installation & configuration
+
 #+BEGIN_SRC emacs-lisp
 (use-package org-roam
   :diminish org-roam-mode
@@ -3652,12 +3654,43 @@ Example how it works: https://blog.jethro.dev/posts/how_to_take_smart_notes_org/
               (("C-c n I" . org-roam-insert-immediate)))
 	:config
 	(require 'org-roam-protocol)
-	(setq org-roam-tag-sources '(prop vanilla)))
+	(setq org-roam-tag-sources '(prop vanilla)
+				org-roam-index-file (expand-file-name "index.org" org-roam-directory)))
 #+END_SRC
+
+**** org-roam-protocol
+
+https://www.orgroam.com/manual.html#Roam-Protocol
 
 =org-roam-protocol= requires few extra steps in order to properly work:
 
-https://www.orgroam.com/manual.html#Roam-Protocol
+#+BEGIN_SRC bash :tangle nil
+cat > "${HOME}/.local/share/applications/org-protocol.desktop" << EOF
+[Desktop Entry]
+Name=org-protocol
+Exec=emacsclient %u
+Type=Application
+Terminal=false
+Categories=System;
+MimeType=x-scheme-handler/org-protocol;
+EOF
+update-desktop-database ~/.local/share/applications/
+xdg-mime default org-protocol.desktop x-scheme-handler/org-protocol
+#+END_SRC
+
+**** org-roam-capture-templates
+
+https://www.orgroam.com/manual.html#The-Templating-System
+
+#+BEGIN_SRC emacs-lisp
+(setq org-roam-capture-templates
+			'(("d" "default" plain #'org-roam-capture--get-point "%?"
+				 :file-name "%<%Y%m%d%H%M%S>-${slug}"
+				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: \n#+CREATED: %U\n\n- links :: \n\n" :unnarrowed t)
+				("t" "text" plain #'org-roam-capture--get-point "%?"
+				 :file-name "%<%Y%m%d%H%M%S>-${slug}"
+				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: text\n#+CREATED: %U\n\n- links :: \n\n" :unnarrowed t)))
+#+END_SRC
 
 **** org-roam-server
 
