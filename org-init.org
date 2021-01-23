@@ -2630,17 +2630,18 @@ Preserves the first heading of the org-mode file and the inherited tags (found i
 				;;  "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
 				("t" "Todo" entry (file (lambda () (expand-file-name "captures.org" org-directory)))
 				 "* TODO %?\t%^G\n :LOGBOOK:\n - CREATED: %U\n :END:\n\n About region:%i\n %a" :prepend t)
-				("n" "Note" entry (file+datetree (lambda ()(expand-file-name "notes.org" org-directory)))
+				("j" "Journal" entry (file+datetree (lambda ()(expand-file-name "journal.org" org-directory)))
 				 "* %?\t%^G\n CREATED: %U\n About region:%i\n %a")
 				("c" "Code" entry (file (lambda () (expand-file-name "captures.org" org-directory )))
 				 "* %?\t%^G\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a" :prepend t)
+				;; The following two templates are used by the org-capture extension in your web browser
 				("p" "Protocol" entry (file+headline
 															 (lambda () (expand-file-name "captures.org" org-directory ))
-															 "Inbox")
+															 "Bookmarks from the web browser")
          "* [[%:link][%:description]]\nCREATED: %U\n\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n%?" :prepend t)
 				("L" "Protocol Link" entry (file+headline
 																		(lambda () (expand-file-name "captures.org" org-directory ))
-																		"Inbox")
+																		"Bookmarks from the web browser")
          "* [[%:link][%:description]] \nCREATED: %U\n\n%?" :prepend t)
 				))
 #+END_SRC
@@ -3699,10 +3700,10 @@ https://www.orgroam.com/manual.html#The-Templating-System
 (setq org-roam-capture-templates
 			'(("d" "default" plain #'org-roam-capture--get-point "%?"
 				 :file-name "%<%Y%m%d%H%M%S>-${slug}"
-				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: \n#+CREATED: %U\n\n- links :: \n\n" :unnarrowed t)
+				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: \n#+ROAM_ALIAS: \n#+CREATED: %U\n\n- links :: \n\n" :unnarrowed t)
 				("t" "text" plain #'org-roam-capture--get-point "%?"
 				 :file-name "%<%Y%m%d%H%M%S>-${slug}"
-				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: text\n#+CREATED: %U\n\n- links :: \n\n" :unnarrowed t)))
+				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: text\n#+ROAM_ALIAS: \n#+CREATED: %U\n\n- links :: \n\n" :unnarrowed t)))
 #+END_SRC
 
 **** org-roam-server
