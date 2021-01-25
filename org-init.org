@@ -3732,6 +3732,29 @@ Depends on =org-roam-protocol=.
 
 Caveat: at first, no nodes where shown, but the error "roamSource is undefined" in the Firefox console. The installation of the most recent version of =org-roam-server= solved the issue. 
 
+**** org-roam-bibtex
+
+https://github.com/org-roam/org-roam-bibtex
+
+Enables a tight integration of =org-roam= with =helm-bibtex= and =org-ref=. 
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-roam-bibtex
+	:ensure t
+  :after org-roam
+  :hook (org-roam-mode . org-roam-bibtex-mode))
+#+END_SRC
+
+Templates for =org-roam-bibtex=:
+
+#+BEGIN_SRC emacs-lisp
+(setq orb-templates
+      '(("r" "ref" plain (function org-roam-capture--get-point) ""
+         :file-name "${citekey}"
+         :head "#+TITLE: ${citekey}: ${title}\n#+CREATED: %U\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS: %^{Tags} \n#+ROAM_ALIAS: \n\n- links :: \n\n"
+         :unnarrowed t)))
+#+END_SRC
+
 *** org-show
 
 Simple interactive presentations from within Emacs.
@@ -9546,7 +9569,7 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
 (defhydra hydra-org-roam (:color teal
 			     :hint nil)
   "
-  Org-roam:   _f_:ind file  _i_:nsert  _I_:ndex  _g_:raph _c_:apture  _s_:erver       _q_:uit
+  Org-roam:   _f_:ind file  _i_:nsert _bi_:b i[[file:../Cloud/Tresor/_NOTES/org/zettel/Chomsky:21.org][Chomsky:21: Linguistics then and now: Some personal reflections]]nsert   _I_:ndex  _g_:raph _c_:apture  _s_:erver       _q_:uit
   "
   ("q" nil)
   ("f" org-roam-find-file)
@@ -9554,6 +9577,7 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
   ("I" org-roam-jump-to-index)
   ("g" org-roam-graph)
   ("c" org-roam-capture)
+  ("bi" orb-insert)
   ("s" org-roam-server-mode))
 #+END_SRC
 
