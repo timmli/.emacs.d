@@ -4250,6 +4250,15 @@ Observe dependencies between TODOs:
 (setq org-enforce-todo-dependencies t)
 #+END_SRC
 
+*** Last modified
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-mode-hook (lambda ()
+													 (set (make-local-variable 'time-stamp-pattern)
+																"20/^#\\+LAST_MODIFIED:[ \t]+%:y-%02m-%02d %02H:%02M:%02S$")))  
+(add-hook 'before-save-hook 'time-stamp)
+#+END_SRC
+
 ** outline-mode
 
 *** outline-magic
