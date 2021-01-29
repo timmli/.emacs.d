@@ -2324,18 +2324,6 @@ Function to only unfold current heading and its content:
 *** General keys
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "<f9> c") 'org-goto-calendar)
-(global-set-key (kbd "<f9> a") 'org-agenda-list)
-(global-set-key (kbd "<f9> t") 'org-todo-list)
-(global-set-key (kbd "C-<f9>") 'org-cycle-agenda-files)
-(global-set-key (kbd "<f9> s") 'org-search-view)
-(global-set-key (kbd "<f9> f") 'org-search-view)
-(global-set-key (kbd "<f9> l") 'org-tags-view)
-(global-set-key (kbd "<f9> r") 'org-reload)
-(global-set-key (kbd "<f9> w")
-								(lambda() (interactive)(find-file (concat org-notes-dir "/work/work.org"))))
-(global-set-key (kbd "<f9> n")
-								(lambda() (interactive)(find-file (concat org-notes-dir "/notes.org"))))
 (global-set-key (kbd "C-c a") 'org-agenda)
 (global-set-key (kbd "C-c l") 'org-store-link)
 
@@ -8918,7 +8906,7 @@ Global org-mode keys:
 	("a" org-agenda-list-complete :exit t)
 	("d" deft :exit t)
 	("j" (lambda nil (interactive)
-				 (find-file (concat org-directory "/notes.org"))) :exit t)
+				 (find-file (concat org-directory "/journal.org"))) :exit t)
 	("n" hydra-org-roam/body :exit t)
 	("o" deft :exit t)
 	("c" org-capture :exit t)
@@ -9578,7 +9566,7 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
 (defhydra hydra-org-roam (:color teal
 			     :hint nil)
   "
-  Org-roam:   _f_:ind file  _i_:nsert _bi_:b i[[file:../Cloud/Tresor/_NOTES/org/zettel/Chomsky:21.org][Chomsky:21: Linguistics then and now: Some personal reflections]]nsert   _I_:ndex  _g_:raph _c_:apture  _s_:erver       _q_:uit
+  Org-roam:   _f_:ind file  _i_:nsert _bi_:bib insert   _I_:ndex  _g_:raph _c_:apture  _s_:erver       _q_:uit
   "
   ("q" nil)
   ("f" org-roam-find-file)
