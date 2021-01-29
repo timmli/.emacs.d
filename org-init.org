@@ -7915,7 +7915,6 @@ Better keys for closing and switching between windows. The rest is done in [[*hy
 	(global-set-key (kbd "M-<f2>") 'delete-window)
 #+END_SRC
 
-
 =winner-mode= allows you to undo (and redo) changes in the window configuration.
 
 #+BEGIN_SRC emacs-lisp
@@ -7989,7 +7988,7 @@ Visually highlight the selected buffer.
 
 https://github.com/alphapapa/burly.el
 
-From the prject decription: This package provides tools to save and restore frame and window configurations in Emacs, including buffers that may not be live anymore. 
+From the project decription: This package provides tools to save and restore frame and window configurations in Emacs, including buffers that may not be live anymore. 
 
 #+BEGIN_SRC emacs-lisp
 (use-package burly
@@ -8548,10 +8547,10 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
      Help^^  │Window│  Config^^   Check^^   Refresh^^   Mode^^   Open^^   Mark^^   Org^^
    ╭─────^^──╯      └────────^^────────^^──────────^^───^^───────^^───────^^───────^^────╯
 
-          ^^  _<up>_            │→ _M-<right>_      [_z_] window undo    [_t_] transpose frame
-          ^^   ↑   ^^           │split [_h_]oriz.   [_Z_] window redo    [_H_] swap horizontally
-    _<left>_ ←   → _<right>_    │← _M-<left>_       [_f_] clone frame    [_V_] swap vertically
-          ^^   ↓   ^^          ────────^^────────   [_b_] clone buffer      
+          ^^  _<up>_            │→ _M-<right>_      [_z_] window undo            [_t_] transpose frame
+          ^^   ↑   ^^           │split [_h_]oriz.   [_Z_] window redo            [_H_] swap horizontally
+    _<left>_ ←   → _<right>_    │← _M-<left>_       [_f_] clone frame            [_V_] swap vertically
+          ^^   ↓   ^^          ────────^^────────   [_b_] clone buffer         [_C-L_] scroll
           ^^ _<down>_           ↑ _M-<up>_          [_p_] print buffer to PDF  
           ^^ ^^                 split [_v_]ert.     [_=_] balance windows         [_q_]uit    
           ^^ ^^                 ↓ _M-<down>_
@@ -8571,6 +8570,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 	("=" balance-windows :exit t)
 	("t" transpose-frame :exit t)
 	("H" flop-frame :exit t)
+	("C-L" hydra-scroll :exit t)
 	("V" flip-frame :exit t)
 	("z" winner-undo)
 	("Z" winner-redo)
