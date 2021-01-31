@@ -3694,6 +3694,23 @@ https://www.orgroam.com/manual.html#The-Templating-System
 				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: text\n#+ROAM_ALIAS: \n#+CREATED: %U\n\n- links :: \n\n" :unnarrowed t)))
 #+END_SRC
 
+**** org-roam-dailies
+
+https://www.orgroam.com/manual.html#Daily_002dnotes
+
+Org-roam provides journaling capabilities akin to =org-journal= with =org-roam-dailies=. 
+
+#+BEGIN_SRC emacs-lisp
+(setq org-roam-dailies-directory "daily/")
+
+(setq org-roam-dailies-capture-templates
+      '(("d" "default" entry
+         #'org-roam-capture--get-point
+         "* %?"
+         :file-name "daily/%<%Y-%m-%d>"
+         :head "#+title: %<%Y-%m-%d>\n\n")))
+#+END_SRC
+
 **** org-roam-server
 
 https://github.com/org-roam/org-roam-server
@@ -9566,7 +9583,7 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
 (defhydra hydra-org-roam (:color teal
 			     :hint nil)
   "
-  Org-roam:   _f_:ind file  _i_:nsert _bi_:bib insert   _I_:ndex  _g_:raph _c_:apture  _s_:erver       _q_:uit
+  Org-roam:   _f_:ind file  _i_:nsert _bi_:bib insert   _I_:ndex  _g_:raph _c_:apture _d_:ailies  _s_:erver       _q_:uit
   "
   ("q" nil)
   ("f" org-roam-find-file)
@@ -9574,6 +9591,7 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
   ("I" org-roam-jump-to-index)
   ("g" org-roam-graph)
   ("c" org-roam-capture)
+  ("d" org-roam-dailies-today)
   ("bi" orb-insert)
   ("s" org-roam-server-mode))
 #+END_SRC
