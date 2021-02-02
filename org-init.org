@@ -9581,9 +9581,9 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-roam (:color teal
-			     :hint nil)
+																 :hint nil)
   "
-  Org-roam:   _f_:ind file  _i_:nsert _bi_:bib insert   _I_:ndex  _g_:raph _c_:apture _d_:ailies  _s_:erver       _q_:uit
+  Org-roam:   _f_:ind file  _i_:nsert  _bi_:bib insert  _I_:ndex  _g_:raph  _c_:apture  _d_:ailies  _s_:erver _u_pdate db       _q_:uit
   "
   ("q" nil)
   ("f" org-roam-find-file)
@@ -9593,7 +9593,9 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
   ("c" org-roam-capture)
   ("d" org-roam-dailies-today)
   ("bi" orb-insert)
-  ("s" org-roam-server-mode))
+  ("s" org-roam-server-mode)
+  ("u" org-roam-db-build-cache)
+	)
 #+END_SRC
 
 ** hydra-deft
