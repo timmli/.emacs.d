@@ -6929,6 +6929,8 @@ https://github.com/chuntaro/emacs-keypression
 
 *** undo-tree
 
+https://gitlab.com/tsc25/undo-tree
+
 Visualize the undo history.
 
 #+begin_src emacs-lisp
@@ -6941,6 +6943,24 @@ Visualize the undo history.
     (setq undo-tree-visualizer-timestamps t)
     (setq undo-tree-visualizer-diff t)))
 #+end_src
+
+*** COMMENT undo-fu
+
+https://gitlab.com/ideasman42/emacs-undo-fu
+
+Simple, stable linear undo with redo for Emacs. 
+
+Don't use it together with [[undo-tree]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package undo-fu
+	:ensure t
+	:config
+	(global-unset-key (kbd "C-z"))
+	(global-set-key (kbd "C-z")   'undo-fu-only-undo)
+	(global-set-key (kbd "C-S-z") 'undo-fu-only-redo)
+	)
+#+END_SRC
 
 *** Remove newlines
 
