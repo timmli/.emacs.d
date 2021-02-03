@@ -2611,16 +2611,22 @@ Preserves the first heading of the org-mode file and the inherited tags (found i
 (setq org-capture-templates
 			'(
 				;; uses appointment tag
-				("a" "Appointment" entry (file (lambda () (expand-file-name "captures.org" org-directory)))
-				 "* %?\t%^G:appointment:\n\n%^T\n\n" :prepend t)
+				("a" "Appointment" entry (file+headline 
+																	(lambda () (expand-file-name "captures.org" org-directory))
+																	"Appointments")
+				 "* %? %^T\t%^G:appointment:\n\n" :prepend t)
 				;; ;; used for org-gcal
 				;; ("a" "Appointment" entry (file (concat org-directory "/gcal.org"))
 				;;  "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
-				("t" "Todo" entry (file (lambda () (expand-file-name "captures.org" org-directory)))
+				("t" "Todo" entry (file+headline
+													 (lambda () (expand-file-name "captures.org" org-directory))
+													 "Todos")
 				 "* TODO %?\t%^G\n :LOGBOOK:\n - CREATED: %U\n :END:\n\n About region:%i\n %a" :prepend t)
 				("j" "Journal" entry (file+datetree (lambda ()(expand-file-name "journal.org" org-directory)))
 				 "* %?\t%^G\n CREATED: %U\n About region:%i\n %a")
-				("c" "Code" entry (file (lambda () (expand-file-name "captures.org" org-directory )))
+				("c" "Code" entry (file+headline 
+													 (lambda () (expand-file-name "captures.org" org-directory ))
+													 "Code")
 				 "* %?\t%^G\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a" :prepend t)
 				;; The following two templates are used by the org-capture extension in your web browser
 				("p" "Protocol" entry (file+headline
