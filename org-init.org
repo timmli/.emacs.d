@@ -2603,6 +2603,24 @@ Preserves the first heading of the org-mode file and the inherited tags (found i
         (org-set-tags-to tags)))))
 #+END_SRC
 
+*** Bibliography
+
+**** citeproc-org
+
+https://github.com/andras-simonyi/citeproc-org
+
+Renders =org-mode= citations and bibliographies during export in Citation Style Language (CSL) styles using the =citeproc-el= library.
+
+=citeproc-org= is used by [[helm-bibtex]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package citeproc-org
+	:ensure t
+	;; :config
+	;; (citeproc-org-setup)
+	)
+#+END_SRC
+
 *** Capture templates
 
 - Template expansions: http://orgmode.org/manual/Template-expansion.html
@@ -4989,6 +5007,8 @@ Use =bibtex-entry= when inserting entry templates:
 
 *** helm-bibtex
 
+https://github.com/tmalsburg/helm-bibtex
+
 Search through your BibTeX bibliography with helm. 
 
 #+BEGIN_SRC emacs-lisp
@@ -5043,6 +5063,25 @@ Search through your BibTeX bibliography with helm.
 	(setq bibtex-completion-display-formats 
 				'((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
 	)
+#+END_SRC
+
+Support for CSL, see https://github.com/tmalsburg/helm-bibtex/issues/235#issuecomment-383870278.
+
+#+BEGIN_SRC emacs-lisp
+(defvar helm-bibtex-csl-style ".emacs.d/csl/unified-style-sheet-for-linguistics.csl")
+
+(defvar helm-bibtex-csl-locale-dir ".emacs.d/csl")
+
+(defun helm-bibtex-insert-citeproc-reference (_candidate)
+  (let* ((locale-getter (citeproc-locale-getter-from-dir helm-bibtex-csl-locale-dir))
+         (item-getter (citeproc-itemgetter-from-bibtex helm-bibtex-bibliography))
+         (proc (citeproc-create helm-bibtex-csl-style item-getter locale-getter))
+         (cites (mapcar (lambda (x) (citeproc-citation-create :cites `(((id . ,x)))))
+                        (helm-marked-candidates))))
+    (citeproc-append-citations cites proc)
+    (insert (car (citeproc-render-bib proc 'plain)))))
+
+(helm-add-action-to-source "Insert citeproc reference" 'helm-bibtex-insert-citeproc-reference helm-source-bibtex)
 #+END_SRC
 
 *** COMMENT ivy-bibtex
