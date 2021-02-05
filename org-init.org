@@ -5081,7 +5081,7 @@ Support for CSL, see https://github.com/tmalsburg/helm-bibtex/issues/235#issueco
     (citeproc-append-citations cites proc)
     (insert (car (citeproc-render-bib proc 'plain)))))
 
-(helm-add-action-to-source "Insert citeproc reference" 'helm-bibtex-insert-citeproc-reference helm-source-bibtex)
+(helm-add-action-to-source "Insert citeproc-formatted reference" 'helm-bibtex-insert-citeproc-reference helm-source-bibtex)
 #+END_SRC
 
 *** COMMENT ivy-bibtex
