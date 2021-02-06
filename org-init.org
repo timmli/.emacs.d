@@ -6015,6 +6015,15 @@ https://www.gnu.org/software/gtypist/doc/gtypist.html
 
 Unfortunately, there doesn't seem to be an easy way to run this within Emacs (at least under Windows).
 
+** Scripts
+
+Make script files (e.g. Bash scripts) with the hash-bang notation exectuable when saving them:
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'after-save-hook
+  'executable-make-buffer-file-executable-if-script-p)
+#+END_SRC
+
 * Minor modes
 ** COMMENT literal-calc-mode
 
