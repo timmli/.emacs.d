@@ -3616,7 +3616,7 @@ https://orgmode.org/worg/org-contrib/org-protocol.html
 							("C-c ]" . org-ref-helm-insert-cite-link)
 							("C-c )" . org-ref-helm-insert-ref-link)
 							("C-c (" . org-ref-helm-insert-label-link))
-)
+	)
 #+END_SRC
 
 Add \citeauthoryear and  \citealtauthoryear to org-ref:
@@ -3636,7 +3636,7 @@ Set colors:
  )
 #+END_SRC
 
-TODO: Change format entry string with =org-ref-formatted-citation-formats=:
+TODO: Change format entry string with =org-ref-formatted-citation-formats=.
 
 *** org-reveal
 
@@ -5016,6 +5016,10 @@ Search through your BibTeX bibliography with helm.
 	:ensure t
 	:pin MELPA
 	:config
+	;; Make sure that the most recent version of `bibtex-completion' is installed. 
+	(use-package bibtex-completion
+		:ensure t
+		:pin MELPA)
 	(setq bibtex-completion-bibliography (list user-bibliography-file))
 	(setq bibtex-completion-additional-search-fields '(bibtexkey))
 	;; The standard function with modified default action  
