@@ -5072,9 +5072,9 @@ Search through your BibTeX bibliography with helm.
 Support for CSL, see https://github.com/tmalsburg/helm-bibtex/issues/235#issuecomment-383870278.
 
 #+BEGIN_SRC emacs-lisp
-(defvar helm-bibtex-csl-style ".emacs.d/csl/unified-style-sheet-for-linguistics.csl")
+(defvar helm-bibtex-csl-style "~/.emacs.d/csl/unified-style-sheet-for-linguistics.csl")
 
-(defvar helm-bibtex-csl-locale-dir ".emacs.d/csl")
+(defvar helm-bibtex-csl-locale-dir "~/.emacs.d/csl")
 
 (defun helm-bibtex-insert-citeproc-reference (_candidate)
   (let* ((locale-getter (citeproc-locale-getter-from-dir helm-bibtex-csl-locale-dir))
