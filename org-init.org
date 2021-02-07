@@ -3712,10 +3712,10 @@ https://www.orgroam.com/manual.html#The-Templating-System
 (setq org-roam-capture-templates
 			'(("d" "default" plain #'org-roam-capture--get-point "%?"
 				 :file-name "%<%Y%m%d%H%M%S>-${slug}"
-				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: \n#+ROAM_ALIAS: \n#+CREATED: %U\n#+LAST_MODIFIED:\n\n- links :: \n\n" :unnarrowed t)
+				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: %^{Tags}\n#+ROAM_ALIAS: \n#+CREATED: %U\n#+LAST_MODIFIED: \n\n- links :: \n\n" :unnarrowed t)
 				("t" "text" plain #'org-roam-capture--get-point "%?"
 				 :file-name "%<%Y%m%d%H%M%S>-${slug}"
-				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: text\n#+ROAM_ALIAS: \n#+CREATED: %U\n#+LAST_MODIFIED:\n\n- links :: \n\n" :unnarrowed t)))
+				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: text\n#+ROAM_ALIAS: \n#+CREATED: %U\n#+LAST_MODIFIED: \n\n- links :: \n\n" :unnarrowed t)))
 #+END_SRC
 
 **** org-roam-dailies
@@ -3780,7 +3780,7 @@ Templates for =org-roam-bibtex=:
 (setq orb-templates
       '(("r" "ref" plain (function org-roam-capture--get-point) ""
          :file-name "${citekey}"
-         :head "#+TITLE: ${citekey}: ${title}\n#+CREATED: %U\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS: %^{Tags} \n#+ROAM_ALIAS: \n#+LAST_MODIFIED:\n\n- links :: \n\n%?"
+         :head "#+TITLE: ${citekey}: ${title}\n#+CREATED: %U\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS: %^{Tags} \n#+ROAM_ALIAS: \n#+LAST_MODIFIED: \n\n- links :: \n\n%?"
          :unnarrowed t)))
 #+END_SRC
 
