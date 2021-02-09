@@ -6979,7 +6979,9 @@ https://github.com/chuntaro/emacs-keypression
 
 ** Undo & remove
 
-*** undo-tree
+*** COMMENT undo-tree
+
+- [ ] waiting for v0.8 to appear on elpa
 
 https://gitlab.com/tsc25/undo-tree
 
@@ -6996,7 +6998,7 @@ Visualize the undo history.
     (setq undo-tree-visualizer-diff t)))
 #+end_src
 
-*** COMMENT undo-fu
+*** undo-fu
 
 https://gitlab.com/ideasman42/emacs-undo-fu
 
@@ -11011,8 +11013,8 @@ Key bindings roughly following the conventions of the Windows habitat.
 						(define-key key-translation-map (kbd "M-q") (kbd "C-g"))
 
 						;; undo/redo
-						(define-key map (kbd "C-z") 'undo-tree-undo)
-						(define-key map (kbd "C-S-z") 'undo-tree-redo)
+						;; (define-key map (kbd "C-z") 'undo-tree-undo)
+						;; (define-key map (kbd "C-S-z") 'undo-tree-redo)
 
 						;; yank
 						(define-key map (kbd "C-v") 'yank)						
