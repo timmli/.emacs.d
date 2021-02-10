@@ -6737,6 +6737,31 @@ Copy mouse selection to kill-ring:
 ;; (setq mouse-drag-copy-region t)
 #+end_src
 
+Drag'n drop of text with the mouse:
+#+BEGIN_SRC emacs-lisp
+(setq mouse-drag-and-drop-region t)
+#+END_SRC
+
+*** TODO COMMENT drag-stuff
+:LOGBOOK:
+- State "TODO"       from              [2021-02-10 Wed 22:56]
+:END:
+
+- [ ] make it compatible with org-mode
+
+https://github.com/rejeep/drag-stuff.el
+
+Drag around marked stuff (words, region, lines) with the keyboard.
+
+#+BEGIN_SRC emacs-lisp
+(use-package drag-stuff
+	:ensure t
+	:config
+	(drag-stuff-global-mode 1)
+	(drag-stuff-define-keys)							; Use <M-up>, <M-down>, <M-left> and <M-right>
+	)
+#+END_SRC
+
 *** iedit
 
 https://github.com/victorhge/iedit
