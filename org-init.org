@@ -3592,6 +3592,22 @@ https://orgmode.org/worg/org-contrib/org-protocol.html
 (require 'org-protocol)
 #+END_SRC
 
+In order to make it available to, e.g., web browsers as an application, execute the following:
+
+#+BEGIN_SRC bash :tangle nil
+cat > "${HOME}/.local/share/applications/org-protocol.desktop" << EOF
+[Desktop Entry]
+Name=org-protocol
+Exec=emacsclient %u
+Type=Application
+Terminal=false
+Categories=System;
+MimeType=x-scheme-handler/org-protocol;
+EOF
+update-desktop-database ~/.local/share/applications/
+xdg-mime default org-protocol.desktop x-scheme-handler/org-protocol
+#+END_SRC
+
 *** org-ref
 
 - [X] =org-ref-prefer-bracket-links= does not work?
