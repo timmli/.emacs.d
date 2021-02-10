@@ -2603,6 +2603,24 @@ Preserves the first heading of the org-mode file and the inherited tags (found i
         (org-set-tags-to tags)))))
 #+END_SRC
 
+*** Bibliography
+
+**** citeproc-org
+
+https://github.com/andras-simonyi/citeproc-org
+
+Renders =org-mode= citations and bibliographies during export in Citation Style Language (CSL) styles using the =citeproc-el= library.
+
+=citeproc-org= is used by [[helm-bibtex]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package citeproc-org
+	:ensure t
+	;; :config
+	;; (citeproc-org-setup)
+	)
+#+END_SRC
+
 *** Capture templates
 
 - Template expansions: http://orgmode.org/manual/Template-expansion.html
@@ -3614,7 +3632,7 @@ xdg-mime default org-protocol.desktop x-scheme-handler/org-protocol
 							("C-c ]" . org-ref-helm-insert-cite-link)
 							("C-c )" . org-ref-helm-insert-ref-link)
 							("C-c (" . org-ref-helm-insert-label-link))
-)
+	)
 #+END_SRC
 
 Add \citeauthoryear and  \citealtauthoryear to org-ref:
@@ -3634,7 +3652,7 @@ Set colors:
  )
 #+END_SRC
 
-TODO: Change format entry string with =org-ref-formatted-citation-formats=:
+TODO: Change format entry string with =org-ref-formatted-citation-formats=.
 
 *** org-reveal
 
@@ -3710,10 +3728,10 @@ https://www.orgroam.com/manual.html#The-Templating-System
 (setq org-roam-capture-templates
 			'(("d" "default" plain #'org-roam-capture--get-point "%?"
 				 :file-name "%<%Y%m%d%H%M%S>-${slug}"
-				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: \n#+ROAM_ALIAS: \n#+CREATED: %U\n#+LAST_MODIFIED:\n\n- links :: \n\n" :unnarrowed t)
+				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: %^{Tags}\n#+ROAM_ALIAS: \n#+CREATED: %U\n#+LAST_MODIFIED: \n\n- links :: \n\n" :unnarrowed t)
 				("t" "text" plain #'org-roam-capture--get-point "%?"
 				 :file-name "%<%Y%m%d%H%M%S>-${slug}"
-				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: text\n#+ROAM_ALIAS: \n#+CREATED: %U\n#+LAST_MODIFIED:\n\n- links :: \n\n" :unnarrowed t)))
+				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: text\n#+ROAM_ALIAS: \n#+CREATED: %U\n#+LAST_MODIFIED: \n\n- links :: \n\n" :unnarrowed t)))
 #+END_SRC
 
 **** org-roam-dailies
@@ -3778,7 +3796,7 @@ Templates for =org-roam-bibtex=:
 (setq orb-templates
       '(("r" "ref" plain (function org-roam-capture--get-point) ""
          :file-name "${citekey}"
-         :head "#+TITLE: ${citekey}: ${title}\n#+CREATED: %U\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS: %^{Tags} \n#+ROAM_ALIAS: \n#+LAST_MODIFIED:\n\n- links :: \n\n%?"
+         :head "#+TITLE: ${citekey}: ${title}\n#+CREATED: %U\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS: %^{Tags} \n#+ROAM_ALIAS: \n#+LAST_MODIFIED: \n\n- links :: \n\n%?"
          :unnarrowed t)))
 #+END_SRC
 
@@ -5005,6 +5023,8 @@ Use =bibtex-entry= when inserting entry templates:
 
 *** helm-bibtex
 
+https://github.com/tmalsburg/helm-bibtex
+
 Search through your BibTeX bibliography with helm. 
 
 #+BEGIN_SRC emacs-lisp
@@ -5012,6 +5032,10 @@ Search through your BibTeX bibliography with helm.
 	:ensure t
 	:pin MELPA
 	:config
+	;; Make sure that the most recent version of `bibtex-completion' is installed. 
+	(use-package bibtex-completion
+		:ensure t
+		:pin MELPA)
 	(setq bibtex-completion-bibliography (list user-bibliography-file))
 	(setq bibtex-completion-additional-search-fields '(bibtexkey))
 	;; The standard function with modified default action  
@@ -5059,6 +5083,25 @@ Search through your BibTeX bibliography with helm.
 	(setq bibtex-completion-display-formats 
 				'((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
 	)
+#+END_SRC
+
+Support for CSL, see https://github.com/tmalsburg/helm-bibtex/issues/235#issuecomment-383870278.
+
+#+BEGIN_SRC emacs-lisp
+(defvar helm-bibtex-csl-style "~/.emacs.d/csl/unified-style-sheet-for-linguistics.csl")
+
+(defvar helm-bibtex-csl-locale-dir "~/.emacs.d/csl")
+
+(defun helm-bibtex-insert-citeproc-reference (_candidate)
+  (let* ((locale-getter (citeproc-locale-getter-from-dir helm-bibtex-csl-locale-dir))
+         (item-getter (citeproc-itemgetter-from-bibtex helm-bibtex-bibliography))
+         (proc (citeproc-create helm-bibtex-csl-style item-getter locale-getter))
+         (cites (mapcar (lambda (x) (citeproc-citation-create :cites `(((id . ,x)))))
+                        (helm-marked-candidates))))
+    (citeproc-append-citations cites proc)
+    (insert (car (citeproc-render-bib proc 'plain)))))
+
+(helm-add-action-to-source "Insert citeproc-formatted reference" 'helm-bibtex-insert-citeproc-reference helm-source-bibtex)
 #+END_SRC
 
 *** COMMENT ivy-bibtex
@@ -5991,6 +6034,15 @@ GNU Typist: An interactive typing tutor
 https://www.gnu.org/software/gtypist/doc/gtypist.html
 
 Unfortunately, there doesn't seem to be an easy way to run this within Emacs (at least under Windows).
+
+** Scripts
+
+Make script files (e.g. Bash scripts) with the hash-bang notation exectuable when saving them:
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'after-save-hook
+  'executable-make-buffer-file-executable-if-script-p)
+#+END_SRC
 
 * Minor modes
 ** COMMENT literal-calc-mode
@@ -6943,7 +6995,9 @@ https://github.com/chuntaro/emacs-keypression
 
 ** Undo & remove
 
-*** undo-tree
+*** COMMENT undo-tree
+
+- [ ] waiting for v0.8 to appear on elpa
 
 https://gitlab.com/tsc25/undo-tree
 
@@ -6960,7 +7014,7 @@ Visualize the undo history.
     (setq undo-tree-visualizer-diff t)))
 #+end_src
 
-*** COMMENT undo-fu
+*** undo-fu
 
 https://gitlab.com/ideasman42/emacs-undo-fu
 
@@ -10975,8 +11029,8 @@ Key bindings roughly following the conventions of the Windows habitat.
 						(define-key key-translation-map (kbd "M-q") (kbd "C-g"))
 
 						;; undo/redo
-						(define-key map (kbd "C-z") 'undo-tree-undo)
-						(define-key map (kbd "C-S-z") 'undo-tree-redo)
+						;; (define-key map (kbd "C-z") 'undo-tree-undo)
+						;; (define-key map (kbd "C-S-z") 'undo-tree-redo)
 
 						;; yank
 						(define-key map (kbd "C-v") 'yank)						
