@@ -8186,11 +8186,15 @@ From the project decription: This package provides tools to save and restore fra
 
 * Bookmarks
 
+** General settings
+
 #+BEGIN_SRC emacs-lisp
 (setq bookmark-default-file my-bookmarks-file) ; default bookmark file
 (setq bookmark-save-flag 1) ; everytime bookmark is changed, automatically save it
 (global-set-key (kbd "C-x C-r") 'helm-bookmarks)
 #+END_SRC
+
+** [[Burly]]
 
 * Git
 
