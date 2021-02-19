@@ -2603,6 +2603,65 @@ Preserves the first heading of the org-mode file and the inherited tags (found i
         (org-set-tags-to tags)))))
 #+END_SRC
 
+*** Attachments
+
+=org-attach= might not be autoloaded by org-mode.
+#+BEGIN_SRC emacs-lisp
+(require 'org-attach)  
+#+END_SRC
+
+Note that =org-attach= has been refactored and extended in =org-mode= v9.3 (see https://orgmode.org/Changes.html), adding the following variables:
+#+BEGIN_SRC emacs-lisp
+(setq
+ org-attach-use-inheritance t	    ; enable inheritance
+ org-attach-dir-relative t		    ; enable relative paths in DIR property
+ org-attach-preferred-new-method 'dir ; prefered method for attachments (id, dir, ask, nil)
+ )
+#+END_SRC  
+
+Function to rename =ATTACH_DIR= (deprecated) to =DIR=, and to remove =ATTACH_DIR_INHERIT= (deprecated):
+#+BEGIN_SRC emacs-lisp
+(defun org-update-attach-properties ()
+    "Change properties for Org-Attach."
+    (interactive)
+    (org-with-point-at 1
+      (while (outline-next-heading)
+        (let ((DIR (org--property-local-values "ATTACH_DIR" nil)))
+          (when DIR
+            (org-set-property "DIR" (car DIR))
+            (org-delete-property "ATTACH_DIR"))))
+      (org-delete-property-globally "ATTACH_DIR_INHERIT")))
+#+END_SRC
+
+Add some link types (deprecated):
+#+BEGIN_SRC emacs-lisp
+;; (add-to-list 'org-link-abbrev-alist '("attachment" . org-attach-expand-link)) ; included in `org-attach` since v9.3
+;; (add-to-list 'org-link-abbrev-alist '("att" . org-attach-expand-link)) ; only for downward compatibility and not supported any longer since v9.4
+#+END_SRC
+
+Handling attachments of =xournalpp= files:
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-add-or-open-xournal-attachment ()
+	"Start `xournalpp' in attachment directory and open notes file, if available.
+
+If no attachment directory can be found, the user is asked to create one."
+	(interactive)
+	(if (derived-mode-p 'org-mode)
+			(progn (when (and (not (org-attach-dir))
+												(y-or-n-p "No attachment directory found.  Create one? "))
+							 (org-attach-dir t))
+						 (if (org-attach-dir)
+								 (start-process "" nil
+																"xournalpp" (expand-file-name "hand-notes.xopp" (org-attach-dir)))
+							 (start-process "" nil "xournalpp")))
+		(message "Not in org-mode")))
+#+END_SRC
+
+Note that one can specify the name of attachment directories per file with
+#+BEGIN_SRC emacs-lisp :tangle no
+# -*- org-attach-id-dir: "my-fancy-dir-name" -*-
+#+END_SRC
+
 *** Bibliography
 
 **** citeproc-org
