@@ -1799,6 +1799,12 @@ Notes regarding texts, videos etc. are handled in the following way:
 - body: URL or [[org-ref]] citation link
 - When available, an electronic copy (usually as PDF) is stored as regular attachment based on the heading's ID. As far as PDFs are concerned, notes can be left there with [[pdf-tools]].
 
+**** Projects
+
+How to deal with and define projects within =org-mode=: 
+- https://karl-voit.at/2019/11/03/org-projects/
+- http://juanreyero.com/article/emacs/org-teams.html
+
 *** General appearence
 
 **** Lists
@@ -3873,12 +3879,6 @@ http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
  #+BEGIN_SRC emacs-lisp
 (org-babel-do-load-languages  'org-babel-load-languages '((plantuml . t)))
 #+END_SRC
-
-*** Projects
-
-How to deal with and define projects within =org-mode=: 
-- https://karl-voit.at/2019/11/03/org-projects/
-- http://juanreyero.com/article/emacs/org-teams.html
 
 *** Refile
 
