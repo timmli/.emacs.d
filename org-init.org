@@ -3250,6 +3250,17 @@ Set keys:
 	(define-key org-mode-map (kbd "S-<return>") 'tl/org-shift-return )) ; not org-table-copy-down
 #+END_SRC
 
+**** COMMENT org-autolist
+
+https://github.com/calvinwyoung/org-autolist
+
+DWIM behaviour of =<return>= in lists.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-autolist
+	:ensure t)
+#+END_SRC
+
 **** COMMENT Old stuff
 
 This is an old version of scimax/org-return that I modified.
