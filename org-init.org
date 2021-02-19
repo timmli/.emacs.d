@@ -3110,6 +3110,8 @@ Split the line with =M-<return>=. Disables =org-table-wrap-region= when set to =
 (setq org-M-RET-may-split-line '((default . t)))
 #+END_SRC
 
+**** scimax/org-return
+
 The following is taken from [[http://github.com/jkitchin/scimax/blob/master/scimax-org.el]] . 
 See also http://kitchingroup.cheme.cmu.edu/blog/2017/04/09/A-better-return-in-org-mode/ .
 
@@ -3219,7 +3221,14 @@ Use a prefix arg to get regular RET. "
       (org-return)))))
 #+END_SRC
 
-Shift-return:
+Set keys:
+
+#+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'org
+	(define-key org-mode-map (kbd "<return>") 'scimax/org-return)) ; not org-table-next-row
+#+END_SRC
+
+**** Shift-return
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/org-shift-return ()
@@ -3238,7 +3247,6 @@ Set keys:
 
 #+BEGIN_SRC emacs-lisp
 (with-eval-after-load 'org
-	(define-key org-mode-map (kbd "<return>") 'scimax/org-return) ; not org-table-next-row
 	(define-key org-mode-map (kbd "S-<return>") 'tl/org-shift-return )) ; not org-table-copy-down
 #+END_SRC
 
