@@ -8252,6 +8252,10 @@ Enhancement of magit to make available a more comprehensive access to Github rep
 
 ** git-gutter
 
+https://github.com/emacsorphanage/git-gutter
+
+An Emacs port of the Sublime Text plugin [[https://github.com/jisaacks/GitGutter][GitGutter]].
+
 #+begin_src emacs-lisp
 (use-package git-gutter
 	:ensure t
