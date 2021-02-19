@@ -2793,6 +2793,8 @@ Only use actual width of image when not specified with =#+ATTR* :width= (require
 
 *** LaTeX support
 
+**** General Settings
+
 Load export module for LaTeX:
 #+BEGIN_SRC emacs-lisp
 (require 'ox-latex)
@@ -2960,6 +2962,62 @@ For non-floats, see `org-latex--wrap-label'."
 							(if short (format "[%s]" (org-export-data short info)) "")
 							(org-export-data main info)
 							label)))))
+#+END_SRC
+
+**** Beamer
+
+Documentation:
+- https://github.com/fniessen/refcard-org-beamer
+- http://orgmode.org/tmp/worg/org-tutorials/org-latex-export.html
+
+Load support for exporting LaTeX beamer presentations:
+#+BEGIN_SRC emacs-lisp
+(require 'ox-beamer)
+#+END_SRC
+
+Add virtual beamer class (=tl-beamer=) to the known LaTeX classes:
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-latex-classes
+         '("tl-beamer" 
+						"\\documentclass{beamer}
+						[NO-DEFAULT-PACKAGES]"
+            ("\\section{%s}" . "\\section*{%s}")
+            ("\\subsection{%s}" . "\\subsection*{%s}")
+            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+            ("\\paragraph{%s}" . "\\paragraph*{%s}")
+            ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
+#+END_SRC
+
+Change export of bold font:
+#+BEGIN_SRC emacs-lisp
+(defun my-beamer-bold (contents backend info)
+  (when (eq backend 'beamer)
+    (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textbf" contents)))
+
+(add-to-list 'org-export-filter-bold-functions 'my-beamer-bold)
+#+END_SRC
+
+Change export of italic font:
+#+BEGIN_SRC emacs-lisp
+(defun my-beamer-italic (contents backend info)
+  (when (eq backend 'beamer)
+    (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textit" contents)))
+
+(add-to-list 'org-export-filter-italic-functions 'my-beamer-italic)
+#+END_SRC
+
+**** COMMENT org-edit-latex
+
+As of org-mode 9.4, this functionality is built in.
+See https://orgmode.org/Changes.html#org685f215.
+
+=org-edit-latex= lets you edit inline math equations in a separate buffer.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-edit-latex
+  :ensure t
+  :config
+  (add-hook 'org-mode-hook #'org-edit-latex-mode))
 #+END_SRC
 
 *** TODO Links
@@ -3578,62 +3636,6 @@ https://github.com/gregsexton/ob-ipython
 	(org-babel-do-load-languages
 	 'org-babel-load-languages
 	 '((ipython . t))))
-#+END_SRC
-
-*** org-beamer
-
-Documentation:
-- https://github.com/fniessen/refcard-org-beamer
-- http://orgmode.org/tmp/worg/org-tutorials/org-latex-export.html
-
-Load support for exporting LaTeX beamer presentations:
-#+BEGIN_SRC emacs-lisp
-(require 'ox-beamer)
-#+END_SRC
-
-Add virtual beamer class (=tl-beamer=) to the known LaTeX classes:
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'org-latex-classes
-         '("tl-beamer" 
-						"\\documentclass{beamer}
-						[NO-DEFAULT-PACKAGES]"
-            ("\\section{%s}" . "\\section*{%s}")
-            ("\\subsection{%s}" . "\\subsection*{%s}")
-            ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-            ("\\paragraph{%s}" . "\\paragraph*{%s}")
-            ("\\subparagraph{%s}" . "\\subparagraph*{%s}")))
-#+END_SRC
-
-Change export of bold font:
-#+BEGIN_SRC emacs-lisp
-(defun my-beamer-bold (contents backend info)
-  (when (eq backend 'beamer)
-    (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textbf" contents)))
-
-(add-to-list 'org-export-filter-bold-functions 'my-beamer-bold)
-#+END_SRC
-
-Change export of italic font:
-#+BEGIN_SRC emacs-lisp
-(defun my-beamer-italic (contents backend info)
-  (when (eq backend 'beamer)
-    (replace-regexp-in-string "\\`\\\\[A-Za-z0-9]+" "\\\\textit" contents)))
-
-(add-to-list 'org-export-filter-italic-functions 'my-beamer-italic)
-#+END_SRC
-
-*** COMMENT org-edit-latex
-
-As of org-mode 9.4, this functionality is built in.
-See https://orgmode.org/Changes.html#org685f215.
-
-=org-edit-latex= lets you edit inline math equations in a separate buffer.
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-edit-latex
-  :ensure t
-  :config
-  (add-hook 'org-mode-hook #'org-edit-latex-mode))
 #+END_SRC
 
 *** COMMENT org-gcal
