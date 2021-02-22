@@ -6809,23 +6809,22 @@ Drag'n drop of text with the mouse:
 (setq mouse-drag-and-drop-region t)
 #+END_SRC
 
-*** TODO COMMENT drag-stuff
-:LOGBOOK:
-- State "TODO"       from              [2021-02-10 Wed 22:56]
-:END:
+- [ ] Does not work in org-mode
 
-- [ ] make it compatible with org-mode
+*** drag-stuff
 
 https://github.com/rejeep/drag-stuff.el
 
 Drag around marked stuff (words, region, lines) with the keyboard.
+
+There is a irreconcilable conflict in the key bindings of =drag-stuff= and =org-mode=, see [[https://github.com/rejeep/drag-stuff.el/issues/6#issuecomment-254298391][here]]. I have therefore added [[hydra-drag-stuff]] an will use it in [[hydra-transpose]]. 
 
 #+BEGIN_SRC emacs-lisp
 (use-package drag-stuff
 	:ensure t
 	:config
 	(drag-stuff-global-mode 1)
-	(drag-stuff-define-keys)							; Use <M-up>, <M-down>, <M-left> and <M-right>
+	;; (drag-stuff-define-keys)							; Use <M-up>, <M-down>, <M-left> and <M-right>
 	)
 #+END_SRC
 
@@ -10815,6 +10814,7 @@ Taken from https://github.com/abo-abo/hydra/wiki/Emacs
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-transpose (:color red)
 	"Transpose"
+	("d" hydra-drag-stuff/body "drag stuff" :color blue)
 	("c" transpose-chars "characters")
 	("w" transpose-words "words")
 	("x" transpose-sexps "expressions")
@@ -10829,6 +10829,20 @@ Taken from https://github.com/abo-abo/hydra/wiki/Emacs
 	("C-t" nil nil :color blue)
 	("q" nil "cancel" :color blue))
 (global-set-key (kbd "C-t") 'hydra-transpose/body)
+#+END_SRC
+
+** hydra-drag-stuff
+
+For package [[drag-stuff]].
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-drag-stuff (:color red)
+	"Drag stuff"
+	("<left>" drag-stuff-left "left")
+	("<right>" drag-stuff-right "right")
+	("<up>" drag-stuff-up "up")
+	("<down>" drag-stuff-down "down")
+	("q" nil "cancel" :color blue))
 #+END_SRC
 
 ** hydra: end
