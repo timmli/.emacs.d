@@ -1,0 +1,29 @@
+# -*- mode: snippet -*-
+# name: new course
+# key: <C
+# --
+`(progn (org-insert-heading)(org-demote)(org-set-tags ":project:"))` INPROGRESS $1
+:PROPERTIES:
+:DIR: `(insert (read-file-name ""))`
+:COLUMNS:  %40ITEM %25SESSION_LITERATURE(LITERATURE) %30SESSION_MATERIAL(MATERIAL) %SESSION_PRESENTER(PRESENTER)
+:END:
+:LOGBOOK:
+- CREATED: `(org-insert-time-stamp (current-time) t t)`
+:END:
+
+`(progn (org-insert-heading) (org-demote))` Sitzungen
+:PROPERTIES:
+:COLUMNS:  %40ITEM %25SESSION_LITERATURE(LITERATURE) %30SESSION_MATERIAL(MATERIAL) %SESSION_PRESENTER(PRESENTER)
+:END:
+
+`(progn (org-insert-heading) (org-demote) (org-demote))` 1. Sitzung $0
+
+`(progn (org-insert-heading) (org-promote) (org-promote))` Hausarbeiten
+
+`(progn (org-insert-heading))` Themen & Literatur
+
+`(progn (org-insert-heading))` Beschreibung
+
+`(progn (org-insert-heading))` Ähnliche Veranstaltungen
+
+

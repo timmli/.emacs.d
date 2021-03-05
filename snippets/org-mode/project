@@ -3,9 +3,9 @@
 # key: <P
 # --
 `(progn (org-insert-heading)(org-set-tags ":project:"))` INPROGRESS $1
-${2:SCHEDULED:`[2021-01-23 Sat 12:48](org-insert-time-stamp (current-time) t t)`}
+${2:SCHEDULED:`(org-insert-time-stamp (current-time) t t)`}
 :LOGBOOK:
-- CREATED: `[2021-01-23 Sat 12:48](org-insert-time-stamp (current-time) t t)`
+- CREATED: `(org-insert-time-stamp (current-time) t t)`
 :END:
 
 $0
