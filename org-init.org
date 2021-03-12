@@ -6797,7 +6797,10 @@ Expand region increases the selected region by semantic units. I've bound it to 
 	)
 #+end_src
 
-*** Mouse selection
+*** TODO Mouse selection
+:LOGBOOK:
+- State "TODO"       from              [2021-02-11 Thu 09:22]
+:END:
 
 Copy mouse selection to kill-ring:
 #+begin_src emacs-lisp
@@ -10815,6 +10818,7 @@ Taken from https://github.com/abo-abo/hydra/wiki/Emacs
 (defhydra hydra-transpose (:color red)
 	"Transpose"
 	("d" hydra-drag-stuff/body "drag stuff" :color blue)
+  ("D" xah-fix-datetime "date")
 	("c" transpose-chars "characters")
 	("w" transpose-words "words")
 	("x" transpose-sexps "expressions")
@@ -10830,6 +10834,132 @@ Taken from https://github.com/abo-abo/hydra/wiki/Emacs
 	("q" nil "cancel" :color blue))
 (global-set-key (kbd "C-t") 'hydra-transpose/body)
 #+END_SRC
+
+Helper function to transform date to yyyy-mm-dd format:
+
+#+BEGIN_SRC emacs-lisp
+(defun xah-fix-datetime (@begin @end)
+  "Change timestamp under cursor into a yyyy-mm-dd format.
+If there's a text selection, use that as input, else use current line.
+Replace the text in selection or current line.
+
+Any “day of week”, or “time” info, or any other parts of the string, are discarded.
+For example:
+ TUESDAY, FEB 15, 2011 05:16 ET → 2011-02-15
+ November 28, 1994              → 1994-11-28
+ Nov. 28, 1994                  → 1994-11-28
+ 11/28/1994                     → 1994-11-28
+ 1994/11/28                     → 1994-11-28
+
+URL `http://ergoemacs.org/emacs/elisp_datetime_parser.html'
+Version 2020-09-08"
+  (interactive
+   (list
+    (if (region-active-p) (region-beginning))
+    (if (region-active-p) (region-end))))
+  (require 'parse-time)
+  (let ($p1 $p2 $in)
+    (if @begin
+        (setq $p1 @begin $p2 @end)
+      (setq $p1 (line-beginning-position) $p2 (line-end-position)))
+    (setq $in (replace-regexp-in-string "^ *\\(.+\\) *$" "\\1" (buffer-substring-no-properties $p1 $p2)))
+																				; remove white spaces
+
+    (setq $in
+          (cond
+
+           ;; yyyy/mm/dd
+           ((string-match "\\([0-9][0-9][0-9][0-9]\\)/\\([0-9][0-9]\\)/\\([0-9][0-9]\\)" $in)
+            (concat (match-string 1 $in) "-" (match-string 2 $in) "-" (match-string 3 $in)))
+
+           ;; mm/dd/yyyy
+           ((string-match "\\([0-9][0-9]\\)/\\([0-9][0-9]\\)/\\([0-9][0-9][0-9][0-9]\\)" $in)
+            (concat (match-string 3 $in) "-" (match-string 1 $in) "-" (match-string 2 $in)))
+           ;; m/dd/yyyy
+           ((string-match "\\([0-9]\\)/\\([0-9][0-9]\\)/\\([0-9][0-9][0-9][0-9]\\)" $in)
+            (concat (match-string 3 $in) "-0" (match-string 1 $in) "-" (match-string 2 $in)))
+
+           ;; USA convention of mm/dd/yy
+           ((string-match "\\([0-9][0-9]\\)/\\([0-9][0-9]\\)/\\([0-9][0-9]\\)" $in)
+            (concat (format-time-string "%C") (match-string 3 $in) "-" (match-string 1 $in) "-" (match-string 2 $in)))
+           ;; USA convention of m/dd/yy
+           ((string-match "\\([0-9]\\)/\\([0-9][0-9]\\)/\\([0-9][0-9]\\)" $in)
+            (concat (format-time-string "%C") (match-string 3 $in) "-0" (match-string 1 $in) "-" (match-string 2 $in)))
+
+					 ;; Inserted by Timm Lichte -->
+           ;; dd.mm.yyyy
+           ((string-match "\\([0-9][0-9]\\).\\([0-9][0-9]\\).\\([0-9][0-9][0-9][0-9]\\)" $in)
+            (concat (match-string 3 $in) "-" (match-string 2 $in) "-" (match-string 1 $in)))
+           ;; d.mm.yyyy
+           ((string-match "\\([0-9]\\).\\([0-9][0-9]\\).\\([0-9][0-9][0-9][0-9]\\)" $in)
+            (concat (match-string 3 $in) "-" (match-string 2 $in) "-0" (match-string 1 $in)))
+					 ;; d.m.yyyy
+           ((string-match "\\([0-9]\\).\\([0-9]\\).\\([0-9][0-9][0-9][0-9]\\)" $in)
+            (concat (match-string 3 $in) "-0" (match-string 2 $in) "-0" (match-string 1 $in)))
+					 ;; dd.m.yyyy
+           ((string-match "\\([0-9][0-9]\\).\\([0-9]\\).\\([0-9][0-9][0-9][0-9]\\)" $in)
+            (concat (match-string 3 $in) "-0" (match-string 2 $in) "-" (match-string 1 $in)))
+           ;; dd.mm.yy
+           ((string-match "\\([0-9][0-9]\\).\\([0-9][0-9]\\).\\([0-9][0-9]\\)" $in)
+            (concat (format-time-string "%C") (match-string 3 $in) "-" (match-string 2 $in) "-" (match-string 1 $in)))
+           ;; d.mm.yy
+           ((string-match "\\([0-9]\\).\\([0-9][0-9]\\).\\([0-9][0-9]\\)" $in)
+            (concat (format-time-string "%C") (match-string 3 $in) "-" (match-string 2 $in) "-0" (match-string 1 $in)))
+					 ;; dd.m.yy
+           ((string-match "\\([0-9][0-9]\\).\\([0-9]\\).\\([0-9][0-9]\\)" $in)
+            (concat (format-time-string "%C") (match-string 3 $in) "-0" (match-string 2 $in) "-" (match-string 1 $in)))
+					 ;; d.m.yy
+           ((string-match "\\([0-9]\\).\\([0-9]\\).\\([0-9][0-9]\\)" $in)
+            (concat (format-time-string "%C") (match-string 3 $in) "-0" (match-string 2 $in) "-0" (match-string 1 $in)))
+					 ;; Inserted by Timm Lichte <--
+					 
+           ;; some ISO 8601. yyyy-mm-ddThh:mm
+           ((string-match "\\([0-9][0-9][0-9][0-9]\\)-\\([0-9][0-9]\\)-\\([0-9][0-9]\\)T[0-9][0-9]:[0-9][0-9]" $in)
+            (concat (match-string 1 $in) "-" (match-string 2 $in) "-" (match-string 3 $in)))
+           ;; some ISO 8601. yyyy-mm-dd
+           ((string-match "\\([0-9][0-9][0-9][0-9]\\)-\\([0-9][0-9]\\)-\\([0-9][0-9]\\)" $in)
+            (concat (match-string 1 $in) "-" (match-string 2 $in) "-" (match-string 3 $in)))
+           ;; some ISO 8601. yyyy-mm
+           ((string-match "\\([0-9][0-9][0-9][0-9]\\)-\\([0-9][0-9]\\)" $in)
+            (concat (match-string 1 $in) "-" (match-string 2 $in)))
+
+           ;; else
+           (t
+            (progn
+              (setq $in (replace-regexp-in-string "January " "Jan. " $in))
+              (setq $in (replace-regexp-in-string "February " "Feb. " $in))
+              (setq $in (replace-regexp-in-string "March " "Mar. " $in))
+              (setq $in (replace-regexp-in-string "April " "Apr. " $in))
+              (setq $in (replace-regexp-in-string "May " "May. " $in))
+              (setq $in (replace-regexp-in-string "June " "Jun. " $in))
+              (setq $in (replace-regexp-in-string "July " "Jul. " $in))
+              (setq $in (replace-regexp-in-string "August " "Aug. " $in))
+              (setq $in (replace-regexp-in-string "September " "Sep. " $in))
+              (setq $in (replace-regexp-in-string "October " "Oct. " $in))
+              (setq $in (replace-regexp-in-string "November " "Nov. " $in))
+              (setq $in (replace-regexp-in-string "December " "Dec. " $in))
+
+              (setq $in (replace-regexp-in-string "\\([0-9]+\\)st" "\\1" $in))
+              (setq $in (replace-regexp-in-string "\\([0-9]+\\)nd" "\\1" $in))
+              (setq $in (replace-regexp-in-string "\\([0-9]+\\)rd" "\\1" $in))
+              (setq $in (replace-regexp-in-string "\\([0-9]\\)th" "\\1" $in))
+
+              (let ($dateList $year $month $date $yyyy $mm $dd )
+                (setq $dateList (parse-time-string $in))
+                (setq $year (nth 5 $dateList))
+                (setq $month (nth 4 $dateList))
+                (setq $date (nth 3 $dateList))
+
+                (setq $yyyy (number-to-string $year))
+                (setq $mm (if $month (format "%02d" $month) "" ))
+                (setq $dd (if $date (format "%02d" $date) "" ))
+                (concat $yyyy "-" $mm "-" $dd))))))
+    (delete-region $p1 $p2 )
+    (insert $in)))
+#+END_SRC
+
+#+RESULTS:
+: xah-fix-datetime
 
 ** hydra-drag-stuff
 
