@@ -7296,7 +7296,8 @@ https://github.com/alphapapa/bufler.el
 
 #+BEGIN_SRC emacs-lisp
 (use-package bufler
-	:ensure t)
+	:ensure t
+	:pin MELPA)
 #+END_SRC
 
 Fuzzy search in [[helm]].
@@ -7304,6 +7305,7 @@ Fuzzy search in [[helm]].
 #+BEGIN_SRC emacs-lisp
 (use-package helm-bufler
 	:ensure t
+	:pin MELPA
 	:config
 	(defun helm-bufler-go ()
 		(interactive)
