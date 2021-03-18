@@ -1531,6 +1531,17 @@ Copied from https://oremacs.com/2017/03/18/dired-ediff/:
 (define-key dired-mode-map "e" 'ora-ediff-files)
 #+END_SRC
 
+*** diffpdf
+
+https://github.com/ShuguangSun/diffpdf.el
+
+Use =diffpdf= in =dired=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package diffpdf
+	:ensure t)
+#+END_SRC
+
 *** imenu
 
 Integrate imenu into dired.
@@ -9273,8 +9284,8 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
   ^^            v        ^^             _w_: copy file name _P_: change property _ow_: open in other window
             _<down>_     ^^             _W_: copy path      _c_/_Z_: compress      _of_: open in other frame
   ^^                     ^^             ^^                  _=_: diff
-   _._: home  _j_: jump  _f_: find        _$_: wdired         _e_: diff on marked  ^^
-   ^^         ^^         ^^             ^^                    _a_: attach to mail  ^^        _q_: quit hydra 
+   _._: home  _j_: jump  _f_: find        _$_: wdired         _a_: attach to mail    ^^
+   ^^         ^^         ^^             ^^                      ^^        _q_: quit hydra 
 -^----------^------------------------^----^---------------^-------^-------------^----^-----------
 "
 	("<left>" (lambda () (interactive) (find-alternate-file "..")))
@@ -9302,9 +9313,8 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
 	("$" wdired-change-to-wdired-mode :color blue)
 	("f" helm-find)
 	("." (find-file home-directory))
-	("=" diredp-ediff)  
+	("=" hydra-dired-diff/body :color blue)  
 	;; ("=" dired-diff)
-	("e" ora-ediff-files)
 	("g" revert-buffer)
 	("j" dired-goto-file)
 	("ow" dired-find-file-other-window :color blue)
@@ -9349,6 +9359,14 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
 	("o" dired-do-chown "owner")
 	("r" dired-do-chmod "rights")
 	("g" dired-do-chgrp "group")
+	("q" hydra-dired-main/body "quit" :color blue)
+	)
+
+(defhydra hydra-dired-diff (:hint nil :after-exit (hydra-dired-main/body))
+	"Diff"
+	("=" diredp-ediff "diff")
+	("e" ora-ediff-files "diff on marked")
+	("p" diffpdf-dired--command "diffpdf")
 	("q" hydra-dired-main/body "quit" :color blue)
 	)
 #+END_SRC
