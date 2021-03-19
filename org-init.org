@@ -8243,11 +8243,16 @@ From the project decription: This package provides tools to save and restore fra
 	:bind
 	("C-x g" . magit-status)
 	;; ("C-x C-g" . magit-status)
+	:init
+	;; make sure the latest version of magit-section is installed
+	(use-package magit-section
+		:ensure t
+		:pin MELPA)
 	:config
 	;; show magit full screen
 	(setq magit-display-buffer-function #'magit-display-buffer-fullframe-status-v1)
 	)
-#+end_src
+#+END_SRC
 
 ** TODO COMMENT magit-gh-pulls
 
