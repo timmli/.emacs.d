@@ -7116,6 +7116,14 @@ Visualize the undo history.
     (setq undo-tree-visualizer-diff t)))
 #+end_src
 
+*** vundo
+
+https://github.com/casouri/vundo
+
+Visual helper for the regular undo.
+See blog post: https://archive.casouri.cat/note/2021/visual-undo-tree/index.html
+Requires Emacs 28.
+
 *** undo-fu
 
 https://gitlab.com/ideasman42/emacs-undo-fu
