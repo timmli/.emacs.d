@@ -2170,6 +2170,8 @@ Do not edit in invisible areas of the buffer:
 	 ))
 #+END_SRC
 
+Syntax highlighting with =src_*=: see https://stackoverflow.com/a/62319997/6452961 
+
 **** Checkboxes
 
 Fontify checkbox items. 
@@ -4120,6 +4122,7 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 				("conference" . nil)
 				("talk" . nil)									
 				("workshop" . nil)
+				("sharedtask" . nil)
 				(:endgroup . nil)
 
 				(:startgroup . nil)
@@ -4129,6 +4132,14 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 				("video" . nil)
 				("talk" . nil)
 				("poster" . nil)																		
+				(:endgroup . nil)
+
+				(:startgroup . nil)
+				("ressource" . ?r)
+				(:grouptags . nil)							; kinds of content
+				("data" . nil)
+				("corpus" . nil)
+				("software" . nil)
 				(:endgroup . nil)
 
 				;; topics
@@ -7116,7 +7127,7 @@ Visualize the undo history.
     (setq undo-tree-visualizer-diff t)))
 #+end_src
 
-*** vundo
+*** SOMEDAY vundo
 
 https://github.com/casouri/vundo
 
