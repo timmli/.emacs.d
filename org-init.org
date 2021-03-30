@@ -1764,21 +1764,26 @@ http://takingnotenow.blogspot.com/2008/07/note-keeping-in-1786-blumenbachs-syste
 
 **** General structure of files
 
-
-| Heading type | Properties                                   | Body                                                  | Purpose                                 | Title format                    |
-|--------------+----------------------------------------------+-------------------------------------------------------+-----------------------------------------+---------------------------------|
-| area         | non-intersecting with other areas            | topics, projects, ...                                 | group topics, keep overview             |                                 |
-| topic        | none                                         | topics, projects, ...                                 | group content, keeping overview         |                                 |
-| [[Projects][project]]      | SCHEDULED, DEADLINE, outcome, :project:, DIR | todos, notes, events that lead to some common outcome | track progress                          | $outcome: $topic                |
-| todo         | SCHEDULED, DEADLINE                          | text, todo, event                                     | track progress, take action             |                                 |
-| event        | timestamp, location, participants, :event:   | [[Minutes][minutes]]/notes                                         | store observations, ideas, action items | $topic/$participants $timestamp |
-| note         | CREATED, LAST_CHANGED                         | text                                                  | store ideas, concepts, references, ...  |                                 |
+| Heading type | Properties                                   | Body                                                  | Purpose                                 | End of life | Title format                    |
+|--------------+----------------------------------------------+-------------------------------------------------------+-----------------------------------------+-------------+---------------------------------|
+| area         | non-intersecting with other areas            | topics, projects, ...                                 | group topics, keep overview             |             |                                 |
+| topic        | :topic:                                      | topics, projects, ...                                 | group content, keeping overview         |             |                                 |
+| [[Projects][project]]      | SCHEDULED, DEADLINE, outcome, :project:, DIR | todos, notes, events that lead to some common outcome | track progress                          | :ARCHIVE:   | $outcome: $topic                |
+| todo         | SCHEDULED, DEADLINE                          | text, todo, event                                     | track progress, take action             | :ARCHIVE:   |                                 |
+| event        | timestamp, location, participants, :event:   | [[Minutes][minutes]]/notes                                         | store observations, ideas, action items | :ARCHIVE:   | $topic/$participants $timestamp |
+| note         | CREATED, LAST_CHANGED, :media:, ...           | text                                                  | store ideas, concepts, references, ...  |             |                                 |
 
 General structure of an high-level =org-mode= file:
 - Inbox
 - Events
 - Projects
+      - Events
+      - Goals
+      - Notes
 - Topics
+      - Events
+      - Projects
+      - Notes
 
 Information flow: 
 - Inbox $\Rightarrow$ Events|Projects  $\Rightarrow$ Topics
@@ -1809,8 +1814,12 @@ Notes regarding texts, videos etc. are handled in the following way:
 - properties: ID
 - body: URL or [[org-ref]] citation link
 - When available, an electronic copy (usually as PDF) is stored as regular attachment based on the heading's ID. As far as PDFs are concerned, notes can be left there with [[pdf-tools]].
+- eternal
 
 **** Projects
+
+- Projects have a defined start and end, similar to events, but in contrast to notes and topics.
+- Projects have a defined goal, which is achieved via todo items (either a list of checkboxes or headings), in contrast to events (which usually serve a goal but don't reach the goal unfortunately). 
 
 How to deal with and define projects within =org-mode=: 
 - https://karl-voit.at/2019/11/03/org-projects/
