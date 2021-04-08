@@ -2679,7 +2679,17 @@ Only use hours and minutes as duration format in clocktables:
 
 *** Download
 
-****  org-download
+**** TODO org-download
+:PROPERTIES:
+:ID:       05a42000-8498-4624-989a-a7f95357af87
+:END:
+:LOGBOOK:
+- State "TODO"       from              [2021-04-08 Thu 15:13]
+:END:
+
+https://github.com/abo-abo/org-download
+
+- [ ] Issue with rename-at-point: https://github.com/abo-abo/org-download/issues/164
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-download
@@ -9448,7 +9458,7 @@ Don't ask for the path when searching for files:
      _t_ set todo keyword        _dl_ delete link
      _:_ set tags                _dt_ delete aux files  ^^                      ^^      _q_ quit
    _+_/_-_ priority up/down         _e_ editmarks...
-     _1_ move to top
+     _1_ move to top              _D_ download
      _N_ number headings
      _x_ add/open hand notes
 "
@@ -9457,6 +9467,7 @@ Don't ask for the path when searching for files:
 	("b" org-tree-to-indirect-buffer)
 	("B" org-babel-goto-named-src-block :color pink)
 	("C" hydra-org-columns/body)
+	("D" hydra-org-download/body)
 	("c" hydra-org-clock/body)
 	("E" my-sem-hydra-start)
 	("e" my-sem-hydra-start)
@@ -9621,6 +9632,24 @@ Hydra for clocking activities in org-mode (taken from https://github.com/abo-abo
   ("m" org-timer)
   ("t" org-timer-item)
   ("h" (org-info "Timers")))
+#+END_SRC
+
+
+*** hydra-org-download
+
+Download with [[org-download]].
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-org-download (:hint nil)
+	"Org-mode download"
+	("c" org-download-clipboard "clipboard" :exit t)
+	("d" org-download-delete "delete" :exit t)
+	("r" org-download-rename-at-point "rename " :exit t)
+	("s" org-download-screenshot "screenshot" :exit t)
+	("u" org-download-image "url" :exit t)
+	("y" org-download-yank "yank" :exit t)
+	("q" nil :color blue)
+	)
 #+END_SRC
 
 *** hydra-org-agenda
