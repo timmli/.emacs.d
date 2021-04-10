@@ -96,6 +96,8 @@
       - [[#dimmer][dimmer]]
       - [[#burly][Burly]]
 - [[#bookmarks][Bookmarks]]
+      - [[#general-settings][General settings]]
+      - [[#burly][[[Burly]]]]
 - [[#git][Git]]
       - [[#magit][magit]]
       - [[#git-gutter][git-gutter]]
@@ -166,6 +168,7 @@
       - [[#hydra-smerge][hydra-smerge]]
       - [[#hydra-tags][hydra-tags]]
       - [[#hydra-transpose][hydra-transpose]]
+      - [[#hydra-drag-stuff][hydra-drag-stuff]]
       - [[#hydra-end][hydra: end]]
 - [[#key-bindings][Key bindings]]
       - [[#tlkeys-mode][tlkeys-mode]]
@@ -2680,9 +2683,6 @@ Only use hours and minutes as duration format in clocktables:
 *** Download
 
 **** TODO org-download
-:PROPERTIES:
-:ID:       05a42000-8498-4624-989a-a7f95357af87
-:END:
 :LOGBOOK:
 - State "TODO"       from              [2021-04-08 Thu 15:13]
 :END:
