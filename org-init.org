@@ -948,6 +948,21 @@ Quick, comprehensive search on org-mode files.
 
 ** Gnuplot
 
+*** gnuplot
+
+https://github.com/emacsorphanage/gnuplot
+
+#+BEGIN_SRC emacs-lisp
+(use-package gnuplot
+	:ensure t
+	:mode	"\\.\\(gp\\|gnuplot|plt\\)$"
+	)
+#+END_SRC
+
+*** COMMENT gnuplot-mode
+
+https://github.com/mkmcc/gnuplot-mode
+
 #+BEGIN_SRC emacs-lisp
 (use-package gnuplot-mode
 	:ensure t
