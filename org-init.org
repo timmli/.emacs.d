@@ -2779,17 +2779,20 @@ LaTeX source blocks should be executed with the following header arguments:
 #+END_SRC
 #+END_EXAMPLE
 
-Scale LaTeX previews:
+Style of LaTeX previews:
 #+BEGIN_SRC emacs-lisp
-;; static
-;; (plist-put org-format-latex-options :scale 2) ; scale inline PNGs
+(let ((default-scale 1.8))
+	;; static
+	(plist-put org-format-latex-options :scale default-scale) ; scale inline PNGs
+	(plist-put org-format-latex-options :background 'default) ; background of inline PNGs
 
-;; dynamic (http://emacs.stackexchange.com/a/13032/12336)
-(defun update-org-latex-fragment-scale ()
-  (let ((text-scale-factor (expt text-scale-mode-step text-scale-mode-amount)))
-    (plist-put org-format-latex-options :scale (* 2.3 text-scale-factor)))
-)
-(add-hook 'text-scale-mode-hook 'update-org-latex-fragment-scale)
+	;; dynamic (http://emacs.stackexchange.com/a/13032/12336)
+	(defun update-org-latex-fragment-scale ()
+		(let ((text-scale-factor (expt text-scale-mode-step text-scale-mode-amount)))
+			(plist-put org-format-latex-options :scale (* 2.3 default-scale text-scale-factor)))
+		)
+	(add-hook 'text-scale-mode-hook 'update-org-latex-fragment-scale)
+	)
 #+END_SRC
 
 Use LaTeXmk:
@@ -2808,6 +2811,15 @@ Extra function to delete auxiliary files:
 	"This function deletes auxiliary files that are not deleted by `latexmk` or `TeX-clean`."
 	(interactive)
 	(shell-command "rm -rfv *.fls *.prv preview.fmt .aux .fdb_latexmk frag-master.tex"))
+#+END_SRC
+
+Adjust =org-format-latex-header=: 
+#+BEGIN_SRC emacs-lisp
+(let ((default org-format-latex-header))
+	(setq org-format-latex-header (concat default "
+\\DeclareMathOperator*{\\argmax}{arg\\,max}
+\\DeclareMathOperator*{\\argmin}{arg\\,min}
+")))
 #+END_SRC
 
 Add some classes to the set of known classes:
