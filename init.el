@@ -139,6 +139,11 @@ This variable should be changed in private-emacs-settings-before.el.")
 	"Path to mail directory.
 This variable should be changed in private-emacs-settings-before.el.")
 
+(defvar personal-dictionary-file
+	nil
+	"Path to personal dictionary file that is used by ispell.
+This variable should be changed in private-emacs-settings-before.el.")
+
 
 ;;==========================================================
 ;;      PRIVATE SETTINGS: USER INFO (outside .emacs.d)

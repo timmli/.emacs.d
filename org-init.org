@@ -6477,15 +6477,43 @@ Flycheck integration for [[https://github.com/errata-ai/vale][vale]], a natural 
 	:after (flycheck)
 	:config (flycheck-vale-setup))
 #+END_SRC
+
 ** Spell checking
 
-https://200ok.ch/posts/2020-08-22_setting_up_spell_checking_with_multiple_dictionaries.html
+- Using multiple dictionaries:
+      - http://aspell.net/man-html/Using-Multi-Dictionaries.html
+      - https://200ok.ch/posts/2020-08-22_setting_up_spell_checking_with_multiple_dictionaries.html
+
+*** ispell 
+
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Spelling.html
+
+=ispell= is the built-in spell checking routine.
+
+Tell =ispell= which back-end to use:
+#+BEGIN_SRC emacs-lisp
+(setq ispell-program-name "aspell")
+#+END_SRC
+
+Comparisons of spell checkers:
+- http://aspell.net/test/cur/
+- https://battlepenguin.com/tech/aspell-and-hunspell-a-tale-of-two-spell-checkers/
+
+Specify the private dictionary file (use the system defaults when set to =nil=):
+#+BEGIN_SRC emacs-lisp
+(setq ispell-personal-dictionary personal-dictionary-file)
+
+;; Make sure the personal dictionary file exists
+(unless (or (not ispell-personal-dictionary)
+						(file-exists-p ispell-personal-dictionary))
+  (write-region "" nil ispell-personal-dictionary nil 0))
+#+END_SRC
 
 *** flyspell
 
-#+begin_src emacs-lisp
-(setq ispell-program-name "aspell")
+Built-in on-the-fly spell checking.
 
+#+begin_src emacs-lisp
 ;; remove keybindings for autocorrect 
 (eval-after-load "flyspell"
 	'(define-key flyspell-mode-map (kbd "C-;") nil))
@@ -6552,16 +6580,14 @@ https://200ok.ch/posts/2020-08-22_setting_up_spell_checking_with_multiple_dictio
   (interactive "P")
 	(progn
 		(flyspell-goto-next-error)
-		(ispell-word)
-		))
+		(ispell-word)))
 
 (defun flyspell-previous-and-ispell-word (args)
   ""
   (interactive "P")
 	(progn
 		(flyspell-goto-previous-error)
-		(ispell-word)
-		))
+		(ispell-word)))
 
 (defun flyspell-goto-next-and-correct (args)
   ""
@@ -6569,8 +6595,7 @@ https://200ok.ch/posts/2020-08-22_setting_up_spell_checking_with_multiple_dictio
 	(progn
 		(flyspell-goto-next-error)
 		(flyspell-correct-word-generic)
-		(right-char)
-		))
+		(right-char)))
 
 (defun flyspell-goto-previous-and-correct (args)
   ""
@@ -6578,9 +6603,7 @@ https://200ok.ch/posts/2020-08-22_setting_up_spell_checking_with_multiple_dictio
 	(progn
 		(flyspell-goto-previous-error 1)
 		(flyspell-correct-word-generic)
-		(left-word)
-		))
-
+		(left-word)))
 #+end_src
 
 Flyspell face:
@@ -6590,15 +6613,44 @@ Flyspell face:
 
 *** flyspell-correct
 
+https://github.com/d12frosted/flyspell-correct
+
+Correcting misspelled words with flyspell using favourite interface.
+
 #+BEGIN_SRC emacs-lisp
 (use-package flyspell-correct
 	:ensure t
+	:after flyspell
 	:config
 	(use-package flyspell-correct-helm
 		:ensure t)
 	;; (add-hook 'flyspell-mode-hook #'flyspell-correct-auto-mode)
 	;; (setq flyspell-correct-auto-delay 0.8)
+	;; :bind ("C-;" . flyspell-correct-wrapper)
 	)
+#+END_SRC
+
+*** guess-language
+
+https://github.com/tmalsburg/guess-language.el
+
+Minor mode for robust automatic language detection that automatically switches the spell checker accordingly.
+
+This mode assumes that [[flyspell]] is activated and configured for all relevant languages, i.e., those listed in =guess-language-languages=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package guess-language
+	:ensure t
+  :init (add-hook 'text-mode-hook #'guess-language-mode)
+	:config
+	(setq guess-language-languages '(en de))
+	(setq guess-language-min-paragraph-length 35)
+	:diminish guess-language-mode)
+#+END_SRC
+
+To see what dictionaries are installed , call
+#+BEGIN_SRC emacs-lisp
+(mapcar 'car ispell-dictionary-alist)
 #+END_SRC
 
 *** COMMENT flyspell-popup
@@ -6620,6 +6672,10 @@ Deprecated. I instead use =flyspell-correct=.
 	(define-key popup-menu-keymap (kbd "TAB") 'popup-select) ; Unfortunately, this does not seem to work.
 )
 #+END_SRC
+
+*** spell-fu
+
+https://gitlab.com/ideasman42/emacs-spell-fu
 
 ** Grammar checking
 
