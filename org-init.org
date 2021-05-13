@@ -6641,6 +6641,7 @@ This mode assumes that [[flyspell]] is activated and configured for all relevant
 #+BEGIN_SRC emacs-lisp
 (use-package guess-language
 	:ensure t
+  :pin MELPA
   :init (add-hook 'text-mode-hook #'guess-language-mode)
 	:config
 	(setq guess-language-languages '(en de))
