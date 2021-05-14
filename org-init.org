@@ -5721,12 +5721,14 @@ Taken from https://joshrollinswrites.com/help-desk-head-desk/20200611/.
 
 The hard part is to generate =epdfinfo.exe= under Windows, which is why I'm not using it there.
 
-https://github.com/politza/pdf-tools
+New: https://github.com/vedang/pdf-tools
+Old: https://github.com/politza/pdf-tools
 
 #+BEGIN_SRC emacs-lisp
 (when (not (eq system-type 'windows-nt))
 	(use-package pdf-tools
 		:ensure t
+		:pin MELPA
 		;; :if (executable-find "epdfinfo")
 		:mode (("\\.pdf\\'" . pdf-view-mode))
 		:bind ("M-w" . pdf-view-kill-ring-save) ; does not work
