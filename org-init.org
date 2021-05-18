@@ -6501,6 +6501,8 @@ Comparisons of spell checkers:
 - http://aspell.net/test/cur/
 - https://battlepenguin.com/tech/aspell-and-hunspell-a-tale-of-two-spell-checkers/
 
+Note on =aspell=: Unfortunately, =ispell-program-name= does not allow for also specifying =aspell= options. This would be desirable for changing, e.g., =home-dir=.
+
 Specify the private dictionary file (use the system defaults when set to =nil=):
 #+BEGIN_SRC emacs-lisp
 (setq ispell-personal-dictionary personal-dictionary-file)
