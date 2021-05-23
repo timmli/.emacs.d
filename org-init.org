@@ -2845,7 +2845,7 @@ Add the class [[https://github.com/langsci/latex][langscibook]] to the set of kn
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-latex-classes
 						 '("langscibook" 
-							 "\\documentclass{langsci/langscibook}
+							 "\\documentclass{langscibook}
 				    		[NO-DEFAULT-PACKAGES]" 
 							 ("\\part{%s}" . "\\part*{%s}") 
 							 ("\\chapter{%s}" . "\\chapter*{%s}") 
@@ -2857,7 +2857,7 @@ Add the class [[https://github.com/langsci/latex][langscibook]] to the set of kn
 
 (add-to-list 'org-latex-classes
 						 '("langscibook-paper" 
-							 "\\documentclass[output=paper]{langsci/langscibook}
+							 "\\documentclass[output=paper]{langscibook}
 				    		[NO-DEFAULT-PACKAGES]" 
 							 ("\\section{%s}" . "\\section*{%s}") 
 							 ("\\subsection{%s}" . "\\subsection*{%s}") 
