@@ -6431,6 +6431,22 @@ Add easy templates to company (https://emacs.stackexchange.com/a/33487/12336):
 
 #+END_SRC
 
+**** COMMENT company-org-block
+
+https://github.com/xenodium/company-org-block
+
+Insert Emacs org blocks with completion (via company mode).
+
+#+BEGIN_SRC emacs-lisp
+(use-package company-org-block
+  :ensure t
+  :custom
+  (company-org-block-edit-style 'auto) ;; 'auto, 'prompt, or 'inline
+  :hook ((org-mode . (lambda ()
+                       (setq-local company-backends '(company-org-block))
+                       (company-mode +1)))))
+#+END_SRC
+
 **** yasnippet
 
 Execute when all backends added to =company-backends=.
