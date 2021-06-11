@@ -6205,6 +6205,17 @@ There is a =literate-calc-minor-mode=, which slows down Emacs tremendously, howe
   (add-hook 'pandoc-mode-hook 'pandoc-load-default-settings))
 #+END_SRC
 
+** so-long-mode
+
+https://www.emacswiki.org/emacs/SoLong
+
+=so-long.el= optimizes the performance on files with long lines. Built into Emacs since v27.
+
+#+BEGIN_SRC emacs-lisp
+(when (require 'so-long nil :noerror)
+   (global-so-long-mode 1))
+#+END_SRC
+
 * Buffer
 
 ** General configuration
