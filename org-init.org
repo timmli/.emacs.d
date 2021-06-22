@@ -5876,19 +5876,23 @@ Open eml-files with =org-mode= turned on:
 :END:
 
 https://www.djcbsoftware.nl/code/mu/mu4e/index.html
+https://github.com/djcb/mu
 
 See https://github.com/munen/emacs.d/#mu4e for an elaborate example configuration.
 
 #+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path (expand-file-name "lisp/mu4e" user-emacs-directory))
 (require 'mu4e)
 (require 'org-mu4e)
 (setq send-mail-function 'smtpmail-send-it)
 
 ;; Default account on startup
-(setq mu4e-maildir  "~/Maildir"
-      mu4e-sent-folder "/Sent"
-      mu4e-drafts-folder "/Drafts"
-      mu4e-trash-folder "/Trash")
+(setq
+ mu4e-mu-home "~/.mu" 			; as of v1.4
+ ;; mu4e-maildir  "~/Maildir" ; deprecated in v1.4
+ mu4e-sent-folder "/Sent"
+ mu4e-drafts-folder "/Drafts"
+ mu4e-trash-folder "/Trash")
 
 (setq smtpmail-debug-info t
       mu4e-get-mail-command "mbsync -c ~/SOME_PATH/.mbsyncrc work"
