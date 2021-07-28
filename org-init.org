@@ -53,6 +53,7 @@
       - [[#scripts][Scripts]]
 - [[#minor-modes][Minor modes]]
       - [[#pandoc-mode][pandoc-mode]]
+      - [[#so-long-mode][so-long-mode]]
 - [[#buffer][Buffer]]
       - [[#general-configuration][General configuration]]
       - [[#autocomplete][Autocomplete]]
