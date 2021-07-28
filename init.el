@@ -306,6 +306,11 @@ This variable should be changed in private-emacs-settings.el.")
 ;; quelpa: a tool to compile and install Emacs Lisp packages
 (use-package quelpa
 	:ensure t)
+(quelpa
+ '(quelpa-use-package
+   :fetcher git
+   :url "https://github.com/quelpa/quelpa-use-package.git"))
+(require 'quelpa-use-package)
 
 ;; straight.el: yet another (purely functional) package manager
 ;; https://github.com/raxod502/straight.el
