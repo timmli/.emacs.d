@@ -3938,6 +3938,26 @@ See https://github.com/jkitchin/jmax/blob/master/org/org-show.org for more infor
 (require 'org-show) 
 #+END_SRC
 
+*** org-xournalpp
+
+https://gitlab.com/vherrmann/org-xournalpp
+
+[[https://xournalpp.github.io/][Xournal++]] is a versatile software to create hand-written notes and drawings, also allowing for the annotation of PDFs.
+
+=org-xournalpp= creates a new org link type called =xournalpp= that:
+- when clicked on, opens =xournalpp= for editing the file linked, and
+- shows the updated image preview inline if =org-xournalpp-mode= is enabled.
+
+Note that the installation requires =quelpa=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-xournalpp
+  :ensure t
+  :quelpa (org-xournalpp :fetcher gitlab :repo "vherrmann/org-xournalpp" :files ("*.el" "resources"))
+  :config
+  (add-hook 'org-mode-hook 'org-xournalpp-mode))
+#+END_SRC
+
 *** PDF interaction
 
 **** interleave
