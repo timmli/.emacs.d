@@ -13,3 +13,6 @@
 [submodule "lisp/org-fm-dev"]
 	path = lisp/org-fm-dev
 	url = https://github.com/timmli/org-fm-dev.git
+[submodule "lisp/org-transclusion"]
+	path = lisp/org-transclusion
+	url = https://github.com/nobiot/org-transclusion.git
