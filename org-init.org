@@ -7982,6 +7982,25 @@ Call dictcc with word under cursor or marked region:
 (global-set-key (kbd "C-0") 'tl/dictcc-at-point)
 #+END_SRC
 
+*** TODO COMMENT txl
+:LOGBOOK:
+- State "TODO"       from              [2021-08-01 Sun 15:47]
+:END:
+
+https://github.com/tmalsburg/txl.el
+
+High-quality machine translation in Emacs via DeepL's REST API.
+Requires access to DeepL's REST API.
+
+#+BEGIN_SRC emacs-lisp
+(straight-use-package
+ '(txl :type git :host github :repo "tmalsburg/txl.el"))
+(require 'txl)
+(setq txl-languages '(DE . EN-US))
+(setq txl-deepl-api-key "my-api-key")
+(global-set-key (kbd "C-S-0") 'txl-translate-region-or-paragraph)
+#+END_SRC
+
 ** Printing
 
 This solution reuses code from here:
