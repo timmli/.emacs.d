@@ -11349,11 +11349,12 @@ Opinionated Emacs key bindings just for this init file.
 																								 (recenter-top-bottom))
 																						 (helm-imenu))))
 						(define-key helm-map (kbd "H-i") 'helm-select-action) ; show actions (default is <tab>)
-						; (define-key map (kbd "C-S-i") 'imenu-list) ; disabled because it will break org-edit-special
+																				; (define-key map (kbd "C-S-i") 'imenu-list) ; disabled because it will break org-edit-special
 
 						;; buffers
 						(define-key map (kbd "C-x b") 'bufler)
 						(define-key map (kbd "C-x C-b") 'helm-bufler-go)
+						(define-key map (kbd "C-x C-s") 'save-some-buffers)
 
 						;; helm
 						(define-key helm-map (kbd "C-n") 'helm-next-source)
