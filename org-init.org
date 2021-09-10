@@ -2361,10 +2361,10 @@ Customize agenda view:
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-custom-commands
 			'(("w" "Work-related agenda and tasks"
-				 ((tags "PRIORITY=\"A\""
+				 ((agenda "")
+					(tags "PRIORITY=\"A\""
                 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
 								 (org-agenda-overriding-header "High-priority tasks:")))
-					(agenda "")
 					(todo "INPROGRESS"
 								((org-agenda-overriding-header "Normal-priority tasks:")))
 					(todo "NEXT" ((org-agenda-overriding-header "")
@@ -2385,10 +2385,10 @@ Customize agenda view:
 				 ((org-agenda-tag-filter-preset '("+@work"))))
 
 				("h" "Home-related agenda and tasks"
-				 ((tags "PRIORITY=\"A\""
+				 ((agenda "")
+					(tags "PRIORITY=\"A\""
 								((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
 								 (org-agenda-overriding-header "High-priority tasks:")))
-					(agenda "")
 					(todo "INPROGRESS"
 								((org-agenda-overriding-header "Normal-priority tasks:")))
 					(todo "NEXT" ((org-agenda-overriding-header "")
@@ -2405,10 +2405,10 @@ Customize agenda view:
 				 ((org-agenda-tag-filter-preset '("+@home"))))
 
 				("c" "Complete list of agenda and tasks"
-				 ((tags "PRIORITY=\"A\""
+				 ((agenda "")
+					(tags "PRIORITY=\"A\""
 								((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
 								 (org-agenda-overriding-header "High-priority tasks:")))
-					(agenda "")
 					(todo "INPROGRESS"
 								((org-agenda-overriding-header "Normal-priority tasks:")))
 					(todo "NEXT" ((org-agenda-overriding-header "")
@@ -4321,9 +4321,15 @@ Key bindings:
 (define-key org-mode-map (kbd "C-c :") 'org-set-tags-command)
 #+END_SRC
 
-*** Timestamps/Dates
+*** TODO Timestamps/Dates
+:LOGBOOK:
+- State "TODO"       from              [2021-09-09 Thu 22:28]
+:END:
 
-**** General
+**** TODO General
+:LOGBOOK:
+- State "TODO"       from              [2021-09-09 Thu 22:28]
+:END:
 
 Insert timestamp or change type depending on region or point: 
 #+BEGIN_SRC emacs-lisp
@@ -4358,6 +4364,8 @@ Set timestamp language to English:
 #+END_SRC
 
 Use Alt-Shift+cursor key chords to quickly change timestamps:
+- [ ] reorganize with cond
+- [ ] fix: does not work with inactive time stamps
 #+BEGIN_SRC emacs-lisp
 (defun tl/org-alt-shift-up ()
 	(interactive)
