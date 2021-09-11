@@ -2498,6 +2498,10 @@ Enable log mode in order to display done and clocked items:
 (setq org-agenda-start-with-log-mode t)
 (setq org-agenda-log-mode-items '(closed clock))
 (face-spec-set 'org-agenda-clocking '((t (:inherit unspecified))))
+(set-face-attribute 'org-agenda-date nil :foreground
+										(face-attribute 'org-agenda-date-today :foreground))
+(set-face-attribute 'org-agenda-date-weekend nil :foreground
+										(face-attribute 'org-agenda-date-today :foreground))
 #+END_SRC
 
 **** COMMENT org-timeline
