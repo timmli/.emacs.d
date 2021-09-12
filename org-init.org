@@ -2497,11 +2497,23 @@ Enable log mode in order to display done and clocked items:
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-start-with-log-mode t)
 (setq org-agenda-log-mode-items '(closed clock))
-(face-spec-set 'org-agenda-clocking '((t (:inherit unspecified))))
-(set-face-attribute 'org-agenda-date nil :foreground
-										(face-attribute 'org-agenda-date-today :foreground))
-(set-face-attribute 'org-agenda-date-weekend nil :foreground
-										(face-attribute 'org-agenda-date-today :foreground))
+#+END_SRC
+
+Change font faces:
+- [ ] =org-agenda-date= and =org-agenda-date-weekend= should depend on  =org-agenda-date-today=. Hard coding of colors should be avoided.
+#+BEGIN_SRC emacs-lisp
+(set-face-attribute 'org-agenda-date nil :foreground "#66d9ef")
+(set-face-attribute 'org-agenda-date-weekend nil :foreground "#66d9ef")
+(set-face-attribute 'org-agenda-clocking nil :inherit 'unspecified)
+
+;;;; Does not work, because `org-agenda-date-today' does not seem to be available when org-agenda-mode-hook is executed:
+;; (defun tl/org-agenda-style ()
+;; 	(set-face-attribute 'org-agenda-date nil :foreground
+;; 											(face-attribute 'org-agenda-date-today :foreground))
+;; 	(set-face-attribute 'org-agenda-date-weekend nil :foreground
+;; 											(face-attribute 'org-agenda-date-today :foreground))
+;; 	(set-face-attribute 'org-agenda-clocking nil :inherit unspecified))
+;; (add-hook 'org-agenda-mode-hook 'tl/org-agenda-style)
 #+END_SRC
 
 **** COMMENT org-timeline
