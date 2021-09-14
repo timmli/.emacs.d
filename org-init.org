@@ -9918,7 +9918,7 @@ Download with [[org-download]].
 *** hydra-org-agenda
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-org-agenda (:hint nil :color pink)
+(defhydra hydra-org-agenda (:hint nil :color red)
 	"
     ^^                   ^^                  ^^                ^^                ^^             ╭────────────┐   
      ^Calendar^          ^Heading^           ^Filter^          ^Navigation^      ^Clocking^     │ org-agenda │
