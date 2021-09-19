@@ -1767,7 +1767,7 @@ http://doc.rix.si/cce/cce-org.html
 Historical remark on taking notes:
 http://takingnotenow.blogspot.com/2008/07/note-keeping-in-1786-blumenbachs-system.html
 
-*** INPROGRESS My GTD setup in org-mode
+*** My GTD setup in org-mode
 
 **** Directories & files
 
