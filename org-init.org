@@ -1876,7 +1876,7 @@ Notes regarding texts, videos etc. are handled in the following way:
 - When available, an electronic copy (usually as PDF) is stored as regular attachment based on the heading's ID. As far as PDFs are concerned, notes can be left there with [[pdf-tools]].
 - eternal
 
-I am using [[https://www.orgroam.com/][org-roam]] to look through my notes.
+I use [[https://www.orgroam.com/][org-roam]] to look through my notes on literature.
 
 **** Projects
 
