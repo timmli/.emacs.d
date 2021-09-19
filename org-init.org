@@ -1792,17 +1792,19 @@ http://takingnotenow.blogspot.com/2008/07/note-keeping-in-1786-blumenbachs-syste
 | event        | timestamp, location, participants, :event:   | [[Minutes][minutes]]/notes                                         | store observations, ideas, action items | :ARCHIVE:   | $topic/$participants $timestamp |
 | note         | CREATED, LAST_CHANGED, :media:, ...           | text                                                  | store ideas, concepts, references, ...  |             |                                 |
 
-General structure of an high-level =org-mode= file:
+Areas (e.g. administration, research, teaching) are usually implemented as separate =org-mode= files with the following general structure:
+
+- Clocking (for general clocking)
 - Inbox
-- Events
-- Projects
       - Events
-      - Goals
+      - Projects
       - Notes
 - Topics
       - Events
       - Projects
       - Notes
+- Archive
+      - Topics
 
 Information flow: 
 - Inbox $\Rightarrow$ Events|Projects  $\Rightarrow$ Topics
@@ -1810,13 +1812,52 @@ Information flow:
 
 **** Structure of files for teaching
 
+The area file for teaching is organized similar to the format shown above:
+
+- Clocking (for general clocking)
+- Inbox
+- Courses & course ideas
+      - Courses are treated as projects – see below
+- Notes about teaching methods and goals
+      - Typsetting
+      - How to give talks
+      - etc.
+- Supervised theses
+- Administration
+      - Accreditation
+      - etc.
+- Archive
+
+Courses have the following specific headings:
+
 | Heading type  | Properties                                   | Title format                                 | Body                   |
 |---------------+----------------------------------------------+----------------------------------------------+------------------------|
 | course        | semester, :project:, DIR                     | (Semester) Title of course                   | list of sessions       |
 | session       | timestamp, :event:                           | Nth session Shorttitle of course <timestamp> | list of teaching units |
 | teaching unit | presenter, literature, material, attachments | Title of teaching unit                       | notes                  |
 
-- [ ] add example
+Here is an example of how they might be structured:
+
+#+BEGIN_SRC org
+,* (Semester) Course name with abbreviation XYZ
+:PROPERTIES:
+:DIR: ~/path/to/course/folder
+:END:
+
+,** Sessions
+
+,*** 1. session XYZ <active timestamp>
+
+,**** Topic of teaching unit
+
+,** Term papers / projects
+
+,** Homework / exercises
+
+,** Course description
+
+,** Topics & notes
+#+END_SRC
 
 Every course is linked with a directory (via DIR property) including the following subdirectories depending on the type of event:
 - slides (by me)
@@ -1834,6 +1875,8 @@ Notes regarding texts, videos etc. are handled in the following way:
 - body: URL or [[org-ref]] citation link
 - When available, an electronic copy (usually as PDF) is stored as regular attachment based on the heading's ID. As far as PDFs are concerned, notes can be left there with [[pdf-tools]].
 - eternal
+
+I am using [[https://www.orgroam.com/][org-roam]] to look through my notes.
 
 **** Projects
 
