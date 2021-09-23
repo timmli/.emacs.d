@@ -2591,10 +2591,10 @@ Convenience functions for clocking workflow.
 (use-package org-clock-convenience
   :ensure t
   :bind (:map org-agenda-mode-map
-   	   ("<M-S-up>" . org-clock-convenience-timestamp-up)
-   	   ("<M-S-down>" . org-clock-convenience-timestamp-down)
-   	   ("ö" . org-clock-convenience-fill-gap)
-   	   ("é" . org-clock-convenience-fill-gap-both)))
+   						("<M-S-up>" . org-clock-convenience-timestamp-up)
+   						("<M-S-down>" . org-clock-convenience-timestamp-down)
+   						("ö" . org-clock-convenience-fill-gap)
+   						("é" . org-clock-convenience-fill-gap-both)))
 #+END_SRC
 
 **** Keys
@@ -4456,16 +4456,16 @@ Use Alt-Shift+cursor key chords to quickly change timestamps:
 
 (defun tl/org-agenda-alt-shift-up ()
 	(interactive)
-	(if (org-clock-convenience-at-timefield-p)
-			(org-clock-convenience-timestamp-up)
-		(org-agenda-date-earlier)
+	(unless (ignore-errors
+						(funcall-interactively 'org-agenda-date-earlier 1))
+		(org-clock-convenience-timestamp-up)
 		))
 
 (defun tl/org-agenda-alt-shift-down ()
 	(interactive)
-	(if (org-clock-convenience-at-timefield-p)
-			(org-clock-convenience-timestamp-down)
-		(org-agenda-date-later)
+	(unless (ignore-errors
+						(funcall-interactively 'org-agenda-date-later 1))
+		(org-clock-convenience-timestamp-down)
 		))
 
 (with-eval-after-load 'org
