@@ -8555,6 +8555,33 @@ From the project decription: This package provides tools to save and restore fra
 	:ensure t)
 #+END_SRC
 
+** TODO emacs-everywhere
+:LOGBOOK:
+- State "TODO"       from              [2021-10-04 Mon 22:23]
+:END:
+
+https://github.com/tecosaur/emacs-everywhere
+https://emacstil.com/til/2021/10/04/edit-text-everywhere-with-emacs/
+
+Open and edit everything in an Emacs frame. 
+
+#+BEGIN_SRC emacs-lisp
+(use-package emacs-everywhere
+	:ensure t)
+#+END_SRC
+
+One can evoke =emacs-everywhere= from everywhere with:
+
+#+BEGIN_SRC bash :tangle no
+emacsclient --eval "(emacs-everywhere)"
+#+END_SRC
+
+Under Linux, make sure that the dependencies are satisfied:
+
+#+BEGIN_SRC bash :tangle no 
+sudo apt install xclip xdotool
+#+END_SRC
+
 * Bookmarks
 
 ** General settings
