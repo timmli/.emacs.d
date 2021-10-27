@@ -4594,9 +4594,11 @@ Observe dependencies between TODOs:
 
 ** outline-mode
 
-*** outline-magic
+*** COMMENT outline-magic
 
 This adds useful commands to =outline-mode=, e.g. cycling.
+
+Unfortunately, it interferes with =outline-cycle= in org-mode v9.5 with the consequence that source blocks and drawers are not expanded any more when pressing =<tab>=. 
 
 #+BEGIN_SRC emacs-lisp
 (use-package outline-magic
