@@ -7627,9 +7627,14 @@ https://github.com/killdash9/buffer-flip.el
 
 Flip through Emacs buffers Alt-Tab style. 
 
-*** bufler
+*** TODO COMMENT bufler
+:LOGBOOK:
+- State "TODO"       from              [2021-10-27 Wed 21:49]
+:END:
 
 https://github.com/alphapapa/bufler.el
+
+- [ ] Waiting for v.0.3.
 
 #+BEGIN_SRC emacs-lisp
 (use-package bufler
@@ -11509,8 +11514,10 @@ Opinionated Emacs key bindings just for this init file.
 																				; (define-key map (kbd "C-S-i") 'imenu-list) ; disabled because it will break org-edit-special
 
 						;; buffers
-						(define-key map (kbd "C-x b") 'bufler)
-						(define-key map (kbd "C-x C-b") 'helm-bufler-go)
+						(when (require 'bufler nil t)
+							(define-key map (kbd "C-x b") 'bufler))
+						(when (require 'helm-bufler nil t)
+							(define-key map (kbd "C-x C-b") 'helm-bufler-go))
 						(define-key map (kbd "C-x C-s") 'save-some-buffers)
 
 						;; helm
