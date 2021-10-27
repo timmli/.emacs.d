@@ -8559,7 +8559,8 @@ From the project decription: This package provides tools to save and restore fra
 
 #+BEGIN_SRC emacs-lisp
 (use-package burly
-	:ensure t)
+	:ensure t
+	:pin MELPA)
 #+END_SRC
 
 ** TODO emacs-everywhere
@@ -11399,9 +11400,6 @@ Version 2020-09-08"
     (delete-region $p1 $p2 )
     (insert $in)))
 #+END_SRC
-
-#+RESULTS:
-: xah-fix-datetime
 
 ** hydra-drag-stuff
 
