@@ -6507,7 +6507,9 @@ Sequence is important!
 
 **** General settings
 
-#+begin_src emacs-lisp
+http://company-mode.github.io/
+
+#+BEGIN_SRC emacs-lisp
 (use-package company
 	:ensure t
 	:config
@@ -6515,12 +6517,12 @@ Sequence is important!
 	;; some general variables
 	(setq company-idle-delay 0.2
 				company-minimum-prefix-length 1
-				company-selection-wrap-around t
+				company-selection-wrap-around t ; If enabled, selecting item before first or after last wraps around.
 				company-tooltip-flip-when-above t
 				;; company-show-numbers t
 				company-dabbrev-downcase nil
 				company-auto-complete nil
-				company-tooltip-align-annotations t
+				company-tooltip-align-annotations nil ; When non-nil, align annotations to the right tooltip border.
 				company-transformers '(company-sort-by-occurrence))
 
 	;; keys
@@ -6538,17 +6540,7 @@ Sequence is important!
   ;; activate global-company-mode
 	(add-hook 'after-init-hook 'global-company-mode)
 	)
-#+end_src
-
-Add fuzzy matching capabilities:
-
-#+begin_src emacs-lisp
-(use-package company-flx
-	:ensure t
-	:config
-	(with-eval-after-load 'company
-		(company-flx-mode +1)))
-#+end_src
+#+END_SRC
 
 When =company= is actively used by browsing completion candidates, =<return>= should execute the selected completion.
 
@@ -6567,7 +6559,25 @@ When =company= is actively used by browsing completion candidates, =<return>= sh
 (define-key company-active-map (kbd "RET") #'my-company-active-return)
 #+END_SRC
 
+**** company-flx
+
+https://github.com/PythonNut/company-flx
+
+Add fuzzy matching capabilities with =flx=:
+
+#+BEGIN_SRC emacs-lisp
+(use-package company-flx
+	:ensure t
+	:config
+	(with-eval-after-load 'company
+		(company-flx-mode +1)))
+#+END_SRC
+
 **** Math symbols
+
+https://github.com/vspinu/company-math
+
+Add company completions for LaTeX and unicode math symbols. $\frac$ 
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-math
@@ -6578,8 +6588,12 @@ When =company= is actively used by browsing completion candidates, =<return>= sh
 	)
 #+END_SRC
 
-**** LaTeX
+**** LaTeX/AUCTeX
   
+https://github.com/alexeyr/company-auctex/
+
+Add company completions for [[AUCTeX]].
+
   #+BEGIN_SRC emacs-lisp
 (use-package company-auctex
 	:ensure t
@@ -6587,6 +6601,10 @@ When =company= is actively used by browsing completion candidates, =<return>= sh
 #+END_SRC
 
 **** RefTeX
+
+https://github.com/TheBB/company-reftex
+
+Add company completions for citations and label references in LaTeX based on RefTeX.
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-reftex
@@ -6605,7 +6623,9 @@ Unfortunately, this really slows down eshell a lot.
 (add-hook 'eshell-mode-hook '(lambda () (setq company-idle-delay 0)))
 #+end_src
 
-**** org-mode
+**** COMMENT org-mode
+
+Do not use this part. The code needs to be revised. 
 
 #+begin_src emacs-lisp
 (add-to-list 'company-backends 'company-capf)
@@ -6635,14 +6655,15 @@ Add easy templates to company (https://emacs.stackexchange.com/a/33487/12336):
 (defun add-easy-templates-to-capf ()
 	(add-hook 'completion-at-point-functions 'org-easy-template-completion-function nil t))
 (add-hook 'org-mode-hook #'add-easy-templates-to-capf)
-
 #+END_SRC
 
 **** COMMENT company-org-block
 
 https://github.com/xenodium/company-org-block
 
-Insert Emacs org blocks with completion (via company mode).
+Insert Emacs org blocks with completion (via company mode). 
+
+Currently, I don't need this and it seems to hinder the completion of LaTeX commands, for example.
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-org-block
@@ -6658,7 +6679,8 @@ Insert Emacs org blocks with completion (via company mode).
 
 Execute when all backends added to =company-backends=.
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
+;; Code from https://emacs.stackexchange.com/a/10520/12336
 (defvar company-mode/enable-yas t
 	"Enable yasnippet for all backends.")
 (defun company-mode/backend-with-yas (backend)
@@ -6668,7 +6690,7 @@ Execute when all backends added to =company-backends=.
 		(append (if (consp backend) backend (list backend))
 						'(:with company-yasnippet))))
 (setq company-backends (mapcar #'company-mode/backend-with-yas company-backends))
-  #+end_src
+  #+END_SRC
 
 *** academic-phrases
 
