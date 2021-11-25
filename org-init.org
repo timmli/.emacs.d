@@ -112,6 +112,7 @@
       - [[#external-terminal][External terminal]]
       - [[#windows-cmd][Windows cmd]]
       - [[#bash][Bash]]
+      - [[#vterm][vterm]]
 - [[#encryption][Encryption]]
       - [[#gnupg][GnuPG]]
 - [[#system-management][System management]]
