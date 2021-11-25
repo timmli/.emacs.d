@@ -8863,16 +8863,19 @@ A native linux shell inside Emacs.
   :ensure t
 	:config
 	(add-hook 'vterm-mode-hook (lambda () (setq-local winkeys-mode nil)))
+	(setq vterm-buffer-name-string "vterm %s") ; set to a string including %s for multiple vterms
 	:bind
 	(:map vterm-mode-map
          ("M-s" . nil)))
 #+END_SRC
 
-Note that =vterm-module= is compiled during the installation, which depends on
+During installation, =vterm-module= is compiled, which depends on
 - cmake
 - libtool
 - libtool-bin
- 
+
+Note that, in order to use all the features of =vterm=, also the underlying linux shell needs to be configured. See https://github.com/akermu/emacs-libvterm#shell-side-configuration-files for more information.
+
 * Encryption
 
 ** GnuPG
@@ -9469,7 +9472,7 @@ Deprecated:
    ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^──╯    └──────^^────────╯
  
        [_a_] address book       [_d_] dired/file browser     [_t_] pomodoro timer      [m] mail
-       [_b_] new buffer         [_e_] emacs shell            [_l_] dictionary
+       [_b_] new buffer         [_e_] emacs shell            [_l_] dictionary          [v] vterm
        [_i_] buffer overview    [_s_] system shell           [_B_] bookmarks
        [_c_] calendar           [_S_] external shell        [_gl_] magit buffer log 
        [_p_] projectile         [_f_] search files          [_hb_] bibliography     
@@ -9498,6 +9501,7 @@ Deprecated:
 	("r" tl/elfeed :exit t)
 	("R" R :exit t)
 	("t" pomidor :exit t)
+	("v" vterm :exit t)
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
 	("<f2>" hydra-f2/body :exit t)
