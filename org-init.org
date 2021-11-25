@@ -8851,6 +8851,27 @@ Bash support in =org-mode=:
 (org-babel-do-load-languages  'org-babel-load-languages '((shell . t)))
 #+END_SRC
 
+** vterm
+
+https://github.com/akermu/emacs-libvterm
+
+A native linux shell inside Emacs.
+
+#+BEGIN_SRC emacs-lisp
+(use-package vterm
+  :ensure t
+	:config
+	(add-hook 'vterm-mode-hook (lambda () (setq-local winkeys-mode nil)))
+	:bind
+	(:map vterm-mode-map
+         ("M-s" . nil)))
+#+END_SRC
+
+Note that =vterm-module= is compiled during the installation, which depends on
+- cmake
+- libtool
+- libtool-bin
+ 
 * Encryption
 
 ** GnuPG
