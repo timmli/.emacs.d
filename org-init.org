@@ -4049,7 +4049,10 @@ Enables a tight integration of =org-roam= with =helm-bibtex= and =org-ref=.
   :pin MELPA
   :after org-roam
 	:config
-	(require 'org-ref))
+	(require 'org-ref)										; probably optional
+	(setq orb-roam-ref-format 'org-ref-v2)
+	:custom
+	(orb-insert-interface 'helm-bibtex))
 #+END_SRC
 
 Templates for =org-roam-bibtex=:
