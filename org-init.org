@@ -3935,18 +3935,18 @@ TODO: Change format entry string with =org-ref-formatted-citation-formats=.
 
 https://github.com/org-roam/org-roam
 
-Knowledge management system similar to Roam and Zettelkästen.
+Knowledge management system similar to Roam and Zettelkästen. This configuration works with v2 of org-roam.
 
-Example how it works: https://blog.jethro.dev/posts/how_to_take_smart_notes_org/
+Example of how it works: https://blog.jethro.dev/posts/how_to_take_smart_notes_org/
 
 **** Installation & configuration
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-roam
-  :diminish org-roam-mode
   :ensure t
-  :hook
-  (after-init . org-roam-mode)
+  :pin MELPA
+	:init
+	(setq org-roam-v2-ack t)
   :custom
   (org-roam-directory my-org-roam-directory)
 	(org-roam-db-location (expand-file-name "org-roam.db" my-org-roam-directory))
@@ -3965,7 +3965,7 @@ Example how it works: https://blog.jethro.dev/posts/how_to_take_smart_notes_org/
 
 **** org-roam-protocol
 
-https://www.orgroam.com/manual.html#Roam-Protocol
+https://www.orgroam.com/manual.html#Org_002droam-Protocol
 
 =org-roam-protocol= requires few extra steps in order to properly work:
 
@@ -3989,12 +3989,14 @@ https://www.orgroam.com/manual.html#The-Templating-System
 
 #+BEGIN_SRC emacs-lisp
 (setq org-roam-capture-templates
-			'(("d" "default" plain #'org-roam-capture--get-point "%?"
-				 :file-name "%<%Y%m%d%H%M%S>-${slug}"
-				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: %^{Tags}\n#+ROAM_ALIAS: \n#+CREATED: %U\n#+LAST_MODIFIED: \n\n- links :: \n\n" :unnarrowed t)
-				("t" "text" plain #'org-roam-capture--get-point "%?"
-				 :file-name "%<%Y%m%d%H%M%S>-${slug}"
-				 :head "#+TITLE: ${title}\n#+ROAM_TAGS: text\n#+ROAM_ALIAS: \n#+CREATED: %U\n#+LAST_MODIFIED: \n\n- links :: \n\n" :unnarrowed t)))
+			'(("d" "default" plain "%?"
+				 :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+														":PROPERTIES:\n:ROAM_ALIASES: %^{Aliases}\n:END:\n#+TITLE: ${title}\n#+FILETAGS: %^{Tags|:topic:}\n#+CREATED: %U\n#+LAST_MODIFIED: \n\n- links :: \n\n")
+				 :unnarrowed t)
+				("t" "text" plain "%?"
+				 :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
+														":PROPERTIES:\n:ROAM_ALIASES: %^{Aliases}\n:END:#+TITLE: ${title}\n#+FILETAGS: :text:\n#+ROAM_ALIASES: \n#+CREATED: %U\n#+LAST_MODIFIED: \n\n- links :: \n- PDF :: \n\n")
+				 :unnarrowed t)))
 #+END_SRC
 
 **** org-roam-dailies
@@ -4008,17 +4010,70 @@ Org-roam provides journaling capabilities akin to =org-journal= with =org-roam-d
 
 (setq org-roam-dailies-capture-templates
       '(("d" "default" entry
-         #'org-roam-capture--get-point
          "* %?"
-         :file-name "daily/%<%Y-%m-%d>"
-         :head "#+title: %<%Y-%m-%d>\n\n")))
+         :target (file+head "%<%Y-%m-%d>.org"
+                            "#+title: %<%Y-%m-%d>\n"))))
 #+END_SRC
 
-**** org-roam-server
+**** org-roam-ui
+
+https://github.com/org-roam/org-roam-ui
+
+Graphical interface to org-roam v2 notes in the web browser. Successor of [[org-roam-server]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-roam-ui
+	:ensure t
+  :after org-roam
+	;;         normally we'd recommend hooking orui after org-roam, but since org-roam does not have
+	;;         a hookable mode anymore, you're advised to pick something yourself
+	;;         if you don't care about startup time, use
+	;; :hook (after-init . org-roam-ui-mode)
+  :config
+  (setq org-roam-ui-sync-theme t
+        org-roam-ui-follow t
+        org-roam-ui-update-on-save t
+        org-roam-ui-open-on-start t 		; Whether to open your default browser when ‘org-roam-ui’ launces.
+))
+#+END_SRC
+
+**** org-roam-bibtex
+
+https://github.com/org-roam/org-roam-bibtex
+
+Enables a tight integration of =org-roam= with =helm-bibtex= and =org-ref=. 
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-roam-bibtex
+	:ensure t
+  :pin MELPA
+  :after org-roam
+	:config
+	(require 'org-ref))
+#+END_SRC
+
+Templates for =org-roam-bibtex=:
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-roam-capture-templates
+						 '("r" "bibliography reference" plain "%?"
+							 :target
+							 (file+head "${citekey}.org"
+													"#+TITLE: ${citekey}: ${title}\n#+FILETAGS: %^{Tags|:text:}\n#+CREATED: %U\n#+LAST_MODIFIED: \n\n- links :: \n- PDF ::\n\n")
+							 :unnarrowed t))
+
+;; (setq orb-templates
+;;       '(("r" "ref" plain (function org-roam-capture--get-point) ""
+;;          :file-name "${citekey}"
+;;          :head "#+TITLE: ${citekey}: ${title}\n#+CREATED: %U\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS: %^{Tags} \n#+ROAM_ALIAS: \n#+LAST_MODIFIED: \n\n- links :: \n\n%?"
+;;          :unnarrowed t)))
+#+END_SRC
+
+**** COMMENT org-roam-server
 
 https://github.com/org-roam/org-roam-server
 
-Depends on =org-roam-protocol=.
+Depends on =org-roam-protocol=. Only works with v1 of org-roam.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-roam-server
@@ -4039,29 +4094,6 @@ Depends on =org-roam-protocol=.
 #+END_SRC
 
 Caveat: at first, no nodes where shown, but the error "roamSource is undefined" in the Firefox console. The installation of the most recent version of =org-roam-server= solved the issue. 
-
-**** org-roam-bibtex
-
-https://github.com/org-roam/org-roam-bibtex
-
-Enables a tight integration of =org-roam= with =helm-bibtex= and =org-ref=. 
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-roam-bibtex
-	:ensure t
-  :after org-roam
-  :hook (org-roam-mode . org-roam-bibtex-mode))
-#+END_SRC
-
-Templates for =org-roam-bibtex=:
-
-#+BEGIN_SRC emacs-lisp
-(setq orb-templates
-      '(("r" "ref" plain (function org-roam-capture--get-point) ""
-         :file-name "${citekey}"
-         :head "#+TITLE: ${citekey}: ${title}\n#+CREATED: %U\n#+ROAM_KEY: ${ref}\n#+ROAM_TAGS: %^{Tags} \n#+ROAM_ALIAS: \n#+LAST_MODIFIED: \n\n- links :: \n\n%?"
-         :unnarrowed t)))
-#+END_SRC
 
 *** org-show
 
@@ -10290,20 +10322,21 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
 (defhydra hydra-org-roam (:color teal
 																 :hint nil)
   "
-  Org-roam:   _f_:ind file  _i_:nsert  _bi_:bib insert  _I_:ndex  _g_:raph  _c_:apture  _d_:ailies  _s_:erver _u_pdate db       _q_:uit
+  Org-roam:   _f_:ind file  _i_:nsert  _bi_:bib insert  _g_:raph  _c_:apture  _d_:ailies  _s_:erver _u_pdate db       _q_:uit
   "
   ("q" nil)
-  ("f" org-roam-find-file)
-  ("i" org-roam-insert)
-  ("I" org-roam-jump-to-index)
+  ("f" org-roam-node-find)
+  ("i" org-roam-node-insert)
   ("g" org-roam-graph)
   ("c" org-roam-capture)
-  ("d" org-roam-dailies-today)
-  ("bi" orb-insert)
-  ("s" org-roam-server-mode)
-  ("u" org-roam-db-build-cache)
+  ("d" org-roam-dailies-goto-today)
+  ("bi" orb-insert-link)
+  ("s" org-roam-ui-mode)
+  ("u" org-roam-db-sync)
 	)
 #+END_SRC
+
+
 
 ** hydra-deft
 
