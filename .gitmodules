@@ -16,3 +16,6 @@
 [submodule "lisp/org-transclusion"]
 	path = lisp/org-transclusion
 	url = https://github.com/nobiot/org-transclusion.git
+[submodule "lisp/mu4e-thread-folding"]
+	path = lisp/mu4e-thread-folding
+	url = https://github.com/rougier/mu4e-thread-folding.git
