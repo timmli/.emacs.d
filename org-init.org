@@ -6595,6 +6595,9 @@ http://company-mode.github.io/
 				company-tooltip-align-annotations nil ; When non-nil, align annotations to the right tooltip border.
 				company-transformers '(company-sort-by-occurrence))
 
+	;; face
+	(set-face-attribute 'company-tooltip nil :inherit 'fixed-pitch) ; Use monospaced font in tooltips.
+
 	;; keys
 	(eval-after-load 'company
 	  '(progn
