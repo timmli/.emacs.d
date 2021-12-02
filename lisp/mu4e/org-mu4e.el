@@ -9,20 +9,22 @@
 
 ;; This file is not part of GNU Emacs.
 
-;; GNU Emacs is free software: you can redistribute it and/or modify
+;; mu4e is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
 ;; the Free Software Foundation, either version 3 of 1the License, or
 ;; (at your option) any later version.
 
-;; GNU Emacs is distributed in the hope that it will be useful,
+;; mu4e is distributed in the hope that it will be useful,
 ;; but WITHOUT ANY WARRANTY; without even the implied warranty of
 ;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 ;; GNU General Public License for more details.
 
 ;; You should have received a copy of the GNU General Public License
-;; along with GNU Emacs.  If not, see <http://www.gnu.org/licenses/>.
+;; along with mu4e.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
+
+;; OBSOLETE, UNSUPPORTED.
 
 ;; Support for links to mu4e messages/queries from within org-mode,
 ;; and for writing message in org-mode, sending them as rich-text.
@@ -185,8 +187,7 @@ or org-mode (when in the body)."
        ((and (> (point) sepapoint) (eq major-mode 'mu4e-compose-mode))
         (org-mode)
         (add-hook 'before-save-hook
-                  (lambda ()
-                    (mu4e-error "Switch to mu4e-compose-mode (M-m) before saving"))
+                  #'org~mu4e-error-before-save-hook-fn
                   nil t)
         (org~mu4e-mime-decorate-headers)
         (local-set-key (kbd "M-m")
@@ -202,6 +203,9 @@ or org-mode (when in the body)."
         (add-hook 'message-send-hook 'org~mu4e-mime-convert-to-html-maybe nil t)))
       ;; and add the hook
       (add-hook 'post-command-hook 'org~mu4e-mime-switch-headers-or-body t t))))
+
+(defun org~mu4e-error-before-save-hook-fn ()
+  (mu4e-error "Switch to mu4e-compose-mode (M-m) before saving"))
 
 (defun org-mu4e-compose-org-mode ()
   "Defines a pseudo-minor mode for mu4e-compose-mode.

@@ -6122,7 +6122,7 @@ See https://github.com/munen/emacs.d/#mu4e for an elaborate example configuratio
 
 ;; Default account on startup
 (setq
- mu4e-mu-home "~/.mu" 			; as of v1.4
+ mu4e-mu-home "~/.cache/mu" 			; as of v1.4
  ;; mu4e-maildir  "~/Maildir" ; deprecated in v1.4
  mu4e-sent-folder "/Sent"
  mu4e-drafts-folder "/Drafts"

@@ -1,8 +1,8 @@
 ;; auto-generated
-(defconst mu4e-mu-version "1.4.15"
+(defconst mu4e-mu-version "1.6.10"
   "Required mu binary version; mu4e's version must agree with this.")
 
-(defconst mu4e-builddir "/home/timm/Downloads/mu-1.4.15"
+(defconst mu4e-builddir "/home/timm/Temp/mu-1.6.10"
   "Top-level build directory.")
 
 (defconst mu4e-doc-dir "/usr/local/share/doc/mu"
