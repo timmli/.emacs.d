@@ -4734,6 +4734,16 @@ If no login is given, use nil.
 ")
 #+END_SRC
 
+*** Calendar export
+
+#+BEGIN_SRC emacs-lisp
+(setq org-icalendar-timezone "Europe/Berlin"
+			org-icalendar-include-todo t
+			org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due)
+			org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo)
+			org-icalendar-include-body nil)
+#+END_SRC
+
 *** calfw 
 
 http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
