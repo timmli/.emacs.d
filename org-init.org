@@ -4777,7 +4777,7 @@ http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
 
 #+END_SRC
 
-*** org-caldav
+*** COMMENT org-caldav
 
 Unfortunately, =org-caldav= is not able to handle recurring events created on the calendar side, see "Knwon Bugs" and https://github.com/dengste/org-caldav/issues/150. On the other hand, =icalendar-import-file= can import them to the Emacs diary.
 
