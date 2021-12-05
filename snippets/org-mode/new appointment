@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: new appointment
+# key: <A
+# --
+`(progn (org-insert-heading)(org-set-tags ":appointment:"))` `(read-string "Enter appointment title: ")` `(yas/org-time-stamp nil)`
+:LOGBOOK:
+- CREATED: `(yas/org-insert-time-stamp (current-time) t t)`
+:END:
+
+$0

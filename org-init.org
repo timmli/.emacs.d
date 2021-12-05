@@ -6545,11 +6545,20 @@ Show vertical line per indentation level:
 Helper functions for yasnippet:
 
 #+BEGIN_SRC emacs-lisp
-(defun yas/org-get-time-stamp (&rest args)
+(defun yas/org-insert-time-stamp (&rest args)
   "Return the string that `org-insert-time-stamp' would insert.
 Taken from https://emacs.stackexchange.com/questions/24060/yasnippet-truncates-clipboard-contents"
   (with-temp-buffer
     (apply #'org-insert-time-stamp args)
+    (buffer-string)))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun yas/org-time-stamp (&rest args)
+  "Return the string that `org-time-stamp' would insert.
+Similar to `yas/org-insert-time-stamp`"
+  (with-temp-buffer
+    (apply #'org-time-stamp args)
     (buffer-string)))
 #+END_SRC
 
