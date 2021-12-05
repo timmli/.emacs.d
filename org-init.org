@@ -6111,6 +6111,7 @@ Open eml-files with =org-mode= turned on:
 
 https://www.djcbsoftware.nl/code/mu/mu4e/index.html
 https://github.com/djcb/mu
+https://github.com/djcb/mu/releases/tag/1.6.0
 
 See https://github.com/munen/emacs.d/#mu4e for an elaborate example configuration.
 
@@ -6132,6 +6133,10 @@ See https://github.com/munen/emacs.d/#mu4e for an elaborate example configuratio
       mu4e-get-mail-command "mbsync -c ~/SOME_PATH/.mbsyncrc work"
       ;; mu4e-attachment-dir "~/SOME_PATH/attachements"
 )
+
+;; Message viewer settings
+;; (setq mu4e-view-use-old t)							; use Gnus; since v1.6
+;; (setq mu4e-view-use-gnus t)						; deprecated in v1.6
 
 ;; show full addresses in view message (instead of just names)
 ;; toggle per name with M-RET
@@ -6361,6 +6366,8 @@ https://github.com/rougier/mu4e-thread-folding
 (define-key mu4e-headers-mode-map (kbd "<S-left>")  'mu4e-headers-fold-all)
 (define-key mu4e-headers-mode-map (kbd "<right>")   'mu4e-headers-unfold-at-point)
 (define-key mu4e-headers-mode-map (kbd "<S-right>") 'mu4e-headers-unfold-all)
+
+(add-hook 'mu4e-headers-mode-hook 'mu4e-thread-folding-mode)
 #+END_SRC
 
 **** COMMENT mu4e-maildirs-extension
