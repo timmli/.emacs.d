@@ -2399,7 +2399,6 @@ Indent automatically
 
 Support for inline tasks
 #+BEGIN_SRC emacs-lisp
-(load "org-inlinetask")
 (define-key org-mode-map (kbd "C-c C-x C-t") 'org-inlinetask-insert-task)
 #+END_SRC
 
