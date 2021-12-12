@@ -1,0 +1,22 @@
+# -*- mode: snippet -*-
+# name: new purchase
+# key: <pur
+# --
+`(org-insert-heading)`${1:`(yas/org-time-stamp nil t)`} `(read-string "Enter product name: ")` `(org-set-tags ":purchase:")``(org-todo)`
+:LOGBOOK:
+- CREATED: `(yas/org-insert-time-stamp (current-time) t t)`
+:END:
+
+Historie
+- Anschaffung am $1
+      - Preis: $0
+      - Bei: 
+      - Beleg: 
+      - Garantie: 
+
+Spezifikation
+- 
+
+#+ATTR_ORG: :width 250
+
+

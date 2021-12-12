@@ -2,7 +2,7 @@
 # name: new project
 # key: <P
 # --
-`(progn (org-insert-heading)(org-set-tags ":project:"))` INPROGRESS `(read-string "Enter project title: ")`
+`(org-insert-heading)``(read-string "Enter project title: ")` `(org-set-tags ":project:")``(org-todo)`
 :LOGBOOK:
 - CREATED: `(yas/org-insert-time-stamp (current-time) t t)`
 :END:
