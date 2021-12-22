@@ -673,7 +673,7 @@ Smex helps to remember often used commands; used by ido and counsel
 					)
 		(setq bibtex-completion-bibliography user-bibliography-file
 					bibtex-completion-library-path user-bibliography-pdf-dir ; directory of PDFs
-					;; bibtex-completion-notes-path "~/bibliography/helm-bibtex-notes"
+					bibtex-completion-notes-path user-bibliography-notes-dir ; directory of notes
 					)
 		
 		;; helm-mini
