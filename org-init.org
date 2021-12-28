@@ -8973,6 +8973,15 @@ During installation, =vterm-module= is compiled, which depends on
 
 Note that, in order to use all the features of =vterm=, also the underlying linux shell needs to be configured. See https://github.com/akermu/emacs-libvterm#shell-side-configuration-files for more information.
 
+#+BEGIN_SRC bash :tangle no 
+echo '# vterm settings
+if [[ "$INSIDE_EMACS" = 'vterm' ]] \
+    && [[ -n ${EMACS_VTERM_PATH} ]] \
+    && [[ -f ${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh ]]; then
+	source ${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh
+fi' >> ~/.bashrc  
+#+END_SRC
+
 * Encryption
 
 ** GnuPG
