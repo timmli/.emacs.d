@@ -9146,12 +9146,13 @@ On the side of the browser, you need to install an extension such as [[https://g
 - [ ] add German Wikipedia
 
 http://ergoemacs.org/emacs/xah-lookup.html
+http://xahlee.info/emacs/emacs/xah-lookup.html
 
 Look up information about words and phrases in online databases such as Wikpedia, Google Search etc.  
  
 #+BEGIN_SRC emacs-lisp
 (use-package xah-lookup
-	:ensure t)
+	:load-path "lisp/xah-lookup.el")
 #+END_SRC
 
 * bbdb
