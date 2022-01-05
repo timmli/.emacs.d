@@ -2859,7 +2859,8 @@ https://github.com/abo-abo/org-download
 	:ensure t
 	:pin MELPA
 	:config
-	(setq org-download-method 'attach)
+	(setq org-download-image-org-width 400 ; will also add #+ATTR_ORG keyword
+				org-download-method 'attach)
 	(when (not (eq system-type 'windows-nt))
 		(setq org-download-screenshot-method "scrot -s %s"))
   (add-hook 'dired-mode-hook 'org-download-enable))
