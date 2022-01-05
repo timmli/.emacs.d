@@ -1101,6 +1101,7 @@ Depends on plantuml.jar and Gaphviz (http://www.graphviz.org).
   :ensure t
   :mode ("\\.plu\\'" "\\.puml\\'") 
   :init
+	(setq org-plantuml-jar-path "/")
 	(when (eq system-type 'windows-nt)
 		(setq org-plantuml-jar-path
 					(expand-file-name "C:/ProgramData/chocolatey/lib/plantuml/tools/plantuml.jar"))
