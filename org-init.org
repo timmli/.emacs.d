@@ -1936,7 +1936,7 @@ I use [[https://www.orgroam.com/][org-roam]] to look through my notes on literat
 How to deal with and define projects within =org-mode=: 
 - https://karl-voit.at/2019/11/03/org-projects/
 - http://juanreyero.com/article/emacs/org-teams.html
-
+  
 *** General appearence
 
 **** Lists
