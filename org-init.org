@@ -4006,11 +4006,11 @@ https://www.orgroam.com/manual.html#The-Templating-System
 (setq org-roam-capture-templates
 			'(("d" "default" plain "%?"
 				 :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-														":PROPERTIES:\n:ROAM_ALIASES: %^{Aliases}\n:END:\n#+TITLE: ${title}\n#+FILETAGS: %^{Tags|:topic:}\n#+CREATED: %U\n#+LAST_MODIFIED: \n\n- links :: \n\n")
+														":PROPERTIES:\n:ROAM_ALIASES: %^{Aliases| }\n:END:\n#+TITLE: ${title}\n#+FILETAGS: %^{Tags|:topic:}\n#+CREATED: %U\n#+LAST_MODIFIED: \n\n- links :: \n\n")
 				 :unnarrowed t)
 				("t" "text" plain "%?"
 				 :target (file+head "%<%Y%m%d%H%M%S>-${slug}.org"
-														":PROPERTIES:\n:ROAM_ALIASES: %^{Aliases}\n:END:#+TITLE: ${title}\n#+FILETAGS: :text:\n#+ROAM_ALIASES: \n#+CREATED: %U\n#+LAST_MODIFIED: \n\n- links :: \n- PDF :: \n\n")
+														":PROPERTIES:\n:ROAM_ALIASES: %^{Aliases| }\n:END:#+TITLE: ${title}\n#+FILETAGS: :text:\n#+ROAM_ALIASES: \n#+CREATED: %U\n#+LAST_MODIFIED: \n\n- links :: \n- PDF :: \n\n")
 				 :unnarrowed t)))
 #+END_SRC
 
@@ -4063,6 +4063,7 @@ Enables a tight integration of =org-roam= with =helm-bibtex= and =org-ref=.
 	:ensure t
   :pin MELPA
   :after org-roam
+	:hook (org-roam-mode . org-roam-bibtex-mode)
 	:config
 	(require 'org-ref)										; probably optional
 	(setq orb-roam-ref-format 'org-ref-v2)
