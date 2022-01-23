@@ -8110,8 +8110,18 @@ Version 2020-06-26"
       (put this-command 'state 2))
      ((equal 2 (get this-command 'state))
       (downcase-region $p1 $p2)
+      (put this-command 'state 3))
+		 ((equal 3 (get this-command 'state))
+      (titlecase-dwim)
       (put this-command 'state 0)))))
 #+end_src
+
+*** Titlecase
+
+#+BEGIN_SRC emacs-lisp
+(use-package titlecase
+	:ensure t)
+#+END_SRC
 
 ** Special characters
 
