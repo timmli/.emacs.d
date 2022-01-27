@@ -2450,69 +2450,35 @@ Show notifications of agenda events:
 
 Customize agenda view:
 #+BEGIN_SRC emacs-lisp
+(defvar tl/org-agenda-structure
+	'((agenda "")
+		(tags "PRIORITY=\"A\""
+					((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
+					 (org-agenda-overriding-header "HIGH-PRIORITY TASKS")))
+		(todo "INPROGRESS"
+					((org-agenda-overriding-header "PROJECTS")))
+		(todo "NEXT" ((org-agenda-overriding-header "NORMAL-PRIORITY TASKS")))
+		(todo "TODO" ((org-agenda-overriding-header "")
+									(org-agenda-block-separator nil)))
+		(todo "WAITING" ((org-agenda-overriding-header "")
+										 (org-agenda-block-separator nil)))
+		(todo "HOLD" ((org-agenda-overriding-header "")
+									(org-agenda-block-separator nil)))
+		(todo "SOMEDAY" ((org-agenda-overriding-header "")
+										 (org-agenda-block-separator nil)))
+		))
+
 (setq org-agenda-custom-commands
-			'(("w" "Work-related agenda and tasks"
-				 ((agenda "")
-					(tags "PRIORITY=\"A\""
-                ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-								 (org-agenda-overriding-header "High-priority tasks:")))
-					(todo "INPROGRESS"
-								((org-agenda-overriding-header "Normal-priority tasks:")))
-					(todo "NEXT" ((org-agenda-overriding-header "")
-												(org-agenda-block-separator nil)))
-					(todo "TODO" ((org-agenda-overriding-header "")
-												(org-agenda-block-separator nil)))
-					(todo "WAITING" ((org-agenda-overriding-header "")
-													 (org-agenda-block-separator nil)))
-					(todo "HOLD" ((org-agenda-overriding-header "")
-												(org-agenda-block-separator nil)))
-					(todo "SOMEDAY" ((org-agenda-overriding-header "")
-													 (org-agenda-block-separator nil)))
-					;; (tags-todo "@work"
-					;; 					 ((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo '("NEXT")))
-					;; 						(org-agenda-overriding-header "")
-					;; 						(org-agenda-block-separator nil)))
-					)
+			`(("w" "Work-related agenda and tasks"
+				 ,tl/org-agenda-structure
 				 ((org-agenda-tag-filter-preset '("+@work"))))
 
 				("h" "Home-related agenda and tasks"
-				 ((agenda "")
-					(tags "PRIORITY=\"A\""
-								((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-								 (org-agenda-overriding-header "High-priority tasks:")))
-					(todo "INPROGRESS"
-								((org-agenda-overriding-header "Normal-priority tasks:")))
-					(todo "NEXT" ((org-agenda-overriding-header "")
-												(org-agenda-block-separator nil)))
-					(todo "TODO" ((org-agenda-overriding-header "")
-												(org-agenda-block-separator nil)))
-					(todo "WAITING" ((org-agenda-overriding-header "")
-													 (org-agenda-block-separator nil)))
-					(todo "HOLD" ((org-agenda-overriding-header "")
-												(org-agenda-block-separator nil)))
-					(todo "SOMEDAY" ((org-agenda-overriding-header "")
-													 (org-agenda-block-separator nil)))
-					)
+				 ,tl/org-agenda-structure
 				 ((org-agenda-tag-filter-preset '("+@home"))))
 
 				("c" "Complete list of agenda and tasks"
-				 ((agenda "")
-					(tags "PRIORITY=\"A\""
-								((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
-								 (org-agenda-overriding-header "High-priority tasks:")))
-					(todo "INPROGRESS"
-								((org-agenda-overriding-header "Normal-priority tasks:")))
-					(todo "NEXT" ((org-agenda-overriding-header "")
-												(org-agenda-block-separator nil)))
-					(todo "TODO" ((org-agenda-overriding-header "")
-												(org-agenda-block-separator nil)))
-					(todo "WAITING" ((org-agenda-overriding-header "")
-													 (org-agenda-block-separator nil)))
-					(todo "HOLD" ((org-agenda-overriding-header "")
-												(org-agenda-block-separator nil)))
-					(todo "SOMEDAY" ((org-agenda-overriding-header "")
-													 (org-agenda-block-separator nil)))
-					)
+				 ,tl/org-agenda-structure
 				 ;; ((org-agenda-tag-filter-preset '("+@home")))
 				 )
 				))
