@@ -8365,6 +8365,12 @@ This command depends on the shell command `ps2pdf'."
 (global-set-key (kbd "C-9") 'tl/increment-number-at-point)  
 #+END_SRC
 
+** Numbered examples
+
+*** numbex
+
+https://github.com/enricoflor/numbex
+
 * Files
 
 ** org-agenda files
