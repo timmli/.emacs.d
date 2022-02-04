@@ -2455,8 +2455,13 @@ Customize agenda view:
 		(tags "PRIORITY=\"A\""
 					((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
 					 (org-agenda-overriding-header "HIGH-PRIORITY TASKS")))
-		(todo "INPROGRESS"
+		;; (todo "INPROGRESS"
+		;; 			((org-agenda-overriding-header "ONGOING PROJECTS")))
+		(tags "project+TODO=\"INPROGRESS\""
 					((org-agenda-overriding-header "ONGOING PROJECTS")))
+		(tags "project+TODO=\"WAITING\"" 
+					((org-agenda-overriding-header "")
+					 (org-agenda-block-separator nil)))
 		(todo "NEXT" ((org-agenda-overriding-header "NORMAL-PRIORITY TASKS")))
 		(todo "TODO" ((org-agenda-overriding-header "")
 									(org-agenda-block-separator nil)))
