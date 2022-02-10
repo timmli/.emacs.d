@@ -924,6 +924,20 @@ Quick, comprehensive search on org-mode files.
 				 (clojure-mode . helm-cider-mode)))
 #+END_SRC
 
+*** helm-recoll
+
+https://github.com/emacs-helm/helm-recoll
+
+Helm interface to [[https://www.lesbonscomptes.com/recoll/][recoll]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-recoll
+	:ensure t
+  :commands helm-recoll
+  :init (setq helm-recoll-directories
+              '(("all" . "~/.recoll"))))
+#+END_SRC
+
 ** Keys
 
 #+BEGIN_SRC emacs-lisp
@@ -11376,7 +11390,7 @@ I've added this to make it fit into [[*hydra-f3][hydra-f3]]:
    ^in buffer^            ^across buffers^        ^grep-like^          ^file^     │ Search │
 ╭─^^─────────────────────^^──────────────────────^^───────────────────^^──────────┴────────╯
    _b_ helm-swoop         _B_ all buffers         _a_ helm-ag          _f_ helm-find
-   _s_ isearch forward    _M_ all buffers         _g_ git grep
+   _s_ isearch forward    _M_ all buffers         _g_ git grep         _c_ helm-recoll
    _r_ isearch backward   ^^  with current mode   _p_ projectile grep
    _o_ occur              _O_ all buffers         _R_ ripgrep
    ^^                     ^^                      _P_ pdfgrep 
@@ -11384,6 +11398,7 @@ I've added this to make it fit into [[*hydra-f3][hydra-f3]]:
 	("a" helm-ag)
 	("b" helm-swoop)
 	("B" helm-multi-swoop-all)
+	("c" helm-recoll-all)
 	("M" helm-multi-swoop-current-mode)
 	("f" helm-find)
   ("g" helm-grep-do-git-grep)
