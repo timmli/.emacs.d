@@ -4573,6 +4573,10 @@ will not be modified."
       (org-set-property created now))))
 #+END_SRC
 
+**** Recurring events
+
+http://karl-voit.at/2017/01/15/org-clone-subtree-with-time-shift/
+
 *** TOC
 
 **** toc-org
@@ -7899,7 +7903,9 @@ Taken from https://emacs.stackexchange.com/a/21356/12336:
 
 *** poporg
 
-=[[https://github.com/QBobWatson/poporg][poporg]]= lets one edit comments in a separate buffer.
+https://github.com/QBobWatson/poporg
+
+Poporg lets one edit comments in a separate buffer.
 
 #+BEGIN_SRC emacs-lisp
 (use-package poporg
@@ -7922,6 +7928,10 @@ Taken from https://emacs.stackexchange.com/a/21356/12336:
 #+END_SRC
 
 *** Critical markup
+
+https://github.com/joostkremers/criticmarkup-emacs
+
+Support of [[https://github.com/CriticMarkup/CriticMarkup-toolkit][CriticMarkup]] in Emacs.
 
 #+begin_src emacs-lisp
 (use-package cm-mode
@@ -7952,6 +7962,11 @@ Taken from https://emacs.stackexchange.com/a/21356/12336:
 (add-to-list 'load-path (expand-file-name "lisp/ov-highlight" user-emacs-directory))
 (use-package ov-highlight)
 #+END_SRC
+
+
+*** Inline comments with links
+
+http://kitchingroup.cheme.cmu.edu/blog/2015/04/24/Commenting-in-org-files/
 
 ** Line actions
 *** Delete line
