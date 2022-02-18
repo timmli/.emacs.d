@@ -4793,20 +4793,6 @@ It is recommended to populate this variable in `private-emacs-settings-after.el`
 Helper functions:
 
 #+BEGIN_SRC emacs-lisp
-(defun my-open-calfw ()
-	(interactive)
-	(cfw:open-calendar-buffer
-	 :contents-sources
-	 (list 
-		(cfw:org-create-source "Orange")							; orgmode source
-		(cfw:cal-create-source)												; diary source
-		;; (cfw:ical-create-source "NAME" "URL" "Green") ; ical source
-		)))
-#+END_SRC
-
-Helper functions:
-
-#+BEGIN_SRC emacs-lisp
 (require 'dash)
 (defun tl/update-my-calendars ()
 	(let ((newpcal
@@ -9754,7 +9740,11 @@ Deprecated:
        [_o_] open externally    [_R_] R repl                [_gs_] magit status         [_q_]uit
 	" 
 	("a" helm-bbdb :exit t)
-	("c" my-open-calfw :exit t)
+	("c" (lambda ()
+				 (interactive)
+				 (if (get-buffer "*cfw-calendar*")
+						 (switch-to-buffer "*cfw-calendar*")
+					 (my-open-calfw))) :exit t)
 	("d" dired-jump :exit t)
 	("f" hydra-search/body :exit t)
 	("s" shell :exit t)
