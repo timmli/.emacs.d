@@ -4862,7 +4862,14 @@ Helper functions:
 
 *** COMMENT org-caldav
 
-Unfortunately, =org-caldav= is not able to handle recurring events created on the calendar side, see "Knwon Bugs" and https://github.com/dengste/org-caldav/issues/150. On the other hand, =icalendar-import-file= can import them to the Emacs diary.
+https://github.com/dengste/org-caldav
+
+CalDAV sync for org-mode.
+
+Issues
+- Unfortunately, =org-caldav= is not able to handle recurring events created on the calendar side, see "Known Bugs" and https://github.com/dengste/org-caldav/issues/150. On the other hand, =icalendar-import-file= can import them to the Emacs diary.
+- [ ] =org-caldav= adds IDs  to all headings in synced org files. It should be possible to only add IDs to headings that matter. Adding IDs to headings might have side effects, e.g., in =org-roam=.
+- [ ] The possibility to call =org-caldav-sync= asynchronously is missing.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-caldav
@@ -4872,16 +4879,72 @@ Unfortunately, =org-caldav= is not able to handle recurring events created on th
 	(when (not (file-exists-p (concat org-directory "caldav")))
 		(make-directory (concat org-directory "caldav")))
   :config (setq org-icalendar-timezone "Europe/Berlin"
-								org-caldav-files nil
+								;; org-caldav-files (org-agenda-files)	; list of org files you would like to sync
+								;; org-caldav-inbox	"org-caldav-inbox.org" ; org filename where new entries from the calendar should be stored
 								org-caldav-backup-file (concat org-directory "caldav/org-caldav-backup.org")
 								org-caldav-save-directory (concat org-directory "caldav/")
-								org-caldav-delete-calendar-entries 'ask ; values: 'never 'ask
+								org-caldav-delete-org-entries 'never ; take over changes in calendar? values: 'never 'ask
+								org-caldav-delete-calendar-entries 'ask ; take over changes in org-file? values: 'never 'ask
 								;; for creating calendar events from org headings
 								org-icalendar-include-todo t
 								org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due)
 								org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo))
 	)
 #+END_SRC
+
+Add IDs to headings only if necessary. 
+Taken from: https://github.com/dengste/org-caldav/issues/227
+
+#+BEGIN_SRC emacs-lisp
+(straight-use-package 'el-patch)
+(el-patch-defun org-caldav-create-uid (file &optional bell)
+								"Set ID property on headlines missing it in FILE.
+When optional argument BELL is non-nil, inform the user with
+a message if the file was modified. This func is the same as
+org-icalendar-create-uid except that it ignores entries that
+match org-caldav-skip-conditions."
+								(let (modified-flag)
+									(el-patch-swap
+									 (org-map-entries
+										(lambda ()
+											(let ((entry (org-element-at-point)))
+												(unless (org-element-property :ID entry)
+													(unless (apply 'org-agenda-skip-entry-if org-caldav-skip-conditions)
+														(org-id-get-create)
+														(setq modified-flag t)
+														(forward-line)))))
+										nil nil 'comment)
+									 (let ((timestamps
+													(thread-last
+															(org-element-map (org-element-parse-buffer) '(headline timestamp) 'identity)
+														(seq-map #'(lambda (el)
+																				 (let ((ts (pcase el
+																										 (`(headline ,(map :scheduled :deadline) . ,_)
+																											(or scheduled deadline))
+																										 (`(timestamp . ,_)
+																											el))))
+																					 (pcase ts
+																						 (`(timestamp ,(map :type :begin) . ,_)
+																							(and (or (eq type 'active) (eq type 'active-range)) begin))))))
+														(seq-filter #'identity)
+														(seq-reverse))))
+										 (save-excursion
+											 (mapc #'(lambda (pos)
+																 (goto-char pos)
+																 (org-back-to-heading t)
+																 (unless (org-element-property :ID (org-element-at-point))
+																	 (unless (apply 'org-agenda-skip-entry-if org-caldav-skip-conditions)
+																		 (org-id-get-create)
+																		 (setq id-pos pos)
+																		 (setq modified-flag t)
+																		 (forward-line))))
+														 timestamps))))
+									(when (and bell modified-flag)
+										(message "ID properties created in file \"%s\"" file)
+										(sit-for 2))))
+#+END_SRC
+
+The syncing process is startet with =org-caldav-sync=.
 
 ** LaTeX
 
