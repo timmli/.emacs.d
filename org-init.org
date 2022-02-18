@@ -4816,6 +4816,7 @@ Helper functions:
 Helper functions:
 
 #+BEGIN_SRC emacs-lisp
+(require 'dash)
 (defun tl/update-my-calendars ()
 	(let ((newpcal
 				 (-zip-with
