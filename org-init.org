@@ -4862,6 +4862,7 @@ Issues
 - Unfortunately, =org-caldav= is not able to handle recurring events created on the calendar side, see "Known Bugs" and https://github.com/dengste/org-caldav/issues/150. On the other hand, =icalendar-import-file= can import them to the Emacs diary.
 - [ ] =org-caldav= adds IDs  to all headings in synced org files. It should be possible to only add IDs to headings that matter. Adding IDs to headings might have side effects, e.g., in =org-roam=.
 - [ ] The possibility to call =org-caldav-sync= asynchronously is missing.
+      - see https://github.com/dengste/org-caldav/issues/111#issuecomment-306137822
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-caldav
