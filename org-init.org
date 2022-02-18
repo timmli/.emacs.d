@@ -4728,16 +4728,7 @@ Unfortunately, it interferes with =outline-cycle= in org-mode v9.5 with the cons
 :END:
 
 - [ ] Idea: import ics-files from caldav servers into the diary file. This will eventually be shown in org-agenda thanks to =org-agenda-include-diary=.
-
-#+BEGIN_SRC emacs-lisp
-(defvar private-calendars-urls
-	""
-	"This variable stores the URL and the login name of a remote caldav calendar.
-
-Entries consist of pairs of the form (url login) where URL and LOGIN are strings. 
-If no login is given, use nil.
-")
-#+END_SRC
+      - =icalendar-import-file=
 
 *** Calendar export
 
@@ -4785,7 +4776,7 @@ Define a key to update calendars from within calfw:
 		 ))
 #+END_SRC
 
-Calendars are defines in =my-private-calendars=:
+Calendars are defined in =my-private-calendars=:
 
 #+BEGIN_SRC emacs-lisp
 (defvar my-private-calendars
