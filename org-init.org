@@ -4751,35 +4751,113 @@ If no login is given, use nil.
 
 *** calfw 
 
-http://jameswilliams.be/blog/2016/01/11/Taming-Your-GCal.html
+https://github.com/kiwanami/emacs-calfw/
+
+Powerful calendar view for Emacs.
+
+Issues:
+- [ ] Week numbers are not shown: https://github.com/kiwanami/emacs-calfw/issues/137
 
  #+BEGIN_SRC emacs-lisp
 (use-package calfw
 	:ensure t 
 	:init
 
-	(use-package calfw-org
+	(use-package calfw-org								; for org-agenda
 		:ensure t)
-	(use-package calfw-ical
+	(use-package calfw-ical								; for ics files
+		:ensure t)
+	(use-package calfw-cal 								; for diaries
 		:ensure t)
 
 	(setq cfw:render-line-breaker 'cfw:render-line-breaker-simple)
-
-	(defvar user-calendar-settings-file
-		(expand-file-name "calendar-calfw-settings.el" private-emacs-settings-dir))
-
-	(if (file-exists-p user-calendar-settings-file)
-			(load-file user-calendar-settings-file)
-		(display-warning "calfw" (concat "Could not load " user-calendar-settings-file)))
 	)
+#+END_SRC
 
+Define a key to update calendars from within calfw: 
+
+#+BEGIN_SRC emacs-lisp
 (define-key cfw:calendar-mode-map (kbd "u") 
 	'(lambda () (interactive)
-		 (when (fboundp 'tl/update-my-calendars) ; tl/update-my-calendars is defined in  user-calendar-settings-file
+		 (when (fboundp 'tl/update-my-calendars) ; tl/update-my-calendars can be redefined in private-emacs-settings-after.el
 			 (tl/update-my-calendars))
 		 (my-open-calfw)
 		 ))
+#+END_SRC
 
+Calendars are defines in =my-private-calendars=:
+
+#+BEGIN_SRC emacs-lisp
+(defvar my-private-calendars
+			'((:name "NAME"
+							 :url "URL"
+							 :color "Orange"
+							 :description ""))
+	"This variable stores the remote calendars as a list of plists.
+
+A calendar consists of a list of KEY VALUE pairs (plist) with keys :name, :url, :color, and :description.
+It is recommended to populate this variable in `private-emacs-settings-after.el`.")
+#+END_SRC
+
+Helper functions:
+
+#+BEGIN_SRC emacs-lisp
+(defun my-open-calfw ()
+	(interactive)
+	(cfw:open-calendar-buffer
+	 :contents-sources
+	 (list 
+		(cfw:org-create-source "Orange")							; orgmode source
+		(cfw:cal-create-source)												; diary source
+		;; (cfw:ical-create-source "NAME" "URL" "Green") ; ical source
+		)))
+#+END_SRC
+
+Helper functions:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/update-my-calendars ()
+	(let ((newpcal
+				 (-zip-with
+					(lambda (s1 s2) (append s1 s2))
+					(mapcar
+					 (lambda (cal)
+						 (let* ((name (plist-get cal ':name))
+										(url (plist-get cal ':url))
+										(color (plist-get cal ':color))
+										(file (concat trimmed-private-emacs-settings-dir name ".ics")))
+							 (tl/check-url-and-download-file url file)
+							 `(:file ,file)))
+					 my-private-calendars)
+					my-private-calendars)
+				 ))
+		(setq my-private-calendars newpcal)))
+
+(defun my-open-calfw ()
+	(interactive)
+	(cfw:open-calendar-buffer
+	 :contents-sources
+	 (append 
+		(list
+		 (cfw:org-create-source "Orange")							; orgmode source
+		 ;; (cfw:cal-create-source)											; diary source
+		 )
+		(mapcar
+		 (lambda (cal)
+			 (let ((name (plist-get cal ':name))
+						 (url (plist-get cal ':url))
+						 (color (plist-get cal ':color))
+						 (file (if (plist-get cal ':file)
+											 (plist-get cal ':file)
+										 "No file")))
+				 (cfw:ical-create-source name file color)))
+		 my-private-calendars))
+	 ))
+
+(defun tl/check-url-and-download-file (url filename)
+	(if (url-https-file-exists-p url)
+			(url-copy-file url filename t nil nil)
+		(display-warning 'calendar (concat "Could not download " filename))))
 #+END_SRC
 
 *** COMMENT org-caldav
