@@ -105,6 +105,7 @@
       - [[#burly][[[Burly]]]]
 - [[#git][Git]]
       - [[#magit][magit]]
+      - [[#forge][Forge]]
       - [[#git-gutter][git-gutter]]
 - [[#kill-ring][Kill ring]]
 - [[#shells][Shells]]
@@ -8937,7 +8938,7 @@ A Git porcelain inside Emacs.
 	)
 #+END_SRC
 
-** COMMENT Forge
+** Forge
 
 https://github.com/magit/forge
 
@@ -8951,8 +8952,6 @@ Usage:
 - [[https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started][Getting started with ghub]]
 
 Issues:
-- [ ] error message: "emacsql-sqlite-ensure-binary: No EmacSQL SQLite binary available, aborting"
-      - depends on EmacsSQL and is therefore not supported on Windows due to an issue with =start-process-shell-command= (https://github.com/skeeto/emacsql#windows-issues)
 
 #+BEGIN_SRC emacs-lisp
 (use-package forge
@@ -8986,22 +8985,6 @@ An Emacs port of the Sublime Text plugin [[https://github.com/jisaacks/GitGutter
 	)
 #+END_SRC
 
-** COMMENT magit-gh-pulls
-
-https://github.com/sigma/magit-gh-pulls
-
-Show pull requests from Github in Magit.
-*ARCHIVED* and superseded by [[Forge]].
-
-Issues:
-- [ ] "Error (use-package): magit-gh-pulls/:catch: Wrong number of arguments: (3 . 4), 2"
-
-#+BEGIN_SRC emacs-lisp
-(use-package magit-gh-pulls             
-  :ensure t
-  :init (add-hook 'magit-mode-hook #'turn-on-magit-gh-pulls))
-#+END_SRC
-
 ** COMMENT magithub
 
 https://github.com/vermiculus/magithub/
@@ -9021,6 +9004,22 @@ Issues:
   :config
 	(magithub-feature-autoinject t)
 	(setq magithub-clone-default-directory "~/github"))
+#+END_SRC
+
+** COMMENT magit-gh-pulls
+
+https://github.com/sigma/magit-gh-pulls
+
+Show pull requests from Github in Magit.
+*ARCHIVED* and superseded by [[Forge]].
+
+Issues:
+- [ ] "Error (use-package): magit-gh-pulls/:catch: Wrong number of arguments: (3 . 4), 2"
+
+#+BEGIN_SRC emacs-lisp
+(use-package magit-gh-pulls             
+  :ensure t
+  :init (add-hook 'magit-mode-hook #'turn-on-magit-gh-pulls))
 #+END_SRC
 
 * Kill ring
