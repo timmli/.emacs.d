@@ -8915,6 +8915,10 @@ sudo apt install xclip xdotool
 
 ** magit
 
+https://github.com/magit/magit
+
+A Git porcelain inside Emacs.
+
 #+BEGIN_SRC emacs-lisp
 (use-package magit
 	:ensure t
@@ -8933,38 +8937,20 @@ sudo apt install xclip xdotool
 	)
 #+END_SRC
 
-** TODO COMMENT magit-gh-pulls
+** COMMENT Forge
 
-- [ ] "Error (use-package): magit-gh-pulls/:catch: Wrong number of arguments: (3 . 4), 2"
+https://github.com/magit/forge
 
-Show pull requests from Github in Magit.
-
-#+BEGIN_SRC emacs-lisp
-(use-package magit-gh-pulls             
-  :ensure t
-  :init (add-hook 'magit-mode-hook #'turn-on-magit-gh-pulls))
-#+END_SRC
-
-** TODO COMMENT magithub
-
-- [ ] Ghub does not recognize credentials in auth-source file correctly and keeps asking to generate a token.
-- [ ] I still get the message during creation of tokens: "ghub--token: Wrong type argument: listp, "/authorizations""
-
-Enhancement of magit to make available a more comprehensive access to Github repositories, regarding issues etc.:
-
-#+BEGIN_SRC emacs-lisp
-(use-package magithub
-	:ensure t
-  :after magit
-  :config
-	(magithub-feature-autoinject t)
-	(setq magithub-clone-default-directory "~/github"))
-#+END_SRC
-
-** COMMENT forge
-
+Work with Git forges from the comfort of Magit.
 - use extra functions of Git forges: issues, pull requests
 - very similar to [[*magithub][magithub]]
+- supports Github and Gitlab out of the box. Further Git forges can be installed with [[https://github.com/magit/ghub][ghub]]. 
+
+Usage:
+- [[https://magit.vc/manual/forge/Getting-Started.html][Getting started]]
+- [[https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started][Getting started with ghub]]
+
+Issues:
 - [ ] error message: "emacsql-sqlite-ensure-binary: No EmacSQL SQLite binary available, aborting"
       - depends on EmacsSQL and is therefore not supported on Windows due to an issue with =start-process-shell-command= (https://github.com/skeeto/emacsql#windows-issues)
 
@@ -8998,6 +8984,43 @@ An Emacs port of the Sublime Text plugin [[https://github.com/jisaacks/GitGutter
 	("C-x C-g n" . git-gutter:next-hunk)
 	("C-x C-g p" . git-gutter:previous-hunk)
 	)
+#+END_SRC
+
+** COMMENT magit-gh-pulls
+
+https://github.com/sigma/magit-gh-pulls
+
+Show pull requests from Github in Magit.
+*ARCHIVED* and superseded by [[Forge]].
+
+Issues:
+- [ ] "Error (use-package): magit-gh-pulls/:catch: Wrong number of arguments: (3 . 4), 2"
+
+#+BEGIN_SRC emacs-lisp
+(use-package magit-gh-pulls             
+  :ensure t
+  :init (add-hook 'magit-mode-hook #'turn-on-magit-gh-pulls))
+#+END_SRC
+
+** COMMENT magithub
+
+https://github.com/vermiculus/magithub/
+
+Enhancement of magit to make available a more comprehensive access to Github repositories, regarding issues etc.
+
+*DEPRECATED* and superseded by [[Forge]].
+
+Issues:
+- [ ] Ghub does not recognize credentials in auth-source file correctly and keeps asking to generate a token.
+- [ ] I still get the message during creation of tokens: "ghub--token: Wrong type argument: listp, "/authorizations""
+
+#+BEGIN_SRC emacs-lisp
+(use-package magithub
+	:ensure t
+  :after magit
+  :config
+	(magithub-feature-autoinject t)
+	(setq magithub-clone-default-directory "~/github"))
 #+END_SRC
 
 * Kill ring
