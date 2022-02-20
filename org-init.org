@@ -8985,6 +8985,43 @@ An Emacs port of the Sublime Text plugin [[https://github.com/jisaacks/GitGutter
 	)
 #+END_SRC
 
+** COMMENT Blamer
+
+https://github.com/Artawower/blamer.el
+
+A Git blame plugin for emacs.
+
+#+BEGIN_SRC emacs-lisp
+(use-package blamer
+  :ensure t
+  :bind (("s-i" . blamer-show-commit-info))
+  :defer 20
+  :custom
+  (blamer-idle-time 0.3)
+  (blamer-min-offset 70)
+  :custom-face
+  (blamer-face ((t :foreground "#7a88cf"
+                    :background nil
+                    :height 140
+                    :italic t)))
+  :config
+  (global-blamer-mode 1))
+#+END_SRC
+
+From the manual:
+
+=(setq blamer-type 'both)= can accept
+- ='selected= - blamer will show commit info for every selected line.
+- ='visual= - blamer will show info only about one line.
+- ='both= - works with both states.
+- ='overlay-popup= - nice overlay popup (see images/blamer-pretty-popup-dark.jpg)
+  *Warning* The 'overlay-popup feature highly dependent on you custom fonts, it may have worse alignment.
+
+=blamer--overlay-popup-position= is position for the overlay popup, it could be:
+- ='bottom=
+- ='top=
+- ='smart= – will choose the better popup position, in most cases it will prefer center
+
 ** COMMENT magithub
 
 https://github.com/vermiculus/magithub/
