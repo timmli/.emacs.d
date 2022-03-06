@@ -9613,9 +9613,9 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 ** hydra-f3
 
 #+BEGIN_SRC emacs-lisp
-	(defhydra hydra-f3
-		(:hint nil
-					 :idle 0.2)
+(defhydra hydra-f3
+	(:hint nil
+				 :idle 0.2)
 	"
 
          ^^   ^^         ╭──────┐       
@@ -9623,17 +9623,18 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
      Help^^    Window^^  │Config│  Check^^   Refresh^^   Mode^^   Open^^   Mark^^   Org^^
    ╭─────^^─────────^^───╯      └───────^^──────────^^───^^───────^^───────^^───────^^────╯
  
-         [_i_] init file           [_p_] package manager      [_m_] macros
-         [_d_] .emacs.d            [_u_] upgrade packages     [_fp_] proportional font
-         [_c_] customize emacs     [_t_] load theme           [_s_] system packages
-        [_lv_] visual line mode   [_ln_] line numbers         
-        [_lt_] truncate lines     [_lr_] toggle relative line numbers        [_q_]uit
+         [_i_] init file             [_p_] package manager         [_m_] macros
+         [_d_] .emacs.d              [_u_] upgrade packages        [_fp_] proportional font
+         [_c_] customize emacs       [_t_] load theme              [_s_] system packages
+        [_lv_] visual line mode     [_ln_] line numbers            [_P_] private settings
+        [_lt_] truncate lines       [_lr_] toggle relative line numbers        [_q_]uit
 	"
 	("i" (find-file (expand-file-name org-init-file user-emacs-directory)) :exit t)
 	("d" (find-file user-emacs-directory) :exit t)
 	("fp" toggle-proportional :exit t)
 	("c" customize :exit t)
 	("p" paradox-list-packages :exit t)
+	("P" (find-file private-emacs-settings-dir) :exit t)
 	("s" helm-system-packages :exit t)
 	("u" paradox-upgrade-packages :exit t)
 	("m" hydra-macro/body :exit t)
