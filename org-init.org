@@ -3766,6 +3766,11 @@ See https://www.mail-archive.com/emacs-orgmode@gnu.org/msg30416.html
 					(:exports . "results"))))
 #+END_SRC
 
+Add org-mode to the list of supported languages:
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages 'org-babel-load-languages '((org . t)))
+#+END_SRC
+
 **** TODO Gnuplot support
 
 - [ ] compiling Gnuplot source blocks crashes Emacs
