@@ -6596,6 +6596,29 @@ Make script files (e.g. Bash scripts) with the hash-bang notation exectuable whe
   'executable-make-buffer-file-executable-if-script-p)
 #+END_SRC
 
+** COMMENT OSM
+
+https://github.com/minad/osm
+
+OpenStreeMap viewer for Emacs.
+
+- [ ] v0.3: too buggy so far, but interesting project 
+
+#+BEGIN_SRC emacs-lisp
+(use-package osm
+	:ensure t
+	:pin MELPA
+  ;; :bind (("C-c m h" . osm-home)
+  ;;        ("C-c m s" . osm-search)
+  ;;        ("C-c m v" . osm-server)
+  ;;        ("C-c m t" . osm-goto)
+  ;;        ("C-c m j" . osm-bookmark-jump))
+  :init
+  ;; Load Org link support
+  (with-eval-after-load 'org
+    (require 'osm-ol)))
+#+END_SRC
+
 * Minor modes
 ** COMMENT literal-calc-mode
 
