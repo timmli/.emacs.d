@@ -2633,6 +2633,19 @@ Convenience functions for clocking workflow.
    						("é" . org-clock-convenience-fill-gap-both)))
 #+END_SRC
 
+**** COMMENT org-timeline
+
+https://github.com/Fuco1/org-timeline/
+
+Add graphical time line of agenda items to agenda buffer.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-timeline
+	:ensure t
+	:config
+	(add-hook 'org-agenda-finalize-hook 'org-timeline-insert-timeline :append))
+#+END_SRC
+
 **** Keys
 
 Open heading with double-click:
