@@ -4743,22 +4743,45 @@ Unfortunately, it interferes with =outline-cycle= in org-mode v9.5 with the cons
     )
 #+END_SRC
 
-*** TODO Calendar import
-:LOGBOOK:
-- State "TODO"       from              [2018-11-25 Sun 11:24]
-:END:
+*** iCalendar import
 
-- [ ] Idea: import ics-files from caldav servers into the diary file. This will eventually be shown in org-agenda thanks to =org-agenda-include-diary=.
+- iCalendar files can be imported via [[calfw]].
+- Via diary: import ics-files from caldav servers into the diary file. This will eventually be shown in org-agenda thanks to =org-agenda-include-diary=.
       - =icalendar-import-file=
 
-*** Calendar export
+*** TODO iCalendar export
+:LOGBOOK:
+- State "TODO"       from              [2022-03-10 Thu 14:51]
+:END:
 
 #+BEGIN_SRC emacs-lisp
 (setq org-icalendar-timezone "Europe/Berlin"
-			org-icalendar-include-todo t
-			org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due)
-			org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo)
-			org-icalendar-include-body nil)
+			org-icalendar-include-todo nil			; Non-nil means create VTODO components from TODO items.
+			org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due) ; Export all deadline time stamps.
+			org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo) ; Export all scheduled time stamps.
+			org-icalendar-include-body nil)		; Amount of text below headline to be included in iCalendar export.
+#+END_SRC
+
+**** org-agenda
+
+See blog post [[https://200ok.ch/posts/2022-02-13_integrating_org_mode_agenda_into_other_calendar_apps.html][Integrating Org mode Agenda into other calendar apps]].
+
+The org-mode agenda can be exported with two commands:
+
+- =org-icalendar-export-agenda-files=: export to separate files.
+- =org-icalendar-combine-agenda-files=: combine all exported entries in one file, which is specified in =org-icalendar-combined-agenda-file= (=~/org.ics= by default).
+ 
+The idea would be to export the agenda to an icalendar file (when saving an agenda file) that is regularly imported to the calendar. 
+
+Issues: 
+- [ ] Error "Unable to resolve link": Some broken links will terminate the export for no good reason.
+
+The export can be narrowed to specific org-agenda files in the following way: 
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(let ((org-agenda-files (list
+												 "/path/to/my/org-file.org")))
+	(org-icalendar-combine-agenda-files))
 #+END_SRC
 
 *** calfw 
