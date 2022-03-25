@@ -787,6 +787,10 @@ Complete tags with =helm= when using =org-set-tags=:
 
 *** helm-swoop
 
+https://github.com/emacsorphanage/helm-swoop
+
+Search buffer while showing matches in a separate buffer.
+
 #+begin_src emacs-lisp
 (use-package helm-swoop
 	:ensure t
@@ -823,6 +827,11 @@ Complete tags with =helm= when using =org-set-tags=:
 
 *** swiper-helm 
 
+Swiper with Helm backend.
+
+https://github.com/abo-abo/swiper-helm
+
+Issues:
 - [ ] Error: "swiper-helm: Cannot open load file: No such file or directory, helm-match-plugin"
 
 #+BEGIN_SRC emacs-lisp
@@ -893,6 +902,8 @@ Does not work under windows so far.
 
 *** helm-org-rifle 
 
+https://github.com/alphapapa/org-rifle
+
 Quick, comprehensive search on org-mode files.
 
 #+BEGIN_SRC emacs-lisp
@@ -910,6 +921,10 @@ Quick, comprehensive search on org-mode files.
 
 *** helm-ag
 
+https://github.com/emacsorphanage/helm-ag
+
+Helm interface to [[https://github.com/ggreer/the_silver_searcher][The Silver Searcher]].
+
 #+BEGIN_SRC emacs-lisp
 (use-package helm-ag
 	:ensure    t
@@ -919,6 +934,10 @@ Quick, comprehensive search on org-mode files.
 #+END_SRC
 
 *** helm-cider
+
+https://github.com/clojure-emacs/helm-cider
+
+Helm interface to CIDER.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-cider
