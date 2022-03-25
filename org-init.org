@@ -7794,7 +7794,7 @@ Issues:
 - [X] waiting for v0.8 to appear on elpa
       - In retrospect, I don't remember the exact reason. Maybe a broken undo history in v0.7?
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (use-package undo-tree
 	:ensure t
   :diminish undo-tree-mode
@@ -7802,8 +7802,12 @@ Issues:
   (progn
     (global-undo-tree-mode)
     (setq undo-tree-visualizer-timestamps t)
-    (setq undo-tree-visualizer-diff t)))
-#+end_src
+    (setq undo-tree-visualizer-diff t))
+	(global-unset-key (kbd "C-z"))
+	(global-set-key (kbd "C-z")   'undo-tree-undo)
+	(global-set-key (kbd "C-S-z") 'undo-tree-redo)
+	)
+#+END_SRC
 
 *** SOMEDAY vundo
 
