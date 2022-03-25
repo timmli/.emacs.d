@@ -7764,13 +7764,16 @@ https://github.com/chuntaro/emacs-keypression
 
 ** Undo & remove
 
-*** COMMENT undo-tree
+*** undo-tree
 
-- [ ] waiting for v0.8 to appear on elpa
-
+https://www.dr-qubit.org/undo-tree.html
 https://gitlab.com/tsc25/undo-tree
 
 Visualize the undo history.
+
+Issues:
+- [X] waiting for v0.8 to appear on elpa
+      - In retrospect, I don't remember the exact reason. Maybe a broken undo history in v0.7?
 
 #+begin_src emacs-lisp
 (use-package undo-tree
@@ -7791,12 +7794,11 @@ Visual helper for the regular undo.
 See blog post: https://archive.casouri.cat/note/2021/visual-undo-tree/index.html
 Requires Emacs 28.
 
-*** undo-fu
+*** COMMENT undo-fu
 
 https://gitlab.com/ideasman42/emacs-undo-fu
 
 Simple, stable linear undo with redo for Emacs. 
-
 Don't use it together with [[undo-tree]].
 
 #+BEGIN_SRC emacs-lisp
