@@ -10707,21 +10707,20 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
 (defhydra hydra-org-roam (:color teal
 																 :hint nil)
   "
-  Org-roam:   _f_:ind file  _i_:nsert  _bi_:bib insert  _g_:raph  _c_:apture  _d_:ailies  _s_:erver _u_pdate db       _q_:uit
+  Org-roam:   _b_:acklinks _c_:apture _d_:ailies _f_:ind file  _g_:raph _i_:nsert  _li_:terature insert _s_:erver _u_:pdate db       _q_:uit
   "
   ("q" nil)
   ("f" org-roam-node-find)
+	("b" org-roam-buffer-toggle)
   ("i" org-roam-node-insert)
   ("g" org-roam-graph)
   ("c" org-roam-capture)
   ("d" org-roam-dailies-goto-today)
-  ("bi" orb-insert-link)
+  ("li" orb-insert-link)
   ("s" org-roam-ui-mode)
   ("u" org-roam-db-sync)
 	)
 #+END_SRC
-
-
 
 ** hydra-deft
 
