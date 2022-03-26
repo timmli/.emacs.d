@@ -3860,6 +3860,30 @@ https://github.com/gregsexton/ob-ipython
 	 '((ipython . t))))
 #+END_SRC
 
+
+*** org-drill 
+
+https://gitlab.com/phillord/org-drill/
+https://orgmode.org/worg/org-contrib/org-drill.html
+
+Drill yourself in everything you want to learn – inspired by [[https://apps.ankiweb.net/][Anki]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-drill
+	:ensure t)
+#+END_SRC
+
+**** org-drill-table
+
+https://github.com/chrisbarrett/org-drill-table
+
+Easily generate org-drill cards using org-mode tables.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-drill-table
+	:ensure t)
+#+END_SRC
+
 *** COMMENT org-gcal
 
 Integrate Google Calendar with =org-gcal=.
