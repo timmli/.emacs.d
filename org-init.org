@@ -51,7 +51,7 @@
       - [[#pdf][PDF]]
       - [[#djvu][DjVu]]
       - [[#email][Email]]
-      - [[#gtypist][gtypist]]
+      - [[#typing-tutor][Typing tutor]]
       - [[#scripts][Scripts]]
 - [[#minor-modes][Minor modes]]
       - [[#pandoc-mode][pandoc-mode]]
@@ -3859,7 +3859,6 @@ https://github.com/gregsexton/ob-ipython
 	 'org-babel-load-languages
 	 '((ipython . t))))
 #+END_SRC
-
 
 *** org-drill 
 
