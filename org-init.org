@@ -7813,13 +7813,14 @@ Issues:
 	:ensure t
   :diminish undo-tree-mode
   :config
-  (progn
-    (global-undo-tree-mode)
-    (setq undo-tree-visualizer-timestamps t)
-    (setq undo-tree-visualizer-diff t))
+  (global-undo-tree-mode)
+  (setq undo-tree-visualizer-timestamps t
+				undo-tree-visualizer-diff t)
 	(global-unset-key (kbd "C-z"))
 	(global-set-key (kbd "C-z")   'undo-tree-undo)
 	(global-set-key (kbd "C-S-z") 'undo-tree-redo)
+	:custom
+	(undo-tree-auto-save-history nil)
 	)
 #+END_SRC
 
