@@ -6635,12 +6635,26 @@ https://admiralakber.github.io/2018/09/20/myos-email/
 	(setq notmuch-command "remote-notmuch.bat")) ; make sure this is in your PATH variable
 #+END_SRC
 
-** gtypist
+
+** Typing tutor
+
+*** gtypist
 
 GNU Typist: An interactive typing tutor
 https://www.gnu.org/software/gtypist/doc/gtypist.html
 
-Unfortunately, there doesn't seem to be an easy way to run this within Emacs (at least under Windows).
+There seems to be a mode for Emacs: https://www.gnu.org/software/gtypist/doc/gtypist.html#Emacs-mode
+
+*** COMMENT monkeytype
+
+https://github.com/jpablobr/emacs-monkeytype
+
+A typing tutor inspired by [[https://monkeytype.com/][monkeytype.com]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package monkeytype
+	:ensure t)
+#+END_SRC
 
 ** Scripts
 
