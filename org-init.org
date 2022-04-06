@@ -36,6 +36,7 @@
       - [[#dired][dired]]
       - [[#javascript][JavaScript]]
       - [[#clojure][Clojure]]
+      - [[#csvtsv][CSV/TSV]]
       - [[#org-mode][org-mode]]
       - [[#outline-mode][outline-mode]]
       - [[#calendardiary][Calendar/Diary]]
@@ -1837,6 +1838,20 @@ From the README: "=eval-sexp-fu= provides tiny improvements to expression evalua
 (use-package cider-eval-sexp-fu
 	:ensure t
   :defer t)
+#+END_SRC
+
+
+** CSV/TSV
+
+*** csv-mode
+
+https://elpa.gnu.org/packages/csv-mode.html
+
+Major mode for editing files in a generalized CSV (character-separated values) format.
+
+#+BEGIN_SRC emacs-lisp
+(use-package csv-mode
+	:ensure t)
 #+END_SRC
 
 ** org-mode
