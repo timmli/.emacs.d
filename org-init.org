@@ -4037,7 +4037,10 @@ Example of how it works: https://blog.jethro.dev/posts/how_to_take_smart_notes_o
 	:config
 	(require 'org-roam-protocol)
 	(setq org-roam-tag-sources '(prop vanilla)
-				org-roam-index-file (expand-file-name "index.org" org-roam-directory)))
+				org-roam-index-file (expand-file-name "index.org" org-roam-directory)
+				org-roam-node-display-template
+				(concat "${title:*} " (propertize "${tags:10}" 'face 'org-tag)) ; add tags to org-roam-node-find
+				))
 #+END_SRC
 
 **** org-roam-protocol
