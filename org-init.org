@@ -662,6 +662,10 @@ Smex helps to remember often used commands; used by ido and counsel
 
 ** helm
 
+https://github.com/emacs-helm/helm
+
+Emacs framework for incremental completions and narrowing selections.
+
 #+BEGIN_SRC emacs-lisp
 (use-package helm
   :diminish helm-mode
@@ -750,15 +754,27 @@ Smex helps to remember often used commands; used by ido and counsel
 				 )
 )
 (ido-mode -1)														; turn off ido mode, just in case
+#+END_SRC
 
-;; ;; helm-flx: improves fuzzy matching
-;; ;; https://github.com/PythonNut/helm-flx
+*** Fuzzy matching
+
+https://github.com/PythonNut/helm-flx
+
+helm-flx: improves fuzzy matching
+
+Issues:
+- I'm using =straight= here, because currently there are inconsistencies between versions of [[https://github.com/PythonNut/helm-flx/commit/99d6e14138409e8e7f26610df04eee8afe78498f][helm-flx]]  and [[https://github.com/emacs-helm/helm/releases/tag/v3.8.5][helm]]. Waiting for the next stable version of =helm= to fix this.
+
+#+BEGIN_SRC emacs-lisp
 (use-package helm-flx
 	:ensure t
+   :straight (helm-flx :type git :host github :repo "PythonNut/helm-flx")
 	:after helm
 	:config
 	(helm-flx-mode +1))
+#+END_SRC
 
+#+BEGIN_SRC emacs-lisp
 ;; ;; helm-fuzzier: improves fuzzy matching even more by taking more candidates into account
 ;; ;; With helm v3.6.4, `helm-fuzzier' breaks the display of candidates in `helm-find-files'.
 ;; (use-package helm-fuzzier
@@ -766,7 +782,11 @@ Smex helps to remember often used commands; used by ido and counsel
 ;; 	:after helm
 ;; 	:config
 ;; 	(helm-fuzzier-mode +1))
+#+END_SRC
 
+*** helm-descbinds
+
+#+BEGIN_SRC emacs-lisp
 ;; list active key bindings 
 (use-package helm-descbinds
 	:ensure t
