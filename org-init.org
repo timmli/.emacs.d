@@ -909,10 +909,11 @@ I don't use it right now.
 	(add-hook 'prog-mode-hook 'helm-gtags-mode))
 #+END_SRC
 
-*** helm-tramp
+*** COMMENT helm-tramp
+
+https://github.com/masasam/emacs-helm-tramp
 
 Select an ssh connection from the server list in ~/.ssh/config with the helm interface.
-
 Does not work under windows so far.
 
 #+BEGIN_SRC emacs-lisp
