@@ -756,7 +756,10 @@ Emacs framework for incremental completions and narrowing selections.
 (ido-mode -1)														; turn off ido mode, just in case
 #+END_SRC
 
-*** Fuzzy matching
+*** TODO helm-flx
+:LOGBOOK:
+- State "TODO"       from              [2022-04-14 Thu 11:02]
+:END:
 
 https://github.com/PythonNut/helm-flx
 
@@ -764,6 +767,7 @@ helm-flx: improves fuzzy matching
 
 Issues:
 - I'm using =straight= here, because currently there are inconsistencies between versions of [[https://github.com/PythonNut/helm-flx/commit/99d6e14138409e8e7f26610df04eee8afe78498f][helm-flx]]  and [[https://github.com/emacs-helm/helm/releases/tag/v3.8.5][helm]]. Waiting for the next stable version of =helm= to fix this.
+      - [ ] Let =straight= install the commit 6640fac.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-flx
@@ -774,14 +778,21 @@ Issues:
 	(helm-flx-mode +1))
 #+END_SRC
 
+*** COMMENT helm-fuzzier
+
+https://github.com/EphramPerdition/helm-fuzzier
+
+Improves fuzzy matching even more by taking more candidates into account.
+
+Issues:
+- With helm v3.6.4, =helm-fuzzier= breaks the display of candidates in =helm-find-files=.
+
 #+BEGIN_SRC emacs-lisp
-;; ;; helm-fuzzier: improves fuzzy matching even more by taking more candidates into account
-;; ;; With helm v3.6.4, `helm-fuzzier' breaks the display of candidates in `helm-find-files'.
-;; (use-package helm-fuzzier
-;; 	:ensure t
-;; 	:after helm
-;; 	:config
-;; 	(helm-fuzzier-mode +1))
+(use-package helm-fuzzier
+	:ensure t
+	:after helm
+	:config
+	(helm-fuzzier-mode +1))
 #+END_SRC
 
 *** helm-descbinds
