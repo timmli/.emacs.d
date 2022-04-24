@@ -11100,14 +11100,16 @@ Copied from https://github.com/cmcmahan/elisp/blob/master/emacs-hydra.el:
 	 ("4" (insert-date "%B %d, %Y"))
 	 ("5" (insert-date "%A, %B %d, %Y"))
 	 ;; inspired from http://ergoemacs.org/emacs/elisp_insert-date-time.html
-	 ("6" (insert (concat
-								 (format-time-string "%Y-%m-%dT%T")
-								 (funcall (lambda ($x) (format "%s:%s" (substring $x 0 3) (substring $x 3 5))) (format-time-string "%z")))))
-   ("o" (insert-date "[%Y-%m-%d %a %k:%M]"))
-   ("O" (insert-date "<%Y-%m-%d %a %k:%M>"))
+	 ("6" (progn
+					(when (use-region-p) (delete-region (region-beginning) (region-end)))
+					(insert (concat
+									 (format-time-string "%Y-%m-%dT%T")
+									 (funcall (lambda ($x) (format "%s:%s" (substring $x 0 3) (substring $x 3 5))) (format-time-string "%z"))))))
+	 ("o" (insert-date "[%Y-%m-%d %a %k:%M]"))
+	 ("O" (insert-date "<%Y-%m-%d %a %k:%M>"))
 	 ("/" (insert-date "%d/%m/%Y"))
-   ("." (insert-date "%d.%m.%Y"))
-   ("q" nil)))
+	 ("." (insert-date "%d.%m.%Y"))
+	 ("q" nil)))
 (global-set-key (kbd "C-c i d") 'hydra-insert-date/body)
 #+END_SRC
 
