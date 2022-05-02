@@ -4228,12 +4228,10 @@ https://github.com/nobiot/org-transclusion
 Include content from one file into another by reference.
 
 #+BEGIN_SRC emacs-lisp
-(with-eval-after-load 'org
-  (add-to-list  'load-path (expand-file-name "org-transclusion" lisp-dir))
-  (require 'org-transclusion)
-  ;; (define-key global-map (kbd "<f12>") #'org-transclusion-add)
-  ;; (define-key global-map (kbd "C-n t") #'org-transclusion-mode)
-	)
+(use-package org-transclusion
+  :after org
+	:ensure t
+	:pin "GNU ELPA")
 #+END_SRC
 
 *** org-xournalpp
