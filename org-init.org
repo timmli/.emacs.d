@@ -6204,7 +6204,10 @@ Taken from https://joshrollinswrites.com/help-desk-head-desk/20200611/.
 (define-key elfeed-search-mode-map (kbd "v") 'elfeed-view-mpv)
 #+END_SRC 
 
-*** elfeed-summary
+*** TODO elfeed-summary
+:LOGBOOK:
+- State "TODO"       from              [2022-05-15 Sun 10:53]
+:END:
 
 https://github.com/SqrtMinusOne/elfeed-summary
 
@@ -6212,7 +6215,8 @@ A tree-based feed summary interface for [[elfeed]].
 
 Issues & TODOs:
 - [ ] Rebind keys: R --> mark as read, U --> update
-- [ ] Include groups 
+- [ ] Include groups
+- [ ] Add hydra
 
 #+BEGIN_SRC emacs-lisp
 (use-package elfeed-summary
