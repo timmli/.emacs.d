@@ -6204,8 +6204,20 @@ Taken from https://joshrollinswrites.com/help-desk-head-desk/20200611/.
 (define-key elfeed-search-mode-map (kbd "v") 'elfeed-view-mpv)
 #+END_SRC 
 
-#+RESULTS:
-: elfeed-view-mpv
+*** elfeed-summary
+
+https://github.com/SqrtMinusOne/elfeed-summary
+
+A tree-based feed summary interface for [[elfeed]].
+
+Issues & TODOs:
+- [ ] Rebind keys: R --> mark as read, U --> update
+- [ ] Include groups 
+
+#+BEGIN_SRC emacs-lisp
+(use-package elfeed-summary
+	:ensure t)
+#+END_SRC
 
 ** XMG
 
@@ -10001,7 +10013,8 @@ Deprecated:
 	("o" xah-open-in-external-app :exit t)
 	("p" helm-projectile :exit t)
 	("P" pandoc-main-hydra/body :exit t)
-	("r" tl/elfeed :exit t)
+	("r" elfeed-summary :exit t)
+	;; ("r" tl/elfeed :exit t)
 	("R" R :exit t)
 	("t" pomidor :exit t)
 	("v" vterm :exit t)
