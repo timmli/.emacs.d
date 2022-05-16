@@ -8690,6 +8690,9 @@ This command depends on the shell command `ps2pdf'."
 
 =andy/increment-number-at-point= is taken from https://gist.github.com/argherna/6392696.
 
+Issues / TODOs: 
+- [ ] Changes in timestamp should update the timestamps. 
+
 #+BEGIN_SRC emacs-lisp
 (defun andy/increment-number-at-point ()
   (interactive)
