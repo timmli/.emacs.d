@@ -8711,36 +8711,38 @@ This command depends on the shell command `ps2pdf'."
 
 ** Integers
 
-*** increment-number-at-point
+*** change-number-at-point
 
-=andy/increment-number-at-point= is taken from https://gist.github.com/argherna/6392696.
-
-Issues / TODOs: 
-- [ ] Changes in timestamp should update the timestamps. 
+Increase or decrease number at point, and when inside an org-mode timestamp, do the appropriate thing. But do not go below 0!
+Inspired by =andy/increment-number-at-point= from https://gist.github.com/argherna/6392696.
 
 #+BEGIN_SRC emacs-lisp
-(defun andy/increment-number-at-point ()
-  (interactive)
-  (skip-chars-backward "0123456789")
-  (or (looking-at "[0123456789]+")
-    (error "No number at point"))
-    (replace-match (number-to-string (1+ (string-to-number (match-string 0))))))
-
-(defun tl/increment-number-at-point ()
-	(interactive)
-	(save-excursion
-		(andy/increment-number-at-point)))
-
-(defun tl/decrement-number-at-point ()
+(defun tl/change-number-at-point (step)
 	(interactive)
 	(save-excursion
 		(skip-chars-backward "0123456789")
 		(or (looking-at "[0123456789]+")
 				(error "No number at point"))
-		(replace-match (number-to-string (1- (string-to-number (match-string 0)))))))
+		(replace-match
+		 (let ((number (string-to-number (match-string 0))))
+			 (number-to-string
+				(if (> (+ number step) 0)
+						(+ number step)
+					0))))
+		))
 
-(global-set-key (kbd "C-8") 'tl/decrement-number-at-point)
-(global-set-key (kbd "C-9") 'tl/increment-number-at-point)  
+(defun tl/change-number-dwim (step)
+	(interactive)
+	(cond
+	 ((and (org-at-timestamp-p) (> step 0))
+		(org-timestamp-up))
+	 ((and (org-at-timestamp-p) (< step 0))
+		(org-timestamp-down))
+	 (t (tl/change-number-at-point step))
+	 ))
+
+(global-set-key (kbd "C-8") (lambda () (interactive) (tl/change-number-dwim -1)))
+(global-set-key (kbd "C-9") (lambda () (interactive) (tl/change-number-dwim +1)))
 #+END_SRC
 
 ** Numbered examples
