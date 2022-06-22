@@ -27,6 +27,7 @@
       - [[#helm][helm]]
       - [[#keys][Keys]]
 - [[#major-modes][Major modes]]
+      - [[#address-book][Address book]]
       - [[#web-mode][web-mode]]
       - [[#graphvizdot][Graphviz/dot]]
       - [[#gnuplot][Gnuplot]]
@@ -43,6 +44,7 @@
       - [[#latex][LaTeX]]
       - [[#ledger][Ledger]]
       - [[#markdown][Markdown]]
+      - [[#media-player][Media player]]
       - [[#r][R]]
       - [[#deft][Deft]]
       - [[#pomodoro-technique][Pomodoro technique]]
@@ -54,6 +56,7 @@
       - [[#email][Email]]
       - [[#typing-tutor][Typing tutor]]
       - [[#scripts][Scripts]]
+      - [[#chat][Chat]]
 - [[#minor-modes][Minor modes]]
       - [[#pandoc-mode][pandoc-mode]]
       - [[#so-long-mode][so-long-mode]]
@@ -122,20 +125,17 @@
 - [[#system-management][System management]]
       - [[#proced][proced]]
       - [[#helm-system-packages][helm-system-packages]]
-- [[#media-player][Media player]]
 - [[#tags][Tags]]
       - [[#etags][etags]]
-- [[#chat][Chat]]
 - [[#web-browsing][Web browsing]]
       - [[#atomic-chrome][atomic-chrome]]
       - [[#xah-lookup][xah-lookup]]
-- [[#bbdb][bbdb]]
 - [[#remote-connections][Remote connections]]
       - [[#tramp][tramp]]
       - [[#emacs-ssh-deploy][emacs-ssh-deploy]]
 - [[#help][Help]]
       - [[#helpful][helpful]]
-- [[#hydra][hydra]]
+- [[#hydras][Hydras]]
       - [[#hydra-begin][hydra: begin]]
       - [[#hydra-f1][hydra-f1]]
       - [[#hydra-f2][hydra-f2]]
@@ -1030,6 +1030,59 @@ Helm interface to [[https://www.lesbonscomptes.com/recoll/][recoll]].
 
 * Major modes
 
+** Address book
+
+*** khadel
+
+https://github.com/DamienCassou/khardel
+
+Uses [[https://github.com/lucc/khard][khard]] and [[https://github.com/pimutils/vdirsyncer][vdirsyncer]] to edit and sync local copies of CarDAV address books. 
+Also supports org-mode links to khard entries.
+
+*** bbdb
+
+http://sachachua.com/notebook/emacs/bbdb-config.el
+
+#+BEGIN_SRC emacs-lisp
+(use-package bbdb
+	:ensure t
+	:config
+	(progn
+		(bbdb-initialize)
+		;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
+		;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-message)
+		;; (add-hook 'message-setup-hook 'bbdb-define-all-aliases)
+
+		(setq bbdb-file my-bbdb-file
+					bbdb-auto-revert t
+					bbdb-check-auto-save-file t
+					bbdb-expand-mail-aliases t
+					bbdb-phone-style nil
+					;; bbdb-pop-up-window-size 10
+					bbdb-pop-up-target-lines 1 ; The window should be as small as possible
+					bbdb-use-pop-up nil        ; Show pup-up?
+
+																				;bbdb/news-auto-create-p t
+					bbdb-complete-name-allow-cycling t
+					bbdb-complete-mail-allow-cycling t
+					bbdb-complete-name-full-completion t
+					bbdb-completion-type 'primary-or-name
+																				;bbdb-use-pop-up nil
+
+					bbdb-offer-save 1  ; Always save
+					bbdb-electric-p t)
+		))
+
+  (use-package bbdb-vcard
+    :ensure t)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-bbdb
+    :ensure t)
+  (global-set-key (kbd "<f7> a") 'helm-bbdb)
+#+END_SRC
+
 ** web-mode
 
 #+BEGIN_SRC emacs-lisp
@@ -1871,7 +1924,6 @@ From the README: "=eval-sexp-fu= provides tiny improvements to expression evalua
 	:ensure t
   :defer t)
 #+END_SRC
-
 
 ** CSV/TSV
 
@@ -4782,6 +4834,8 @@ Observe dependencies between TODOs:
 
 *** COMMENT outline-magic
 
+https://github.com/tj64/outline-magic
+
 This adds useful commands to =outline-mode=, e.g. cycling.
 
 Unfortunately, it interferes with =outline-cycle= in org-mode v9.5 with the consequence that source blocks and drawers are not expanded any more when pressing =<tab>=. 
@@ -5961,6 +6015,44 @@ See [[*company]].
 	:ensure t)
 #+END_SRC
 
+** Media player
+
+*** COMMENT emms
+
+- [ ] takes way to long for scanning my music collection
+- [ ] For some reason, =emms= does not correctly use =vlc= under Windows.
+      - Path names are not properly treated wrt. slashes and spaces in filenames.
+
+#+BEGIN_SRC emacs-lisp
+(use-package emms
+  :ensure t
+  :config
+	(require 'emms-setup)
+	(emms-all) 
+	(emms-default-players)
+	(when (executable-find "vlc")
+		(setq emms-player-list '(emms-player-vlc-playlist
+														 emms-player-vlc)))
+	(if (eq system-type 'windows-nt)
+			(setq emms-player-vlc-command-name
+						(expand-file-name "c:/Program Files/VideoLAN/VLC/vlc.exe"))
+		(setq emms-player-vlc-parameters '("--intf=rc"))
+		(setq emms-player-list '(emms-player-vlc-playlist
+														 emms-player-vlc)))
+	(setq emms-source-file-default-directory music-dir)
+	(emms-add-directory-tree music-dir))
+#+END_SRC
+
+**** helm-emms
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-emms
+	:ensure t
+	:after emms
+	:config
+	(require 'helm-adaptive))
+#+END_SRC
+
 ** R
 
 *** ess
@@ -6747,7 +6839,6 @@ https://admiralakber.github.io/2018/09/20/myos-email/
 	(setq notmuch-command "remote-notmuch.bat")) ; make sure this is in your PATH variable
 #+END_SRC
 
-
 ** Typing tutor
 
 *** gtypist
@@ -6798,6 +6889,33 @@ OpenStreeMap viewer for Emacs.
   ;; Load Org link support
   (with-eval-after-load 'org
     (require 'osm-ol)))
+#+END_SRC
+
+** Chat
+
+*** COMMENT Jabber
+
+https://github.com/legoscia/emacs-jabber
+
+- [ ] OMEMO support missing
+
+#+BEGIN_SRC emacs-lisp
+(use-package jabber
+  :ensure t
+  :defer t
+  :config
+  (setq jabber-chat-buffer-show-avatar nil
+				jabber-vcard-avatars-retrieve nil
+				jabber-alert-presence-hooks nil
+				jabber-mode-line-mode t
+
+				;; jabber-account-list ; better configure this in a secret place
+				;;     '(("<your-gmail-email>"
+				;;        (:network-server . "talk.google.com")
+				;;        (:port . 443)
+				;;        (:connection-type . ssl))))
+
+))
 #+END_SRC
 
 * Minor modes
@@ -9003,6 +9121,8 @@ Use helm for completions.
 
 * Windows and frames
 
+** General key bindings
+
 Better keys for closing and switching between windows. The rest is done in [[*hydra-f2][hydra-f2]].
 
 #+BEGIN_SRC emacs-lisp
@@ -9480,44 +9600,6 @@ A Helm interface to the package manager of your operating system.
 	:pin MELPA)
 #+END_SRC
 
-* Media player
-
-** COMMENT emms
-
-- [ ] takes way to long for scanning my music collection
-- [ ] For some reason, =emms= does not correctly use =vlc= under Windows.
-      - Path names are not properly treated wrt. slashes and spaces in filenames.
-
-#+BEGIN_SRC emacs-lisp
-(use-package emms
-  :ensure t
-  :config
-	(require 'emms-setup)
-	(emms-all) 
-	(emms-default-players)
-	(when (executable-find "vlc")
-		(setq emms-player-list '(emms-player-vlc-playlist
-														 emms-player-vlc)))
-	(if (eq system-type 'windows-nt)
-			(setq emms-player-vlc-command-name
-						(expand-file-name "c:/Program Files/VideoLAN/VLC/vlc.exe"))
-		(setq emms-player-vlc-parameters '("--intf=rc"))
-		(setq emms-player-list '(emms-player-vlc-playlist
-														 emms-player-vlc)))
-	(setq emms-source-file-default-directory music-dir)
-	(emms-add-directory-tree music-dir))
-#+END_SRC
-
-*** helm-emms
-
-#+BEGIN_SRC emacs-lisp
-(use-package helm-emms
-	:ensure t
-	:after emms
-	:config
-	(require 'helm-adaptive))
-#+END_SRC
-
 * Tags
 
 ** etags
@@ -9542,31 +9624,6 @@ A Helm interface to the package manager of your operating system.
   ;; (setq-local imenu-create-index-function #'ggtags-build-imenu-index)
   :config
   (add-hook 'prog-mode-hook 'ggtags-mode))
-#+END_SRC
-
-* Chat
-
-** COMMENT Jabber
-
-- [ ] OMEMO support missing
-
-#+BEGIN_SRC emacs-lisp
-(use-package jabber
-  :ensure t
-  :defer t
-  :config
-  (setq jabber-chat-buffer-show-avatar nil
-				jabber-vcard-avatars-retrieve nil
-				jabber-alert-presence-hooks nil
-				jabber-mode-line-mode t
-
-				;; jabber-account-list ; better configure this in a secret place
-				;;     '(("<your-gmail-email>"
-				;;        (:network-server . "talk.google.com")
-				;;        (:port . 443)
-				;;        (:connection-type . ssl))))
-
-))
 #+END_SRC
 
 * Web browsing
@@ -9599,50 +9656,6 @@ Look up information about words and phrases in online databases such as Wikpedia
 #+BEGIN_SRC emacs-lisp
 (use-package xah-lookup
 	:load-path "lisp/xah-lookup.el")
-#+END_SRC
-
-* bbdb
-
-http://sachachua.com/notebook/emacs/bbdb-config.el
-
-#+BEGIN_SRC emacs-lisp
-(use-package bbdb
-	:ensure t
-	:config
-	(progn
-		(bbdb-initialize)
-		;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
-		;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-message)
-		;; (add-hook 'message-setup-hook 'bbdb-define-all-aliases)
-
-		(setq bbdb-file my-bbdb-file
-					bbdb-auto-revert t
-					bbdb-check-auto-save-file t
-					bbdb-expand-mail-aliases t
-					bbdb-phone-style nil
-					;; bbdb-pop-up-window-size 10
-					bbdb-pop-up-target-lines 1 ; The window should be as small as possible
-					bbdb-use-pop-up nil        ; Show pup-up?
-
-																				;bbdb/news-auto-create-p t
-					bbdb-complete-name-allow-cycling t
-					bbdb-complete-mail-allow-cycling t
-					bbdb-complete-name-full-completion t
-					bbdb-completion-type 'primary-or-name
-																				;bbdb-use-pop-up nil
-
-					bbdb-offer-save 1  ; Always save
-					bbdb-electric-p t)
-		))
-
-  (use-package bbdb-vcard
-    :ensure t)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package helm-bbdb
-    :ensure t)
-  (global-set-key (kbd "<f7> a") 'helm-bbdb)
 #+END_SRC
 
 * Remote connections
@@ -9681,7 +9694,7 @@ https://github.com/cjohansson/emacs-ssh-deploy
    ("C-h C" . helpful-command)))
 #+END_SRC
 
-* hydra
+* Hydras
 
 Nice examples:
 https://github.com/rubensts/.emacs.d#hydra
