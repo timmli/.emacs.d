@@ -4924,8 +4924,26 @@ The export can be narrowed to specific org-agenda files in the following way:
 
 #+BEGIN_SRC emacs-lisp :tangle no
 (let ((org-agenda-files (list
-												 "/path/to/my/org-file.org")))
+												 "/path/to/my/org-file.org"))
+			(org-icalendar-combined-agenda-file "/path/to/my/ics-file.ics"))
 	(org-icalendar-combine-agenda-files))
+#+END_SRC
+
+Lets create a helper function that can exports an org-mode buffer to an ics file with the same path:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(defun tl/org-export-buffer-to-ics ()
+	(interactive)
+	(if (buffer-file-name (current-buffer))
+			(let* ((file-name (buffer-file-name (current-buffer)))
+						 (org-agenda-files (list file-name))
+						 (org-icalendar-combined-agenda-file
+							(concat
+							 (file-name-sans-extension file-name)
+							 ".ics")))
+				(org-icalendar-combine-agenda-files))
+		(message "tl/org-export-buffer-to-ics: buffer has no file, export aborted.")
+		))
 #+END_SRC
 
 *** calfw 
@@ -4936,6 +4954,7 @@ Powerful calendar view for Emacs.
 
 Issues:
 - [ ] Week numbers are not shown: https://github.com/kiwanami/emacs-calfw/issues/137
+- [ ] Recurring events in imported ics files are not shown. 
 
  #+BEGIN_SRC emacs-lisp
 (use-package calfw
@@ -5061,7 +5080,7 @@ Issues
 	)
 #+END_SRC
 
-Add IDs to headings only if necessary. 
+Add IDs to headings only if necessary, thus with active time stamps. 
 Taken from: https://github.com/dengste/org-caldav/issues/227
 
 #+BEGIN_SRC emacs-lisp
