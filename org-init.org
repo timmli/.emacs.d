@@ -5134,6 +5134,33 @@ match org-caldav-skip-conditions."
 
 The syncing process is startet with =org-caldav-sync=.
 
+*** khalel
+
+https://gitlab.com/hperrey/khalel
+
+Uses [[https://lostpackets.de/khal/][khal]] and [[https://github.com/pimutils/vdirsyncer][vdirsyncer]] to sync local copies of CalDAV calendars with calendar entries in org-mode files. 
+As for address books, please have a look at [[https://github.com/lucc/khard][khard]] and [[https://github.com/DamienCassou/khardel][khardel]].
+
+Important limitations:
+- Only for importing calendars as org-mode files. Hence, changes to calendars must be made upstream with a client such as khal.
+
+#+begin_src ditaa :file sync_scheme.png
+  +-------+    +----------+    +-------+    +-------+    +---------+
+  |       |--->|          |--->|       |--->|       |--->|         |
+  | remote|    |vdirsyncer|    |  khal |    |khalel |    | org mode|
+  |       |<===|          |<===|       |===>|       |===>|         |
+  +-------+    +----------+    +-------+    +-------+    +---------+
+                                   ^
+                                   :
+                                   :
+               +----------+    +--------+
+               |          |    |        |       --> existing events
+               | org mode |===>| khalel |
+               |          |    |        |       ==> new events
+               +----------+    +--------+
+
+#+end_src
+
 ** LaTeX
 
 *** TODO AUCTeX 
