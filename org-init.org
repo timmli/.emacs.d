@@ -3985,7 +3985,7 @@ Provides an API for creating Jupyter kernel frontends in Emacs and also provides
 
 https://github.com/gregsexton/ob-ipython
 
-- Sometimes gives rise to =(json-readtable-error)= when using [[id:115490f8-a6d6-4d46-b812-7a7bd30d917c][org-minutes]].
+- Sometimes gives rise to =(json-readtable-error)= when using [[org-fm]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package ob-ipython 
