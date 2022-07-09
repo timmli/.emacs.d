@@ -1,7 +1,7 @@
 # -*- mode: snippet -*-
 # name: jupyter-python source
-# key: <jp
+# key: <src
 # --
-#+BEGIN_SRC jupyter-python
+#+BEGIN_SRC jupyter-python :session py
 $0
 #+END_SRC
