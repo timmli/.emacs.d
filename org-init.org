@@ -1193,10 +1193,14 @@ https://github.com/mkmcc/gnuplot-mode
 
 *** elpy
 
+https://github.com/jorgenschaefer/elpy
+
+Powerful environment for Python coding.
+
 Prerequisites as for Python:
 #+BEGIN_SRC bash
-	sudo pip install jedi flake8 importmagic autopep8 # Elpy's recommendation
-	sudo pip install pylint virtualenv epc # Zamansky's recommendation
+sudo pip install jedi flake8 importmagic autopep8 # Elpy's recommendation
+sudo pip install pylint virtualenv epc # Zamansky's recommendation
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
@@ -1223,6 +1227,15 @@ Prerequisites as for Python:
 #+END_SRC
 
 *** company-jedi
+
+https://github.com/emacsorphanage/company-jedi
+
+=company-mode= completion back-end for Python JEDI.
+
+Prerequisites as for Python:
+#+BEGIN_SRC bash
+sudo pip install jedi
+#+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 ;; Use Company for auto-completion interface.
