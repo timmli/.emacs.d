@@ -4265,10 +4265,10 @@ Enables a tight integration of =org-roam= with =helm-bibtex= and =org-ref=.
 (use-package org-roam-bibtex
 	:ensure t
   :pin MELPA
-  :after org-roam
+  :after (org-roam org-ref)
 	;; :hook (org-roam-mode . org-roam-bibtex-mode) ; will start org-roam-bibtex too late
 	:config
-	(require 'org-ref)										; probably optional
+	(require 'org-ref)										; optional: if using Org-ref v2 or v3 citation links
 	(setq orb-roam-ref-format 'org-ref-v2)
  (org-roam-bibtex-mode t) 							; enable org-roam-bibtex-mode
 	:custom
