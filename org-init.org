@@ -8976,9 +8976,15 @@ Inspired by =andy/increment-number-at-point= from https://gist.github.com/argher
 (defun tl/change-number-dwim (step)
 	(interactive)
 	(cond
-	 ((and (org-at-timestamp-p) (> step 0))
+	 
+	 ((and (org-at-clock-log-p) (> step 0)) (let ((org-clock-adjust-closest t))
+																						(call-interactively 'org-timestamp-up)))
+	 ((and (org-at-clock-log-p) (< step 0)) (let ((org-clock-adjust-closest t))
+																						(call-interactively 'org-timestamp-down)))
+	 ;; with `(org-at-timestamp-p 'lax)', the function matches any part of the document looking like a timestamp
+	 ((and (org-at-timestamp-p 'lax) (> step 0)) 
 		(org-timestamp-up))
-	 ((and (org-at-timestamp-p) (< step 0))
+	 ((and (org-at-timestamp-p 'lax) (< step 0))
 		(org-timestamp-down))
 	 (t (tl/change-number-at-point step))
 	 ))
