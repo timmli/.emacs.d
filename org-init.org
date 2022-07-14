@@ -380,6 +380,7 @@ The monokai theme is one of my favourites:
  'monokai
  `(region ((t (:inherit highlight :background "#FFB269" :foreground ,monokai-background))))
  )
+(enable-theme 'monokai)									; needed since v27
 #+END_SRC
 
 ** Mode line and window labels
