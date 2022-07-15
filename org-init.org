@@ -9803,6 +9803,13 @@ Look up information about words and phrases in online databases such as Wikpedia
 ;; (setq tramp-default-user "")
 #+END_SRC
 
+Disable =tramp-archive.el=, because it tries to mount odt/odg files, see https://emacs.stackexchange.com/a/56345/12336.
+
+#+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'tramp-archive
+  (setq tramp-archive-enabled nil))
+#+END_SRC
+
 ** emacs-ssh-deploy
 
 Deploy local files and directories to remote hosts.
