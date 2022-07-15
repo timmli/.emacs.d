@@ -2853,7 +2853,7 @@ Preserves the first heading of the org-mode file and the inherited tags (found i
     (with-current-buffer (find-file-noselect (org-extract-archive-file))
       (save-excursion
         (while (org-up-heading-safe))
-        (org-set-tags-to tags)))))
+        (org-set-tags tags)))))
 #+END_SRC
 
 *** Attachments
@@ -6463,7 +6463,6 @@ Elfeed interface to Youtube subscriptions.
          ("F" . elfeed-tube-fetch)
          ([remap save-buffer] . elfeed-tube-save)))
 #+END_SRC
-
 
 ** XMG
 
