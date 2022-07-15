@@ -12566,6 +12566,20 @@ TESTING: Let =swiper-helm= behave more like isearch:
 
 https://github.com/publicus/emacs-org-mode-for-the-laity
 
+
+* Debugging
+
+*** pkill
+
+It has proven surprisingly useful to debug problems within Emacs from outside, namely by invoking =pkill= from a shell like this:
+
+#+BEGIN_SRC bash :tangle no
+pkill -SIGUSR2 emacs
+#+END_SRC
+
+I learned about this way of debugging Emacs from a question on StackOverflow:
+https://stackoverflow.com/q/65815662/6452961
+
 * Private settings 
 
 Load file with private settings after generic settings.
