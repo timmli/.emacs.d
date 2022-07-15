@@ -27,36 +27,14 @@
       - [[#helm][helm]]
       - [[#keys][Keys]]
 - [[#major-modes][Major modes]]
-      - [[#address-book][Address book]]
-      - [[#web-mode][web-mode]]
-      - [[#graphvizdot][Graphviz/dot]]
-      - [[#gnuplot][Gnuplot]]
-      - [[#connll-u][CoNNLL-U]]
-      - [[#python][Python]]
-      - [[#plantuml][PlantUML]]
-      - [[#dired][dired]]
-      - [[#javascript][JavaScript]]
-      - [[#clojure][Clojure]]
-      - [[#csvtsv][CSV/TSV]]
       - [[#org-mode][org-mode]]
-      - [[#outline-mode][outline-mode]]
-      - [[#calendardiary][Calendar/Diary]]
-      - [[#latex][LaTeX]]
-      - [[#ledger][Ledger]]
-      - [[#markdown][Markdown]]
-      - [[#media-player][Media player]]
-      - [[#r][R]]
-      - [[#deft][Deft]]
-      - [[#pomodoro-technique][Pomodoro technique]]
-      - [[#epub-reader][EPUB reader]]
-      - [[#rssatom-feed-reader][RSS/Atom feed reader]]
-      - [[#xmg][XMG]]
-      - [[#pdf][PDF]]
-      - [[#djvu][DjVu]]
-      - [[#email][Email]]
-      - [[#typing-tutor][Typing tutor]]
-      - [[#scripts][Scripts]]
-      - [[#chat][Chat]]
+      - [[#accounting][Accounting]]
+      - [[#calendardiary--address-book][Calendar/Diary & address book]]
+      - [[#coding--writing][Coding & Writing]]
+      - [[#file-management][File management]]
+      - [[#getting-things-done][Getting things done]]
+      - [[#messaging][Messaging]]
+      - [[#viewing][Viewing]]
 - [[#minor-modes][Minor modes]]
       - [[#pandoc-mode][pandoc-mode]]
       - [[#so-long-mode][so-long-mode]]
@@ -99,6 +77,7 @@
 - [[#project-management][Project management]]
       - [[#projectile][projectile]]
 - [[#windows-and-frames][Windows and frames]]
+      - [[#general-key-bindings][General key bindings]]
       - [[#navigation][Navigation]]
       - [[#transpose-frame][transpose-frame]]
       - [[#dimmer][dimmer]]
@@ -183,6 +162,7 @@
       - [[#underi-mode][underi-mode]]
       - [[#winkeys-mode][winkeys-mode]]
       - [[#winkeys-starter-mode][winkeys-starter-mode]]
+- [[#debugging][Debugging]]
 - [[#private-settings][Private settings]]
 
 * Good examples
@@ -757,30 +737,6 @@ Emacs framework for incremental completions and narrowing selections.
 (ido-mode -1)														; turn off ido mode, just in case
 #+END_SRC
 
-*** TODO COMMENT helm-flx
-:LOGBOOK:
-- State "TODO"       from              [2022-04-14 Thu 11:02]
-:END:
-
-https://github.com/PythonNut/helm-flx
-
-helm-flx: improves fuzzy matching
-
-Issues:
-- I'm using =straight= here, because currently there are inconsistencies between versions of [[https://github.com/PythonNut/helm-flx/commit/99d6e14138409e8e7f26610df04eee8afe78498f][helm-flx]]  and [[https://github.com/emacs-helm/helm/releases/tag/v3.8.5][helm]]. Waiting for the next stable version of =helm= to fix this.
-      - [ ] Let =straight= install the commit 6640fac.
-- Problem with Helm v3.8.6:
-      - helm-fuzzy-highlight-matches: Wrong number of arguments: (1 . 1), 2
-
-#+BEGIN_SRC emacs-lisp
-(use-package helm-flx
-	:ensure t
-   :straight (helm-flx :type git :host github :repo "PythonNut/helm-flx")
-	:after helm
-	:config
-	(helm-flx-mode +1))
-#+END_SRC
-
 *** COMMENT helm-fuzzier
 
 https://github.com/EphramPerdition/helm-fuzzier
@@ -996,6 +952,30 @@ Helm interface to [[https://www.lesbonscomptes.com/recoll/][recoll]].
               '(("all" . "~/.recoll"))))
 #+END_SRC
 
+*** COMMENT helm-flx
+:LOGBOOK:
+- State "TODO"       from              [2022-04-14 Thu 11:02]
+:END:
+
+https://github.com/PythonNut/helm-flx
+
+helm-flx: improves fuzzy matching
+
+Issues:
+- I'm using =straight= here, because currently there are inconsistencies between versions of [[https://github.com/PythonNut/helm-flx/commit/99d6e14138409e8e7f26610df04eee8afe78498f][helm-flx]]  and [[https://github.com/emacs-helm/helm/releases/tag/v3.8.5][helm]]. Waiting for the next stable version of =helm= to fix this.
+      - [ ] Let =straight= install the commit 6640fac.
+- Problem with Helm v3.8.6:
+      - helm-fuzzy-highlight-matches: Wrong number of arguments: (1 . 1), 2
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-flx
+	:ensure t
+   :straight (helm-flx :type git :host github :repo "PythonNut/helm-flx")
+	:after helm
+	:config
+	(helm-flx-mode +1))
+#+END_SRC
+
 ** Keys
 
 #+BEGIN_SRC emacs-lisp
@@ -1032,965 +1012,6 @@ Helm interface to [[https://www.lesbonscomptes.com/recoll/][recoll]].
 #+END_SRC
 
 * Major modes
-
-** Address book
-
-*** vdirel
-
-https://github.com/DamienCassou/vdirel/
-
-*** khadel
-
-https://github.com/DamienCassou/khardel
-
-Uses [[https://github.com/lucc/khard][khard]] and [[https://github.com/pimutils/vdirsyncer][vdirsyncer]] to edit and sync local copies of CarDAV address books. 
-Also supports org-mode links to khard entries.
-
-*** bbdb
-
-http://sachachua.com/notebook/emacs/bbdb-config.el
-
-#+BEGIN_SRC emacs-lisp
-(use-package bbdb
-	:ensure t
-	:config
-	(progn
-		(bbdb-initialize)
-		;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
-		;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-message)
-		;; (add-hook 'message-setup-hook 'bbdb-define-all-aliases)
-
-		(setq bbdb-file my-bbdb-file
-					bbdb-auto-revert t
-					bbdb-check-auto-save-file t
-					bbdb-expand-mail-aliases t
-					bbdb-phone-style nil
-					;; bbdb-pop-up-window-size 10
-					bbdb-pop-up-target-lines 1 ; The window should be as small as possible
-					bbdb-use-pop-up nil        ; Show pup-up?
-
-																				;bbdb/news-auto-create-p t
-					bbdb-complete-name-allow-cycling t
-					bbdb-complete-mail-allow-cycling t
-					bbdb-complete-name-full-completion t
-					bbdb-completion-type 'primary-or-name
-																				;bbdb-use-pop-up nil
-
-					bbdb-offer-save 1  ; Always save
-					bbdb-electric-p t)
-		))
-
-  (use-package bbdb-vcard
-    :ensure t)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-  (use-package helm-bbdb
-    :ensure t)
-  (global-set-key (kbd "<f7> a") 'helm-bbdb)
-#+END_SRC
-
-
-** Web development
-
-*** web-mode
-
-https://web-mode.org/
-https://github.com/fxbois/web-mode
-
-#+BEGIN_SRC emacs-lisp
-(use-package web-mode										; for improved html support
-	:ensure t
-	:mode
-	("\\.phtml\\'" . web-mode)
-	("\\.tpl\\'" . web-mode)
-	("\\.php\\'" . web-mode)
-	("\\.[agj]sp\\'" . web-mode)
-	("\\.as[cp]x\\'" . web-mode)
-	("\\.erb\\'" . web-mode)
-	("\\.mustache\\'" . web-mode)
-	("\\.djhtml\\'" . web-mode)
-	("\\.html?\\'" . web-mode)
-	("\\.xml\\'" . web-mode)
-	("\\.css\\'" . web-mode)
-	("\\.svg\\'" . web-mode)
-	:config
-	;; highlight enclosing tags of the element under cursor
-  (setq web-mode-enable-current-element-highlight t)
-  ;; colorize CSS
-	(setq web-mode-enable-css-colorization t)
-)
-#+END_SRC
-
-*** impatient-mode
-
-https://github.com/skeeto/impatient-mode
-
-See the effect of your HTML as you type it.
-
-#+BEGIN_SRC emacs-lisp
-(use-package impatient-mode
-	:ensure t)
-#+END_SRC
-
-Usage: when in a HTML buffer,
-- call httpd-start & impatient-mode
-- open your browser at http://localhost:8080/imp/
-
-*** COMMENT skewer-mode
-
-https://github.com/skeeto/skewer-mode
-
-Live web development with Emacs, properly supporting JavaScript (other than [[impatient-mode]]) 
-
-#+BEGIN_SRC emacs-lisp
-(use-package skewer-mode
-	:ensure t
-	:config
-	(skewer-setup))
-#+END_SRC
-
-** Graphviz/dot
-
-#+BEGIN_SRC emacs-lisp
-(use-package graphviz-dot-mode
-  :ensure t
-	:mode "\\.dot\\'")
-#+END_SRC
-
-** Gnuplot
-
-*** gnuplot
-
-https://github.com/emacsorphanage/gnuplot
-
-#+BEGIN_SRC emacs-lisp
-(use-package gnuplot
-	:ensure t
-	:mode	"\\.\\(gp\\|gnuplot|plt\\)$"
-	)
-#+END_SRC
-
-*** COMMENT gnuplot-mode
-
-https://github.com/mkmcc/gnuplot-mode
-
-#+BEGIN_SRC emacs-lisp
-(use-package gnuplot-mode
-	:ensure t
-	:mode	"\\.\\(gp\\|gnuplot|plt\\)$"
-	)
-#+END_SRC
-
-** CoNNLL-U
-
-#+BEGIN_SRC emacs-lisp
-(use-package conllu-mode
-	:ensure t
-	:config
-	(add-to-list 'auto-mode-alist '("\\.conllu\\'" . conllu-mode))
-)
-#+END_SRC
-
-** Python
-
-*** elpy
-
-https://github.com/jorgenschaefer/elpy
-
-Powerful environment for Python coding.
-
-Prerequisites as for Python:
-#+BEGIN_SRC bash
-sudo pip install jedi flake8 importmagic autopep8 # Elpy's recommendation
-sudo pip install pylint virtualenv epc # Zamansky's recommendation
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(use-package elpy
-	:ensure t
-	:defer 2
-	:config
-	(progn
-		;; Use Flycheck instead of Flymake
-		(when (require 'flycheck nil t)
-			(remove-hook 'elpy-modules 'elpy-module-flymake)
-			(remove-hook 'elpy-modules 'elpy-module-yasnippet)
-			(remove-hook 'elpy-mode-hook 'elpy-module-highlight-indentation)
-			(add-hook 'elpy-mode-hook 'flycheck-mode))
-		(elpy-enable)
-		(define-key python-mode-map (kbd "C-h f") 'python-eldoc-at-point)
-		;; highlight-indentation is ugly
-		(add-hook 'elpy-mode-hook '(lambda () (highlight-indentation-mode -1)))
-		;; jedi is great
-		(setq elpy-rpc-backend "jedi")
-		;; tell elpy to use python3 (or install python-is-python3 under GNU/Linux)
-		(setq elpy-rpc-python-command "python3")
-		))
-#+END_SRC
-
-*** company-jedi
-
-https://github.com/emacsorphanage/company-jedi
-
-=company-mode= completion back-end for Python JEDI.
-
-Prerequisites as for Python:
-#+BEGIN_SRC bash
-sudo pip install jedi
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-;; Use Company for auto-completion interface.
-(defun my/python-mode-hook ()
-  (add-to-list 'company-backends 'company-jedi))
-
-(use-package company-jedi
-  :ensure t
-  :init
-  (add-hook 'python-mode-hook 'my/python-mode-hook))
-#+END_SRC
-
-*** ein (Jupyter noteboook)
-
-Procedure to open a notebook:
-1. externally start Jupyter server
-2. =ein:notebooklist-login= and insert the token of the Jupyter session (see terminal)
-3. =ein:notebooklist-open= and select the notebook
-
-#+BEGIN_SRC emacs-lisp
-(use-package ein
-  :ensure t
-	:config
-	(setq ein:completion-backend 'ein:use-ac-jedi-backend))
-#+END_SRC
-
-*** [[emacs-jupyter]]
-
-** PlantUML
-
-Depends on plantuml.jar and Gaphviz (http://www.graphviz.org).
-
-#+BEGIN_SRC emacs-lisp
-(use-package plantuml-mode
-  :ensure t
-  :mode ("\\.plu\\'" "\\.puml\\'") 
-  :init
-	(setq org-plantuml-jar-path "/")
-	(when (eq system-type 'windows-nt)
-		(setq org-plantuml-jar-path
-					(expand-file-name "C:/ProgramData/chocolatey/lib/plantuml/tools/plantuml.jar"))
-		(setq plantuml-jar-path
-					(expand-file-name "C:/ProgramData/chocolatey/lib/plantuml/tools/plantuml.jar"))))
-#+END_SRC
-
-** dired
-
-The following prevents Emacs from throwing =Symbol's value as variable is void: dired-mode-map=: 
-
-#+BEGIN_SRC emacs-lisp
-(require 'dired)
-#+END_SRC
-
-*** General settings
-
-Tips:  http://ergoemacs.org/emacs/emacs_dired_tips.html
-
-Open new buffer when opening a file/directory, if necessary: 
-#+BEGIN_SRC emacs-lisp
-;; (define-key dired-mode-map (kbd "<return>") 'dired-find-alternate-file) ; was dired-advertised-find-file
-
-;; (define-key dired-mode-map (kbd "<backspace>") (lambda () (interactive) (find-alternate-file ".."))) ; find-alternate-file forgets the cursor position of the left dired buffer
-;; (define-key dired-mode-map (kbd "<left>") (lambda () (interactive) (find-alternate-file "..")))
-
-(define-key dired-mode-map (kbd "<left>") (lambda () (interactive) (diredp-up-directory)))
-(define-key dired-mode-map (kbd "<backspace>") (lambda () (interactive) (diredp-up-directory)))
-#+END_SRC
-
-View file and return to dired with q:
-#+BEGIN_SRC emacs-lisp
-(define-key dired-mode-map (kbd "<tab>") 'dired-view-file)
-(define-key dired-mode-map (kbd "<right>") 'dired-view-file)
-(add-hook 'view-mode-hook
-  (lambda ()
-    (define-key view-mode-map (kbd "<left>") 'View-quit)
-		(define-key view-mode-map (kbd "<right>") 'View-exit-and-edit)
-    ))
-#+END_SRC
-
-Copy/move into other dired buffer:
-#+BEGIN_SRC emacs-lisp
-(setq dired-dwim-target t)
-#+END_SRC
-
-Show details of files and directories:
-#+BEGIN_SRC emacs-lisp
-(add-hook 'dired-mode-hook
-          (lambda () (dired-hide-details-mode -1)))
-#+END_SRC
-
-Don't break lines:
-#+BEGIN_SRC emacs-lisp
-(add-hook 'dired-initial-position-hook '(lambda () (setq truncate-lines t)))
-;; (add-hook 'dired-mode-hook (lambda () (setq truncate-lines t)))
-#+END_SRC
-
-Order directories first (only windows?):
-#+BEGIN_SRC emacs-lisp
-(setq ls-lisp-dirs-first t)
-#+END_SRC
-
-Ignore case when sorting:
-#+BEGIN_SRC emacs-lisp
-(setq ls-lisp-ignore-case t)
-#+END_SRC
-
-Other settings: http://oremacs.com/2015/01/13/dired-options/
-#+BEGIN_SRC emacs-lisp
-(setq dired-listing-switches "-laGh1v --group-directories-first") ; --group-directories-first is only supported by recent versions of ls.
-#+END_SRC
-
-Specify ls program: https://www.gnu.org/software/emacs/manual/html_node/efaq-w32/Dired-ls.html
-#+BEGIN_SRC emacs-lisp
-(setq ls-lisp-use-insert-directory-program t)	; use external ls
-;; (setq insert-directory-program "c:/tools/cygwin/bin/ls") ; path to ls program
-#+END_SRC
-
-Chose Windows drives:
-#+BEGIN_SRC emacs-lisp
-(when (eq system-type 'windows-nt)
-	(define-key dired-mode-map (kbd "\\") 'diredp-w32-drives))
-#+END_SRC
-
-Move to trash can (recycle bin under windows) when deleting:
-#+BEGIN_SRC emacs-lisp
-(setq delete-by-moving-to-trash t)
-#+END_SRC
-
-<mouse-1> opens file/directory in the same window:
-#+BEGIN_SRC emacs-lisp
-(define-key dired-mode-map (kbd "<mouse-2>") 'dired-mouse-find-file)
-#+END_SRC
-
-*** Mark/Unmark 
-
-Use shift-up and shift-down in the usual way.
-See http://emacs.stackexchange.com/a/30890/12336
-
-#+BEGIN_SRC emacs-lisp
-(defun my-dired-toggle (arg)
-  (save-restriction
-    (narrow-to-region (point-at-bol) (point-at-eol))
-    (dired-toggle-marks))
-	(dired-previous-line arg))
-
-(defun my-dired-mark-up ()
-  (interactive)
-  (my-dired-toggle 1))
-
-(defun my-dired-mark-down ()
-  (interactive)
-  (my-dired-toggle -1))
-
-(define-key dired-mode-map (kbd "<S-up>") 'my-dired-mark-up)
-(define-key dired-mode-map (kbd "<S-down>") 'my-dired-mark-down)
-#+END_SRC
-
-*** TODO Open with external program
-:LOGBOOK:
-- State "TODO"       from              [2020-05-13 Mi 19:06]
-:END:
-
-- [ ] How to open certain binary files automatically with external program from within dired?
-
-#+BEGIN_SRC
-advice(dired-find-file :before)
-if (dired-get-file-for-visit ~= /^.*\.(pdf|wav|mp3|flac|...)/ ) {
-  xah-open-in-external-app(dired-get-file-for-visit)
-  return t
-} 
-#+END_SRC
-
-**** xah-open-in-external-app
-
-#+BEGIN_SRC emacs-lisp
-(defun xah-open-in-external-app (&optional @fname)
-  "Open the current file or dired marked files in external app.
-The app is chosen from your OS's preference.
-
-When called in emacs lisp, if @fname is given, open that.
-
-URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
-Version 2019-11-04"
-  (interactive)
-  (let* (
-         ($file-list
-          (if @fname
-              (progn (list @fname))
-            (if (string-equal major-mode "dired-mode")
-                (dired-get-marked-files)
-              (list (buffer-file-name)))))
-         ($do-it-p (if (<= (length $file-list) 5)
-                       t
-                     (y-or-n-p "Open more than 5 files? "))))
-    (when $do-it-p
-      (cond
-       ((string-equal system-type "windows-nt")
-        (mapc
-         (lambda ($fpath)
-           (w32-shell-execute "open" $fpath)) $file-list))
-       ((string-equal system-type "darwin")
-        (mapc
-         (lambda ($fpath)
-           (shell-command
-            (concat "open " (shell-quote-argument $fpath))))  $file-list))
-       ((string-equal system-type "gnu/linux")
-        (mapc
-         (lambda ($fpath) (let ((process-connection-type nil))
-                            (start-process "" nil "xdg-open" $fpath))) $file-list))))))
-(define-key dired-mode-map (kbd "C-<return>") 'xah-open-in-external-app)
-#+END_SRC
-
-***** Archive
-
-#+BEGIN_SRC emacs-lisp
-(defun xah-open-in-external-app ()
-  "Open the current file or dired marked files in external app.
-The app is chosen from your OS's preference.
-URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
-Version 2016-10-15"
-  (interactive)
-  (let* (
-         (-file-list
-          (if (string-equal major-mode "dired-mode")
-              (dired-get-marked-files)
-            (list (buffer-file-name))))
-         (-do-it-p (if (<= (length -file-list) 5)
-                       t
-                     (y-or-n-p "Open more than 5 files? "))))
-    (when -do-it-p
-      (cond
-       ((string-equal system-type "windows-nt")
-        (mapc
-         (lambda (-fpath)
-           (w32-shell-execute "open" (replace-regexp-in-string "/" "\\" -fpath t t))) -file-list))
-       ((string-equal system-type "darwin")
-        (mapc
-         (lambda (-fpath)
-           (shell-command
-            (concat "open " (shell-quote-argument -fpath))))  -file-list))
-       ((string-equal system-type "gnu/linux")
-        (mapc
-         (lambda (-fpath) (let ((process-connection-type nil))
-                            (start-process "" nil "xdg-open" -fpath))) -file-list))))))
-
-(define-key dired-mode-map (kbd "C-<return>") 'xah-open-in-external-app)
-#+END_SRC
-
-**** COMMENT openwith
-
-https://github.com/jpkotta/openwith
-
-=openwith= allows one to specify which external program to use for each extension. 
-
-#+BEGIN_SRC emacs-lisp
-(use-package openwith
-:ensure t
-:config
-(when (require 'openwith nil 'noerror)
-	(setq openwith-associations
-				(list
-				 (list (openwith-make-extension-regexp
-								'("mpg" "mpeg" "mp3" "mp4"
-									"avi" "wmv" "wav" "mov" "flv"
-									"ogm" "ogg" "mkv"))
-							 "vlc"
-							 '(file))
-				 (list (openwith-make-extension-regexp
-								'("xbm" "pbm" "pgm" "ppm" "pnm"
-									"png" "gif" "bmp" "tif" "jpeg" "jpg"))
-							 "geeqie"
-							 '(file))
-				 (list (openwith-make-extension-regexp
-								'("doc" "xls" "ppt" "odt" "ods" "odg" "odp"))
-							 "libreoffice"
-							 '(file))
-				 '("\\.lyx" "lyx" (file))
-				 '("\\.chm" "kchmviewer" (file))
-				 (list (openwith-make-extension-regexp
-								'("pdf" "ps" "ps.gz" "dvi"))
-							 "okular"
-							 '(file))
-				 ))
-	(openwith-mode 1)))
-#+END_SRC
-
-*** Special keys
-**** Copy path
-
-Sometimes its useful to copy the path of a file or directory under cursor:
-
-#+BEGIN_SRC emacs-lisp
-(defun tl/dired-copy-path-at-point ()
-	(interactive)
-	(dired-copy-filename-as-kill 0)
-)
-
-(define-key dired-mode-map (kbd "W") 'tl/dired-copy-path-at-point)
-#+END_SRC
-
-**** Delete 
-
-Delete with <delete> key.
-
-#+BEGIN_SRC emacs-lisp
-(define-key dired-mode-map (kbd "<delete>") 'dired-do-delete)
-#+END_SRC
-
-*** dired-imenu
-
-#+BEGIN_SRC emacs-lisp
-(use-package dired-imenu
-	:ensure t
-	:init
-	(require 'dired-imenu)
-)
-#+END_SRC
-
-*** dired-k
-
-#+BEGIN_SRC emacs-lisp
-(use-package dired-k
-	:ensure t
-	:bind (:map dired-mode-map ("K" . dired-k))
-	:config
-  (progn
-		;; FIXME: Tramp prompts for the password in every new dired buffer!
-		;; (add-hook 'dired-initial-position-hook 'dired-k)
-		;; (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
-))
-#+END_SRC
-
-*** dired-quick-sort
-
-https://gitlab.com/xuhdev/dired-quick-sort
-
-Depends on =ls=, the version of which should support =--group-directories-first=.
-Activated in =dired= with <S-s>.
-
-#+BEGIN_SRC emacs-lisp
-(use-package dired-quick-sort
-	:ensure t
-	:init
-	(require 'dired-quick-sort)
-	(dired-quick-sort-setup)
-	)
-#+END_SRC
-
-*** dired+
-
-https://www.emacswiki.org/emacs/DiredPlus
-
-Downloaded from here: https://github.com/emacsmirror/emacswiki.org/blob/master/dired%2b.el
-
-#+BEGIN_SRC emacs-lisp
-(use-package dired+
-  :config
-  (require 'dired+)
-  (setq diredp-hide-details-initially-flag nil)
-  (set-face-foreground 'diredp-file-name nil)
-  ;; Keep dired buffers updated when the file system changes.
-  (setq global-auto-revert-non-file-buffers t)
-  (setq auto-revert-verbose nil)
-  (define-key dired-mode-map (kbd "<mouse-2>") 'dired-mouse-find-file) ; Just a reminder for dired+ ;-)
-)
-#+END_SRC
-
-*** dired-hacks
-
-Several helper packages for dired.
-See documentation here: https://github.com/Fuco1/dired-hacks
-
-**** dired-narrow
-
-Filter dired list on the fly:
-
-#+BEGIN_SRC emacs-lisp
-(use-package dired-narrow
-  :ensure t
-  :bind (:map dired-mode-map
-							("/" . dired-narrow)
-							:map dired-narrow-map
-              ("<tab>" . dired-narrow-enter-directory)
-              ("<right>" . dired-view-file)
-							("<return>" . exit-minibuffer))        
-	:config
-	(setq dired-narrow-exit-action 'dired-narrow-find-file)
-)
-#+END_SRC
-
-**** COMMENT dired-subtree
-
-Taken from: https://github.com/Fuco1/.emacs.d/blob/master/files/dired-defs.el
-
-#+BEGIN_SRC emacs-lisp
-(use-package dired-subtree
-  :init
-  (bind-keys :map dired-mode-map
-             :prefix "C-,"
-             :prefix-map dired-subtree-map
-             :prefix-docstring "Dired subtree map."
-    ("<C-i-key>" . dired-subtree-insert)
-    ("C-/" . dired-subtree-apply-filter)
-    ("C-k" . dired-subtree-remove)
-    ("C-n" . dired-subtree-next-sibling)
-    ("C-p" . dired-subtree-previous-sibling)
-    ("C-u" . dired-subtree-up)
-    ("C-d" . dired-subtree-down)
-    ("C-a" . dired-subtree-beginning)
-    ("C-e" . dired-subtree-end)
-    ("C-c" . dired-subtree-cycle)
-    ("m" . dired-subtree-mark-subtree)
-    ("u" . dired-subtree-unmark-subtree)
-    ("C-o C-f" . dired-subtree-only-this-file)
-    ("C-o C-d" . dired-subtree-only-this-directory)))
-
-#+END_SRC
-
-**** dired-rainbow
-
-More customizable highlightning in dired listings.
-Settings inspired by
-- https://github.com/Fuco1/.emacs.d/blob/master/files/dired-defs.el
-- https://github.com/Fuco1/dired-hacks#dired-rainbow
-
-#+BEGIN_SRC emacs-lisp
-(defconst my-dired-media-files-extensions '("mp3" "mp4" "MP3" "MP4" "avi" "mpg" "flv" "ogg" "wmv" "mkv" "mov" "wma")
-  "Media file extensions that should launch in VLC.
-Also used for highlighting.")
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(use-package dired-rainbow
-	:ensure t 
-  :config
-  (progn
-    (dired-rainbow-define html "#4e9a06" ("htm" "html" "xhtml"))
-    (dired-rainbow-define xml "#b4fa70" ("xml" "xsd" "xsl" "xslt" "wsdl"))
-
-    (dired-rainbow-define document "#fce94f" ("doc" "docx" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub"))
-    (dired-rainbow-define excel "#3465a4" ("xlsx"))
-    (dired-rainbow-define media "#ce5c00" my-dired-media-files-extensions)
-    (dired-rainbow-define image "#ff4b4b" ("jpg" "png" "jpeg" "gif"))
-
-    (dired-rainbow-define log "#c17d11" ("log"))
-    (dired-rainbow-define sourcefile "#fcaf3e" ("py" "c" "cc" "h" "java" "pl" "rb" "R" "php"))
-
-    (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
-    (dired-rainbow-define compressed "#ad7fa8" ("zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
-    (dired-rainbow-define packaged "#e6a8df" ("deb" "rpm"))
-    (dired-rainbow-define encrypted "LightBlue" ("gpg" "pgp"))
-
-    (dired-rainbow-define-chmod executable-unix "Green" "-.*x.*")
-    ))
-#+END_SRC
-
-**** dired-ranger
-
-https://github.com/Fuco1/dired-hacks#dired-ranger
-
-Adds conventional copy & paste behaviour to =dired=.
-
-See blog post at http://pragmaticemacs.com/emacs/copy-and-paste-files-with-dired-ranger/.
-
-#+BEGIN_SRC emacs-lisp
-(use-package dired-ranger
-	:ensure t
-  :config
-  (setq dired-ranger-copy-ring-size 1)
-	(define-key dired-mode-map (kbd "C-w")
-		(lambda ()
-			(interactive)
-			(dired-ranger-copy nil)	; t adds item to dired-ranger-copy-ring
-			(define-key dired-mode-map (kbd "C-y") 'dired-ranger-move)))
-	(define-key dired-mode-map (kbd "M-w")
-		(lambda ()
-			(interactive)
-			(dired-ranger-copy nil)
-			(define-key dired-mode-map (kbd "C-y") 'dired-ranger-paste)))
-)
-#+END_SRC
-
-**** dired-collapse
-
-Show whole path to contained file or directory if there is only one.
-
-See https://github.com/Fuco1/dired-hacks#dired-collapse.
-
-#+BEGIN_SRC emacs-lisp
-(use-package dired-collapse
-	:ensure t
-	:init
-	(add-hook 'dired-mode-hook #'dired-collapse-mode))
-#+END_SRC
-
-*** dired-efap
-
-Rename file name at point.
-
-#+BEGIN_SRC emacs-lisp
-(use-package dired-efap
-	:ensure t
-	:config
-	(setq dired-efap-initial-filename-selection nil)
-	(define-key dired-mode-map (kbd "r") 'dired-efap)
-	)
-#+END_SRC
-
-*** ediff 
-
-Quick ediff on marked files.
-Copied from https://oremacs.com/2017/03/18/dired-ediff/:
-#+BEGIN_SRC emacs-lisp
-(defun ora-ediff-files ()
-  (interactive)
-  (let ((files (dired-get-marked-files))
-        (wnd (current-window-configuration)))
-    (if (<= (length files) 2)
-        (let ((file1 (car files))
-              (file2 (if (cdr files)
-                         (cadr files)
-                       (read-file-name
-                        "file: "
-                        (dired-dwim-target-directory)))))
-          (if (file-newer-than-file-p file1 file2)
-              (ediff-files file2 file1)
-            (ediff-files file1 file2))
-          (add-hook 'ediff-after-quit-hook-internal
-                    (lambda ()
-                      (setq ediff-after-quit-hook-internal nil)
-                      (set-window-configuration wnd))))
-      (error "no more than 2 files should be marked"))))
-
-(define-key dired-mode-map "e" 'ora-ediff-files)
-#+END_SRC
-
-*** diffpdf
-
-https://github.com/ShuguangSun/diffpdf.el
-
-Use =diffpdf= in =dired=.
-
-#+BEGIN_SRC emacs-lisp
-(use-package diffpdf
-	:ensure t)
-#+END_SRC
-
-*** imenu
-
-Integrate imenu into dired.
-Copied from https://fuco1.github.io/2017-05-01-Support-for-imenu-in-dired.html 
-
-#+BEGIN_SRC emacs-lisp
-(defun my-dired-imenu-prev-index-position (&optional arg)
-  "Go to the header line of previous directory."
-  (interactive "p")
-  (unless (= (line-number-at-pos) 1)
-    (call-interactively 'dired-prev-subdir)
-    t))
-
-(defun my-dired-extract-index-name ()
-  "Extract name of the current item for imenu."
-  (save-excursion
-    (back-to-indentation)
-    (buffer-substring-no-properties
-     (point)
-     (1- (re-search-forward ":$")))))
-
-(defun my-dired-imenu-create-index ()
-  "Create `imenu' index for dired."
-  (let* ((alist (imenu-default-create-index-function))
-         (uniquified (f-uniquify-alist (-map 'car alist))))
-    (--remove
-     (= 0 (length (car it)))
-     (--map (cons (cdr (assoc (car it) uniquified)) (cdr it))
-            alist))))
-
-(defun my-dired-imenu-init ()
-  "Initialize `imenu' variables in current buffer."
-  (setq-local imenu-prev-index-position-function
-              'my-dired-imenu-prev-index-position)
-  (setq-local imenu-extract-index-name-function
-              'my-dired-extract-index-name)
-  (setq-local imenu-create-index-function
-              'my-dired-imenu-create-index))
-
-(add-hook 'dired-mode-hook 'my-dired-imenu-init)
-#+END_SRC
-
-*** TODO History
-
-- [ ] I would like to be able to browse the dired history. =helm-dired-history= could be useful for this, but I don't know how to use it to this end.
-
-**** COMMENT helm-dired-history
-
-https://github.com/jixiuf/helm-dired-history
-
-#+BEGIN_SRC emacs-lisp
-(use-package helm-dired-history
-	:ensure t
-	:init	
-	(require 'savehist)
-	(add-to-list 'savehist-additional-variables 'helm-dired-history-variable)
-	(savehist-mode 1)
-	
-	:config
-	(with-eval-after-load 'dired
-		(require 'helm-dired-history) 
-		;; if you are using ido,you'd better disable ido for dired
-		;; (define-key (cdr ido-minor-mode-map-entry) [remap dired] nil) ;in ido-setup-hook
-		)
-	)
-#+END_SRC
-
-*** size info 
-
-Calculates the size of marked directories using =du=.
-Copied from https://oremacs.com/2015/01/12/dired-file-size/ and slightly adapted.
-
-#+BEGIN_SRC emacs-lisp
-(defun dired-get-size ()
-  (interactive)
-  (let ((files (dired-get-marked-files)))
-    (with-temp-buffer
-      (apply 'call-process "du" nil t nil "-sch" files)
-      (message
-       "Size of all marked files: %s"
-       (progn
-         (re-search-backward "\\(^[ 0-9.,]+[A-Za-z]+\\).*total$")
-         (match-string 1))))))
-
-(define-key dired-mode-map (kbd "z") 'dired-get-size)
-#+END_SRC
-
-*** COMMENT ranger, deer
-
-https://github.com/ralesi/ranger.el
-
-Minor mode within [[*dired][dired]] that makes available a hierarchical, column-like view on directories. 
-
-#+BEGIN_SRC emacs-lisp
-(use-package ranger
-	:ensure t
-	:bind
-	("C-x C-d" . deer))
-#+END_SRC
-
-** JavaScript
-
-*** js2-mode
-
-Major mode for JavaScript files.
-
-#+BEGIN_SRC emacs-lisp
-(use-package js2-mode
-	:ensure t
-	:mode
-	("\\.js\\'" . js2-mode)
-	:config
-	;; Better imenu
-	(add-hook 'js2-mode-hook #'js2-imenu-extras-mode)
-)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(use-package js2-refactor
-	:ensure t
-	:after js2-mode
-	:config
-	(add-hook 'js2-mode-hook #'js2-refactor-mode)
-	(js2r-add-keybindings-with-prefix "C-c C-r")
-	(define-key js2-mode-map (kbd "C-k") #'js2r-kill))
-#+END_SRC
-
-*** TODO indium
-
-JavaScript development environment for Emacs
-
-*** TODO tern
-
-for better autocompletion
-
-** Clojure
-
-*** clojure-mode
-
-#+BEGIN_SRC emacs-lisp
-(use-package clojure-mode
-  :ensure t
-  :mode (("\\.clj\\'" . clojure-mode)
-         ("\\.edn\\'" . clojure-mode))
-	:init
-	(add-hook 'clojure-mode-hook #'subword-mode))
-#+END_SRC
-
-*** clj-refactor
-
-#+BEGIN_SRC emacs-lisp
-(use-package clj-refactor
-  :defer t
-  :ensure t
-  :diminish clj-refactor-mode
-  :config (cljr-add-keybindings-with-prefix "C-c C-m"))
-#+END_SRC
-
-*** cider
-
-A basic configuration of Cider is shown here: http://ccann.github.io/2015/10/18/cider.html
-
-#+BEGIN_SRC emacs-lisp
-(use-package cider
-  :ensure t
-  :defer t
-  :init (add-hook 'cider-mode-hook #'clj-refactor-mode)
-  :diminish subword-mode
-	:bind (:map cider-repl-mode-map
-							("C-h a" . cider-apropos)
-							:map clojure-mode-map
-							("C-h a" . cider-apropos))
-  :config
-  (setq nrepl-log-messages t									 ; useful for debugging
-        cider-repl-display-in-current-window t ; switch to REPL in this window
-        cider-repl-use-clojure-font-lock t ; syntax highlighting in REPL
-        cider-prompt-save-file-on-load 'always-save	; just always save when loading buffer
-        cider-font-lock-dynamically '(macro core function var) ; syntax highlight all namespaces
-        nrepl-hide-special-buffers t		; hide nrepl buffers from menu
-        cider-overlays-use-font-lock t)	; syntax highlight evaluation overlays
-  (cider-repl-toggle-pretty-printing)) ; REPL always pretty-prints results
-#+END_SRC
-
-*** cider-eval-sexp-fu
-
-From the README: "=eval-sexp-fu= provides tiny improvements to expression evaluation - e.g. the expression you've just evaluated would briefly flash and so on."
-
-#+BEGIN_SRC emacs-lisp
-(use-package cider-eval-sexp-fu
-	:ensure t
-  :defer t)
-#+END_SRC
-
-** CSV/TSV
-
-*** csv-mode
-
-https://elpa.gnu.org/packages/csv-mode.html
-
-Major mode for editing files in a generalized CSV (character-separated values) format.
-
-#+BEGIN_SRC emacs-lisp
-(use-package csv-mode
-	:ensure t)
-#+END_SRC
 
 ** org-mode
 
@@ -4884,35 +3905,89 @@ Observe dependencies between TODOs:
 (add-hook 'before-save-hook 'time-stamp)
 #+END_SRC
 
-** outline-mode
+** Accounting
 
-*** COMMENT outline-magic
+*** Ledger
 
-https://github.com/tj64/outline-magic
-
-This adds useful commands to =outline-mode=, e.g. cycling.
-
-Unfortunately, it interferes with =outline-cycle= in org-mode v9.5 with the consequence that source blocks and drawers are not expanded any more when pressing =<tab>=. 
+[[http://ledger-cli.org][Ledger]] is a powerful, double-entry accounting system.
 
 #+BEGIN_SRC emacs-lisp
-(use-package outline-magic
+(use-package ledger-mode
 	:ensure t
-	:config
-	(add-hook 'outline-minor-mode-hook
-	          (lambda ()
-	            (require 'outline-magic)
-	            (define-key outline-minor-mode-map (kbd "S-<tab>") 'outline-cycle)))
-	(add-hook 'LaTeX-mode-hook      ; 'LaTeX-mode-hook for AUCTeX
-						(lambda ()
-							(setq outline-promotion-headings
-										'("\\chapter" "\\section" "\\subsection"
-											"\\subsubsection" "\\paragraph" "\\subparagraph"))))
-	)
+  :mode ("\\.ledger\\'" "\\.dat\\'")
+  :config
+  (define-key ledger-mode-map (kbd "C-c c") 'ledger-mode-clean-buffer)
+  (define-key ledger-mode-map (kbd "C-<tab>") nil)
+  (setq ledger-post-amount-alignment-at :decimal
+        ledger-post-amount-alignment-column 49
+				ledger-default-date-format "%Y-%m-%d"
+				ledger-use-iso-dates t
+				ledger-reconcile-default-commodity "€"
+        ledger-clear-whole-transactions t)
+  (use-package flycheck-ledger
+		:ensure t))
 #+END_SRC
 
-** Calendar/Diary
+** Calendar/Diary & address book 
 
-*** General settings
+*** Address book
+
+**** vdirel
+
+https://github.com/DamienCassou/vdirel/
+
+**** khadel
+
+https://github.com/DamienCassou/khardel
+
+Uses [[https://github.com/lucc/khard][khard]] and [[https://github.com/pimutils/vdirsyncer][vdirsyncer]] to edit and sync local copies of CarDAV address books. 
+Also supports org-mode links to khard entries.
+
+**** bbdb
+
+http://sachachua.com/notebook/emacs/bbdb-config.el
+
+#+BEGIN_SRC emacs-lisp
+(use-package bbdb
+	:ensure t
+	:config
+	(progn
+		(bbdb-initialize)
+		;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
+		;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-message)
+		;; (add-hook 'message-setup-hook 'bbdb-define-all-aliases)
+
+		(setq bbdb-file my-bbdb-file
+					bbdb-auto-revert t
+					bbdb-check-auto-save-file t
+					bbdb-expand-mail-aliases t
+					bbdb-phone-style nil
+					;; bbdb-pop-up-window-size 10
+					bbdb-pop-up-target-lines 1 ; The window should be as small as possible
+					bbdb-use-pop-up nil        ; Show pup-up?
+
+																				;bbdb/news-auto-create-p t
+					bbdb-complete-name-allow-cycling t
+					bbdb-complete-mail-allow-cycling t
+					bbdb-complete-name-full-completion t
+					bbdb-completion-type 'primary-or-name
+																				;bbdb-use-pop-up nil
+
+					bbdb-offer-save 1  ; Always save
+					bbdb-electric-p t)
+		))
+
+  (use-package bbdb-vcard
+    :ensure t)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+  (use-package helm-bbdb
+    :ensure t)
+  (global-set-key (kbd "<f7> a") 'helm-bbdb)
+#+END_SRC
+
+*** Calendar: general settings
 
 #+BEGIN_SRC emacs-lisp
   (setq calendar-week-start-day 1)
@@ -5215,9 +4290,135 @@ Important limitations:
 
 #+end_src
 
-** LaTeX
+** Coding & Writing
 
-*** TODO AUCTeX 
+*** Clojure
+
+**** clojure-mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package clojure-mode
+  :ensure t
+  :mode (("\\.clj\\'" . clojure-mode)
+         ("\\.edn\\'" . clojure-mode))
+	:init
+	(add-hook 'clojure-mode-hook #'subword-mode))
+#+END_SRC
+
+**** clj-refactor
+
+#+BEGIN_SRC emacs-lisp
+(use-package clj-refactor
+  :defer t
+  :ensure t
+  :diminish clj-refactor-mode
+  :config (cljr-add-keybindings-with-prefix "C-c C-m"))
+#+END_SRC
+
+**** cider
+
+A basic configuration of Cider is shown here: http://ccann.github.io/2015/10/18/cider.html
+
+#+BEGIN_SRC emacs-lisp
+(use-package cider
+  :ensure t
+  :defer t
+  :init (add-hook 'cider-mode-hook #'clj-refactor-mode)
+  :diminish subword-mode
+	:bind (:map cider-repl-mode-map
+							("C-h a" . cider-apropos)
+							:map clojure-mode-map
+							("C-h a" . cider-apropos))
+  :config
+  (setq nrepl-log-messages t									 ; useful for debugging
+        cider-repl-display-in-current-window t ; switch to REPL in this window
+        cider-repl-use-clojure-font-lock t ; syntax highlighting in REPL
+        cider-prompt-save-file-on-load 'always-save	; just always save when loading buffer
+        cider-font-lock-dynamically '(macro core function var) ; syntax highlight all namespaces
+        nrepl-hide-special-buffers t		; hide nrepl buffers from menu
+        cider-overlays-use-font-lock t)	; syntax highlight evaluation overlays
+  (cider-repl-toggle-pretty-printing)) ; REPL always pretty-prints results
+#+END_SRC
+
+**** cider-eval-sexp-fu
+
+From the README: "=eval-sexp-fu= provides tiny improvements to expression evaluation - e.g. the expression you've just evaluated would briefly flash and so on."
+
+#+BEGIN_SRC emacs-lisp
+(use-package cider-eval-sexp-fu
+	:ensure t
+  :defer t)
+#+END_SRC
+
+*** Gnuplot
+
+**** gnuplot
+
+https://github.com/emacsorphanage/gnuplot
+
+#+BEGIN_SRC emacs-lisp
+(use-package gnuplot
+	:ensure t
+	:mode	"\\.\\(gp\\|gnuplot|plt\\)$"
+	)
+#+END_SRC
+
+**** COMMENT gnuplot-mode
+
+https://github.com/mkmcc/gnuplot-mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package gnuplot-mode
+	:ensure t
+	:mode	"\\.\\(gp\\|gnuplot|plt\\)$"
+	)
+#+END_SRC
+*** Graphviz/dot
+
+#+BEGIN_SRC emacs-lisp
+(use-package graphviz-dot-mode
+  :ensure t
+	:mode "\\.dot\\'")
+#+END_SRC
+
+*** JavaScript
+
+**** js2-mode
+
+Major mode for JavaScript files.
+
+#+BEGIN_SRC emacs-lisp
+(use-package js2-mode
+	:ensure t
+	:mode
+	("\\.js\\'" . js2-mode)
+	:config
+	;; Better imenu
+	(add-hook 'js2-mode-hook #'js2-imenu-extras-mode)
+)
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package js2-refactor
+	:ensure t
+	:after js2-mode
+	:config
+	(add-hook 'js2-mode-hook #'js2-refactor-mode)
+	(js2r-add-keybindings-with-prefix "C-c C-r")
+	(define-key js2-mode-map (kbd "C-k") #'js2r-kill))
+#+END_SRC
+
+**** TODO indium
+
+JavaScript development environment for Emacs
+
+**** TODO tern
+
+for better autocompletion
+
+*** LaTeX
+
+**** TODO AUCTeX 
 
 - [ ] How to do completion of custom macros?
   
@@ -5384,9 +4585,9 @@ Important limitations:
 	)
 #+END_SRC
 
-Autocompletion: see [[*company]].
+Autocompletion: see [[company]].
 
-*** TODO reftex
+**** TODO reftex
 
 - [ ] Issue: =\section=, =\frametitle= etc. are not shown in TOC when not being line-inital or preceded by whitespaces.
 - [ ] Issue: =\begin{frame}= ist not recognized.
@@ -5457,7 +4658,7 @@ Autocompletion: see [[*company]].
 
 Autocompletion: see [[*company]].
 
-*** bibtex
+**** bibtex
 
 #+BEGIN_SRC emacs-lisp
 (setq bibtex-dialect 'biblatex)
@@ -5512,7 +4713,7 @@ Sorting entries:
 (setq bibtex-maintain-sorted-entries t)
 #+END_SRC
 
-**** import
+***** import
 
 Taken from http://www.anghyflawn.net/blog/2014/emacs-give-a-doi-get-a-bibtex-entry/:
 
@@ -5536,7 +4737,7 @@ Taken from http://www.anghyflawn.net/blog/2014/emacs-give-a-doi-get-a-bibtex-ent
  (bibtex-fill-entry))
 #+END_SRC
 
-**** entry templates
+***** entry templates
 
 #+BEGIN_QUOTE
 Documentation of bibtex-entry-field-alist:
@@ -5806,15 +5007,16 @@ Use =bibtex-entry= when inserting entry templates:
 (define-key bibtex-mode-map (kbd "C-c C-e") 'bibtex-entry)
 #+END_SRC
 
-*** helm-bibtex
+**** helm-bibtex
 
 https://github.com/tmalsburg/helm-bibtex
 
 Search through your BibTeX bibliography with helm. 
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :noweb yes
 (use-package helm-bibtex
 	:ensure t
+	:after (org-citeproc org-ref) 
 	:pin MELPA
 	:config
 	;; Make sure that the most recent version of `bibtex-completion' is installed. 
@@ -5831,6 +5033,7 @@ Search through your BibTeX bibliography with helm.
 
 	(setq bibtex-completion-display-formats 
 				'((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
+	<<helm-bibtex-csl>>
 	)
 #+END_SRC
 
@@ -5878,7 +5081,8 @@ One can influence the order of actions in helm like this:
 
 Support for CSL, see https://github.com/tmalsburg/helm-bibtex/issues/235#issuecomment-383870278.
 
-#+BEGIN_SRC emacs-lisp
+#+NAME: helm-bibtex-csl
+#+BEGIN_SRC emacs-lisp :tangle no
 (defvar helm-bibtex-csl-style "~/.emacs.d/csl/unified-style-sheet-for-linguistics.csl")
 
 (defvar helm-bibtex-csl-locale-dir "~/.emacs.d/csl")
@@ -5895,7 +5099,7 @@ Support for CSL, see https://github.com/tmalsburg/helm-bibtex/issues/235#issueco
 (helm-add-action-to-source "Insert citeproc-formatted reference" 'helm-bibtex-insert-citeproc-reference helm-source-bibtex)
 #+END_SRC
 
-*** COMMENT ivy-bibtex
+**** COMMENT ivy-bibtex
 
 #+BEGIN_SRC emacs-lisp
 		;; ;; ivy-bibtex
@@ -5967,7 +5171,7 @@ Support for CSL, see https://github.com/tmalsburg/helm-bibtex/issues/235#issueco
 		;; 	)
 #+END_SRC
 
-*** Beamer
+**** Beamer
 :LOGBOOK:
 - Note taken on [2017-11-13 Mo 10:07] \\
   Add =\begin{frame}=  to outline (and imenu):
@@ -5982,7 +5186,7 @@ Add =\frametitle= to outline (and imenu):
 (add-to-list 'TeX-outline-extra '("\\\\frametitle\\b" 4))
 #+END_SRC
 
-*** Misc
+**** Misc
 
 Make square brackets indent correctly (testing):
 #+BEGIN_SRC emacs-lisp
@@ -6068,34 +5272,13 @@ Usefull extras, e.g., org-mode-like folding:
   :config (add-hook 'LaTeX-mode-hook #'latex-extra-mode))
 #+END_SRC 
 
-*** Autocompletion
+**** Autocompletion
 
 See [[*company]].
 
-** Ledger
+*** Markdown
 
-[[http://ledger-cli.org][Ledger]] is a powerful, double-entry accounting system.
-
-#+BEGIN_SRC emacs-lisp
-(use-package ledger-mode
-	:ensure t
-  :mode ("\\.ledger\\'" "\\.dat\\'")
-  :config
-  (define-key ledger-mode-map (kbd "C-c c") 'ledger-mode-clean-buffer)
-  (define-key ledger-mode-map (kbd "C-<tab>") nil)
-  (setq ledger-post-amount-alignment-at :decimal
-        ledger-post-amount-alignment-column 49
-				ledger-default-date-format "%Y-%m-%d"
-				ledger-use-iso-dates t
-				ledger-reconcile-default-commodity "€"
-        ledger-clear-whole-transactions t)
-  (use-package flycheck-ledger
-		:ensure t))
-#+END_SRC
-
-** Markdown
-
-*** markdown-mode
+**** markdown-mode
 
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
@@ -6108,54 +5291,108 @@ See [[*company]].
 	:config	(setq markdown-enable-math t))
 #+END_SRC
 
-*** markdown-toc
+**** markdown-toc
 
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-toc
 	:ensure t)
 #+END_SRC
 
-** Media player
+*** PlantUML
 
-*** COMMENT emms
-
-- [ ] takes way to long for scanning my music collection
-- [ ] For some reason, =emms= does not correctly use =vlc= under Windows.
-      - Path names are not properly treated wrt. slashes and spaces in filenames.
+Depends on plantuml.jar and Gaphviz (http://www.graphviz.org).
 
 #+BEGIN_SRC emacs-lisp
-(use-package emms
+(use-package plantuml-mode
   :ensure t
-  :config
-	(require 'emms-setup)
-	(emms-all) 
-	(emms-default-players)
-	(when (executable-find "vlc")
-		(setq emms-player-list '(emms-player-vlc-playlist
-														 emms-player-vlc)))
-	(if (eq system-type 'windows-nt)
-			(setq emms-player-vlc-command-name
-						(expand-file-name "c:/Program Files/VideoLAN/VLC/vlc.exe"))
-		(setq emms-player-vlc-parameters '("--intf=rc"))
-		(setq emms-player-list '(emms-player-vlc-playlist
-														 emms-player-vlc)))
-	(setq emms-source-file-default-directory music-dir)
-	(emms-add-directory-tree music-dir))
+  :mode ("\\.plu\\'" "\\.puml\\'") 
+  :init
+	(setq org-plantuml-jar-path "/")
+	(when (eq system-type 'windows-nt)
+		(setq org-plantuml-jar-path
+					(expand-file-name "C:/ProgramData/chocolatey/lib/plantuml/tools/plantuml.jar"))
+		(setq plantuml-jar-path
+					(expand-file-name "C:/ProgramData/chocolatey/lib/plantuml/tools/plantuml.jar"))))
 #+END_SRC
 
-**** helm-emms
+*** Python
+
+**** elpy
+
+https://github.com/jorgenschaefer/elpy
+
+Powerful environment for Python coding.
+
+Prerequisites as for Python:
+#+BEGIN_SRC bash
+sudo pip install jedi flake8 importmagic autopep8 # Elpy's recommendation
+sudo pip install pylint virtualenv epc # Zamansky's recommendation
+#+END_SRC
 
 #+BEGIN_SRC emacs-lisp
-(use-package helm-emms
+(use-package elpy
 	:ensure t
-	:after emms
+	:defer 2
 	:config
-	(require 'helm-adaptive))
+	(progn
+		;; Use Flycheck instead of Flymake
+		(when (require 'flycheck nil t)
+			(remove-hook 'elpy-modules 'elpy-module-flymake)
+			(remove-hook 'elpy-modules 'elpy-module-yasnippet)
+			(remove-hook 'elpy-mode-hook 'elpy-module-highlight-indentation)
+			(add-hook 'elpy-mode-hook 'flycheck-mode))
+		(elpy-enable)
+		(define-key python-mode-map (kbd "C-h f") 'python-eldoc-at-point)
+		;; highlight-indentation is ugly
+		(add-hook 'elpy-mode-hook '(lambda () (highlight-indentation-mode -1)))
+		;; jedi is great
+		(setq elpy-rpc-backend "jedi")
+		;; tell elpy to use python3 (or install python-is-python3 under GNU/Linux)
+		(setq elpy-rpc-python-command "python3")
+		))
 #+END_SRC
 
-** R
+**** company-jedi
 
-*** ess
+https://github.com/emacsorphanage/company-jedi
+
+=company-mode= completion back-end for Python JEDI.
+
+Prerequisites as for Python:
+#+BEGIN_SRC bash
+sudo pip install jedi
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+;; Use Company for auto-completion interface.
+(defun my/python-mode-hook ()
+  (add-to-list 'company-backends 'company-jedi))
+
+(use-package company-jedi
+  :ensure t
+  :init
+  (add-hook 'python-mode-hook 'my/python-mode-hook))
+#+END_SRC
+
+**** ein (Jupyter noteboook)
+
+Procedure to open a notebook:
+1. externally start Jupyter server
+2. =ein:notebooklist-login= and insert the token of the Jupyter session (see terminal)
+3. =ein:notebooklist-open= and select the notebook
+
+#+BEGIN_SRC emacs-lisp
+(use-package ein
+  :ensure t
+	:config
+	(setq ein:completion-backend 'ein:use-ac-jedi-backend))
+#+END_SRC
+
+**** [[emacs-jupyter]]
+
+*** R
+
+**** ess
 
 - [ ] "Error (use-package): ess :init: Cannot open load file: No such file or directory, julia-mode"
 - [X] "Error (use-package): ess/:init: Recursive ‘require’ for feature ‘ess-r-mode’"
@@ -6170,7 +5407,83 @@ See [[*company]].
 	(setq inferior-ess-r-program "R"))
 #+END_SRC
 
-** Deft
+*** Shell scripts
+
+Make script files (e.g. Bash scripts) with the hash-bang notation exectuable when saving them:
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'after-save-hook
+  'executable-make-buffer-file-executable-if-script-p)
+#+END_SRC
+
+*** Web development
+
+**** web-mode
+
+https://web-mode.org/
+https://github.com/fxbois/web-mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package web-mode										; for improved html support
+	:ensure t
+	:mode
+	("\\.phtml\\'" . web-mode)
+	("\\.tpl\\'" . web-mode)
+	("\\.php\\'" . web-mode)
+	("\\.[agj]sp\\'" . web-mode)
+	("\\.as[cp]x\\'" . web-mode)
+	("\\.erb\\'" . web-mode)
+	("\\.mustache\\'" . web-mode)
+	("\\.djhtml\\'" . web-mode)
+	("\\.html?\\'" . web-mode)
+	("\\.xml\\'" . web-mode)
+	("\\.css\\'" . web-mode)
+	("\\.svg\\'" . web-mode)
+	:config
+	;; highlight enclosing tags of the element under cursor
+  (setq web-mode-enable-current-element-highlight t)
+  ;; colorize CSS
+	(setq web-mode-enable-css-colorization t)
+)
+#+END_SRC
+
+**** impatient-mode
+
+https://github.com/skeeto/impatient-mode
+
+See the effect of your HTML as you type it.
+
+#+BEGIN_SRC emacs-lisp
+(use-package impatient-mode
+	:ensure t)
+#+END_SRC
+
+Usage: when in a HTML buffer,
+- call httpd-start & impatient-mode
+- open your browser at http://localhost:8080/imp/
+
+**** COMMENT skewer-mode
+
+https://github.com/skeeto/skewer-mode
+
+Live web development with Emacs, properly supporting JavaScript (other than [[impatient-mode]]) 
+
+#+BEGIN_SRC emacs-lisp
+(use-package skewer-mode
+	:ensure t
+	:config
+	(skewer-setup))
+#+END_SRC
+
+*** XMG
+
+#+BEGIN_SRC emacs-lisp
+(require 'xmg-mode) 
+#+END_SRC
+
+** File management
+
+*** Deft
 
 #+BEGIN_SRC emacs-lisp
 (use-package deft												; for displaying list of note files
@@ -6186,9 +5499,615 @@ See [[*company]].
 								deft-use-filter-string-for-filename t))
 #+END_SRC
 
-** Pomodoro technique
 
-*** COMMENT tomatinho
+
+*** dired
+
+The following prevents Emacs from throwing =Symbol's value as variable is void: dired-mode-map=: 
+
+#+BEGIN_SRC emacs-lisp
+(require 'dired)
+#+END_SRC
+
+**** General settings
+
+Tips:  http://ergoemacs.org/emacs/emacs_dired_tips.html
+
+Open new buffer when opening a file/directory, if necessary: 
+#+BEGIN_SRC emacs-lisp
+;; (define-key dired-mode-map (kbd "<return>") 'dired-find-alternate-file) ; was dired-advertised-find-file
+
+;; (define-key dired-mode-map (kbd "<backspace>") (lambda () (interactive) (find-alternate-file ".."))) ; find-alternate-file forgets the cursor position of the left dired buffer
+;; (define-key dired-mode-map (kbd "<left>") (lambda () (interactive) (find-alternate-file "..")))
+
+(define-key dired-mode-map (kbd "<left>") (lambda () (interactive) (diredp-up-directory)))
+(define-key dired-mode-map (kbd "<backspace>") (lambda () (interactive) (diredp-up-directory)))
+#+END_SRC
+
+View file and return to dired with q:
+#+BEGIN_SRC emacs-lisp
+(define-key dired-mode-map (kbd "<tab>") 'dired-view-file)
+(define-key dired-mode-map (kbd "<right>") 'dired-view-file)
+(add-hook 'view-mode-hook
+  (lambda ()
+    (define-key view-mode-map (kbd "<left>") 'View-quit)
+		(define-key view-mode-map (kbd "<right>") 'View-exit-and-edit)
+    ))
+#+END_SRC
+
+Copy/move into other dired buffer:
+#+BEGIN_SRC emacs-lisp
+(setq dired-dwim-target t)
+#+END_SRC
+
+Show details of files and directories:
+#+BEGIN_SRC emacs-lisp
+(add-hook 'dired-mode-hook
+          (lambda () (dired-hide-details-mode -1)))
+#+END_SRC
+
+Don't break lines:
+#+BEGIN_SRC emacs-lisp
+(add-hook 'dired-initial-position-hook '(lambda () (setq truncate-lines t)))
+;; (add-hook 'dired-mode-hook (lambda () (setq truncate-lines t)))
+#+END_SRC
+
+Order directories first (only windows?):
+#+BEGIN_SRC emacs-lisp
+(setq ls-lisp-dirs-first t)
+#+END_SRC
+
+Ignore case when sorting:
+#+BEGIN_SRC emacs-lisp
+(setq ls-lisp-ignore-case t)
+#+END_SRC
+
+Other settings: http://oremacs.com/2015/01/13/dired-options/
+#+BEGIN_SRC emacs-lisp
+(setq dired-listing-switches "-laGh1v --group-directories-first") ; --group-directories-first is only supported by recent versions of ls.
+#+END_SRC
+
+Specify ls program: https://www.gnu.org/software/emacs/manual/html_node/efaq-w32/Dired-ls.html
+#+BEGIN_SRC emacs-lisp
+(setq ls-lisp-use-insert-directory-program t)	; use external ls
+;; (setq insert-directory-program "c:/tools/cygwin/bin/ls") ; path to ls program
+#+END_SRC
+
+Chose Windows drives:
+#+BEGIN_SRC emacs-lisp
+(when (eq system-type 'windows-nt)
+	(define-key dired-mode-map (kbd "\\") 'diredp-w32-drives))
+#+END_SRC
+
+Move to trash can (recycle bin under windows) when deleting:
+#+BEGIN_SRC emacs-lisp
+(setq delete-by-moving-to-trash t)
+#+END_SRC
+
+<mouse-1> opens file/directory in the same window:
+#+BEGIN_SRC emacs-lisp
+(define-key dired-mode-map (kbd "<mouse-2>") 'dired-mouse-find-file)
+#+END_SRC
+
+**** Mark/Unmark 
+
+Use shift-up and shift-down in the usual way.
+See http://emacs.stackexchange.com/a/30890/12336
+
+#+BEGIN_SRC emacs-lisp
+(defun my-dired-toggle (arg)
+  (save-restriction
+    (narrow-to-region (point-at-bol) (point-at-eol))
+    (dired-toggle-marks))
+	(dired-previous-line arg))
+
+(defun my-dired-mark-up ()
+  (interactive)
+  (my-dired-toggle 1))
+
+(defun my-dired-mark-down ()
+  (interactive)
+  (my-dired-toggle -1))
+
+(define-key dired-mode-map (kbd "<S-up>") 'my-dired-mark-up)
+(define-key dired-mode-map (kbd "<S-down>") 'my-dired-mark-down)
+#+END_SRC
+
+**** TODO Open with external program
+:LOGBOOK:
+- State "TODO"       from              [2020-05-13 Mi 19:06]
+:END:
+
+- [ ] How to open certain binary files automatically with external program from within dired?
+
+#+BEGIN_SRC
+advice(dired-find-file :before)
+if (dired-get-file-for-visit ~= /^.*\.(pdf|wav|mp3|flac|...)/ ) {
+  xah-open-in-external-app(dired-get-file-for-visit)
+  return t
+} 
+#+END_SRC
+
+***** xah-open-in-external-app
+
+#+BEGIN_SRC emacs-lisp
+(defun xah-open-in-external-app (&optional @fname)
+  "Open the current file or dired marked files in external app.
+The app is chosen from your OS's preference.
+
+When called in emacs lisp, if @fname is given, open that.
+
+URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
+Version 2019-11-04"
+  (interactive)
+  (let* (
+         ($file-list
+          (if @fname
+              (progn (list @fname))
+            (if (string-equal major-mode "dired-mode")
+                (dired-get-marked-files)
+              (list (buffer-file-name)))))
+         ($do-it-p (if (<= (length $file-list) 5)
+                       t
+                     (y-or-n-p "Open more than 5 files? "))))
+    (when $do-it-p
+      (cond
+       ((string-equal system-type "windows-nt")
+        (mapc
+         (lambda ($fpath)
+           (w32-shell-execute "open" $fpath)) $file-list))
+       ((string-equal system-type "darwin")
+        (mapc
+         (lambda ($fpath)
+           (shell-command
+            (concat "open " (shell-quote-argument $fpath))))  $file-list))
+       ((string-equal system-type "gnu/linux")
+        (mapc
+         (lambda ($fpath) (let ((process-connection-type nil))
+                            (start-process "" nil "xdg-open" $fpath))) $file-list))))))
+(define-key dired-mode-map (kbd "C-<return>") 'xah-open-in-external-app)
+#+END_SRC
+
+****** Archive
+
+#+BEGIN_SRC emacs-lisp
+(defun xah-open-in-external-app ()
+  "Open the current file or dired marked files in external app.
+The app is chosen from your OS's preference.
+URL `http://ergoemacs.org/emacs/emacs_dired_open_file_in_ext_apps.html'
+Version 2016-10-15"
+  (interactive)
+  (let* (
+         (-file-list
+          (if (string-equal major-mode "dired-mode")
+              (dired-get-marked-files)
+            (list (buffer-file-name))))
+         (-do-it-p (if (<= (length -file-list) 5)
+                       t
+                     (y-or-n-p "Open more than 5 files? "))))
+    (when -do-it-p
+      (cond
+       ((string-equal system-type "windows-nt")
+        (mapc
+         (lambda (-fpath)
+           (w32-shell-execute "open" (replace-regexp-in-string "/" "\\" -fpath t t))) -file-list))
+       ((string-equal system-type "darwin")
+        (mapc
+         (lambda (-fpath)
+           (shell-command
+            (concat "open " (shell-quote-argument -fpath))))  -file-list))
+       ((string-equal system-type "gnu/linux")
+        (mapc
+         (lambda (-fpath) (let ((process-connection-type nil))
+                            (start-process "" nil "xdg-open" -fpath))) -file-list))))))
+
+(define-key dired-mode-map (kbd "C-<return>") 'xah-open-in-external-app)
+#+END_SRC
+
+***** COMMENT openwith
+
+https://github.com/jpkotta/openwith
+
+=openwith= allows one to specify which external program to use for each extension. 
+
+#+BEGIN_SRC emacs-lisp
+(use-package openwith
+:ensure t
+:config
+(when (require 'openwith nil 'noerror)
+	(setq openwith-associations
+				(list
+				 (list (openwith-make-extension-regexp
+								'("mpg" "mpeg" "mp3" "mp4"
+									"avi" "wmv" "wav" "mov" "flv"
+									"ogm" "ogg" "mkv"))
+							 "vlc"
+							 '(file))
+				 (list (openwith-make-extension-regexp
+								'("xbm" "pbm" "pgm" "ppm" "pnm"
+									"png" "gif" "bmp" "tif" "jpeg" "jpg"))
+							 "geeqie"
+							 '(file))
+				 (list (openwith-make-extension-regexp
+								'("doc" "xls" "ppt" "odt" "ods" "odg" "odp"))
+							 "libreoffice"
+							 '(file))
+				 '("\\.lyx" "lyx" (file))
+				 '("\\.chm" "kchmviewer" (file))
+				 (list (openwith-make-extension-regexp
+								'("pdf" "ps" "ps.gz" "dvi"))
+							 "okular"
+							 '(file))
+				 ))
+	(openwith-mode 1)))
+#+END_SRC
+
+**** Special keys
+***** Copy path
+
+Sometimes its useful to copy the path of a file or directory under cursor:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/dired-copy-path-at-point ()
+	(interactive)
+	(dired-copy-filename-as-kill 0)
+)
+
+(define-key dired-mode-map (kbd "W") 'tl/dired-copy-path-at-point)
+#+END_SRC
+
+***** Delete 
+
+Delete with <delete> key.
+
+#+BEGIN_SRC emacs-lisp
+(define-key dired-mode-map (kbd "<delete>") 'dired-do-delete)
+#+END_SRC
+
+**** dired-imenu
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-imenu
+	:ensure t
+	:init
+	(require 'dired-imenu)
+)
+#+END_SRC
+
+**** dired-k
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-k
+	:ensure t
+	:bind (:map dired-mode-map ("K" . dired-k))
+	:config
+  (progn
+		;; FIXME: Tramp prompts for the password in every new dired buffer!
+		;; (add-hook 'dired-initial-position-hook 'dired-k)
+		;; (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
+))
+#+END_SRC
+
+**** dired-quick-sort
+
+https://gitlab.com/xuhdev/dired-quick-sort
+
+Depends on =ls=, the version of which should support =--group-directories-first=.
+Activated in =dired= with <S-s>.
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-quick-sort
+	:ensure t
+	:init
+	(require 'dired-quick-sort)
+	(dired-quick-sort-setup)
+	)
+#+END_SRC
+
+**** dired+
+
+https://www.emacswiki.org/emacs/DiredPlus
+
+Downloaded from here: https://github.com/emacsmirror/emacswiki.org/blob/master/dired%2b.el
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired+
+  :config
+  (require 'dired+)
+  (setq diredp-hide-details-initially-flag nil)
+  (set-face-foreground 'diredp-file-name nil)
+  ;; Keep dired buffers updated when the file system changes.
+  (setq global-auto-revert-non-file-buffers t)
+  (setq auto-revert-verbose nil)
+  (define-key dired-mode-map (kbd "<mouse-2>") 'dired-mouse-find-file) ; Just a reminder for dired+ ;-)
+)
+#+END_SRC
+
+**** dired-hacks
+
+Several helper packages for dired.
+See documentation here: https://github.com/Fuco1/dired-hacks
+
+***** dired-narrow
+
+Filter dired list on the fly:
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-narrow
+  :ensure t
+  :bind (:map dired-mode-map
+							("/" . dired-narrow)
+							:map dired-narrow-map
+              ("<tab>" . dired-narrow-enter-directory)
+              ("<right>" . dired-view-file)
+							("<return>" . exit-minibuffer))        
+	:config
+	(setq dired-narrow-exit-action 'dired-narrow-find-file)
+)
+#+END_SRC
+
+***** COMMENT dired-subtree
+
+Taken from: https://github.com/Fuco1/.emacs.d/blob/master/files/dired-defs.el
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-subtree
+  :init
+  (bind-keys :map dired-mode-map
+             :prefix "C-,"
+             :prefix-map dired-subtree-map
+             :prefix-docstring "Dired subtree map."
+    ("<C-i-key>" . dired-subtree-insert)
+    ("C-/" . dired-subtree-apply-filter)
+    ("C-k" . dired-subtree-remove)
+    ("C-n" . dired-subtree-next-sibling)
+    ("C-p" . dired-subtree-previous-sibling)
+    ("C-u" . dired-subtree-up)
+    ("C-d" . dired-subtree-down)
+    ("C-a" . dired-subtree-beginning)
+    ("C-e" . dired-subtree-end)
+    ("C-c" . dired-subtree-cycle)
+    ("m" . dired-subtree-mark-subtree)
+    ("u" . dired-subtree-unmark-subtree)
+    ("C-o C-f" . dired-subtree-only-this-file)
+    ("C-o C-d" . dired-subtree-only-this-directory)))
+
+#+END_SRC
+
+***** dired-rainbow
+
+More customizable highlightning in dired listings.
+Settings inspired by
+- https://github.com/Fuco1/.emacs.d/blob/master/files/dired-defs.el
+- https://github.com/Fuco1/dired-hacks#dired-rainbow
+
+#+BEGIN_SRC emacs-lisp
+(defconst my-dired-media-files-extensions '("mp3" "mp4" "MP3" "MP4" "avi" "mpg" "flv" "ogg" "wmv" "mkv" "mov" "wma")
+  "Media file extensions that should launch in VLC.
+Also used for highlighting.")
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-rainbow
+	:ensure t 
+  :config
+  (progn
+    (dired-rainbow-define html "#4e9a06" ("htm" "html" "xhtml"))
+    (dired-rainbow-define xml "#b4fa70" ("xml" "xsd" "xsl" "xslt" "wsdl"))
+
+    (dired-rainbow-define document "#fce94f" ("doc" "docx" "odt" "pdb" "pdf" "ps" "rtf" "djvu" "epub"))
+    (dired-rainbow-define excel "#3465a4" ("xlsx"))
+    (dired-rainbow-define media "#ce5c00" my-dired-media-files-extensions)
+    (dired-rainbow-define image "#ff4b4b" ("jpg" "png" "jpeg" "gif"))
+
+    (dired-rainbow-define log "#c17d11" ("log"))
+    (dired-rainbow-define sourcefile "#fcaf3e" ("py" "c" "cc" "h" "java" "pl" "rb" "R" "php"))
+
+    (dired-rainbow-define executable "#8cc4ff" ("exe" "msi"))
+    (dired-rainbow-define compressed "#ad7fa8" ("zip" "bz2" "tgz" "txz" "gz" "xz" "z" "Z" "jar" "war" "ear" "rar" "sar" "xpi" "apk" "xz" "tar"))
+    (dired-rainbow-define packaged "#e6a8df" ("deb" "rpm"))
+    (dired-rainbow-define encrypted "LightBlue" ("gpg" "pgp"))
+
+    (dired-rainbow-define-chmod executable-unix "Green" "-.*x.*")
+    ))
+#+END_SRC
+
+***** dired-ranger
+
+https://github.com/Fuco1/dired-hacks#dired-ranger
+
+Adds conventional copy & paste behaviour to =dired=.
+
+See blog post at http://pragmaticemacs.com/emacs/copy-and-paste-files-with-dired-ranger/.
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-ranger
+	:ensure t
+  :config
+  (setq dired-ranger-copy-ring-size 1)
+	(define-key dired-mode-map (kbd "C-w")
+		(lambda ()
+			(interactive)
+			(dired-ranger-copy nil)	; t adds item to dired-ranger-copy-ring
+			(define-key dired-mode-map (kbd "C-y") 'dired-ranger-move)))
+	(define-key dired-mode-map (kbd "M-w")
+		(lambda ()
+			(interactive)
+			(dired-ranger-copy nil)
+			(define-key dired-mode-map (kbd "C-y") 'dired-ranger-paste)))
+)
+#+END_SRC
+
+***** dired-collapse
+
+Show whole path to contained file or directory if there is only one.
+
+See https://github.com/Fuco1/dired-hacks#dired-collapse.
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-collapse
+	:ensure t
+	:init
+	(add-hook 'dired-mode-hook #'dired-collapse-mode))
+#+END_SRC
+
+**** dired-efap
+
+Rename file name at point.
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-efap
+	:ensure t
+	:config
+	(setq dired-efap-initial-filename-selection nil)
+	(define-key dired-mode-map (kbd "r") 'dired-efap)
+	)
+#+END_SRC
+
+**** ediff 
+
+Quick ediff on marked files.
+Copied from https://oremacs.com/2017/03/18/dired-ediff/:
+#+BEGIN_SRC emacs-lisp
+(defun ora-ediff-files ()
+  (interactive)
+  (let ((files (dired-get-marked-files))
+        (wnd (current-window-configuration)))
+    (if (<= (length files) 2)
+        (let ((file1 (car files))
+              (file2 (if (cdr files)
+                         (cadr files)
+                       (read-file-name
+                        "file: "
+                        (dired-dwim-target-directory)))))
+          (if (file-newer-than-file-p file1 file2)
+              (ediff-files file2 file1)
+            (ediff-files file1 file2))
+          (add-hook 'ediff-after-quit-hook-internal
+                    (lambda ()
+                      (setq ediff-after-quit-hook-internal nil)
+                      (set-window-configuration wnd))))
+      (error "no more than 2 files should be marked"))))
+
+(define-key dired-mode-map "e" 'ora-ediff-files)
+#+END_SRC
+
+**** diffpdf
+
+https://github.com/ShuguangSun/diffpdf.el
+
+Use =diffpdf= in =dired=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package diffpdf
+	:ensure t)
+#+END_SRC
+
+**** imenu
+
+Integrate imenu into dired.
+Copied from https://fuco1.github.io/2017-05-01-Support-for-imenu-in-dired.html 
+
+#+BEGIN_SRC emacs-lisp
+(defun my-dired-imenu-prev-index-position (&optional arg)
+  "Go to the header line of previous directory."
+  (interactive "p")
+  (unless (= (line-number-at-pos) 1)
+    (call-interactively 'dired-prev-subdir)
+    t))
+
+(defun my-dired-extract-index-name ()
+  "Extract name of the current item for imenu."
+  (save-excursion
+    (back-to-indentation)
+    (buffer-substring-no-properties
+     (point)
+     (1- (re-search-forward ":$")))))
+
+(defun my-dired-imenu-create-index ()
+  "Create `imenu' index for dired."
+  (let* ((alist (imenu-default-create-index-function))
+         (uniquified (f-uniquify-alist (-map 'car alist))))
+    (--remove
+     (= 0 (length (car it)))
+     (--map (cons (cdr (assoc (car it) uniquified)) (cdr it))
+            alist))))
+
+(defun my-dired-imenu-init ()
+  "Initialize `imenu' variables in current buffer."
+  (setq-local imenu-prev-index-position-function
+              'my-dired-imenu-prev-index-position)
+  (setq-local imenu-extract-index-name-function
+              'my-dired-extract-index-name)
+  (setq-local imenu-create-index-function
+              'my-dired-imenu-create-index))
+
+(add-hook 'dired-mode-hook 'my-dired-imenu-init)
+#+END_SRC
+
+**** TODO History
+
+- [ ] I would like to be able to browse the dired history. =helm-dired-history= could be useful for this, but I don't know how to use it to this end.
+
+***** COMMENT helm-dired-history
+
+https://github.com/jixiuf/helm-dired-history
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-dired-history
+	:ensure t
+	:init	
+	(require 'savehist)
+	(add-to-list 'savehist-additional-variables 'helm-dired-history-variable)
+	(savehist-mode 1)
+	
+	:config
+	(with-eval-after-load 'dired
+		(require 'helm-dired-history) 
+		;; if you are using ido,you'd better disable ido for dired
+		;; (define-key (cdr ido-minor-mode-map-entry) [remap dired] nil) ;in ido-setup-hook
+		)
+	)
+#+END_SRC
+
+**** size info 
+
+Calculates the size of marked directories using =du=.
+Copied from https://oremacs.com/2015/01/12/dired-file-size/ and slightly adapted.
+
+#+BEGIN_SRC emacs-lisp
+(defun dired-get-size ()
+  (interactive)
+  (let ((files (dired-get-marked-files)))
+    (with-temp-buffer
+      (apply 'call-process "du" nil t nil "-sch" files)
+      (message
+       "Size of all marked files: %s"
+       (progn
+         (re-search-backward "\\(^[ 0-9.,]+[A-Za-z]+\\).*total$")
+         (match-string 1))))))
+
+(define-key dired-mode-map (kbd "z") 'dired-get-size)
+#+END_SRC
+
+**** COMMENT ranger, deer
+
+https://github.com/ralesi/ranger.el
+
+Minor mode within [[*dired][dired]] that makes available a hierarchical, column-like view on directories. 
+
+#+BEGIN_SRC emacs-lisp
+(use-package ranger
+	:ensure t
+	:bind
+	("C-x C-d" . deer))
+#+END_SRC
+
+** Getting things done
+
+*** Pomodoro technique
+
+**** COMMENT tomatinho
 
 Tomatinho brings the promodoro technique to Emacs. I prefer pomidor though.
 
@@ -6198,7 +6117,7 @@ Tomatinho brings the promodoro technique to Emacs. I prefer pomidor though.
 	)
 #+END_SRC
 
-*** pomidor
+**** pomidor
 
 Pomidor brings the promodoro technique to Emacs:
 #+BEGIN_SRC emacs-lisp
@@ -6210,14 +6129,402 @@ Pomidor brings the promodoro technique to Emacs:
 				pomidor-sound-overwork t)
 	)
 #+END_SRC
+*** Typing tutor
 
-** EPUB reader
+**** gtypist
 
-https://github.com/wasamasa/nov.el
+GNU Typist: An interactive typing tutor
+https://www.gnu.org/software/gtypist/doc/gtypist.html
 
-** RSS/Atom feed reader 
+There seems to be a mode for Emacs: https://www.gnu.org/software/gtypist/doc/gtypist.html#Emacs-mode
 
-*** elfeed
+**** COMMENT monkeytype
+
+https://github.com/jpablobr/emacs-monkeytype
+
+A typing tutor inspired by [[https://monkeytype.com/][monkeytype.com]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package monkeytype
+	:ensure t)
+#+END_SRC
+
+** Messaging
+
+*** Email
+
+Offlineimap or mbsync? http://pragmaticemacs.com/emacs/migrating-from-offlineimap-to-mbsync-for-mu4e/
+
+**** Interoperability with Thunderbird 
+
+The [[https://github.com/exteditor/exteditor][Exteditor]] plugin can be used in Thunderbird in order to open and edit an email in Emacs.
+
+Open eml-files with =org-mode= turned on:
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.eml\\'" . org-mode))
+#+END_SRC
+
+**** mu4e 
+:LOGBOOK:
+- State "INPROGRESS" from              [2020-12-18 Fri 00:21]
+:END:
+
+https://www.djcbsoftware.nl/code/mu/mu4e/index.html
+https://github.com/djcb/mu
+https://github.com/djcb/mu/releases/tag/1.6.0
+
+See https://github.com/munen/emacs.d/#mu4e for an elaborate example configuration.
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path (expand-file-name "lisp/mu4e" user-emacs-directory))
+(require 'mu4e)
+(require 'org-mu4e)
+(setq send-mail-function 'smtpmail-send-it)
+
+;; Default account on startup
+(setq
+ mu4e-mu-home "~/.cache/mu" 			; as of v1.4
+ ;; mu4e-maildir  "~/Maildir" ; deprecated in v1.4
+ mu4e-sent-folder "/Sent"
+ mu4e-drafts-folder "/Drafts"
+ mu4e-trash-folder "/Trash")
+
+(setq smtpmail-debug-info t
+      mu4e-get-mail-command "mbsync -c ~/SOME_PATH/.mbsyncrc work"
+      ;; mu4e-attachment-dir "~/SOME_PATH/attachements"
+)
+
+;; Message viewer settings
+;; (setq mu4e-view-use-old t)							; use Gnus; since v1.6
+;; (setq mu4e-view-use-gnus t)						; deprecated in v1.6
+
+;; show full addresses in view message (instead of just names)
+;; toggle per name with M-RET
+(setq mu4e-view-show-addresses t)
+
+;; Update mails every 5 minutes and in the background
+(setq mu4e-update-interval (* 5 60))
+(setq mu4e-index-update-in-background t)
+
+;; Always sign outgoing emails
+;; (setq mu4e-compose-crypto-reply-plain-policy 'sign)
+
+;; Automatic line breaks when reading mail
+(add-hook 'mu4e-view-mode-hook 'visual-line-mode)
+
+;; Store link to message if in header view, not to header query.
+(setq org-mu4e-link-query-in-headers-mode nil)
+
+;; Customize header fields to show in mu4e-view. This only adds :bcc.
+(setq mu4e-view-fields '(:from :to :cc :bcc :subject :flags :date :maildir :mailing-list :tags :attachments :signature :decryption))
+
+;; Close mu4e without asking.
+(setq mu4e-confirm-quit nil)
+
+;; Set a sane ISO 8601 date format.
+(setq mu4e-headers-date-format "%+4Y-%m-%d")
+
+;; This allows for using 'helm' to select mailboxes
+(setq mu4e-completing-read-function 'completing-read
+)
+;; Leave sent message
+(setq message-kill-buffer-on-exit t)
+
+;; Show images inline
+(setq mu4e-view-show-images t)
+
+;; Allow fancy (Unicode) characters for marks/threads
+(setq mu4e-use-fancy-chars t)
+
+;; to view selected message in the browser, no signin, just html mail
+(add-to-list 'mu4e-view-actions
+  '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+
+;; How to show messages / headers.
+;; A symbol which is either:
+;;  * ‘horizontal’:    split horizontally (headers on top)
+;;  * ‘vertical’:      split vertically (headers on the left).
+;;  * ‘single-window’: view and headers in one window (mu4e will try not to
+;; 		    touch your window layout), main view in minibuffer
+;;  * anything else:   don’t split (show either headers or messages,
+;; 		    not both)
+(setq mu4e-split-view 'horizontal)
+;; (mu4e-headers-split-view-grow 50)
+
+(add-hook 'mu4e-headers-mode-hook
+					#'(lambda ()
+							(setq-local truncate-lines t)
+							(mu4e-headers-split-view-grow 50)))
+
+;; Keybindings
+(define-key mu4e-headers-mode-map (kbd "M") #'mu4e)
+(define-key mu4e-view-mode-map (kbd "M") #'mu4e)
+(define-key mu4e-compose-mode-map (kbd "M") #'mu4e)
+#+END_SRC
+
+***** Compose messages
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'mu4e-compose-mode-hook
+					(defun my-do-compose-stuff ()
+						"My settings for message composition."
+						(org-mu4e-compose-org-mode)
+						(flyspell-mode)
+						))
+
+;; Each paragraph is a single long line; at sending, emacs will add the special line continuation characters.
+(setq mu4e-compose-format-flowed t)
+(setq fill-flowed-encode-column 998)
+
+;; Only complete with mail addresses that have been used recently
+(setq mu4e-compose-complete-only-after (format-time-string
+                                        "%Y-%m-%d"
+                                        (time-subtract (current-time) (days-to-time 300))))
+
+;; Compose email in separate frame
+(setq mu4e-compose-in-new-frame nil)
+
+;; Automatically include a message-signature in new messages (if it is set).
+(setq mu4e-compose-signature-auto-include t)
+
+;; Format of the first line of citations
+(defun tl/message-insert-citation-line ()
+  "Based on `message-insert-citation-line`."
+  (when message-reply-headers
+    (insert "On " 
+						(format-time-string "%a, %Y-%m-%d, at %H:%M:%S" (date-to-time (mail-header-date message-reply-headers))) " ")
+    (insert (mail-header-from message-reply-headers) " wrote:")
+    (newline)
+    (newline)))
+(setq message-citation-line-function 'tl/message-insert-citation-line)
+;; Alternatively, see https://www.djcbsoftware.nl/code/mu/mu4e/Writing-messages.html
+;; (setq  message-citation-line-format "On %Y-%m-%d at %R %Z, %f wrote...")
+#+END_SRC
+
+Attachments can be included directly from [[*dired][=dired=]] with the help of =gnus=. 
+
+Taken from https://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired.
+
+#+BEGIN_SRC emacs-lisp
+(require 'gnus-dired)
+;; make the `gnus-dired-mail-buffers' function also work on
+;; message-mode derived modes, such as mu4e-compose-mode
+(defun gnus-dired-mail-buffers ()
+  "Return a list of active message buffers."
+  (let (buffers)
+    (save-current-buffer
+      (dolist (buffer (buffer-list t))
+	(set-buffer buffer)
+	(when (and (derived-mode-p 'message-mode)
+		(null message-sent-message-via))
+	  (push (buffer-name buffer) buffers))))
+    (nreverse buffers)))
+
+(setq gnus-dired-mail-mode 'mu4e-user-agent)
+(add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
+#+END_SRC
+
+***** COMMENT Multiple accounts 
+
+From https://www.djcbsoftware.nl/code/mu/mu4e/Multiple-accounts.html#Multiple-accounts.
+
+#+BEGIN_SRC emacs-lisp
+(defvar my-mu4e-account-alist
+  '(("Account1"													; must be identical to the account’s directory name
+     (mu4e-sent-folder "/Account1/Saved Items")
+     (mu4e-drafts-folder "/Account1/Drafts")
+     (user-mail-address "my.address@account1.example.com")
+     (smtpmail-default-smtp-server "smtp.account1.example.com")
+     (smtpmail-local-domain "account1.example.com")
+     (smtpmail-smtp-user "username1")
+     (smtpmail-smtp-server "smtp.account1.example.com")
+     (smtpmail-stream-type 'starttls)
+     (smtpmail-smtp-service 25))
+    ("Account2"
+     (mu4e-sent-folder "/Account2/Saved Items")
+     (mu4e-drafts-folder "/Account2/Drafts")
+     (user-mail-address "my.address@account2.example.com")
+     (smtpmail-default-smtp-server "smtp.account2.example.com")
+     (smtpmail-local-domain "account2.example.com")
+     (smtpmail-smtp-user "username2")
+     (smtpmail-smtp-server "smtp.account2.example.com")
+     (smtpmail-stream-type 'starttls)
+     (smtpmail-smtp-service 587))))
+
+(defun my-mu4e-set-account ()
+  "Set the account for composing a message."
+  (let* ((account
+          (if mu4e-compose-parent-message
+              (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
+                (string-match "/\\(.*?\\)/" maildir)
+                (match-string 1 maildir))
+            (completing-read (format "Compose with account: (%s) "
+                                     (mapconcat #'(lambda (var) (car var))
+                                                my-mu4e-account-alist "/"))
+                             (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
+                             nil t nil nil (caar my-mu4e-account-alist))))
+         (account-vars (cdr (assoc account my-mu4e-account-alist))))
+    (if account-vars
+        (mapc #'(lambda (var)
+                  (set (car var) (cadr var)))
+              account-vars)
+      (error "No email account found"))))
+
+(add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
+#+END_SRC
+
+***** mu4e-alert
+
+https://github.com/iqbalansari/mu4e-alert
+
+Example image:
+https://raw.githubusercontent.com/iqbalansari/mu4e-alert/master/screenshots/mu4e-alert-in-action.png
+
+#+BEGIN_SRC emacs-lisp
+(use-package mu4e-alert
+	:ensure t
+	:after mu4e
+	:config
+
+	;; Choose the style you prefer for desktop notifications
+	;; If you are on Linux you can use
+	;; 1. notifications - Emacs lisp implementation of the Desktop Notifications API
+	;; 2. libnotify     - Notifications using the `notify-send' program, requires `notify-send' to be in PATH
+	;;
+	;; On Mac OSX you can set style to
+	;; 1. notifier      - Notifications using the `terminal-notifier' program, requires `terminal-notifier' to be in PATH
+	;; 1. growl         - Notifications using the `growl' program, requires `growlnotify' to be in PATH
+	(mu4e-alert-set-default-style 'libnotify)
+	(add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+
+	;; Mode Line display of unread emails
+	(add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
+	)
+#+END_SRC
+
+***** mu4e-thread-folding
+
+https://github.com/rougier/mu4e-thread-folding
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path (expand-file-name "lisp/mu4e-thread-folding" user-emacs-directory))
+(require 'mu4e-thread-folding)
+
+(add-to-list 'mu4e-header-info-custom
+             '(:empty . (:name "Empty"
+                         :shortname ""
+                         :function (lambda (msg) "  "))))
+(setq mu4e-headers-fields '((:empty         .    2)
+                            (:human-date    .   12)
+                            (:flags         .    6)
+                            (:mailing-list  .   10)
+                            (:from          .   22)
+                            (:subject       .   45)))
+
+(define-key mu4e-headers-mode-map (kbd "<tab>")     'mu4e-headers-toggle-at-point)
+(define-key mu4e-headers-mode-map (kbd "<left>")    'mu4e-headers-fold-at-point)
+(define-key mu4e-headers-mode-map (kbd "<S-left>")  'mu4e-headers-fold-all)
+(define-key mu4e-headers-mode-map (kbd "<right>")   'mu4e-headers-unfold-at-point)
+(define-key mu4e-headers-mode-map (kbd "<S-right>") 'mu4e-headers-unfold-all)
+
+(add-hook 'mu4e-headers-mode-hook 'mu4e-thread-folding-mode)
+#+END_SRC
+
+***** COMMENT mu4e-maildirs-extension
+
+This functionality is part of mu4e v1.6.1: https://github.com/agpchil/mu4e-maildirs-extension/issues/56
+
+https://github.com/agpchil/mu4e-maildirs-extension
+
+Show the structure of the maildir in =mu4e-main-view=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package mu4e-maildirs-extension
+  :ensure t
+	:after mu4e
+	:init
+	(mu4e-maildirs-extension))
+#+END_SRC
+
+***** COMMENT mu4e-conversation
+
+https://gitlab.com/ambrevar/mu4e-conversation
+
+Show an email thread in a single buffer.
+
+#+BEGIN_SRC emacs-lisp
+(use-package mu4e-conversation
+	:ensure t
+	:after mu4e
+	:config (global-mu4e-conversation-mode)
+)
+#+END_SRC
+
+**** COMMENT mu4e under Windows
+
+- incompatible with windows?
+  - Drafts are saved with incompatible file names (including colons).
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path (expand-file-name "lisp/mu4e" user-emacs-directory))
+(require 'mu4e)
+(setq mu4e-mu-binary (expand-file-name "mu/mu.bat" wemacs-dir)
+			mu4e-maildir (expand-file-name "Maildir" home-directory)) 
+#+END_SRC
+
+**** COMMENT notmuch under Windows
+
+Idea: offlineimap and notmuch are running in a WSL where also the maildir is located. Emacs calls notmuch from outside to search and obtain mails from the WSL maildir.
+
+- [X] install offlinimap and notmuch in the WSL
+- [X] write shell script to call notmuch from windows (=remote-notmuch.bat=)
+- [ ] BUG: search and display of mail not working ("Spawning child process: Invalid argument"); seems to be a problem with shell.el
+- [ ] configure offlineimap to invoke notmuch on changes in maildir
+- [ ] start offlineimap when starting notmuch in emacs.
+- [ ] configure smtp
+
+https://wwwtech.de/articles/2016/jul/my-personal-mail-setup
+https://notmuchmail.org/remoteusage/
+https://kkatsuyuki.github.io/notmuch-conf/
+https://admiralakber.github.io/2018/09/20/myos-email/
+
+#+BEGIN_SRC emacs-lisp
+(use-package notmuch
+	:ensure t
+	:config
+	(setq notmuch-command "remote-notmuch.bat")) ; make sure this is in your PATH variable
+#+END_SRC
+
+*** Chat
+
+**** COMMENT Jabber
+
+https://github.com/legoscia/emacs-jabber
+
+- [ ] OMEMO support missing
+
+#+BEGIN_SRC emacs-lisp
+(use-package jabber
+  :ensure t
+  :defer t
+  :config
+  (setq jabber-chat-buffer-show-avatar nil
+				jabber-vcard-avatars-retrieve nil
+				jabber-alert-presence-hooks nil
+				jabber-mode-line-mode t
+
+				;; jabber-account-list ; better configure this in a secret place
+				;;     '(("<your-gmail-email>"
+				;;        (:network-server . "talk.google.com")
+				;;        (:port . 443)
+				;;        (:connection-type . ssl))))
+
+))
+#+END_SRC
+
+*** RSS/Atom feed reader 
+
+**** elfeed
 
 Largely taken from http://cestlaz.github.io/posts/using-emacs-29%20elfeed/.
 Feed collections can be converted to the format of =elfeed-org= with the function =elfeed-org-import-opml=.
@@ -6396,7 +6703,7 @@ Taken from https://joshrollinswrites.com/help-desk-head-desk/20200611/.
 (define-key elfeed-search-mode-map (kbd "v") 'elfeed-view-mpv)
 #+END_SRC 
 
-*** TODO elfeed-summary
+**** TODO elfeed-summary
 :LOGBOOK:
 - State "TODO"       from              [2022-05-15 Sun 10:53]
 :END:
@@ -6440,7 +6747,7 @@ Issues & TODOs:
 	)
 #+END_SRC
 
-*** elfeed-tube
+**** elfeed-tube
 
 https://github.com/karthink/elfeed-tube
 
@@ -6463,23 +6770,45 @@ Elfeed interface to Youtube subscriptions.
          ("F" . elfeed-tube-fetch)
          ([remap save-buffer] . elfeed-tube-save)))
 #+END_SRC
+** Viewing
 
-** XMG
+*** CoNNLL-U
 
 #+BEGIN_SRC emacs-lisp
-(require 'xmg-mode) 
+(use-package conllu-mode
+	:ensure t
+	:config
+	(add-to-list 'auto-mode-alist '("\\.conllu\\'" . conllu-mode))
+)
 #+END_SRC
 
-** PDF
+*** CSV/TSV
 
-*** doc-view
+**** csv-mode
+
+https://elpa.gnu.org/packages/csv-mode.html
+
+Major mode for editing files in a generalized CSV (character-separated values) format.
+
+#+BEGIN_SRC emacs-lisp
+(use-package csv-mode
+	:ensure t)
+#+END_SRC
+
+*** EPUB reader
+
+https://github.com/wasamasa/nov.el
+
+*** PDF
+
+**** doc-view
 
 #+BEGIN_SRC emacs-lisp
 (when (eq system-type 'windows-nt)
 	(setq doc-view-ghostscript-program "gswin64c.exe"))
 #+END_SRC
 
-*** pdf-tools
+**** pdf-tools
 
 The hard part is to generate =epdfinfo.exe= under Windows, which is why I'm not using it there.
 
@@ -6508,7 +6837,7 @@ Old: https://github.com/politza/pdf-tools
 		))
 #+END_SRC
 
-**** TODO org-pdftools
+***** TODO org-pdftools
 :LOGBOOK:
 - State "TODO"       from              [2020-03-30 Mo 11:07]
 :END:
@@ -6531,7 +6860,7 @@ URL: https://github.com/fuxialexander/org-pdftools
 		))
 #+END_SRC
 
-*** COMMENT bibliothek
+**** COMMENT bibliothek
 
 Nice idea, but it currently does not work because of "too many open files".
 Depends on =pdf-tools=.
@@ -6546,7 +6875,7 @@ https://github.com/cadadr/elisp#bibliothekel
 	(setq bibliothek-path (list user-bibliography-pdf-dir)))
 #+END_SRC
 
-*** COMMENT interleave
+**** COMMENT interleave
 
 For taking notes in =org-mode= side by side with the PDF.
 Depends on =pdf-tools=.
@@ -6561,7 +6890,7 @@ Depends on =pdf-tools=.
         interleave-disable-narrowing t))
 #+END_SRC
 
-*** COMMENT org-noter
+**** COMMENT org-noter
 
 For taking notes in =org-mode= side by side with the PDF.
 Successor of =interleave=.
@@ -6580,7 +6909,7 @@ https://write.as/dani/notes-on-org-noter
 	)
 #+END_SRC
 
-** DjVu
+*** DjVu
 
 http://djvu.sourceforge.net/
 
@@ -6597,7 +6926,7 @@ Issues with =doc-view=:
 - [ ] Copying text from within DocView is not possible.
 - [ ] Searching within DocView ist not possible
 
-*** djvu
+**** djvu
 
 https://elpa.gnu.org/packages/djvu.html
 
@@ -6608,7 +6937,7 @@ Package for reading an editing DjVu files.
 	:ensure t)
 #+END_SRC
 
-*** COMMENT djvu2
+**** COMMENT djvu2
 
 https://github.com/dalanicolai/djvu2.el
 
@@ -6619,380 +6948,70 @@ Read and annotate djvu with Emacs. Builds on [[djvu]].
 (require 'djvu)
 #+END_SRC
 
-** Email
+*** Media player
 
-Offlineimap or mbsync? http://pragmaticemacs.com/emacs/migrating-from-offlineimap-to-mbsync-for-mu4e/
+**** COMMENT emms
 
-*** Interoperability with Thunderbird 
+- [ ] takes way to long for scanning my music collection
+- [ ] For some reason, =emms= does not correctly use =vlc= under Windows.
+      - Path names are not properly treated wrt. slashes and spaces in filenames.
 
-The [[https://github.com/exteditor/exteditor][Exteditor]] plugin can be used in Thunderbird in order to open and edit an email in Emacs.
-
-Open eml-files with =org-mode= turned on:
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.eml\\'" . org-mode))
+(use-package emms
+  :ensure t
+  :config
+	(require 'emms-setup)
+	(emms-all) 
+	(emms-default-players)
+	(when (executable-find "vlc")
+		(setq emms-player-list '(emms-player-vlc-playlist
+														 emms-player-vlc)))
+	(if (eq system-type 'windows-nt)
+			(setq emms-player-vlc-command-name
+						(expand-file-name "c:/Program Files/VideoLAN/VLC/vlc.exe"))
+		(setq emms-player-vlc-parameters '("--intf=rc"))
+		(setq emms-player-list '(emms-player-vlc-playlist
+														 emms-player-vlc)))
+	(setq emms-source-file-default-directory music-dir)
+	(emms-add-directory-tree music-dir))
 #+END_SRC
 
-*** mu4e 
-:LOGBOOK:
-- State "INPROGRESS" from              [2020-12-18 Fri 00:21]
-:END:
-
-https://www.djcbsoftware.nl/code/mu/mu4e/index.html
-https://github.com/djcb/mu
-https://github.com/djcb/mu/releases/tag/1.6.0
-
-See https://github.com/munen/emacs.d/#mu4e for an elaborate example configuration.
+***** helm-emms
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path (expand-file-name "lisp/mu4e" user-emacs-directory))
-(require 'mu4e)
-(require 'org-mu4e)
-(setq send-mail-function 'smtpmail-send-it)
-
-;; Default account on startup
-(setq
- mu4e-mu-home "~/.cache/mu" 			; as of v1.4
- ;; mu4e-maildir  "~/Maildir" ; deprecated in v1.4
- mu4e-sent-folder "/Sent"
- mu4e-drafts-folder "/Drafts"
- mu4e-trash-folder "/Trash")
-
-(setq smtpmail-debug-info t
-      mu4e-get-mail-command "mbsync -c ~/SOME_PATH/.mbsyncrc work"
-      ;; mu4e-attachment-dir "~/SOME_PATH/attachements"
-)
-
-;; Message viewer settings
-;; (setq mu4e-view-use-old t)							; use Gnus; since v1.6
-;; (setq mu4e-view-use-gnus t)						; deprecated in v1.6
-
-;; show full addresses in view message (instead of just names)
-;; toggle per name with M-RET
-(setq mu4e-view-show-addresses t)
-
-;; Update mails every 5 minutes and in the background
-(setq mu4e-update-interval (* 5 60))
-(setq mu4e-index-update-in-background t)
-
-;; Always sign outgoing emails
-;; (setq mu4e-compose-crypto-reply-plain-policy 'sign)
-
-;; Automatic line breaks when reading mail
-(add-hook 'mu4e-view-mode-hook 'visual-line-mode)
-
-;; Store link to message if in header view, not to header query.
-(setq org-mu4e-link-query-in-headers-mode nil)
-
-;; Customize header fields to show in mu4e-view. This only adds :bcc.
-(setq mu4e-view-fields '(:from :to :cc :bcc :subject :flags :date :maildir :mailing-list :tags :attachments :signature :decryption))
-
-;; Close mu4e without asking.
-(setq mu4e-confirm-quit nil)
-
-;; Set a sane ISO 8601 date format.
-(setq mu4e-headers-date-format "%+4Y-%m-%d")
-
-;; This allows for using 'helm' to select mailboxes
-(setq mu4e-completing-read-function 'completing-read
-)
-;; Leave sent message
-(setq message-kill-buffer-on-exit t)
-
-;; Show images inline
-(setq mu4e-view-show-images t)
-
-;; Allow fancy (Unicode) characters for marks/threads
-(setq mu4e-use-fancy-chars t)
-
-;; to view selected message in the browser, no signin, just html mail
-(add-to-list 'mu4e-view-actions
-  '("ViewInBrowser" . mu4e-action-view-in-browser) t)
-
-;; How to show messages / headers.
-;; A symbol which is either:
-;;  * ‘horizontal’:    split horizontally (headers on top)
-;;  * ‘vertical’:      split vertically (headers on the left).
-;;  * ‘single-window’: view and headers in one window (mu4e will try not to
-;; 		    touch your window layout), main view in minibuffer
-;;  * anything else:   don’t split (show either headers or messages,
-;; 		    not both)
-(setq mu4e-split-view 'horizontal)
-;; (mu4e-headers-split-view-grow 50)
-
-(add-hook 'mu4e-headers-mode-hook
-					#'(lambda ()
-							(setq-local truncate-lines t)
-							(mu4e-headers-split-view-grow 50)))
-
-;; Keybindings
-(define-key mu4e-headers-mode-map (kbd "M") #'mu4e)
-(define-key mu4e-view-mode-map (kbd "M") #'mu4e)
-(define-key mu4e-compose-mode-map (kbd "M") #'mu4e)
-#+END_SRC
-
-**** Compose messages
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'mu4e-compose-mode-hook
-					(defun my-do-compose-stuff ()
-						"My settings for message composition."
-						(org-mu4e-compose-org-mode)
-						(flyspell-mode)
-						))
-
-;; Each paragraph is a single long line; at sending, emacs will add the special line continuation characters.
-(setq mu4e-compose-format-flowed t)
-(setq fill-flowed-encode-column 998)
-
-;; Only complete with mail addresses that have been used recently
-(setq mu4e-compose-complete-only-after (format-time-string
-                                        "%Y-%m-%d"
-                                        (time-subtract (current-time) (days-to-time 300))))
-
-;; Compose email in separate frame
-(setq mu4e-compose-in-new-frame nil)
-
-;; Automatically include a message-signature in new messages (if it is set).
-(setq mu4e-compose-signature-auto-include t)
-
-;; Format of the first line of citations
-(defun tl/message-insert-citation-line ()
-  "Based on `message-insert-citation-line`."
-  (when message-reply-headers
-    (insert "On " 
-						(format-time-string "%a, %Y-%m-%d, at %H:%M:%S" (date-to-time (mail-header-date message-reply-headers))) " ")
-    (insert (mail-header-from message-reply-headers) " wrote:")
-    (newline)
-    (newline)))
-(setq message-citation-line-function 'tl/message-insert-citation-line)
-;; Alternatively, see https://www.djcbsoftware.nl/code/mu/mu4e/Writing-messages.html
-;; (setq  message-citation-line-format "On %Y-%m-%d at %R %Z, %f wrote...")
-#+END_SRC
-
-Attachments can be included directly from [[*dired][=dired=]] with the help of =gnus=. 
-
-Taken from https://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired.
-
-#+BEGIN_SRC emacs-lisp
-(require 'gnus-dired)
-;; make the `gnus-dired-mail-buffers' function also work on
-;; message-mode derived modes, such as mu4e-compose-mode
-(defun gnus-dired-mail-buffers ()
-  "Return a list of active message buffers."
-  (let (buffers)
-    (save-current-buffer
-      (dolist (buffer (buffer-list t))
-	(set-buffer buffer)
-	(when (and (derived-mode-p 'message-mode)
-		(null message-sent-message-via))
-	  (push (buffer-name buffer) buffers))))
-    (nreverse buffers)))
-
-(setq gnus-dired-mail-mode 'mu4e-user-agent)
-(add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
-#+END_SRC
-
-**** COMMENT Multiple accounts 
-
-From https://www.djcbsoftware.nl/code/mu/mu4e/Multiple-accounts.html#Multiple-accounts.
-
-#+BEGIN_SRC emacs-lisp
-(defvar my-mu4e-account-alist
-  '(("Account1"													; must be identical to the account’s directory name
-     (mu4e-sent-folder "/Account1/Saved Items")
-     (mu4e-drafts-folder "/Account1/Drafts")
-     (user-mail-address "my.address@account1.example.com")
-     (smtpmail-default-smtp-server "smtp.account1.example.com")
-     (smtpmail-local-domain "account1.example.com")
-     (smtpmail-smtp-user "username1")
-     (smtpmail-smtp-server "smtp.account1.example.com")
-     (smtpmail-stream-type 'starttls)
-     (smtpmail-smtp-service 25))
-    ("Account2"
-     (mu4e-sent-folder "/Account2/Saved Items")
-     (mu4e-drafts-folder "/Account2/Drafts")
-     (user-mail-address "my.address@account2.example.com")
-     (smtpmail-default-smtp-server "smtp.account2.example.com")
-     (smtpmail-local-domain "account2.example.com")
-     (smtpmail-smtp-user "username2")
-     (smtpmail-smtp-server "smtp.account2.example.com")
-     (smtpmail-stream-type 'starttls)
-     (smtpmail-smtp-service 587))))
-
-(defun my-mu4e-set-account ()
-  "Set the account for composing a message."
-  (let* ((account
-          (if mu4e-compose-parent-message
-              (let ((maildir (mu4e-message-field mu4e-compose-parent-message :maildir)))
-                (string-match "/\\(.*?\\)/" maildir)
-                (match-string 1 maildir))
-            (completing-read (format "Compose with account: (%s) "
-                                     (mapconcat #'(lambda (var) (car var))
-                                                my-mu4e-account-alist "/"))
-                             (mapcar #'(lambda (var) (car var)) my-mu4e-account-alist)
-                             nil t nil nil (caar my-mu4e-account-alist))))
-         (account-vars (cdr (assoc account my-mu4e-account-alist))))
-    (if account-vars
-        (mapc #'(lambda (var)
-                  (set (car var) (cadr var)))
-              account-vars)
-      (error "No email account found"))))
-
-(add-hook 'mu4e-compose-pre-hook 'my-mu4e-set-account)
-#+END_SRC
-
-**** mu4e-alert
-
-https://github.com/iqbalansari/mu4e-alert
-
-Example image:
-https://raw.githubusercontent.com/iqbalansari/mu4e-alert/master/screenshots/mu4e-alert-in-action.png
-
-#+BEGIN_SRC emacs-lisp
-(use-package mu4e-alert
+(use-package helm-emms
 	:ensure t
-	:after mu4e
+	:after emms
 	:config
+	(require 'helm-adaptive))
+#+END_SRC
 
-	;; Choose the style you prefer for desktop notifications
-	;; If you are on Linux you can use
-	;; 1. notifications - Emacs lisp implementation of the Desktop Notifications API
-	;; 2. libnotify     - Notifications using the `notify-send' program, requires `notify-send' to be in PATH
-	;;
-	;; On Mac OSX you can set style to
-	;; 1. notifier      - Notifications using the `terminal-notifier' program, requires `terminal-notifier' to be in PATH
-	;; 1. growl         - Notifications using the `growl' program, requires `growlnotify' to be in PATH
-	(mu4e-alert-set-default-style 'libnotify)
-	(add-hook 'after-init-hook #'mu4e-alert-enable-notifications)
+*** outline-mode
 
-	;; Mode Line display of unread emails
-	(add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
+**** COMMENT outline-magic
+
+https://github.com/tj64/outline-magic
+
+This adds useful commands to =outline-mode=, e.g. cycling.
+
+Unfortunately, it interferes with =outline-cycle= in org-mode v9.5 with the consequence that source blocks and drawers are not expanded any more when pressing =<tab>=. 
+
+#+BEGIN_SRC emacs-lisp
+(use-package outline-magic
+	:ensure t
+	:config
+	(add-hook 'outline-minor-mode-hook
+	          (lambda ()
+	            (require 'outline-magic)
+	            (define-key outline-minor-mode-map (kbd "S-<tab>") 'outline-cycle)))
+	(add-hook 'LaTeX-mode-hook      ; 'LaTeX-mode-hook for AUCTeX
+						(lambda ()
+							(setq outline-promotion-headings
+										'("\\chapter" "\\section" "\\subsection"
+											"\\subsubsection" "\\paragraph" "\\subparagraph"))))
 	)
 #+END_SRC
-
-**** mu4e-thread-folding
-
-https://github.com/rougier/mu4e-thread-folding
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path (expand-file-name "lisp/mu4e-thread-folding" user-emacs-directory))
-(require 'mu4e-thread-folding)
-
-(add-to-list 'mu4e-header-info-custom
-             '(:empty . (:name "Empty"
-                         :shortname ""
-                         :function (lambda (msg) "  "))))
-(setq mu4e-headers-fields '((:empty         .    2)
-                            (:human-date    .   12)
-                            (:flags         .    6)
-                            (:mailing-list  .   10)
-                            (:from          .   22)
-                            (:subject       .   45)))
-
-(define-key mu4e-headers-mode-map (kbd "<tab>")     'mu4e-headers-toggle-at-point)
-(define-key mu4e-headers-mode-map (kbd "<left>")    'mu4e-headers-fold-at-point)
-(define-key mu4e-headers-mode-map (kbd "<S-left>")  'mu4e-headers-fold-all)
-(define-key mu4e-headers-mode-map (kbd "<right>")   'mu4e-headers-unfold-at-point)
-(define-key mu4e-headers-mode-map (kbd "<S-right>") 'mu4e-headers-unfold-all)
-
-(add-hook 'mu4e-headers-mode-hook 'mu4e-thread-folding-mode)
-#+END_SRC
-
-**** COMMENT mu4e-maildirs-extension
-
-This functionality is part of mu4e v1.6.1: https://github.com/agpchil/mu4e-maildirs-extension/issues/56
-
-https://github.com/agpchil/mu4e-maildirs-extension
-
-Show the structure of the maildir in =mu4e-main-view=.
-
-#+BEGIN_SRC emacs-lisp
-(use-package mu4e-maildirs-extension
-  :ensure t
-	:after mu4e
-	:init
-	(mu4e-maildirs-extension))
-#+END_SRC
-
-**** COMMENT mu4e-conversation
-
-https://gitlab.com/ambrevar/mu4e-conversation
-
-Show an email thread in a single buffer.
-
-#+BEGIN_SRC emacs-lisp
-(use-package mu4e-conversation
-	:ensure t
-	:after mu4e
-	:config (global-mu4e-conversation-mode)
-)
-#+END_SRC
-
-*** COMMENT mu4e under Windows
-
-- incompatible with windows?
-  - Drafts are saved with incompatible file names (including colons).
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path (expand-file-name "lisp/mu4e" user-emacs-directory))
-(require 'mu4e)
-(setq mu4e-mu-binary (expand-file-name "mu/mu.bat" wemacs-dir)
-			mu4e-maildir (expand-file-name "Maildir" home-directory)) 
-#+END_SRC
-
-*** COMMENT notmuch under Windows
-
-Idea: offlineimap and notmuch are running in a WSL where also the maildir is located. Emacs calls notmuch from outside to search and obtain mails from the WSL maildir.
-
-- [X] install offlinimap and notmuch in the WSL
-- [X] write shell script to call notmuch from windows (=remote-notmuch.bat=)
-- [ ] BUG: search and display of mail not working ("Spawning child process: Invalid argument"); seems to be a problem with shell.el
-- [ ] configure offlineimap to invoke notmuch on changes in maildir
-- [ ] start offlineimap when starting notmuch in emacs.
-- [ ] configure smtp
-
-https://wwwtech.de/articles/2016/jul/my-personal-mail-setup
-https://notmuchmail.org/remoteusage/
-https://kkatsuyuki.github.io/notmuch-conf/
-https://admiralakber.github.io/2018/09/20/myos-email/
-
-#+BEGIN_SRC emacs-lisp
-(use-package notmuch
-	:ensure t
-	:config
-	(setq notmuch-command "remote-notmuch.bat")) ; make sure this is in your PATH variable
-#+END_SRC
-
-** Typing tutor
-
-*** gtypist
-
-GNU Typist: An interactive typing tutor
-https://www.gnu.org/software/gtypist/doc/gtypist.html
-
-There seems to be a mode for Emacs: https://www.gnu.org/software/gtypist/doc/gtypist.html#Emacs-mode
-
-*** COMMENT monkeytype
-
-https://github.com/jpablobr/emacs-monkeytype
-
-A typing tutor inspired by [[https://monkeytype.com/][monkeytype.com]].
-
-#+BEGIN_SRC emacs-lisp
-(use-package monkeytype
-	:ensure t)
-#+END_SRC
-
-** Scripts
-
-Make script files (e.g. Bash scripts) with the hash-bang notation exectuable when saving them:
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'after-save-hook
-  'executable-make-buffer-file-executable-if-script-p)
-#+END_SRC
-
-** COMMENT OSM
+*** COMMENT OSM
 
 https://github.com/minad/osm
 
@@ -7013,33 +7032,6 @@ OpenStreeMap viewer for Emacs.
   ;; Load Org link support
   (with-eval-after-load 'org
     (require 'osm-ol)))
-#+END_SRC
-
-** Chat
-
-*** COMMENT Jabber
-
-https://github.com/legoscia/emacs-jabber
-
-- [ ] OMEMO support missing
-
-#+BEGIN_SRC emacs-lisp
-(use-package jabber
-  :ensure t
-  :defer t
-  :config
-  (setq jabber-chat-buffer-show-avatar nil
-				jabber-vcard-avatars-retrieve nil
-				jabber-alert-presence-hooks nil
-				jabber-mode-line-mode t
-
-				;; jabber-account-list ; better configure this in a secret place
-				;;     '(("<your-gmail-email>"
-				;;        (:network-server . "talk.google.com")
-				;;        (:port . 443)
-				;;        (:connection-type . ssl))))
-
-))
 #+END_SRC
 
 * Minor modes
