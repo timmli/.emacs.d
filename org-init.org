@@ -5016,7 +5016,7 @@ Search through your BibTeX bibliography with helm.
 #+BEGIN_SRC emacs-lisp :noweb yes
 (use-package helm-bibtex
 	:ensure t
-	:after (org-citeproc org-ref) 
+	;; :after (org-citeproc org-ref)   ; do not uncomment this
 	:pin MELPA
 	:config
 	;; Make sure that the most recent version of `bibtex-completion' is installed. 
