@@ -9019,10 +9019,11 @@ Since there can be a vast amount of org-mode files in =org-directory=, especiall
 
 	;; org-agenda-files are org-files with a certain filetag
 	(setq org-agenda-files ())
-	(dolist (file org-files)
-		(if (tl/org-agenda-file-tag-p file)
-				(setq org-agenda-files (cons file org-agenda-files))))
-	
+	(if org-agenda-file-tag								; include all files if org-agenda-file-tag is nil
+			(dolist (file org-files)
+				(if (tl/org-agenda-file-tag-p file)
+						(setq org-agenda-files (cons file org-agenda-files)))))
+		
 	(customize-save-variable 'org-agenda-files org-agenda-files)
 	(message "org-agenda-files updated")
 
@@ -9090,7 +9091,10 @@ Inspired by: http://stackoverflow.com/questions/38061773/add-linked-org-files-to
 Only keep =org-agenda-files= with a certain filetag:
 #+BEGIN_SRC emacs-lisp
 (defcustom org-agenda-file-tag "orgagendafile" 
-	"This variabel saves the filetag that identifies files that are relevant for org-agenda.")
+	"This variabel saves the filetag that identifies files that are relevant for org-agenda.
+
+When set to nil, all org-files are added to org-agenda-files.
+When set to \"\", no org -files are added to org-agenda-files." )
 (defun tl/org-agenda-file-tag-p (file)
 	(let ((found nil)
 				(oafiletag org-agenda-file-tag))
@@ -12594,7 +12598,6 @@ TESTING: Let =swiper-helm= behave more like isearch:
 ** TODO winkeys-starter-mode
 
 https://github.com/publicus/emacs-org-mode-for-the-laity
-
 
 * Debugging
 
