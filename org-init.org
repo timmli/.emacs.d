@@ -9821,7 +9821,10 @@ Look up information about words and phrases in online databases such as Wikpedia
 
 * Remote connections
 
-** tramp
+** COMMENT tramp
+
+Issues
+- Commented because of an error during completion in helm-mini.
 
 #+BEGIN_SRC emacs-lisp
 (require 'tramp)
