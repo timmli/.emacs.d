@@ -6770,7 +6770,7 @@ Elfeed interface to Youtube subscriptions.
          ("F" . elfeed-tube-fetch)
          ([remap save-buffer] . elfeed-tube-save)))
 #+END_SRC
-** Viewing
+** Viewing (and editing)
 
 *** CoNNLL-U
 
@@ -7140,9 +7140,94 @@ Show vertical line per indentation level:
 	)
 #+end_src
 
+** General buffer actions
+
+Open untitled new buffer:
+#+begin_src emacs-lisp
+(defun xah-new-empty-buffer ()
+  "Open a new empty buffer.
+URL `http://ergoemacs.org/emacs/emacs_new_empty_buffer.html'
+Version 2015-06-12"
+  (interactive)
+  (let ((buf (generate-new-buffer "untitled")))
+    (switch-to-buffer buf)
+    (funcall (and initial-major-mode))
+    (setq buffer-offer-save t)))
+(global-set-key (kbd "<f7> <f7>") 'xah-new-empty-buffer)
+#+end_src
+
+Kill buffer:
+ #+begin_src emacs-lisp
+(global-set-key (kbd "M-<f3>") 'kill-this-buffer) ; M-<f4> is bound to killing the application under xfce.
+ #+end_src
+ 
+Revert buffer:
+ #+begin_src emacs-lisp
+(global-set-key (kbd "<f5>") 'revert-buffer)
+ #+END_SRC
+
+** Switch between buffers
+
+*** iflipb
+
+https://github.com/jrosdahl/iflipb
+
+Switching between buffers with C-tab:
+
+#+BEGIN_SRC emacs-lisp
+(use-package iflipb
+	:ensure t
+	:config
+	(setq iflipb-wrap-around t)
+	(setq iflipb-ignore-buffers "^ ")     ; include all buffers
+	:bind
+	("<C-tab>" . iflipb-next-buffer)
+	("<C-iso-lefttab>" . iflipb-previous-buffer))
+#+END_SRC
+
+*** buffer-flip
+
+https://github.com/killdash9/buffer-flip.el
+
+Flip through Emacs buffers Alt-Tab style. 
+
+*** TODO COMMENT bufler
+:LOGBOOK:
+- State "TODO"       from              [2021-10-27 Wed 21:49]
+:END:
+
+https://github.com/alphapapa/bufler.el
+
+Show open buffers in a more structured way.
+
+Issues:
+- [ ] Waiting for v.0.3.
+
+#+BEGIN_SRC emacs-lisp
+(use-package bufler
+	:ensure t
+	:pin MELPA)
+#+END_SRC
+
+Fuzzy search in [[helm]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-bufler
+	:ensure t
+	:pin MELPA
+	:config
+	(defun helm-bufler-go ()
+		(interactive)
+		(helm :sources '(helm-bufler-source))))
+#+END_SRC
+
 ** Autocomplete
 
-*** yasnippet (before auto-complete)
+*** yasnippet
+
+https://github.com/joaotavora/yasnippet
+
+Yet Another Snippet system for Emacs.
 
 #+begin_src emacs-lisp
 (use-package yasnippet
@@ -7171,23 +7256,6 @@ Similar to `yas/org-insert-time-stamp`"
     (apply #'org-time-stamp args)
     (buffer-string)))
 #+END_SRC
-
-*** auto-complete
-
-Sequence is important!
-
-#+begin_src emacs-lisp
-;; (require 'auto-complete)
-;; (require 'auto-complete-auctex)
-;; (require 'auto-complete-config)
-;; (ac-config-default)
-;; (setq ac-auto-show-menu t)
-;; (setq ac-auto-show-menu 1)
-;; (global-auto-complete-mode 1)
-;; ;; (add-to-list 'ac-modes 'latex-mode)     ; activate auto-complete for latex <modes (AUCTeX or Emacs' builtin one).
-;; (add-hook 'latex-mode-hook (function (lambda ()
-;; 																					(ac-source-yasnippet))))
-#+end_src
 
 *** TODO company
 
@@ -7393,6 +7461,23 @@ https://github.com/nashamri/academic-phrases
 	:ensure t
 )
 #+END_SRC
+
+*** COMMENT auto-complete
+
+Sequence is important!
+
+#+begin_src emacs-lisp
+(require 'auto-complete)
+(require 'auto-complete-auctex)
+(require 'auto-complete-config)
+(ac-config-default)
+(setq ac-auto-show-menu t)
+(setq ac-auto-show-menu 1)
+(global-auto-complete-mode 1)
+;; (add-to-list 'ac-modes 'latex-mode)     ; activate auto-complete for latex <modes (AUCTeX or Emacs' builtin one).
+(add-hook 'latex-mode-hook (function (lambda ()
+																					(ac-source-yasnippet))))
+#+end_src
 
 ** Syntax checking
 
@@ -8337,58 +8422,6 @@ Delete consecutive white space characters in one go.
 https://github.com/leoliu/easy-kill
 https://emacsredux.com/blog/2018/11/09/an-easy-kill/
 
-** Switch between buffers
-
-*** iflipb
-
-https://github.com/jrosdahl/iflipb
-
-Switching between buffers with C-tab:
-
-#+BEGIN_SRC emacs-lisp
-(use-package iflipb
-	:ensure t
-	:config
-	(setq iflipb-wrap-around t)
-	(setq iflipb-ignore-buffers "^ ")     ; include all buffers
-	:bind
-	("<C-tab>" . iflipb-next-buffer)
-	("<C-iso-lefttab>" . iflipb-previous-buffer))
-#+END_SRC
-
-*** buffer-flip
-
-https://github.com/killdash9/buffer-flip.el
-
-Flip through Emacs buffers Alt-Tab style. 
-
-*** TODO COMMENT bufler
-:LOGBOOK:
-- State "TODO"       from              [2021-10-27 Wed 21:49]
-:END:
-
-https://github.com/alphapapa/bufler.el
-
-- [ ] Waiting for v.0.3.
-
-#+BEGIN_SRC emacs-lisp
-(use-package bufler
-	:ensure t
-	:pin MELPA)
-#+END_SRC
-
-Fuzzy search in [[helm]].
-
-#+BEGIN_SRC emacs-lisp
-(use-package helm-bufler
-	:ensure t
-	:pin MELPA
-	:config
-	(defun helm-bufler-go ()
-		(interactive)
-		(helm :sources '(helm-bufler-source))))
-#+END_SRC
-
 ** Narrowing
 
 Taken from http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html:
@@ -8653,7 +8686,12 @@ This  comes from vanilla Emacs:
 
 ** Capitalization
 
-Toggle letter case:
+*** xah-toggle-letter-case
+
+http://xahlee.info/emacs/emacs/modernization_upcase-word.html
+
+Cycle through different kinds of capitalization. Requires [[titlecase]].
+
  #+begin_src emacs-lisp
 (global-set-key (kbd "C-7") 'xah-toggle-letter-case)
 
@@ -8661,7 +8699,7 @@ Toggle letter case:
   "Toggle the letter case of current word or text selection.
 Always cycle in this order: Init Caps, ALL CAPS, all lower.
 
-URL `http://ergoemacs.org/emacs/modernization_upcase-word.html'
+URL `http://xahlee.info/emacs/emacs/modernization_upcase-word.html'
 Version 2020-06-26"
   (interactive)
   (let (
@@ -8692,6 +8730,10 @@ Version 2020-06-26"
 #+end_src
 
 *** Titlecase
+
+https://github.com/duckwork/titlecase.el
+
+Convert text to title case in Emacs
 
 #+BEGIN_SRC emacs-lisp
 (use-package titlecase
@@ -8777,41 +8819,19 @@ F5 inserts the entity code."
 	(setq unicode-math-input-insert-tex t))
 #+END_SRC
 
-** Buffer actions
-
-Open untitled new buffer:
-#+begin_src emacs-lisp
-(defun xah-new-empty-buffer ()
-  "Open a new empty buffer.
-URL `http://ergoemacs.org/emacs/emacs_new_empty_buffer.html'
-Version 2015-06-12"
-  (interactive)
-  (let ((buf (generate-new-buffer "untitled")))
-    (switch-to-buffer buf)
-    (funcall (and initial-major-mode))
-    (setq buffer-offer-save t)))
-(global-set-key (kbd "<f7> <f7>") 'xah-new-empty-buffer)
-#+end_src
-
-Kill buffer:
- #+begin_src emacs-lisp
-(global-set-key (kbd "M-<f3>") 'kill-this-buffer) ; M-<f4> is bound to killing the application under xfce.
- #+end_src
- 
-Revert buffer:
- #+begin_src emacs-lisp
-(global-set-key (kbd "<f5>") 'revert-buffer)
- #+END_SRC
-
-** Charmap
+*** COMMENT Charmap
 
 https://github.com/lateau/charmap
 
 =charmap= shows the character map and lets one select a special symbol.
 
+Issues:
+- [ ] helm-M-x-execute-command: Symbol’s value as variable is void: default-scale
+
 #+BEGIN_SRC emacs-lisp
 (use-package charmap
-	:ensure t)
+	:ensure t
+	:pin MELPA)
 #+END_SRC
 
 ** Thesauri
@@ -9825,6 +9845,7 @@ Look up information about words and phrases in online databases such as Wikpedia
 
 Issues
 - Commented because of an error during completion in helm-mini.
+      - =(error "Process *tramp/archive file.odg* not running")=
 
 #+BEGIN_SRC emacs-lisp
 (require 'tramp)
