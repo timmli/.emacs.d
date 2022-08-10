@@ -9300,10 +9300,12 @@ Project management based on Git repositories.
 				projectile-enable-caching t			  ; speed up projectile by caching index
 				projectile-indexing-method 'alien ; use external commands like find, git etc. Maybe not supported in Windows.
 				projectile-require-project-root t ; only use projectile in git projects
-				projectile-keymap-prefix (kbd "C-x p") ; change keymap prefix
+				;; projectile-keymap-prefix (kbd "C-x p") ; change keymap prefix (obsolete sind v2.0.0)
 				projectile-switch-project-action 'projectile-dired ; use dired when switching projects
 				)
-  (projectile-global-mode))
+	(define-key projectile-mode-map (kbd "C-x p") 'projectile-command-map)
+  (projectile-global-mode)
+	)
 #+END_SRC
 
 Use helm for completions.
