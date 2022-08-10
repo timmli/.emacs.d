@@ -7013,11 +7013,12 @@ Unfortunately, it interferes with =outline-cycle= in org-mode v9.5 with the cons
 #+END_SRC
 *** Images 
 
-**** COMMENT image+ (ARCHIVED)
+**** image+ (ARCHIVED)
 
 https://github.com/mhayashi1120/Emacs-imagex
 
 Show and modify images within emacs.
+Used in [[hydra-image]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package image+
