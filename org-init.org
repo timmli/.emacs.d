@@ -12653,7 +12653,9 @@ https://github.com/publicus/emacs-org-mode-for-the-laity
 
 * Debugging
 
-*** pkill
+*** Startup
+
+**** pkill
 
 It has proven surprisingly useful to debug problems within Emacs from outside, namely by invoking =pkill= from a shell like this:
 
@@ -12663,6 +12665,14 @@ pkill -SIGUSR2 emacs
 
 I learned about this way of debugging Emacs from a question on StackOverflow:
 https://stackoverflow.com/q/65815662/6452961
+
+*** Functions
+
+**** debug-on-entry
+
+=(debug-on-entry FUNCTION)=
+
+Request FUNCTION to invoke debugger each time it is called.
 
 * Private settings 
 
