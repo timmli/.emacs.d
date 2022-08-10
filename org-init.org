@@ -9012,6 +9012,25 @@ Inspired by =andy/increment-number-at-point= from https://gist.github.com/argher
 
 https://github.com/enricoflor/numbex
 
+** TODO Zooming
+:LOGBOOK:
+- State "TODO"       from              [2022-08-10 Wed 12:14]
+:END:
+
+*** text-scale-adjust
+
+Built into Emacs: https://www.gnu.org/software/emacs/manual/html_node/emacs/Text-Scale.html
+
+Issues:
+- [ ] Only changes the default font.
+
+*** zoom-frm
+
+https://www.emacswiki.org/emacs/download/zoom-frm.el
+
+Requires:
+[[frame-cmds]]
+
 * Files
 
 ** org-agenda files
@@ -9424,6 +9443,14 @@ Under Linux, make sure that the dependencies are satisfied:
 #+BEGIN_SRC bash :tangle no 
 sudo apt install xclip xdotool
 #+END_SRC
+
+** frame-cmds
+
+https://www.emacswiki.org/emacs/frame-cmds.el
+https://www.emacswiki.org/emacs/CategoryFrames
+
+Requires:
+https://www.emacswiki.org/emacs/frame-fns.el
 
 * Bookmarks
 
