@@ -7011,6 +7011,26 @@ Unfortunately, it interferes with =outline-cycle= in org-mode v9.5 with the cons
 											"\\subsubsection" "\\paragraph" "\\subparagraph"))))
 	)
 #+END_SRC
+*** Images 
+
+**** COMMENT image+ (ARCHIVED)
+
+https://github.com/mhayashi1120/Emacs-imagex
+
+Show and modify images within emacs.
+
+#+BEGIN_SRC emacs-lisp
+(use-package image+
+	:ensure t
+	:init
+	(eval-after-load 'image '(require 'image+))
+	:config
+	(if (eq system-type 'windows-nt)
+			(setq imagex-convert-command "magick")  ; "convert" does not work on Windows machines
+		(setq imagex-convert-command "convert"))
+	)
+#+END_SRC
+
 *** COMMENT OSM
 
 https://github.com/minad/osm
@@ -8115,26 +8135,6 @@ Helper functions to use the Emacs register interactively.
 #+BEGIN_SRC emacs-lisp
 (use-package iregister
 	:ensure t)
-#+END_SRC
-
-** Images
-
-*** image+
-
-https://github.com/mhayashi1120/Emacs-imagex
-
-Show and modify images within emacs:
-
-#+BEGIN_SRC emacs-lisp
-(use-package image+
-	:ensure t
-	:init
-	(eval-after-load 'image '(require 'image+))
-	:config
-	(if (eq system-type 'windows-nt)
-			(setq imagex-convert-command "magick")  ; "convert" does not work on Windows machines
-		(setq imagex-convert-command "convert"))
-	)
 #+END_SRC
 
 ** Keystroke visualizer
