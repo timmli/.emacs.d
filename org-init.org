@@ -9168,7 +9168,7 @@ Set refile targets to move entries inside org-files:
 
 Helper function to export org-agenda-files to one icalendar file:
 #+BEGIN_SRC emacs-lisp
-(defun tl/org-agenda-export-icalendar-file (&optional (target nil))
+(defun tl/org-agenda-export-icalendar-file (&optional target)
 	(let ((org-icalendar-combined-agenda-file (or target org-icalendar-combined-agenda-file)))
 		(org-icalendar-combine-agenda-files)
 		;; Remove org-mode timestamps from date titles
