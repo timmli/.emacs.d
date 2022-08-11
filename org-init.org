@@ -9038,7 +9038,7 @@ Should be loaded after [[Buffer]] settings in order to take effect.
 
 Org-mode files are usually bundled within a single directory stored in the variable =org-directory=. But if there are links to org-mode files outside =org-directory=, they should be included to =org-agenda-files=, too.
 
-Since there can be a vast amount of org-mode files in =org-directory=, especially when using [[org-roam]], only a subset of =org-files= is used as =org-agenda-files=.
+Since there can be a vast amount of org-mode files in =org-directory=, especially when using [[org-roam]], only =org-files= with =org-agenda-file-tag= as filetag are used as =org-agenda-files=.
 
 #+BEGIN_SRC emacs-lisp
 (defcustom org-files nil
@@ -9062,7 +9062,7 @@ Since there can be a vast amount of org-mode files in =org-directory=, especiall
 			(dolist (file org-files)
 				(if (tl/org-agenda-file-tag-p file)
 						(setq org-agenda-files (cons file org-agenda-files)))))
-		
+	
 	(customize-save-variable 'org-agenda-files org-agenda-files)
 	(message "org-agenda-files updated")
 
