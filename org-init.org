@@ -9166,6 +9166,20 @@ Set refile targets to move entries inside org-files:
 													 ))
 #+END_SRC
 
+Helper function to export org-agenda-files to one icalendar file:
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-agenda-export-icalendar-file (&optional (target nil))
+	(let ((org-icalendar-combined-agenda-file (or target org-icalendar-combined-agenda-file)))
+		(org-icalendar-combine-agenda-files)
+		;; Remove org-mode timestamps from date titles
+		(with-current-buffer (find-file-noselect org-icalendar-combined-agenda-file)
+			(goto-char (point-min))
+			(while (re-search-forward "<.*?>\\(\\(-\\|–\\)?<.*?>\\)?" nil t)
+				(replace-match ""))
+			(save-buffer))
+		))
+#+END_SRC 
+
 ** Search & find
 
 *** ripgrep
@@ -10376,11 +10390,13 @@ Global org-mode keys:
      ^^  [_d_] deft    ^^    [_t_] show todos   ^^  ^^   ^^  ^^  ^^    [_u_] update agenda files
      ^^  [_c_] capture ^^    [_w_/_h_] work/home notes ^^ ^^ ^^  ^^    [_C_] clocking...       
      ^^  [_f_] search  ^^    [_:_] filter by tags ^^  ^^  ^^  ^^  ^^   [_n_] show notes      
-     ^^                ^^                         ^^  ^^  ^^  ^^  ^^   [_q_]uit
+     ^^   ^^           ^^    [_e_] export agenda files  ^^ ^^ ^^ ^^ ^^ [_q_]uit
 
 	"
 	("a" org-agenda-list-complete :exit t)
 	("d" deft :exit t)
+	("e" (lambda nil (interactive)
+				 (tl/org-agenda-export-icalendar-file)) :exit t)
 	("j" (lambda nil (interactive)
 				 (find-file (concat org-directory "/journal.org"))) :exit t)
 	("n" hydra-org-roam/body :exit t)
