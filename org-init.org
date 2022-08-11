@@ -9064,7 +9064,8 @@ Since there can be a vast amount of org-mode files in =org-directory=, especiall
 						(setq org-agenda-files (cons file org-agenda-files)))))
 	
 	(customize-save-variable 'org-agenda-files org-agenda-files)
-	(message "org-agenda-files updated")
+	(customize-save-variable 'org-files org-files)
+	(message "org-agenda-files and org-files updated")
 
 	(org-id-update-id-locations)
 	(message "org-id-files updated")	
