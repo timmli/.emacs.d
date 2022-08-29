@@ -11862,7 +11862,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-highlight-changes
-	(:body-pre (highlight-changes-visible-mode +1)
+	(:body-pre (highlight-changes-mode +1)
 						 :hint nil
 						 :idle 0.5)
 	"
@@ -11879,7 +11879,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("k" highlight-changes-previous-change)
 	("n" highlight-changes-next-change)
 	("p" highlight-changes-previous-change)
-	("Q" (highlight-changes-visible-mode -1) :color blue)
+	("Q" (highlight-changes-mode -1) :color blue)
 	("q" nil :color blue))
 #+END_SRC
 
