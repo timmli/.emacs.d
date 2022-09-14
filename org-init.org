@@ -6020,6 +6020,18 @@ Use =diffpdf= in =dired=.
 	:ensure t)
 #+END_SRC
 
+**** vdiff
+
+https://github.com/justbur/emacs-vdiff
+
+Vimdiff for Emacs. 
+
+#+BEGIN_SRC emacs-lisp
+(use-package vdiff
+	:ensure t
+	:pin MELPA)
+#+END_SRC
+
 **** imenu
 
 Integrate imenu into dired.
