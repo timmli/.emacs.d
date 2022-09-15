@@ -5775,6 +5775,10 @@ Delete with <delete> key.
 
 **** dired-k
 
+https://github.com/emacsorphanage/dired-k
+
+Enrich dired buffer with git information.
+
 #+BEGIN_SRC emacs-lisp
 (use-package dired-k
 	:ensure t
@@ -5785,6 +5789,20 @@ Delete with <delete> key.
 		;; (add-hook 'dired-initial-position-hook 'dired-k)
 		;; (add-hook 'dired-after-readin-hook #'dired-k-no-revert)
 ))
+#+END_SRC
+
+**** git-ps1-mode
+
+https://github.com/10sr/git-ps1-mode-el
+
+Show git branch in modeline.
+
+#+BEGIN_SRC emacs-lisp
+(use-package git-ps1-mode
+	:ensure t
+	:pin MELPA
+	:config
+	(git-ps1-mode t))
 #+END_SRC
 
 **** dired-quick-sort
@@ -6000,6 +6018,18 @@ Use =diffpdf= in =dired=.
 #+BEGIN_SRC emacs-lisp
 (use-package diffpdf
 	:ensure t)
+#+END_SRC
+
+**** vdiff
+
+https://github.com/justbur/emacs-vdiff
+
+Vimdiff for Emacs. 
+
+#+BEGIN_SRC emacs-lisp
+(use-package vdiff
+	:ensure t
+	:pin MELPA)
 #+END_SRC
 
 **** imenu
