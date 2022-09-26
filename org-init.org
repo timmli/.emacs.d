@@ -3003,7 +3003,7 @@ Provides an API for creating Jupyter kernel frontends in Emacs and also provides
 (use-package jupyter
   :ensure t
   :defer t
-  :init
+  :config ; Do not use :init here, because this will throw "Error (use-package): jupyter/:init"
   (setq org-babel-default-header-args:jupyter-python
 				'((:async . "yes")
 					(:session . "py")
