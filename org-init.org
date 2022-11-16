@@ -5348,23 +5348,27 @@ sudo pip install pylint virtualenv epc # Zamansky's recommendation
 (use-package elpy
 	:ensure t
 	:defer 2
+	:init
+	(elpy-enable)
 	:config
-	(progn
-		;; Use Flycheck instead of Flymake
-		(when (require 'flycheck nil t)
-			(remove-hook 'elpy-modules 'elpy-module-flymake)
-			(remove-hook 'elpy-modules 'elpy-module-yasnippet)
-			(remove-hook 'elpy-mode-hook 'elpy-module-highlight-indentation)
-			(add-hook 'elpy-mode-hook 'flycheck-mode))
-		(elpy-enable)
-		(define-key python-mode-map (kbd "C-h f") 'python-eldoc-at-point)
-		;; highlight-indentation is ugly
-		(add-hook 'elpy-mode-hook '(lambda () (highlight-indentation-mode -1)))
-		;; jedi is great
-		(setq elpy-rpc-backend "jedi")
-		;; tell elpy to use python3 (or install python-is-python3 under GNU/Linux)
-		(setq elpy-rpc-python-command "python3")
-		))
+	;; Use Flycheck instead of Flymake
+	(when (load "flycheck" t t)
+		(setq elpy-modules (delq 'elpy-module-flymake elpy-modules))
+		(add-hook 'elpy-mode-hook 'flycheck-mode))
+	;;;; Maybe outdated
+	;; (when (require 'flycheck nil t)
+	;; 	(remove-hook 'elpy-modules 'elpy-module-flymake)
+	;; 	(remove-hook 'elpy-modules 'elpy-module-yasnippet)
+	;; 	(remove-hook 'elpy-mode-hook 'elpy-module-highlight-indentation)
+	;; 	(add-hook 'elpy-mode-hook 'flycheck-mode))
+	(define-key python-mode-map (kbd "C-h f") 'python-eldoc-at-point)
+	;; highlight-indentation is ugly
+	(add-hook 'elpy-mode-hook '(lambda () (highlight-indentation-mode -1)))
+	;; jedi is great
+	(setq elpy-rpc-backend "jedi")
+	;; tell elpy to use python3 (or install python-is-python3 under GNU/Linux)
+	(setq elpy-rpc-python-command "python3")
+	)
 #+END_SRC
 
 **** company-jedi

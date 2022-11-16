@@ -66,9 +66,9 @@
 (setq save-place-file (expand-file-name ".places" user-emacs-directory))
 
 
-;;==========================================================
-;;      PRIVATE SETTINGS: DIRECTORIES (outside .emacs.d)
-;;==========================================================
+;;================================================================
+;;      PRIVATE SETTINGS: DIRECTORIES & FILES  (outside .emacs.d)
+;;================================================================
 
 (defvar org-directory
 	(expand-file-name "org/" home-directory) ; default value; may be overwritten by private directory settings
