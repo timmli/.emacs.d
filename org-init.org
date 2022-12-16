@@ -5352,6 +5352,32 @@ Usefull extras, e.g., org-mode-like folding:
 
 See [[*company]].
 
+**** TODO COMMENT Table wizard
+:LOGBOOK:
+- State "TODO"       from              [2022-12-07 Wed 22:11]
+:END:
+
+- [ ] Change key bindings: https://github.com/enricoflor/latex-table-wizard#change-keybindings
+
+https://github.com/enricoflor/latex-table-wizard
+
+Navigate and modify LaTeX tables like a wizard!
+
+#+BEGIN_SRC emacs-lisp
+(use-package latex-table-wizard
+	:ensure t)
+#+END_SRC
+
+Just try it out with =latex-table-wizard-do= inside a LaTeX buffer:
+
+#+BEGIN_SRC latex :
+\begin{tabular}{lll}
+  A0 & B0 & C0 \\\hline
+  A1 & B1 & C1 \\
+  A2 & B2 & C2
+\end{tabular}
+#+END_SRC
+
 *** Markdown
 
 **** markdown-mode
