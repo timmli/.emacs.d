@@ -2121,7 +2121,7 @@ Headlines with =:ignore:= tag are ignored during export, but not their body:
 
 Support from org-babel:
 #+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
+;; (org-babel-do-load-languages 'org-babel-load-languages '((latex . t)))
 (setq org-highlight-latex-and-related '(latex script entities)) ; inline sytax highlighting
 ;; (add-to-list 'org-latex-packages-alist '("" "tikz" t))					; unfortunately this breaks the color of fonts in inline previews
 ;; (add-to-list 'org-latex-packages-alist '("" "forest" t))
@@ -2603,7 +2603,7 @@ Map scr-block languages to =listings= environments:
 *** Makefile support
 
 #+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages 'org-babel-load-languages '((makefile . t)))
+;; (org-babel-do-load-languages 'org-babel-load-languages '((makefile . t)))
 #+END_SRC
 
 *** Memacs
@@ -2989,7 +2989,7 @@ See https://www.mail-archive.com/emacs-orgmode@gnu.org/msg30416.html
 
 Add org-mode to the list of supported languages:
 #+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages 'org-babel-load-languages '((org . t)))
+;; (org-babel-do-load-languages 'org-babel-load-languages '((org . t)))
 #+END_SRC
 
 **** TODO Gnuplot support
@@ -2997,14 +2997,14 @@ Add org-mode to the list of supported languages:
 - [ ] compiling Gnuplot source blocks crashes Emacs
 
 #+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages 'org-babel-load-languages '((gnuplot . t)))
+;; (org-babel-do-load-languages 'org-babel-load-languages '((gnuplot . t)))
 #+END_SRC
 
 **** Graphviz/dot support
 
  #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-src-lang-modes '("dot" . graphviz-dot))
-(org-babel-do-load-languages  'org-babel-load-languages '((dot . t)))
+;; (org-babel-do-load-languages  'org-babel-load-languages '((dot . t)))
 #+END_SRC
 
 **** Python support
@@ -3024,10 +3024,11 @@ Provides an API for creating Jupyter kernel frontends in Emacs and also provides
 				'((:async . "yes")
 					(:session . "py")
 					(:kernel . "python3")))
-	(org-babel-do-load-languages 'org-babel-load-languages
-															 '((emacs-lisp . t)
-																 (python . t)
-																 (jupyter . t))))
+	;; (org-babel-do-load-languages 'org-babel-load-languages
+	;; 														 '((emacs-lisp . t)
+	;; 															 (python . t)
+	;; 															 (jupyter . t)))
+	)
 #+END_SRC
 
 ***** COMMENT ob-ipython
@@ -3047,6 +3048,28 @@ https://github.com/gregsexton/ob-ipython
 	(org-babel-do-load-languages
 	 'org-babel-load-languages
 	 '((ipython . t))))
+#+END_SRC
+
+**** org-babel-load-languages
+
+Load languages that can be evaluated in org-babel source blocks. 
+- https://orgmode.org/manual/Languages.html
+- https://orgmode.org/worg/org-contrib/babel/languages/index.html
+
+#+BEGIN_SRC emacs-lisp
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((emacs-lisp . t)
+   (dot . t)
+   (gnuplot . t)
+   (latex . t)
+	 (makefile . t)
+	 (org . t)
+	 (python . t)
+	 (jupyter . t)												; load jupyter after python
+	 (plantuml . t)
+   (R . t)
+	 (shell . t)))
 #+END_SRC
 
 *** org-drill 
@@ -9785,7 +9808,7 @@ See discussion [[https://emacs.stackexchange.com/a/7652/12336][here]].
 Bash support in =org-mode=:
 
  #+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages  'org-babel-load-languages '((shell . t)))
+;; (org-babel-do-load-languages  'org-babel-load-languages '((shell . t)))
 #+END_SRC
 
 ** vterm
