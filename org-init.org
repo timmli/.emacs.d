@@ -3021,6 +3021,20 @@ plot x * x title 'AA', (1-x) * (1-x) title 'aa', 2 * x * (1-x) title 'Aa'
 ;; (org-babel-do-load-languages  'org-babel-load-languages '((dot . t)))
 #+END_SRC
 
+**** Plantuml support 
+
+https://orgmode.org/worg/org-contrib/babel/languages/ob-doc-plantuml.html
+
+ #+BEGIN_SRC emacs-lisp
+;; (org-babel-do-load-languages  'org-babel-load-languages '((plantuml . t)))
+#+END_SRC
+
+PlantUML example:
+
+#+BEGIN_SRC plantuml :tangle no :file plantuml-example.png 
+Bob -> Alice : Hello World!
+#+END_SRC
+
 **** Python support
 
 ***** emacs-jupyter
@@ -3438,14 +3452,6 @@ Note that the installation requires =quelpa=.
 **** interleave
 
 https://github.com/rudolfochrist/interleave
-
-*** Plantuml
-
-http://eschulte.github.io/babel-dev/DONE-integrate-plantuml-support.html
-
- #+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages  'org-babel-load-languages '((plantuml . t)))
-#+END_SRC
 
 *** Refile
 
@@ -5359,7 +5365,7 @@ Depends on plantuml.jar and Gaphviz (http://www.graphviz.org).
   :ensure t
   :mode ("\\.plu\\'" "\\.puml\\'") 
   :init
-	(setq org-plantuml-jar-path "/")
+	(setq org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
 	(when (eq system-type 'windows-nt)
 		(setq org-plantuml-jar-path
 					(expand-file-name "C:/ProgramData/chocolatey/lib/plantuml/tools/plantuml.jar"))
