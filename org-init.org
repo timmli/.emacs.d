@@ -2992,12 +2992,26 @@ Add org-mode to the list of supported languages:
 ;; (org-babel-do-load-languages 'org-babel-load-languages '((org . t)))
 #+END_SRC
 
-**** TODO Gnuplot support
+**** Gnuplot support
 
-- [ ] compiling Gnuplot source blocks crashes Emacs
+https://orgmode.org/worg/org-contrib/babel/languages/ob-doc-gnuplot.html
 
 #+BEGIN_SRC emacs-lisp
 ;; (org-babel-do-load-languages 'org-babel-load-languages '((gnuplot . t)))
+#+END_SRC
+
+Gnuplot example: 
+
+#+BEGIN_SRC gnuplot :tangle no :file gnuplot-example.png
+reset
+
+set title "a simple graph"
+
+set xrange [0:1]
+set autoscale y
+set xlabel "frequency of A"
+
+plot x * x title 'AA', (1-x) * (1-x) title 'aa', 2 * x * (1-x) title 'Aa'  
 #+END_SRC
 
 **** Graphviz/dot support
