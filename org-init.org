@@ -3078,6 +3078,33 @@ https://github.com/gregsexton/ob-ipython
 	 '((ipython . t))))
 #+END_SRC
 
+**** R support
+
+https://orgmode.org/worg/org-contrib/babel/languages/ob-doc-R.html
+
+Requires [[ess]].
+  
+#+BEGIN_SRC emacs-lisp
+;; (org-babel-do-load-languages 'org-babel-load-languages '((R . t)))
+;; (setq org-babel-R-command "R --slave --no-save") ; needed on Windows
+#+END_SRC
+
+R example (from https://r-lang.com/plot-function-in-r-with-example/):
+
+#+BEGIN_SRC R :tangle no :file R-example.png :results graphics file
+x <- seq(-pi, pi, 0.1)
+
+plot(x, cos(x), type = "l",
+ main = "Overlaying Charts",
+ ylab = "",
+ col = "red")
+
+lines(x, sin(x), col = "blue")
+
+legend("topleft", c("sin(x)", "cos(x)"), fill = c("blue", "red"))
+#+END_SRC
+
+
 **** org-babel-load-languages
 
 Load languages that can be evaluated in org-babel source blocks. 
@@ -3462,15 +3489,6 @@ Following this excellent blog post: https://blog.aaronbieber.com/2017/03/19/orga
 			org-refile-use-outline-path 'file
 			org-outline-path-complete-in-steps nil
 			org-refile-allow-creating-parent-nodes 'confirm)
-#+END_SRC
-
-*** TODO COMMENT R support
-
-- [ ] as of Org 9.1, this throws =(invalid-function org-babel-header-args-safe-fn)= due to =org-babel-R-command=
-  
-#+BEGIN_SRC emacs-lisp
-(org-babel-do-load-languages 'org-babel-load-languages '((R . t)))
-(setq org-babel-R-command "R --slave --no-save")
 #+END_SRC
 
 *** Spell checking
