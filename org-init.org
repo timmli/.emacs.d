@@ -9167,12 +9167,28 @@ Built into Emacs: https://www.gnu.org/software/emacs/manual/html_node/emacs/Text
 Issues:
 - [ ] Only changes the default font.
 
-*** zoom-frm
+*** COMMENT zoom-frm
 
 https://www.emacswiki.org/emacs/download/zoom-frm.el
 
+Commands to zoom into and out of text.  They zoom a frame or a buffer, so that the text appears larger or smaller.
+
 Requires:
-[[frame-cmds]]
+- [[frame-cmds]]
+
+Issues:
+- [ ] Does not scale org-mode files.
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path (expand-file-name "zoom-frm" lisp-dir))
+(use-package zoom-frm
+	:config
+	(define-key ctl-x-map [(control ?+)] 'zoom-in/out)
+	(define-key ctl-x-map [(control ?-)] 'zoom-in/out)
+	(define-key ctl-x-map [(control ?=)] 'zoom-in/out)
+	(define-key ctl-x-map [(control ?0)] 'zoom-in/out)
+	)
+#+END_SRC
 
 * Files
 
@@ -9604,13 +9620,31 @@ Under Linux, make sure that the dependencies are satisfied:
 sudo apt install xclip xdotool
 #+END_SRC
 
-** frame-cmds
+** COMMENT frame-cmds
 
 https://www.emacswiki.org/emacs/frame-cmds.el
 https://www.emacswiki.org/emacs/CategoryFrames
 
+Miscellaneous interactive frame and window commands
+
 Requires:
+- [[frame-fns]]
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path (expand-file-name "frame-cmds" lisp-dir))
+(use-package frame-cmds)
+#+END_SRC
+
+** COMMENT frame-fns
+
 https://www.emacswiki.org/emacs/frame-fns.el
+
+Non-interactive frame and window functions.
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path (expand-file-name "frame-fns" lisp-dir))
+(use-package frame-fns)
+#+END_SRC
 
 * Bookmarks
 
