@@ -1391,8 +1391,8 @@ General settings:
 (with-eval-after-load 'org
 	(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
 	(set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch)
-	(set-face-attribute 'org-latex-and-related nil :foreground "burlywood" :inherit 'fixed-pitch)
-	;; (set-face-attribute 'org-latex-and-related nil :foreground (face-attribute 'org-drawer :foreground) :inherit 'fixed-pitch)
+	;; (set-face-attribute 'org-latex-and-related nil :foreground "burlywood" :inherit 'fixed-pitch)
+	(set-face-attribute 'org-latex-and-related nil :foreground (face-attribute 'font-latex-math-face :foreground) :inherit 'fixed-pitch)
 	(set-face-attribute 'org-link nil :inherit 'fixed-pitch)
 	(set-face-attribute 'org-date nil :inherit 'fixed-pitch)
 	(set-face-attribute 'org-tag nil :inherit 'fixed-pitch)
