@@ -337,6 +337,10 @@ This variable should be changed in private-emacs-settings.el.")
 ;;==========================================================
 
 ;; the remaining settings are in org-init.org
+(setq org-fold-core-style 'overlays) 		; Org v9.6 comes with a new folding technique.
+																				; Use the old folding technique with overlays for
+																				; better interoperability with 3rd-party packages.
+																				; This variable must be set before loading Org.
 (require 'org)
 (defvar org-init-file "org-init.org")
 (org-babel-load-file
