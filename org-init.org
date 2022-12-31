@@ -13,10 +13,9 @@
       - [[#syntax-highlighting][Syntax highlighting]]
       - [[#lines][Lines]]
       - [[#cursor][Cursor]]
-      - [[#theme][Theme]]
+      - [[#text-faces][Text faces]]
       - [[#mode-line-and-window-labels][Mode line and window labels]]
       - [[#distraction-free-mode][Distraction-free mode]]
-      - [[#font][Font]]
       - [[#overlays][Overlays]]
       - [[#icons][Icons]]
       - [[#debugging][Debugging]]
@@ -82,7 +81,6 @@
       - [[#dimmer][dimmer]]
       - [[#burly][Burly]]
       - [[#emacs-everywhere][emacs-everywhere]]
-      - [[#frame-cmds][frame-cmds]]
 - [[#bookmarks][Bookmarks]]
       - [[#general-settings][General settings]]
       - [[#burly][[[Burly]]]]
@@ -323,7 +321,15 @@ Stretch cursor:
 (setq  x-stretch-cursor t)
 #+END_SRC
 
-** Theme
+** Text faces  
+
+A face is a collection of graphical attributes for displaying text: font, foreground color, background color, optional underlining, etc.
+
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Faces.html
+
+*** Themes
+
+A theme is a specified collection of faces, so that different types of text is displayed in a different way.
 
 Add local themes directory to search space (just in case):
 
@@ -333,9 +339,11 @@ Add local themes directory to search space (just in case):
 (add-to-list 'custom-theme-load-path themes-dir)
 #+END_SRC
 
-*** monokai-theme
+**** monokai-theme
 
-The monokai theme is one of my favourites:
+https://github.com/oneKelvinSmith/monokai-emacs
+
+The monokai theme is one of my favourites.
 
 #+BEGIN_SRC emacs-lisp
 (use-package monokai-theme
@@ -352,7 +360,7 @@ The monokai theme is one of my favourites:
 )
 #+END_SRC
 
-- [ ] Yet I don't like how regions are highlighted:
+Yet I don't like how regions are highlighted:
 
 #+BEGIN_SRC emacs-lisp
 (custom-theme-set-faces
@@ -362,59 +370,7 @@ The monokai theme is one of my favourites:
 (enable-theme 'monokai)									; needed since v27
 #+END_SRC
 
-** Mode line and window labels
-
-Mode line:
-#+BEGIN_SRC emacs-lisp
-(use-package smart-mode-line
-	:ensure t
-	:init
-	;; (setq sml/theme 'dark)
-	(setq sml/no-confirm-load-theme t)
-	:config
-	(sml/setup)
-	)
-#+END_SRC
-
-Show file path in window title:
-#+BEGIN_SRC emacs-lisp
-(setq frame-title-format
-      '(buffer-file-name "%b - %f" ; File buffer
-        (dired-directory dired-directory ; Dired buffer
-         (revert-buffer-function "%b" ; Buffer Menu
-																 ("%b - Dir: " default-directory))))) ; Plain buffer
-#+END_SRC
-
-Show date and time:
-#+BEGIN_SRC emacs-lisp
-(setq display-time-24hr-format t)
-(display-time-mode +1)
-#+END_SRC
-
-Fringe style:
-#+BEGIN_SRC emacs-lisp
-;; (set-face-attribute 'fringe nil :background "#3F3F3F" :foreground "#3F3F3F")
-#+END_SRC
-
-** Distraction-free mode
-
-*** writeroom-mode
-
-#+BEGIN_SRC emacs-lisp
-(use-package writeroom-mode
-	:ensure t
-	:bind
-	(:map writeroom-mode-map
-				("C-M-<" . writeroom-decrease-width)
-				("C-M->" . writeroom-increase-width)
-				("C-M-=" . writeroom-adjust-width)
-				("C-<f10>" . writeroom-toggle-mode-line)
-				)
-	)
-(global-set-key (kbd "<f10>") 'writeroom-mode)
-#+END_SRC
-
-** Font 
+*** Switch between font styles 
 
 Toggle proportional mode when appropriate.
 Inspired by https://ogbe.net/blog/toggle-serif.html
@@ -480,10 +436,64 @@ Inspired by https://ogbe.net/blog/toggle-serif.html
                (message "Restored default fonts."))))))
 #+END_SRC
 
+*** UTF8 support
+
 Replace LaTeX commands by UTF8 symbols:
 #+BEGIN_SRC emacs-lisp
 ;; (use-package latex-pretty-symbols
 ;; 	:ensure t)
+#+END_SRC
+
+** Mode line and window labels
+
+Mode line:
+#+BEGIN_SRC emacs-lisp
+(use-package smart-mode-line
+	:ensure t
+	:init
+	;; (setq sml/theme 'dark)
+	(setq sml/no-confirm-load-theme t)
+	:config
+	(sml/setup)
+	)
+#+END_SRC
+
+Show file path in window title:
+#+BEGIN_SRC emacs-lisp
+(setq frame-title-format
+      '(buffer-file-name "%b - %f" ; File buffer
+        (dired-directory dired-directory ; Dired buffer
+         (revert-buffer-function "%b" ; Buffer Menu
+																 ("%b - Dir: " default-directory))))) ; Plain buffer
+#+END_SRC
+
+Show date and time:
+#+BEGIN_SRC emacs-lisp
+(setq display-time-24hr-format t)
+(display-time-mode +1)
+#+END_SRC
+
+Fringe style:
+#+BEGIN_SRC emacs-lisp
+;; (set-face-attribute 'fringe nil :background "#3F3F3F" :foreground "#3F3F3F")
+#+END_SRC
+
+** Distraction-free mode
+
+*** writeroom-mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package writeroom-mode
+	:ensure t
+	:bind
+	(:map writeroom-mode-map
+				("C-M-<" . writeroom-decrease-width)
+				("C-M->" . writeroom-increase-width)
+				("C-M-=" . writeroom-adjust-width)
+				("C-<f10>" . writeroom-toggle-mode-line)
+				)
+	)
+(global-set-key (kbd "<f10>") 'writeroom-mode)
 #+END_SRC
 
 ** Overlays
