@@ -1384,19 +1384,20 @@ General settings:
 
 #+begin_src emacs-lisp
 (add-hook 'org-mode-hook (lambda ()
-													 (variable-pitch-mode t)
-													 ;; (text-scale-increase 0.5)
-													 ))
+                           (variable-pitch-mode t)
+                           ;; (text-scale-increase 0.5)
+                           ))
 
 (with-eval-after-load 'org
-	(set-face-attribute 'org-table nil :inherit 'fixed-pitch)
-	(set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch)
-	;; (set-face-attribute 'org-latex-and-related nil :foreground "burlywood" :inherit 'fixed-pitch)
-	(set-face-attribute 'org-latex-and-related nil :foreground (face-attribute 'font-latex-math-face :foreground) :inherit 'fixed-pitch)
-	(set-face-attribute 'org-link nil :inherit 'fixed-pitch)
-	(set-face-attribute 'org-date nil :inherit 'fixed-pitch)
-	(set-face-attribute 'org-tag nil :inherit 'fixed-pitch)
-	)
+  (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch)
+  ;; (set-face-attribute 'org-latex-and-related nil :foreground "burlywood" :inherit 'fixed-pitch)
+  (with-eval-after-load 'auctex
+    (set-face-attribute 'org-latex-and-related nil :foreground (face-attribute 'font-latex-math-face :foreground) :inherit 'fixed-pitch))
+  (set-face-attribute 'org-link nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-date nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-tag nil :inherit 'fixed-pitch)
+  )
 
 (setq org-hide-emphasis-markers t)
 #+end_src
