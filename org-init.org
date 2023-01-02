@@ -1391,9 +1391,12 @@ General settings:
 (with-eval-after-load 'org
   (set-face-attribute 'org-table nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-verbatim nil :inherit 'fixed-pitch)
-  ;; (set-face-attribute 'org-latex-and-related nil :foreground "burlywood" :inherit 'fixed-pitch)
-  (with-eval-after-load 'auctex
-    (set-face-attribute 'org-latex-and-related nil :foreground (face-attribute 'font-latex-math-face :foreground) :inherit 'fixed-pitch))
+  ;; Use the same color for LaTeX code as is used for math code in LaTeX mode.
+  (set-face-attribute 'org-latex-and-related nil :foreground "#AE81FF" :inherit 'fixed-pitch)
+  ;; ;; The following reuses the color of font-latex-math-face directly. 
+	;; ;; Unfortunately, font-latex-math-face may not yet be available when setting the face.   
+  ;; (with-eval-after-load 'auctex
+  ;;   (set-face-attribute 'org-latex-and-related nil :foreground (face-attribute 'font-latex-math-face :foreground) :inherit 'fixed-pitch))
   (set-face-attribute 'org-link nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-date nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-tag nil :inherit 'fixed-pitch)
