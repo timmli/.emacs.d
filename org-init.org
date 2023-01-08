@@ -1378,7 +1378,7 @@ Link type for typesetting with alert font:
  :help-echo "This will be exported as alerted text.")
 #+END_SRC
 
-**** Several predefined text faces
+**** Modifying some predefined text faces
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook (lambda ()
@@ -1433,6 +1433,8 @@ Hide markers:
 #+BEGIN_SRC emacs-lisp
 (setq org-hide-emphasis-markers t)
 #+END_SRC
+
+See also [[org-appear]] for automatically toggling visibility.
 
 **** Todo keywords
 
@@ -2959,11 +2961,15 @@ Here's my own version, which uses =org-table-wrap-region=. This was superseded b
 
 https://github.com/awth13/org-appear
 
-Automatically toggle visibility of emphasis markers under point.
+Automatically toggle visibility of emphasis markers and links under point.
+
+Issues
+- [X] Links not shown with Org v9.6: https://github.com/awth13/org-appear/issues/46
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-appear
 	:ensure t
+	:pin MELPA
 	:after org
 	:config
 	(add-hook 'org-mode-hook 'org-appear-mode)
