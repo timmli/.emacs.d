@@ -1378,11 +1378,9 @@ Link type for typesetting with alert font:
  :help-echo "This will be exported as alerted text.")
 #+END_SRC
 
-**** Fonts
+**** Several predefined text faces
 
-General settings:
-
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook (lambda ()
                            (variable-pitch-mode t)
                            ;; (text-scale-increase 0.5)
@@ -1401,27 +1399,40 @@ General settings:
   (set-face-attribute 'org-date nil :inherit 'fixed-pitch)
   (set-face-attribute 'org-tag nil :inherit 'fixed-pitch)
   )
+#+END_SRC
 
-(setq org-hide-emphasis-markers t)
-#+end_src
+**** Code blocks
 
-Overwrite some faces:
-
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (custom-set-faces
  '(org-block ((t (:inherit fixed-pitch )))) ; org-mode >9
  '(org-block-background ((t (:inherit fixed-pitch))))
  '(org-block-begin-line ((t (:underline t))))
  '(org-block-end-line  ((t (:overline t))))
+ )
+#+END_SRC
+
+**** Headings
+
+#+BEGIN_SRC emacs-lisp
+(custom-set-faces
  '(org-level-1 ((t (:inherit outline-1 :overline t :weight semi-bold ))))
  '(org-level-2 ((t (:inherit outline-2 :overline t :weight semi-bold ))))
  '(org-level-3 ((t (:inherit outline-3 :weight semi-bold ))))
  '(org-level-4 ((t (:inherit outline-4 :weight semi-bold ))))
  '(org-level-5 ((t (:inherit outline-5 :weight semi-bold ))))
  )
-#+end_src
+#+END_SRC
 
-Further attributes: =:background=, =:height=
+**** Emphasis and monospace
+
+https://orgmode.org/manual/Emphasis-and-Monospace.html
+
+Hide markers:
+
+#+BEGIN_SRC emacs-lisp
+(setq org-hide-emphasis-markers t)
+#+END_SRC
 
 **** Todo keywords
 
@@ -1549,6 +1560,8 @@ Fontify checkbox items.
 #+END_SRC
 
 **** Sticky headers
+
+https://github.com/alphapapa/org-sticky-header
 
 Show current header in first line of buffer.
 
@@ -3117,7 +3130,6 @@ lines(x, sin(x), col = "blue")
 
 legend("topleft", c("sin(x)", "cos(x)"), fill = c("blue", "red"))
 #+END_SRC
-
 
 **** org-babel-load-languages
 
