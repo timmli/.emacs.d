@@ -1,0 +1,27 @@
+#+TITLE: Test file for the export from Org to ICS
+
+* Usage
+
+- Execute the command: =tl/org-export-buffer-to-ics=
+      - Defined in [[file:~/.emacs.d/org-init.org]]
+- Expected result: an ICS file containing the headings with a timestamp as events  
+
+* Header without timestamp
+
+* <2023-01-13 Fri> Header with active timestamp       :appointment:
+
+This text should not appear in the ICS file.
+Links should be ignored, included corrupted ones: [[link to nowhere]]
+
+* [2023-01-13 Fri] Header with inactive timestamp               :appointment:
+
+This header should be ignored.
+
+* <2023-01-13 Fri 10:00-11:00> Header with active timestamp including hours :appointment:
+
+* <2023-01-13 Fri> Header with active timestamp and ID          :appointment:
+:PROPERTIES:
+:ID:       d93f1637-432d-420b-87ec-f9c91699181e
+:END:
+
+The ID property is used as UID in the ICS file.
