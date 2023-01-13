@@ -2964,6 +2964,7 @@ https://github.com/awth13/org-appear
 Automatically toggle visibility of emphasis markers and links under point.
 
 Issues
+- [ ] Links not shown with Org v9.6.1: https://github.com/awth13/org-appear/issues/46
 - [X] Links not shown with Org v9.6: https://github.com/awth13/org-appear/issues/46
 
 #+BEGIN_SRC emacs-lisp
@@ -4095,7 +4096,9 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
   (global-set-key (kbd "<f7> a") 'helm-bbdb)
 #+END_SRC
 
-*** Calendar: general settings
+*** Built-in Calendar: general settings
+
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Calendar_002fDiary.html
 
 #+BEGIN_SRC emacs-lisp
   (setq calendar-week-start-day 1)
@@ -4114,6 +4117,10 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 #+END_SRC
 
 *** German holidays
+
+https://github.com/rudolfochrist/german-holidays
+
+Adds German holidays to the calendar.
 
 #+BEGIN_SRC emacs-lisp
   (use-package german-holidays
@@ -4168,7 +4175,7 @@ The export can be narrowed to specific org-agenda files in the following way:
 
 Lets create a helper function that can exports an org-mode buffer to an ics file with the same path:
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp
 (defun tl/org-export-buffer-to-ics ()
 	(interactive)
 	(if (buffer-file-name (current-buffer))
