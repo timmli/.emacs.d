@@ -4137,10 +4137,13 @@ Adds German holidays to the calendar.
 - Via diary: import ics-files from caldav servers into the diary file. This will eventually be shown in org-agenda thanks to =org-agenda-include-diary=.
       - =icalendar-import-file=
 
-*** TODO iCalendar export
-:LOGBOOK:
-- State "TODO"       from              [2022-03-10 Thu 14:51]
-:END:
+*** iCalendar export
+
+Issues: 
+- [X] Error "Unable to resolve link": Some broken links will terminate the export for no good reason.
+      - Solution: Use =org-export-with-broken-links= to ignore broken links! 
+
+General options:
 
 #+BEGIN_SRC emacs-lisp
 (setq org-icalendar-timezone "Europe/Berlin"
@@ -4161,8 +4164,18 @@ The org-mode agenda can be exported with two commands:
  
 The idea would be to export the agenda to an icalendar file (when saving an agenda file) that is regularly imported to the calendar. 
 
-Issues: 
-- [ ] Error "Unable to resolve link": Some broken links will terminate the export for no good reason.
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-export-agenda-to-ics ()
+	(interactive)
+	(if (org-agenda-files)
+			(let* (
+						 (org-export-with-broken-links t) ; Ignore broken links
+						 )
+				(org-icalendar-combine-agenda-files)
+				(message (concat "Agenda exported to "  org-icalendar-combined-agenda-file)))
+		(message "tl/org-export-agenda-to-ics: org-agenda-files not specified, export aborted.")
+		))
+#+END_SRC
 
 The export can be narrowed to specific org-agenda files in the following way: 
 
@@ -4180,6 +4193,7 @@ Lets create a helper function that can exports an org-mode buffer to an ics file
 	(interactive)
 	(if (buffer-file-name (current-buffer))
 			(let* ((file-name (buffer-file-name (current-buffer)))
+						 (org-export-with-broken-links t) ; Ignore broken links
 						 (org-agenda-files (list file-name))
 						 (org-icalendar-combined-agenda-file
 							(concat
