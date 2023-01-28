@@ -12919,9 +12919,24 @@ https://stackoverflow.com/q/65815662/6452961
 
 **** debug-on-entry
 
-=(debug-on-entry FUNCTION)=
+https://www.gnu.org/software/emacs/manual/html_node/eintr/debug_002don_002dentry.html
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(debug-on-entry FUNCTION)
+#+END_SRC
 
 Request FUNCTION to invoke debugger each time it is called.
+Use =M-x cancel-debug-on-entry= to cancel the effect of this command.
+
+**** toggle-debug-on-error
+
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Error-Debugging.html
+
+Toggle whether to enter Lisp debugger when an error is signaled.
+
+*** Org
+
+https://orgmode.org/manual/Feedback.html#Feedback
 
 * Private settings 
 
