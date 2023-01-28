@@ -6,6 +6,10 @@
       - Defined in [[file:~/.emacs.d/org-init.org]]
 - Expected result: an ICS file containing the headings with a timestamp as events  
 
+#+BEGIN_SRC bash :tangle no
+emacs -Q -l org-to-ics-tests.el org-to-ics-tests.org 
+#+END_SRC
+
 * Header without timestamp
 
 * <2023-01-13 Fri> Header with active timestamp       :appointment:
