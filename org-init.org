@@ -4194,6 +4194,7 @@ Lets create a helper function that can exports an org-mode buffer to an ics file
 	(if (buffer-file-name (current-buffer))
 			(let* ((file-name (buffer-file-name (current-buffer)))
 						 (org-export-with-broken-links t) ; Ignore broken links
+						 (org-export-with-date nil)				; TODO: Does not remove superfluous timestamps 
 						 (org-agenda-files (list file-name))
 						 (org-icalendar-combined-agenda-file
 							(concat

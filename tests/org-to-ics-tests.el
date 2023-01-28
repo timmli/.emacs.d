@@ -13,6 +13,8 @@
 	(interactive)
 	(if (buffer-file-name (current-buffer))
 			(let* ((file-name (buffer-file-name (current-buffer)))
+						 (org-export-with-broken-links t) ; Ignore broken links
+						 (org-export-with-date nil)				; TODO: Does not remove superfluous timestamps 
 						 (org-agenda-files (list file-name))
 						 (org-icalendar-combined-agenda-file
 							(concat
@@ -22,11 +24,9 @@
 		(message "tl/org-export-buffer-to-ics: buffer has no file, export aborted.")
 		))
 
-(setq org-export-with-broken-links t)
 (setq org-icalendar-timezone "Europe/Berlin"
 			org-icalendar-include-todo nil			; Non-nil means create VTODO components from TODO items.
 			org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due) ; Export all deadline time stamps.
 			org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo) ; Export all scheduled time stamps.
 			org-icalendar-include-body nil		; Amount of text below headline to be included in iCalendar export.
-			org-export-with-broken-links t		; Ignore broken links
 			)
