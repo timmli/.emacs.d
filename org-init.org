@@ -4153,6 +4153,20 @@ General options:
 			org-icalendar-include-body nil)		; Amount of text below headline to be included in iCalendar export.
 #+END_SRC
 
+Helper function for removing timestamps from headers:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/remove-org-timestamps ()
+	"Remove all (exportet) Org timestamps and surrounding blanks from buffer."
+	(save-excursion
+		(while (re-search-forward
+						(concat "\\([[:blank:]]\\)*"
+										"\\(" org-element--timestamp-regexp "\\)"
+										"\\(–\\|[[:blank:]]\\)*"
+										) nil t)
+			(replace-match ""))))
+#+END_SRC
+
 **** org-agenda
 
 See blog post [[https://200ok.ch/posts/2022-02-13_integrating_org_mode_agenda_into_other_calendar_apps.html][Integrating Org mode Agenda into other calendar apps]].
@@ -4171,10 +4185,18 @@ The idea would be to export the agenda to an icalendar file (when saving an agen
 			(let* (
 						 (org-export-with-broken-links t) ; Ignore broken links
 						 )
-				(org-icalendar-combine-agenda-files)
-				(message (concat "Agenda exported to "  org-icalendar-combined-agenda-file)))
+				(org-icalendar-combine-agenda-files) 
+				(message (concat "org-agenda exported to "  org-icalendar-combined-agenda-file))
+				(save-window-excursion
+					(find-file org-icalendar-combined-agenda-file)
+					(beginning-of-buffer)
+					(tl/remove-org-timestamps)
+					(save-buffer)
+					(kill-buffer))
+				(message (concat "org-agenda calendar file cleaned and saved: " org-icalendar-combined-agenda-file)))
 		(message "tl/org-export-agenda-to-ics: org-agenda-files not specified, export aborted.")
-		))
+		)
+	)
 #+END_SRC
 
 The export can be narrowed to specific org-agenda files in the following way: 
@@ -4193,14 +4215,12 @@ Lets create a helper function that can exports an org-mode buffer to an ics file
 	(interactive)
 	(if (buffer-file-name (current-buffer))
 			(let* ((file-name (buffer-file-name (current-buffer)))
-						 (org-export-with-broken-links t) ; Ignore broken links
-						 (org-export-with-date nil)				; TODO: Does not remove superfluous timestamps 
 						 (org-agenda-files (list file-name))
 						 (org-icalendar-combined-agenda-file
 							(concat
 							 (file-name-sans-extension file-name)
 							 ".ics")))
-				(org-icalendar-combine-agenda-files))
+				(tl/org-export-agenda-to-ics))
 		(message "tl/org-export-buffer-to-ics: buffer has no file, export aborted.")
 		))
 #+END_SRC
