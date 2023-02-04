@@ -4202,8 +4202,9 @@ The idea would be to export the agenda to an icalendar file (when saving an agen
 	(if (org-agenda-files)
 			(let* (
 						 (org-export-with-broken-links t) ; Ignore broken links
+						 (org-agenda-start-day "-2w") ; Unfortunately, this does not limit the export to recent dates 
 						 )
-				(org-icalendar-combine-agenda-files) 
+				(org-icalendar-combine-agenda-files t) ; Non-nil argument for asynchronuous processing 
 				(message (concat "org-agenda exported to "  org-icalendar-combined-agenda-file))
 				(save-window-excursion
 					(find-file org-icalendar-combined-agenda-file)
