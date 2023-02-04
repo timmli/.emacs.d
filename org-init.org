@@ -4243,6 +4243,26 @@ Lets create a helper function that can exports an org-mode buffer to an ics file
 		))
 #+END_SRC
 
+Finally, wrap a function around the export of the org-agenda and syncing it with a CalDAV server using [[https://github.com/pimutils/vdirsyncer][vdirsyncer]].
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-export-agenda-to-caldav ()
+	(interactive)
+	(message "Exporting org-agenda to ics file...")
+	(tl/org-export-agenda-to-ics)
+	(message "Exporting org-agenda to ics file finished.")
+	(message "Syncing org-agenda and CalDav server...")
+	(async-start
+	 (lambda ()
+		 (shell-command "vdirsyncer sync")
+		 )
+	 (lambda (result)
+		 (message "Syncing org-agenda and CalDav server finished.")
+		 )
+	 )
+	)
+#+END_SRC 
+
 *** calfw 
 
 https://github.com/kiwanami/emacs-calfw/
@@ -11166,7 +11186,7 @@ Download with [[org-download]].
    _vy_ year view      _C-k_ kill            ^^                       _u_ unmark          ^^           _r_efresh
     ^^       _M-S-<up>_ earlier hour       _M-S-<up>_ earlier time    _B_ action on marked^^           _q_uit hydra
     ^^     _M-S-<down>_ later hour       _M-S-<down>_ later time      ^^                  ^^          e_x_it agenda
-    ^^    _M-S-<right>_ earlier day
+    ^^    _M-S-<right>_ earlier day          ^^                       _S_ync with CalDAV  
     ^^     _M-S-<down>_ later day
     _h_ show holidays
     _]_ show inactive timestamps
@@ -11183,6 +11203,7 @@ Download with [[org-download]].
 	("I" org-agenda-clock-in)
 	("O" org-agenda-clockreport-mode)
 	("R" org-agenda-clock-in)
+	("S" tl/org-export-agenda-to-caldav)
 	("f" org-agenda-later)
 	("b" org-agenda-earlier)
 	("F" org-agenda-follow-mode)
