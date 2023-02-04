@@ -11636,21 +11636,23 @@ Copied from https://github.com/cmcmahan/elisp/blob/master/emacs-hydra.el:
 
       Insert Date
     ╭─────────────╯
-      [_1_] 2017-09-30                            [_o_] org inactive stamp
-      [_2_] 2017-09-30 Sa                         [_O_] org active stamp
-      [_3_] 2017-09-30 Sa 23:35                   
-      [_4_] September 30, 2017                    [_._] 30.09.2017
-      [_5_] Saturday, September 30, 2017          [_/_] 30/09/2017  
-      [_6_] 2017-09-30T23:47:53+02:00             
+      [_1_] 170930                            [_o_] org inactive stamp
+      [_2_] 2017-09-30                         [_O_] org active stamp
+      [_3_] 2017-09-30 Sa                   
+      [_4_] 2017-09-30 Sa 23:35             [_._] 30.09.2017
+      [_5_] 2017-09-30T23:47:53+02:00                    [_/_] 30/09/2017  
+      [_6_] September 30, 2017
+      [_7_] Saturday, September 30, 2017             
       ^^                                          [_q_] quit
    "
-	 ("1" (insert-date "%Y-%m-%d"))
-   ("2" (insert-date))
-   ("3" (insert-date-time))
-	 ("4" (insert-date "%B %d, %Y"))
-	 ("5" (insert-date "%A, %B %d, %Y"))
+	 ("1" (insert-date "%y%m%d"))
+	 ("2" (insert-date "%Y-%m-%d"))
+   ("3" (insert-date))
+   ("5" (insert-date-time))
+	 ("6" (insert-date "%B %d, %Y"))
+	 ("7" (insert-date "%A, %B %d, %Y"))
 	 ;; inspired from http://ergoemacs.org/emacs/elisp_insert-date-time.html
-	 ("6" (progn
+	 ("4" (progn
 					(when (use-region-p) (delete-region (region-beginning) (region-end)))
 					(insert (concat
 									 (format-time-string "%Y-%m-%dT%T")
