@@ -1816,6 +1816,14 @@ Change font faces:
 ;; (add-hook 'org-agenda-mode-hook 'tl/org-agenda-style)
 #+END_SRC
 
+**** TODO Show clocked time per day
+:LOGBOOK:
+- State "TODO"       from              [2023-02-05 Sun 22:32]
+:END:
+
+See https://emacs.stackexchange.com/questions/21380/show-sum-of-efforts-for-a-day-in-org-agenda-day-title
+One could maybe use =tl/org-agenda-files-clock-sum-today=.
+
 **** COMMENT org-timeline
 
 https://github.com/Fuco1/org-timeline/
@@ -1852,19 +1860,6 @@ Convenience functions for clocking workflow.
    						("<M-S-down>" . org-clock-convenience-timestamp-down)
    						("ö" . org-clock-convenience-fill-gap)
    						("é" . org-clock-convenience-fill-gap-both)))
-#+END_SRC
-
-**** COMMENT org-timeline
-
-https://github.com/Fuco1/org-timeline/
-
-Add graphical time line of agenda items to agenda buffer.
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-timeline
-	:ensure t
-	:config
-	(add-hook 'org-agenda-finalize-hook 'org-timeline-insert-timeline :append))
 #+END_SRC
 
 **** Keys
@@ -2051,6 +2046,17 @@ Only use hours and minutes as duration format in clocktables:
 Configure mode line:
 #+BEGIN_SRC emacs-lisp
 (setq org-clock-mode-line-total 'today)
+#+END_SRC
+
+Helper function to collect today's clocked times:
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-agenda-files-clock-sum-today ()
+	(apply '+ (mapcar
+					 '(lambda (file)
+							(save-window-excursion
+								(find-file file)
+								(org-clock-sum-today)))
+					 (org-agenda-files))))
 #+END_SRC
 
 **** org-mru-clock
