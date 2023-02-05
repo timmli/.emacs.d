@@ -4284,19 +4284,16 @@ Finally, wrap a function around the export of the org-agenda and syncing it with
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/org-export-agenda-to-caldav ()
+	"Export `org-agenda' to icalendar/ics file and upload it to CalDAV server."
 	(interactive)
 	(message "Exporting org-agenda to ics file...")
 	(tl/org-export-agenda-to-ics)
 	(message "Exporting org-agenda to ics file finished.")
 	(message "Syncing org-agenda and CalDav server...")
-	(async-start
-	 (lambda ()
-		 (shell-command "vdirsyncer sync")
-		 )
-	 (lambda (result)
-		 (message "Syncing org-agenda and CalDav server finished.")
-		 )
-	 )
+	(shell-command "vdirsyncer sync")
+	(while (yes-or-no-p "Sync with vdirsyncer once more? ")
+		(shell-command "vdirsyncer sync"))
+	(message "Syncing org-agenda and CalDav server finished.")
 	)
 #+END_SRC 
 
