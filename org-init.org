@@ -4296,9 +4296,9 @@ Finally, wrap a function around the export of the org-agenda and syncing it with
 	(tl/org-export-agenda-to-ics)
 	(message "Exporting org-agenda to ics file finished.")
 	(message "Syncing org-agenda and CalDav server...")
-	(shell-command "vdirsyncer sync")
+	(shell-command "vdirsyncer sync org_agenda_calendar")
 	(while (yes-or-no-p "Sync with vdirsyncer once more? ")
-		(shell-command "vdirsyncer sync"))
+		(shell-command "vdirsyncer sync org_agenda_calendar"))
 	(message "Syncing org-agenda and CalDav server finished.")
 	)
 #+END_SRC 
