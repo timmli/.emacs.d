@@ -4175,14 +4175,50 @@ Helper function for removing timestamps from headers:
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/remove-org-timestamps ()
-	"Remove all (exportet) Org timestamps and surrounding blanks from buffer."
-	(save-excursion
-		(while (re-search-forward
-						(concat "\\([[:blank:]]\\)*"
-										"\\(" org-element--timestamp-regexp "\\)"
-										"\\(–\\|[[:blank:]]\\)*"
-										) nil t)
-			(replace-match ""))))
+	"Remove all (exported) Org timestamps and surrounding blanks from buffer."
+	(beginning-of-buffer)
+	(while (re-search-forward
+					(concat "\\([[:blank:]]\\)*"
+									"\\(" org-element--timestamp-regexp "\\)"
+									"\\(–\\|[[:blank:]]\\)*"
+									) nil t)
+		(replace-match "")))
+#+END_SRC
+
+Helper function for removing old dates in an icalender file: 
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/icalendar-remove-dates-older-than (&optional date-string-Ymd)
+	"Remove all events older than DATE-STRING-YMD in an icalendar/ics buffer.
+
+The argument DATE-STRING-YMD is optional.  If not specified, it is set 90 days
+before current time."
+	(beginning-of-buffer)
+	(let ((date-string-Ymd (or date-string-Ymd
+														 (format-time-string "%Y%m%d"
+																								 (let ((time (decode-time (current-time)))
+																											 (delta (make-decoded-time :day -90)))
+																									 (encode-time (decoded-time-add time delta)))
+																								 )
+														 ;; (format-time-string "%Y%m%d"
+														 ;; 										 (time-subtract
+														 ;; 											(current-time)
+														 ;; 											(seconds-to-time (* 60 60 24 90))))
+														 )
+												 ))
+		(while (re-search-forward "DTSTART\\(?:;VALUE=DATE\\)?:[[:blank:]]*\\(.\\{8\\}\\)" nil t)
+			(when (< (string-to-number (match-string 1))
+							 (string-to-number date-string-Ymd))
+				(delete-region
+				 (re-search-backward "BEGIN:VEVENT")
+				 (re-search-forward "END:VEVENT"))
+				;; Remove empty line
+				(if (save-excursion
+							(beginning-of-line)
+							(looking-at-p "[[:blank:]]*$"))
+						(delete-line)
+					())
+				))))
 #+END_SRC
 
 **** org-agenda
@@ -4204,12 +4240,12 @@ The idea would be to export the agenda to an icalendar file (when saving an agen
 						 (org-export-with-broken-links t) ; Ignore broken links
 						 (org-agenda-start-day "-2w") ; Unfortunately, this does not limit the export to recent dates 
 						 )
-				(org-icalendar-combine-agenda-files t) ; Non-nil argument for asynchronuous processing 
+				(org-icalendar-combine-agenda-files) ; Non-nil argument for asynchronuous processing 
 				(message (concat "org-agenda exported to "  org-icalendar-combined-agenda-file))
 				(save-window-excursion
 					(find-file org-icalendar-combined-agenda-file)
-					(beginning-of-buffer)
 					(tl/remove-org-timestamps)
+					(tl/icalendar-remove-dates-older-than)
 					(save-buffer)
 					(kill-buffer))
 				(message (concat "org-agenda calendar file cleaned and saved: " org-icalendar-combined-agenda-file)))
