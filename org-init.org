@@ -1959,6 +1959,21 @@ Note that one can specify the name of attachment directories per file with
 # -*- org-attach-id-dir: "my-fancy-dir-name" -*-
 #+END_SRC
 
+Function to jump from attachment directory to heading (https://fuco1.github.io/2023-02-08-Visit-the-org-headline-from-the-attach-dired-buffer.html):
+#+BEGIN_SRC emacs-lisp
+(defun my-org-attach-visit-headline-from-dired ()
+  "Go to the headline corresponding to this org-attach directory."
+  (interactive)
+  (let* ((id-parts (last (split-string default-directory "/" t) 2))
+         (id (apply #'concat id-parts)))
+    (let ((m (org-id-find id 'marker)))
+      (unless m (user-error "Cannot find entry with ID \"%s\"" id))
+      (pop-to-buffer (marker-buffer m))
+      (goto-char m)
+      (move-marker m nil)
+      (org-fold-show-context))))
+#+END_SRC
+
 *** Bibliography
 
 **** citeproc-org
@@ -10871,7 +10886,7 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
 (defhydra hydra-dired-main (:hint nil)
 	"
  ^Navigation^            ^^            ^Mark^              ^Actions^             ^View^
--^----------^------------^^------------^----^--------------^-------^-------------^----^------------
+-^----------^------------^^------------^----^--------------^-------^-------------^----^----------------------
 
              _<up>_      ^^             _m_: mark           _+_: new              _g_: refresh
   ^^            ʌ        ^^             _u_: unmark         _C_: copy to          _/_: filter
@@ -10882,9 +10897,9 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
   ^^            v        ^^             _w_: copy file name _P_: change property _ow_: open in other window
             _<down>_     ^^             _W_: copy path      _c_/_Z_: compress      _of_: open in other frame
   ^^                     ^^             ^^                  _=_: diff
-   _._: home  _j_: jump  _f_: find        _$_: wdired         _a_: attach to mail    ^^
-   ^^         ^^         ^^             ^^                      ^^        _q_: quit hydra 
--^----------^------------------------^----^---------------^-------^-------------^----^-----------
+   _._: home  _j_: jump  _f_: find        _$_: wdired         _am_: attach to mail    ^^
+   ^^         ^^         ^^             ^^                    _af_: goto attached heading      _q_: quit hydra 
+-^----------^------------------------^----^---------------^-------^-------------^----^---------------------
 "
 	("<left>" (lambda () (interactive) (find-alternate-file "..")))
 	("<up>" diredp-previous-line)
@@ -10894,7 +10909,8 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
 	("+" hydra-dired-new/body :color blue)
 	("*" hydra-dired-mark/body :color blue)
 	("P" hydra-dired-properties/body :color blue)
-	("a" gnus-dired-attach :color blue)
+	("am" gnus-dired-attach :color blue)
+	("af" my-org-attach-visit-headline-from-dired :color blue)
 	("O" dired-do-chown)
 	("M" dired-do-chmod)
 	("G" dired-do-chgrp)
@@ -11243,7 +11259,7 @@ Download with [[org-download]].
 	("I" org-agenda-clock-in)
 	("O" org-agenda-clockreport-mode)
 	("R" org-agenda-clock-in)
-	("S" tl/org-export-agenda-to-caldav)
+	("S" tl/org-export-agenda-to-caldav :color blue)
 	("f" org-agenda-later)
 	("b" org-agenda-earlier)
 	("F" org-agenda-follow-mode)
