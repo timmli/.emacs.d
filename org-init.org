@@ -9773,10 +9773,13 @@ Visually highlight the selected buffer.
 #+BEGIN_SRC emacs-lisp
 (use-package dimmer
 	:ensure t
+	:pin MELPA
 	:config
-	(dimmer-configure-which-key)
-	(dimmer-configure-helm)
-	(dimmer-configure-hydra)
+	(dimmer-configure-which-key)					; which-key popups are not dimmed
+	(dimmer-configure-helm) 							; helm buffers are not dimmed
+	(dimmer-configure-hydra)							; hydra buffers are not dimmed
+	(dimmer-configure-magit)							; magit trancient buffers are not dimmed
+  ;; (dimmer-configure-org)								; org buffers are not dimmed
 	(setq dimmer-adjustment-mode ':foreground) ; possible values are `:foreground', `:background', `:both'
 	(setq dimmer-fraction 0.3) ; between 0 and 1; larger means more dimmed
 	(dimmer-mode t))
