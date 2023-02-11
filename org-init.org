@@ -1816,84 +1816,50 @@ Change font faces:
 ;; (add-hook 'org-agenda-mode-hook 'tl/org-agenda-style)
 #+END_SRC
 
-**** TODO COMMENT Show clocked time per day
-:LOGBOOK:
-- State "TODO"       from              [2023-02-05 Sun 22:32]
-:END:
+**** Show clocked time per day
 
-See https://emacs.stackexchange.com/questions/21380/show-sum-of-efforts-for-a-day-in-org-agenda-day-title
-One could maybe use =tl/org-agenda-files-clock-sum-today=.
+Heavily inspired by  https://emacs.stackexchange.com/questions/21380/show-sum-of-efforts-for-a-day-in-org-agenda-day-title
+
+The following code works directly with the agenda buffer. For each day, the clocked times are collected and then added to the day headers. 
 
 #+BEGIN_SRC emacs-lisp
-(require 'cl-lib)
-
-(defun my/org-agenda-calculate-efforts (limit)
-  "Sum the efforts of scheduled entries up to LIMIT in the
-agenda buffer."
-  (let (total)
+(defun tl/org-agenda-collect-clocks (limit)
+  "Sum the clocked time of entries up to LIMIT in the agenda buffer."
+  (let ((total '(0)))
     (save-excursion
-			(while (< (point) limit)
-				(when (member (org-get-at-bol 'type) '("scheduled" "past-scheduled"))
-					;; (org-get-at-bol 'type) --> "clock"
-					(push (org-entry-get (org-get-at-bol 'org-hd-marker) "Effort") total))
-				;; 'org-hd-marker?
-				;; Different idea: just read off the clocked durations from the org-agenda table
-				;; (org-hh:mm-string-to-minutes (progn (re-search-forward "Clocked:[[:blank:]]*(\\(.*\\))") (match-string 1)))
+			(while (and limit
+									(< (point) limit))
+				(when (member (org-get-at-bol 'type) '("clock"))
+					;; Just read off the clocked times from the agenda table
+					(push
+					 (org-hh:mm-string-to-minutes
+						(progn (re-search-forward "Clocked:[[:blank:]]*(\\([0-9:]*\\))") (match-string 1)))
+					 total)
+					)
 				(forward-line)))
-    (org-duration-from-minutes
-     (cl-reduce #'+
-                (mapcar #'org-duration-to-minutes
-                        (cl-remove-if-not 'identity total))))))
+		(org-duration-from-minutes (apply '+ total))))
 
-(defun my/org-agenda-insert-efforts ()
-  "Insert the efforts for each day inside the agenda buffer."
+(defun tl/org-agenda-insert-clocked-time-per-day ()
+  "Insert the clocked time for each day inside the agenda buffer."
   (save-excursion
-		(let (pos)
+		(let ((col (save-excursion
+								 (re-search-forward "Clocked:[[:blank:]]*?(" nil t)
+								 (- (current-column) 2)				; --> 0, if re-search was unsuccessful
+								 ))
+					(pos))
 			(while (setq pos (text-property-any
 												(point) (point-max) 'org-agenda-date-header t))
 				(goto-char pos)
 				(end-of-line)
+				(or (< col (current-column))
+						(move-to-column col t))
 				(insert-and-inherit (concat " ("
-																		(my/org-agenda-calculate-efforts
+																		(tl/org-agenda-collect-clocks
                                      (next-single-property-change (point) 'day))
 																		")"))
 				(forward-line)))))
 
-(add-hook 'org-agenda-finalize-hook 'my/org-agenda-insert-efforts)
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(require 'cl-lib)
-
-(defun my/org-agenda-calculate-efforts (limit)
-  "Sum the efforts of scheduled entries up to LIMIT in the
-agenda buffer."
-  (let (total)
-    (save-excursion
-			(while (< (point) limit)
-				(when (member (org-get-at-bol 'type) '("scheduled" "past-scheduled"))
-					(push (org-entry-get (org-get-at-bol 'org-hd-marker) "Effort") total))
-				(forward-line)))
-    (org-duration-from-minutes
-     (cl-reduce #'+
-                (mapcar #'org-duration-to-minutes
-                        (cl-remove-if-not 'identity total))))))
-
-(defun my/org-agenda-insert-efforts ()
-  "Insert the efforts for each day inside the agenda buffer."
-  (save-excursion
-		(let (pos)
-			(while (setq pos (text-property-any
-												(point) (point-max) 'org-agenda-date-header t))
-				(goto-char pos)
-				(end-of-line)
-				(insert-and-inherit (concat " ("
-																		(my/org-agenda-calculate-efforts
-                                     (next-single-property-change (point) 'day))
-																		")"))
-				(forward-line)))))
-
-(add-hook 'org-agenda-finalize-hook 'my/org-agenda-insert-efforts)
+(add-hook 'org-agenda-finalize-hook 'tl/org-agenda-insert-clocked-time-per-day)
 #+END_SRC
 
 **** COMMENT org-timeline
