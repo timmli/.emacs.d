@@ -1851,7 +1851,9 @@ The following code works directly with the agenda buffer. For each day, the cloc
 					(pos)
 					(total '(0)))
 			;; For each day ... 
-			(while (text-property-search-forward 'org-agenda-date-header t)
+			(while 
+					(and (text-property-search-forward 'org-agenda-date-header t)
+							 (org-get-at-bol 'org-agenda-date-header)) ; double check
 				(end-of-line)
 				(or (< col (current-column))
 						(move-to-column col t))
