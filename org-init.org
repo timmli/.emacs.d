@@ -1831,9 +1831,10 @@ The following code works directly with the agenda buffer. For each day, the cloc
 									(< (point) limit))
 				;; Just read off the clocked times from the agenda table
 				(when (member (org-get-at-bol 'type) '("clock"))
-					(push (org-get-at-bol 'duration)
-					 ;; (org-hh:mm-string-to-minutes
-					 ;; 	(progn (re-search-forward "Clocked:[[:blank:]]*(\\([0-9:]*\\))") (match-string 1)))
+					(push 
+					 ;; (org-get-at-bol 'duration) ; Strangely, some durations are negative (Bug?).
+					 (org-hh:mm-string-to-minutes
+						(progn (re-search-forward "Clocked:[[:blank:]]*(\\([0-9]+:[0-9]+\\))") (match-string 1)))
 					 total)
 					)
 				(forward-line)))
@@ -1859,8 +1860,7 @@ The following code works directly with the agenda buffer. For each day, the cloc
 					(insert-and-inherit (concat " ("
 																			(org-duration-from-minutes day-clocked-minutes)
 																			")"))
-					(push day-clocked-minutes total))
-				(forward-line))
+					(push day-clocked-minutes total)))
 			;; Go back to week and insert total
 			(beginning-of-buffer)
 			(when (and (text-property-search-forward 'org-agenda-date-header t)
