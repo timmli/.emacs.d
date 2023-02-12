@@ -1823,44 +1823,59 @@ Heavily inspired by  https://emacs.stackexchange.com/questions/21380/show-sum-of
 The following code works directly with the agenda buffer. For each day, the clocked times are collected and then added to the day headers. 
 
 #+BEGIN_SRC emacs-lisp
-(defun tl/org-agenda-collect-clocks (limit)
+(defun tl/org-agenda-collect-clocked-minutes (limit)
   "Sum the clocked time of entries up to LIMIT in the agenda buffer."
   (let ((total '(0)))
     (save-excursion
 			(while (and limit
 									(< (point) limit))
+				;; Just read off the clocked times from the agenda table
 				(when (member (org-get-at-bol 'type) '("clock"))
-					;; Just read off the clocked times from the agenda table
-					(push
-					 (org-hh:mm-string-to-minutes
-						(progn (re-search-forward "Clocked:[[:blank:]]*(\\([0-9:]*\\))") (match-string 1)))
+					(push (org-get-at-bol 'duration)
+					 ;; (org-hh:mm-string-to-minutes
+					 ;; 	(progn (re-search-forward "Clocked:[[:blank:]]*(\\([0-9:]*\\))") (match-string 1)))
 					 total)
 					)
 				(forward-line)))
-		(org-duration-from-minutes (apply '+ total))))
+		(apply '+ total)))
 
 (defun tl/org-agenda-insert-clocked-time-per-day ()
   "Insert the clocked time for each day inside the agenda buffer."
   (save-excursion
 		(let ((col (save-excursion
+								 (text-property-search-forward 'type "clock")		 
 								 (re-search-forward "Clocked:[[:blank:]]*?(" nil t)
-								 (- (current-column) 2)				; --> 0, if re-search was unsuccessful
+								 (- (current-column) 2)				; --> -2, if re-search was unsuccessful
 								 ))
-					(pos))
-			(while (setq pos (text-property-any
-												(point) (point-max) 'org-agenda-date-header t))
-				(goto-char pos)
+					(pos)
+					(total '(0)))
+			;; For each day ... 
+			(while (text-property-search-forward 'org-agenda-date-header t)
 				(end-of-line)
 				(or (< col (current-column))
 						(move-to-column col t))
+				(let ((day-clocked-minutes (tl/org-agenda-collect-clocked-minutes
+																		(next-single-property-change (point) 'day))))
+					(insert-and-inherit (concat " ("
+																			(org-duration-from-minutes day-clocked-minutes)
+																			")"))
+					(push day-clocked-minutes total))
+				(forward-line))
+			;; Go back to week and insert total
+			(beginning-of-buffer)
+			(when (and (text-property-search-forward 'org-agenda-date-header t)
+								 (> (forward-line -1) -1))
+				(or (< col (current-column))
+						(move-to-column col t))
 				(insert-and-inherit (concat " ("
-																		(tl/org-agenda-collect-clocks
-                                     (next-single-property-change (point) 'day))
-																		")"))
-				(forward-line)))))
+																		(org-duration-from-minutes (apply '+ total))
+																		")")))
+			)))
 
 (add-hook 'org-agenda-finalize-hook 'tl/org-agenda-insert-clocked-time-per-day)
 #+END_SRC
+
+The function =describe-text-properties= turned out very helpful to find out the specific (hidden) properties of lines of the org agenda. 
 
 **** COMMENT org-timeline
 
