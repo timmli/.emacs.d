@@ -1834,7 +1834,8 @@ The following code works directly with the agenda buffer. For each day, the cloc
 					(push 
 					 ;; (org-get-at-bol 'duration) ; Strangely, some durations are negative (Bug?).
 					 (org-hh:mm-string-to-minutes
-						(progn (re-search-forward "Clocked:[[:blank:]]*(\\([0-9]+:[0-9]+\\))") (match-string 1)))
+						(progn (re-search-forward "Clocked:[[:blank:]]*(\\([0-9]+\\:[0-9]+\\))" (line-end-position) t) 
+									 (match-string 1)))
 					 total)
 					)
 				(forward-line)))
