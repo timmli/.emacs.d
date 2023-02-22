@@ -3425,6 +3425,14 @@ Example of how it works: https://blog.jethro.dev/posts/how_to_take_smart_notes_o
 				))
 #+END_SRC
 
+Different org-roam databases ("Zettelkästen") can be maintained using [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Directory-Variables.html][directory-local settings]].
+See the advice here: https://www.orgroam.com/manual.html#How-do-I-have-more-than-one-Org_002droam-directory_003f
+
+#+BEGIN_SRC emacs-lisp :tangle no :file .dir-locals.el
+((nil . ((org-roam-directory . "/path/to/alt/org-roam-dir")
+         (org-roam-db-location . "/path/to/alt/org-roam-dir/org-roam.db"))))
+#+END_SRC
+
 **** org-roam-protocol
 
 https://www.orgroam.com/manual.html#Org_002droam-Protocol
