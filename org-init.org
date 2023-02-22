@@ -2141,11 +2141,13 @@ Pre-fill your clock history with clocks from your agenda files.
 	:ensure t)
 #+END_SRC
 
-**** org-clock-today-mode
+**** COMMENT org-clock-today-mode
 
 https://github.com/mallt/org-clock-today-mode
 
 Minor mode to show the total clocked time of the current day in the mode line.
+
+Superseded by [[Show clocked time per day]] in org-agenda. 
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-clock-today
