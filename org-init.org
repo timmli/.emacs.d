@@ -1926,7 +1926,15 @@ Open heading with double-click:
 (define-key org-agenda-mode-map [double-mouse-1] 'org-agenda-switch-to)
 #+END_SRC
 
-*** Archive
+*** Archiving
+
+https://orgmode.org/manual/Archiving.html
+
+Archiving helps to "to keep your working files compact and global searches like the construction of agenda views fast."
+
+There are two standard ways of archiving headings in Org:
+1. [[https://orgmode.org/manual/Moving-subtrees.html][Moving a tree to an archive file]]
+2. [[https://orgmode.org/manual/Internal-archiving.html][Internal archiving]] using the =ARCHIVE= tag
 
 Preserves the first heading of the org-mode file and the inherited tags (found in http://orgmode.org/worg/org-hacks.html#orgheadline59):
 
