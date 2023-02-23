@@ -3515,7 +3515,7 @@ Org-roam provides journaling capabilities akin to =org-journal= with =org-roam-d
       '(("d" "default" entry
          "* %?"
          :target (file+head "%<%Y-%m-%d>.org"
-                            "#+title: %<%Y-%m-%d>\n"))))
+                            "#+title: Day %<%Y-%m-%d>\n"))))
 #+END_SRC
 
 **** org-roam-ui
