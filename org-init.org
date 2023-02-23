@@ -3451,6 +3451,21 @@ Note that the function =eval= has to be used in order to evaluate elisp code:
                   org-roam-db-location (expand-file-name "org-roam.db"
                                                          org-roam-directory))))))
 #+END_SRC
+
+**** Full-text search
+
+The org-roam manual recommends to use [[Deft]] to perform full-text search: https://www.orgroam.com/manual.html#Full_002dtext-search-with-Deft
+
+Yet I clearly prefer [[helm-org-rifle]], using the following function:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/search-in-org-roam-files ()
+	(interactive)
+	(helm-org-rifle-files (org-roam-list-files)))
+#+END_SRC
+
+This is added to [[hydra-org-roam]].
+
 **** org-roam-protocol
 
 https://www.orgroam.com/manual.html#Org_002droam-Protocol
@@ -5844,6 +5859,10 @@ Live web development with Emacs, properly supporting JavaScript (other than [[im
 
 *** Deft
 
+https://jblevins.org/projects/deft/
+
+Quickly browsing, filtering, and editing directories of plain text notes.
+
 #+BEGIN_SRC emacs-lisp
 (use-package deft												; for displaying list of note files
 	:ensure t
@@ -5857,8 +5876,6 @@ Live web development with Emacs, properly supporting JavaScript (other than [[im
 								deft-use-filename-as-title t
 								deft-use-filter-string-for-filename t))
 #+END_SRC
-
-
 
 *** dired
 
@@ -11529,10 +11546,11 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
 (defhydra hydra-org-roam (:color teal
 																 :hint nil)
   "
-  Org-roam:   _b_:acklinks _c_:apture _d_:ailies _f_:ind file  _g_:raph _i_:nsert  _li_:terature insert _s_:erver _u_:pdate db       _q_:uit
+  Org-roam:   _b_:acklinks _c_:apture _d_:ailies _f_:ind file _F_:ull-text search _g_:raph _i_:nsert  _li_:terature insert _s_:erver _u_:pdate db       _q_:uit
   "
   ("q" nil)
   ("f" org-roam-node-find)
+	("F" tl/search-in-org-roam-files)
 	("b" org-roam-buffer-toggle)
   ("i" org-roam-node-insert)
   ("g" org-roam-graph)
