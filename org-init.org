@@ -3441,6 +3441,16 @@ See the advice here: https://www.orgroam.com/manual.html#How-do-I-have-more-than
          (org-roam-db-location . "/path/to/alt/org-roam-dir/org-roam.db"))))
 #+END_SRC
 
+Note that the function =eval= has to be used in order to evaluate elisp code:
+
+#+BEGIN_SRC emacs-lisp :tangle no :file .dir-locals.el
+((nil . ((eval . (setq-local
+                  org-roam-directory (expand-file-name "zettel" (locate-dominating-file
+                                                        default-directory ".dir-locals.el") )))
+         (eval . (setq-local
+                  org-roam-db-location (expand-file-name "org-roam.db"
+                                                         org-roam-directory))))))
+#+END_SRC
 **** org-roam-protocol
 
 https://www.orgroam.com/manual.html#Org_002droam-Protocol
