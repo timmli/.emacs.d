@@ -2672,9 +2672,9 @@ Function to remove all ID properties from buffer:
 	(save-excursion
 		(beginning-of-buffer)
 		(let ((id-removed-p nil))
-			(when (and
-						 (not (org-next-visible-heading 1))
-						 (org-at-heading-p))
+			(while (and
+							(not (org-next-visible-heading 1))
+							(org-at-heading-p))
 				(when (org-entry-delete (point) "ID")
 					(setq id-removed-p t)))
 			(when (symbol-value 'id-removed-p)
@@ -3512,16 +3512,41 @@ https://www.orgroam.com/manual.html#The-Templating-System
 
 https://www.orgroam.com/manual.html#Daily_002dnotes
 
-Org-roam provides journaling capabilities akin to =org-journal= with =org-roam-dailies=. 
+Org-roam provides journaling capabilities akin to =org-journal= with =org-roam-dailies=.
+
+Issues 
+- [ ] I actually prefer to put all days into one file, but this does not seem to allow for modifying the body of an entry, unlike the one-file-per-day approach.
+- [ ] %? (After completing the template, position cursor here.) does not work inside the template.
 
 #+BEGIN_SRC emacs-lisp
 (setq org-roam-dailies-directory "daily/")
 
 (setq org-roam-dailies-capture-templates
-      '(("d" "default" entry
-         "* %?"
-         :target (file+head "%<%Y-%m-%d>.org"
-                            "#+title: Day %<%Y-%m-%d>\n"))))
+      `(
+				("f" "file" entry
+				 "* %?"
+				 :target (file+head "day_%<%Y-%m-%d>.org" 
+														"#+title: Day %<%Y-%m-%d %A>
+#+filetags: :day:
+%u
+
+Plan & Todos
+
+Ideas & thoughts
+
+Observations & encounters
+
+"))
+				;; ("n" "node" entry
+        ;;  "* %?"
+        ;;  :target (file+olp "dailies.org"
+				;; 									 (,(format-time-string "%Y")
+				;; 										,(format-time-string "%Y-%m %B")
+				;; 										,(format-time-string "%Y-%m-%d %A"))
+				;; 									 ))
+				;; ;; :empty-lines 1									; throws "peculiar error"
+				;; ;; :prepend t											; throws "peculiar error"
+				))
 #+END_SRC
 
 **** org-roam-ui
