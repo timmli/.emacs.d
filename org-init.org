@@ -3506,17 +3506,47 @@ https://www.orgroam.com/manual.html#The-Templating-System
 
 https://www.orgroam.com/manual.html#Daily_002dnotes
 
-Org-roam provides journaling capabilities akin to =org-journal= with =org-roam-dailies=. 
+Org-roam provides journaling capabilities akin to =org-journal= with =org-roam-dailies=.
+
+I prefer to put all days into one file.
+
+Issues 
+- [ ] %? (After completing the template, position cursor here.) does not work inside the template.
 
 #+BEGIN_SRC emacs-lisp
 (setq org-roam-dailies-directory "daily/")
 
 (setq org-roam-dailies-capture-templates
-      '(("d" "default" entry
+      `(
+				;; ("f" "file" entry
+				;;          "* %?"
+				;;          :target (file+head "day_%<%Y-%m-%d>.org"
+				;; 														"#+title: Day %u
+				;; #+filetags: :day:
+
+				;; Plan & Todos
+
+				;; Ideas & thoughts
+
+				;; Observations & encounters
+				;; "))
+				("n" "node" entry
          "* %?"
-         :target (file+head "day_%<%Y-%m-%d>.org"
-                            "#+title: Day %<%Y-%m-%d>\n#+filetags: :day:\n"))))
+         :target (file+olp "dailies.org"
+													 (,(format-time-string "%Y")
+														,(format-time-string "%Y-%m %B")
+														,(concat (format-time-string "%Y-%m-%d %A") "
+%u
+
+Plan & Todos
+
+Ideas & thoughts
+
+Observations & encounters
+
+"))))))
 #+END_SRC
+
 
 **** org-roam-ui
 
