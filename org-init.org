@@ -3508,9 +3508,8 @@ https://www.orgroam.com/manual.html#Daily_002dnotes
 
 Org-roam provides journaling capabilities akin to =org-journal= with =org-roam-dailies=.
 
-I prefer to put all days into one file.
-
 Issues 
+- [ ] I actually prefer to put all days into one file, but this does not seem to allow for modifying the body of an entry, unlike the one-file-per-day approach.
 - [ ] %? (After completing the template, position cursor here.) does not work inside the template.
 
 #+BEGIN_SRC emacs-lisp
@@ -3518,24 +3517,11 @@ Issues
 
 (setq org-roam-dailies-capture-templates
       `(
-				;; ("f" "file" entry
-				;;          "* %?"
-				;;          :target (file+head "day_%<%Y-%m-%d>.org"
-				;; 														"#+title: Day %u
-				;; #+filetags: :day:
-
-				;; Plan & Todos
-
-				;; Ideas & thoughts
-
-				;; Observations & encounters
-				;; "))
-				("n" "node" entry
-         "* %?"
-         :target (file+olp "dailies.org"
-													 (,(format-time-string "%Y")
-														,(format-time-string "%Y-%m %B")
-														,(concat (format-time-string "%Y-%m-%d %A") "
+				("f" "file" entry
+				 "* %?"
+				 :target (file+head "day_%<%Y-%m-%d>.org" 
+														"#+title: Day %<%Y-%m-%d %A>
+#+filetags: :day:
 %u
 
 Plan & Todos
@@ -3544,9 +3530,18 @@ Ideas & thoughts
 
 Observations & encounters
 
-"))))))
+"))
+				;; ("n" "node" entry
+        ;;  "* %?"
+        ;;  :target (file+olp "dailies.org"
+				;; 									 (,(format-time-string "%Y")
+				;; 										,(format-time-string "%Y-%m %B")
+				;; 										,(format-time-string "%Y-%m-%d %A"))
+				;; 									 ))
+				;; ;; :empty-lines 1									; throws "peculiar error"
+				;; ;; :prepend t											; throws "peculiar error"
+				))
 #+END_SRC
-
 
 **** org-roam-ui
 
