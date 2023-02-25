@@ -3514,8 +3514,8 @@ Org-roam provides journaling capabilities akin to =org-journal= with =org-roam-d
 (setq org-roam-dailies-capture-templates
       '(("d" "default" entry
          "* %?"
-         :target (file+head "%<%Y-%m-%d>.org"
-                            "#+title: Day %<%Y-%m-%d>\n"))))
+         :target (file+head "day_%<%Y-%m-%d>.org"
+                            "#+title: Day %<%Y-%m-%d>\n#+filetags: :day:\n"))))
 #+END_SRC
 
 **** org-roam-ui
