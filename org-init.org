@@ -2213,6 +2213,12 @@ Export to Hugo-compatible markdown.
   :after ox)
 #+END_SRC
 
+**** OpenDocument Text (ODT)
+
+- Apply custom styles
+      - https://orgmode.org/manual/Applying-custom-styles.html
+      - =#+ODT_STYLES_FILE: "/path/to/example.ott"=
+
 *** Images
 
 Only use actual width of image when not specified with =#+ATTR* :width= (requires imagemagick)
@@ -3456,7 +3462,7 @@ Note that the function =eval= has to be used in order to evaluate elisp code:
 
 The org-roam manual recommends to use [[Deft]] to perform full-text search: https://www.orgroam.com/manual.html#Full_002dtext-search-with-Deft
 
-Yet I clearly prefer [[helm-org-rifle]], using the following function:
+Yet I clearly prefer [[helm-org-rifle]] using the following function:
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/search-in-org-roam-files ()
@@ -5764,7 +5770,7 @@ Procedure to open a notebook:
 
 *** R
 
-**** ess
+**** COMMENT ess
 
 https://ess.r-project.org/index.php?Section=home
 
