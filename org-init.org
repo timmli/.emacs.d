@@ -2666,9 +2666,9 @@ Function to remove all ID properties from buffer:
 	(save-excursion
 		(beginning-of-buffer)
 		(let ((id-removed-p nil))
-			(when (and
-						 (not (org-next-visible-heading 1))
-						 (org-at-heading-p))
+			(while (and
+							(not (org-next-visible-heading 1))
+							(org-at-heading-p))
 				(when (org-entry-delete (point) "ID")
 					(setq id-removed-p t)))
 			(when (symbol-value 'id-removed-p)
