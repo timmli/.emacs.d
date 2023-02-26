@@ -11166,7 +11166,7 @@ Don't ask for the path when searching for files:
      _b_ open in new buffer       _m_ markup...           _<tab>_ tidily unfold   _C-c C-u_ embedding heading
      _c_ clocking...              _r_ org-ref            _<left>_ hide subtree   _C-<down>_ next heading same level
      _i_ add ID                   _._ timestamp         _<right>_ show subtree     _C-<up>_ previous heading same level
-     _n_ add note                 _*_ cycle list type  _C-<left>_ hide sublevels        _o_ open link/timestamp/...
+     _n_ notes...                 _*_ cycle list type  _C-<left>_ hide sublevels        _o_ open link/timestamp/...
      _p_ add property             _#_ table...        _C-<right>_ show sublevels        _j_ jump to heading
      _P_ add property-value pair  _v_ toggle images       ^<f9>:^ filter tags globally  _B_ jump to named block
    _s_/\^ sort                     \\ toggle overlays  
@@ -11193,7 +11193,7 @@ Don't ask for the path when searching for files:
 	("dt" delete-org-latex-aux-files)
 	("$" org-fragtog-mode)
 	("m" hydra-org-markup/body)
-	("n" org-add-note)
+	("n" hydra-org-roam/body)
 	("N" org-num-mode)
 	("o" org-open-at-point)
 	("p" org-set-property)
@@ -11583,10 +11583,18 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-roam (:color teal
 																 :hint nil)
-  "
-  Org-roam:   _b_:acklinks _c_:apture _d_:ailies _f_:ind file _F_:ull-text search _g_:raph _i_:nsert  _li_:terature insert _s_:erver _u_:pdate db       _q_:uit
+	"
+    ^^                                ^^                            ^^                          ╭──────────┐
+     ^Navigation between notes^        ^Actions inside note^         ^General actions^          │ org-roam │
+	╭─^^────────────────────────────────^^────────────────────────────^^──────────────────────────┴──────────╯
+     _b_ backlinks                      _a_ add alias                 _g_ show graph
+     _c_ capture                        _i_ insert link               _s_ start UI server    
+     _d_ dailies                       _li_ insert citation link      _u_ update db    
+     _f_ find note										  _t_ add tag			                   
+     _F_ full-text search                ^^                           ^^                          _q_:uit   
   "
   ("q" nil)
+	("a" org-roam-alias-add)
   ("f" org-roam-node-find)
 	("F" tl/search-in-org-roam-files)
 	("b" org-roam-buffer-toggle)
@@ -11596,6 +11604,7 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
   ("d" org-roam-dailies-goto-today)
   ("li" orb-insert-link)
   ("s" org-roam-ui-mode)
+	("t" org-roam-alias-add)
   ("u" org-roam-db-sync)
 	)
 #+END_SRC
