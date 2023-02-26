@@ -10423,7 +10423,9 @@ https://github.com/cjohansson/emacs-ssh-deploy
 
 Nice examples:
 https://github.com/rubensts/.emacs.d#hydra
-https://github.com/jojojames/hydra-integrations
+https://github.com/jojojames/hydra-integrations (Deprecated, moved to Transient)
+
+Comparison of Transient and Hydra (by the author of Transient): https://magit.vc/manual/transient/Comparison-With-Other-Packages.html#Hydra
 
 ** hydra: begin
 
@@ -12212,6 +12214,11 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("q" nil :color blue)
 	)
 #+END_SRC
+
+** TODO hydra-mu4e
+:LOGBOOK:
+- State "TODO"       from              [2023-02-26 Sun 23:08]
+:END:
 
 ** hydra-flycheck
 
