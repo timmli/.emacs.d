@@ -6603,14 +6603,20 @@ Open eml-files with =org-mode= turned on:
 (add-to-list 'auto-mode-alist '("\\.eml\\'" . org-mode))
 #+END_SRC
 
-**** mu4e 
+**** TODO mu4e 
 :LOGBOOK:
+- State "TODO"       from              [2023-02-26 Sun 19:49]
 - State "INPROGRESS" from              [2020-12-18 Fri 00:21]
 :END:
 
 https://www.djcbsoftware.nl/code/mu/mu4e/index.html
 https://github.com/djcb/mu
 https://github.com/djcb/mu/releases/tag/1.6.0
+
+Note that it is recommended to use the version of mu4e that is shipped together with the installed mu.
+
+Issues:
+- [ ] update to v1.8
 
 See https://github.com/munen/emacs.d/#mu4e for an elaborate example configuration.
 
