@@ -3434,8 +3434,9 @@ Example of how it works: https://blog.jethro.dev/posts/how_to_take_smart_notes_o
 	(require 'org-roam-protocol)
 	(setq org-roam-tag-sources '(prop vanilla)
 				org-roam-index-file (expand-file-name "index.org" org-roam-directory)
+				org-roam-node-template-prefixes '(("tags" . "#")("todo" . ""))
 				org-roam-node-display-template
-				(concat "${title:*} " (propertize "${tags:50}" 'face 'org-tag)) ; add tags to org-roam-node-find
+				(concat "${todo:10} ${title:*} " (propertize "${tags:50}" 'face 'org-tag)) ; add tags to org-roam-node-find
 				))
 #+END_SRC
 
