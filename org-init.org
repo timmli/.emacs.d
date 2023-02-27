@@ -11592,18 +11592,22 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
      _b_ backlinks                      _a_ add alias                 _g_ show graph
      _c_ capture                        _i_ insert link               _s_ start UI server    
      _d_ dailies                       _li_ insert citation link      _u_ update db    
-     _f_ find note										  _t_ add tag			                   
-     _F_ full-text search                ^^                           ^^                          _q_:uit   
-  "
+     		 _<_ previous day   					  _t_ add tag			                   
+         _>_ next day                   ^^                           ^^                          _q_:uit   
+     _f_ find note			 
+  	 _F_ full-text search
+"
   ("q" nil)
 	("a" org-roam-alias-add)
-  ("f" org-roam-node-find)
-	("F" tl/search-in-org-roam-files)
 	("b" org-roam-buffer-toggle)
-  ("i" org-roam-node-insert)
-  ("g" org-roam-graph)
   ("c" org-roam-capture)
   ("d" org-roam-dailies-goto-today)
+	("<" org-roam-dailies-goto-previous-note :color red)
+	(">" org-roam-dailies-goto-next-note :color red)
+  ("f" org-roam-node-find)
+	("F" tl/search-in-org-roam-files)
+  ("g" org-roam-graph)
+  ("i" org-roam-node-insert)
   ("li" orb-insert-link)
   ("s" org-roam-ui-mode)
 	("t" org-roam-alias-add)
