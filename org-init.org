@@ -9676,6 +9676,10 @@ Helper function to export org-agenda-files to one icalendar file:
 
 *** ripgrep
 
+https://github.com/dajva/rg.el
+
+Use [[https://github.com/BurntSushi/ripgrep][ripgrep]] in Emacs.
+
 #+BEGIN_SRC emacs-lisp
 (use-package rg
   :ensure t
@@ -9795,6 +9799,8 @@ Version 2015-07-24"
 
 ** projectile
 
+https://projectile.mx/
+
 Project management based on Git repositories.
 
 #+BEGIN_SRC emacs-lisp
@@ -9862,6 +9868,10 @@ Goto other window:
 
 ** COMMENT golden-ratio
 
+https://github.com/roman/golden-ratio.el
+
+Automatically resize windows in a frame.
+
 #+BEGIN_SRC emacs-lisp
 (use-package golden-ratio
   :ensure t
@@ -9872,6 +9882,10 @@ Goto other window:
 
 ** transpose-frame
 
+https://www.emacswiki.org/emacs/TransposeFrame
+
+Interactive functions which allow users to transpose windows arrangement in currently selected frame.
+
 #+BEGIN_SRC emacs-lisp
 (use-package transpose-frame
   :ensure t
@@ -9881,6 +9895,9 @@ Goto other window:
 
 ** COMMENT sr-speedbar
 
+https://melpa.org/#/sr-speedbar
+
+A speedbar for Emacs.
 I don't use this right now.  
 
 #+BEGIN_SRC emacs-lisp
@@ -10343,6 +10360,8 @@ A Helm interface to the package manager of your operating system.
 
 ** etags
 
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Tags-Tables.html
+
 =etags= is part of Emacs.
 
 ** TODO COMMENT GLOBAL
@@ -10431,6 +10450,10 @@ https://github.com/cjohansson/emacs-ssh-deploy
 * Help
 
 ** helpful
+
+https://github.com/Wilfred/helpful
+
+A better help buffer.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helpful
