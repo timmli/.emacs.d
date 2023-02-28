@@ -91,11 +91,8 @@
 - [[#kill-ring][Kill ring]]
 - [[#shells][Shells]]
       - [[#better-shell][better-shell]]
-      - [[#windows-powershell][Windows powershell]]
       - [[#eshell][eshell]]
       - [[#external-terminal][External terminal]]
-      - [[#windows-cmd][Windows cmd]]
-      - [[#bash][Bash]]
       - [[#vterm][vterm]]
 - [[#encryption][Encryption]]
       - [[#gnupg][GnuPG]]
@@ -138,6 +135,7 @@
       - [[#hydra-latex][hydra-latex]]
       - [[#hydra-macro][hydra-macro]]
       - [[#hydra-markdown][hydra-markdown]]
+      - [[#hydra-mu4e][hydra-mu4e]]
       - [[#hydra-flycheck][hydra-flycheck]]
       - [[#hydra-flyspell][hydra-flyspell]]
       - [[#hydra-compilation-error][hydra-compilation-error]]
@@ -10166,6 +10164,10 @@ Version 2017-06-19"
 
 ** better-shell
 
+https://github.com/killdash9/better-shell
+
+Better-shell simplifies shell management and sudo access.
+
 #+BEGIN_SRC emacs-lisp
 (use-package better-shell
     :ensure t
@@ -10174,17 +10176,11 @@ Version 2017-06-19"
 		)
 #+END_SRC
 
-** Windows powershell
-
-#+BEGIN_SRC emacs-lisp
-(if (eq system-type 'windows-nt)
-		(use-package powershell
-			:ensure t)
-)
-(put 'upcase-region 'disabled nil)
-#+END_SRC
-
 ** eshell
+
+https://www.gnu.org/software/emacs/manual/html_mono/eshell.html
+
+Some tweaks of the built-in Eshell.
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'eshell-mode-hook
@@ -10218,35 +10214,6 @@ See discussion [[https://emacs.stackexchange.com/a/7652/12336][here]].
 												 " > /dev/null 2>&1 & disown") nil nil))
 #+END_SRC
 
-** COMMENT WSL  bash
-
-#+BEGIN_SRC emacs-lisp
-(when (and (eq system-type 'windows-nt)
-					 (executable-find "bash"))
-	(setq explicit-shell-file-name "bash") 	; WSL bash
-	(setq shell-file-name explicit-shell-file-name))
-#+END_SRC
-
-** Windows cmd
-
-#+BEGIN_SRC emacs-lisp
-(when (and 
-			 (eq system-type 'windows-nt)
-			 (executable-find "cmdproxy"))
-	(setq explicit-shell-file-name "cmdproxy") 
-	(setq shell-file-name explicit-shell-file-name)
-	(setq shell-command-switch "-c")
-	(setq w32-quote-process-args t))
-#+END_SRC
-
-** Bash
-
-Bash support in =org-mode=:
-
- #+BEGIN_SRC emacs-lisp
-;; (org-babel-do-load-languages  'org-babel-load-languages '((shell . t)))
-#+END_SRC
-
 ** vterm
 
 https://github.com/akermu/emacs-libvterm
@@ -10278,6 +10245,37 @@ if [[ "$INSIDE_EMACS" = 'vterm' ]] \
     && [[ -f ${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh ]]; then
 	source ${EMACS_VTERM_PATH}/etc/emacs-vterm-bash.sh
 fi' >> ~/.bashrc  
+#+END_SRC
+
+** COMMENT Windows powershell
+
+#+BEGIN_SRC emacs-lisp
+(if (eq system-type 'windows-nt)
+		(use-package powershell
+			:ensure t)
+)
+(put 'upcase-region 'disabled nil)
+#+END_SRC
+
+** COMMENT WSL  bash
+
+#+BEGIN_SRC emacs-lisp
+(when (and (eq system-type 'windows-nt)
+					 (executable-find "bash"))
+	(setq explicit-shell-file-name "bash") 	; WSL bash
+	(setq shell-file-name explicit-shell-file-name))
+#+END_SRC
+
+** COMMENT Windows cmd
+
+#+BEGIN_SRC emacs-lisp
+(when (and 
+			 (eq system-type 'windows-nt)
+			 (executable-find "cmdproxy"))
+	(setq explicit-shell-file-name "cmdproxy") 
+	(setq shell-file-name explicit-shell-file-name)
+	(setq shell-command-switch "-c")
+	(setq w32-quote-process-args t))
 #+END_SRC
 
 * Encryption
