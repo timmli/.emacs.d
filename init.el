@@ -170,6 +170,12 @@ This variable should be changed in private-emacs-settings.el.")
 	"Path to the user directory of notes belonging to the bibliography.
 This variable should be changed in private-emacs-settings.el.")
 
+(defvar user-deepl-key
+	"key"
+	"Authentication Key for DeepL API
+This variable should be changed in private-emacs-settings.el.")
+
+
 ;; load file with private settings before generic settings
 (let ((private-settings-file (expand-file-name "private-emacs-settings-before.el" private-emacs-settings-dir)))
 	(when (file-exists-p private-settings-file)

@@ -9337,6 +9337,33 @@ Call dictcc with word under cursor or marked region:
 (global-set-key (kbd "C-0") 'tl/dictcc-at-point)
 #+END_SRC
 
+*** go-translate
+
+https://github.com/lorniu/go-translate
+
+Translation framework for Emacs.
+
+#+BEGIN_SRC emacs-lisp
+(use-package go-translate
+:ensure t
+:config
+(setq gts-translate-list '(("de" "en")))
+
+;; (setq gts-default-translator (gts-translator :engines (gts-bing-engine)))
+
+(setq gts-default-translator
+      (gts-translator
+       :picker (gts-prompt-picker)
+       :engines (list 
+								 ;; (gts-bing-engine)
+      					 (gts-deepl-engine :auth-key user-deepl-key :pro nil)
+								 ;; (gts-google-engine)
+								 ;; (gts-google-rpc-engine)
+								 )
+       :render (gts-buffer-render)))
+)
+#+END_SRC
+
 *** TODO COMMENT txl
 :LOGBOOK:
 - State "TODO"       from              [2021-08-01 Sun 15:47]
@@ -10829,10 +10856,11 @@ This presupposes a running Jupyter server on localhost."
     --------------------------------^^-----------------------------^^-----------------------
       [_a_] mark all                 [_c_] highlight changes        [_b_] add bookmark
       [_r_] mark rectangular         [_s_] highlight same symbols   [_p_] position register
-      [_e_] edit same symbol         [_g_] git gutter               [_t_] tags                      
+      [_e_] edit same symbol         [_g_] git gutter                                     
       [_s_] highlight same symbols   [_w_] show/hide whitespaces                                       
       [_(_] key macro                [_o_] highlight with overlays
-      [_*_] critic markup                                                     [_q_]uit
+      [_*_] critic markup                                           
+      [_t_] translate                ^^                             [_q_]uit
 	"
 	("a" mark-whole-buffer :exit t)
 	("g" hydra-git-gutter/body :exit t)
@@ -10843,7 +10871,8 @@ This presupposes a running Jupyter server on localhost."
 	("o" ov-highlight/body :exit t)
   ("p" hydra-position-register/body :exit t)
 	("s" hydra-highlight-symbol/body :exit t)
-	("t" hydra-tags/body :exit t)
+	;; ("t" hydra-tags/body :exit t)
+  ("t" gts-do-translate :exit t)
 	("w" whitespace-mode :exit t)
 	("(" hydra-macro/body :exit t)
 	("m" hydra-macro/body :exit t)
