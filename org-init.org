@@ -1934,9 +1934,34 @@ There are two standard ways of archiving headings in Org:
 1. [[https://orgmode.org/manual/Moving-subtrees.html][Moving a tree to an archive file]]
 2. [[https://orgmode.org/manual/Internal-archiving.html][Internal archiving]] using the =ARCHIVE= tag
 
-Preserves the first heading of the org-mode file and the inherited tags (found in http://orgmode.org/worg/org-hacks.html#orgheadline59):
+Preserves the first heading of the org-mode file (found in https://orgmode.org/worg/org-hacks.html#org58038ec):
 
 #+BEGIN_SRC emacs-lisp
+(defadvice org-archive-subtree (around my-org-archive-subtree activate)
+  (let ((org-archive-location
+         (if (save-excursion (org-back-to-heading)
+                             (> (org-outline-level) 1))
+             (concat (car (split-string org-archive-location "::"))
+                     "::* "
+                     (car (org-get-outline-path)))
+           org-archive-location)))
+    ad-do-it))
+#+END_SRC
+
+Keep inherited tags of archived headings (found in https://orgmode.org/worg/org-hacks.html#org4449edf):
+Deactivated for now.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(defadvice org-archive-subtree
+  (before add-inherited-tags-before-org-archive-subtree activate)
+    "add inherited tags before org-archive-subtree"
+    (org-set-tags-to (org-get-tags-at)))
+#+END_SRC
+
+Preserves the first heading of the org-mode file and the inherited tags (found in https://orgmode.org/worg/org-hacks.html#org58038ec):
+Deactivated because =org-extract-archive-file= is not found. 
+
+#+BEGIN_SRC emacs-lisp :tangle no
 (defun my-org-inherited-no-file-tags ()
   (let ((tags (org-entry-get nil "ALLTAGS" 'selective))
         (ltags (org-entry-get nil "TAGS")))
