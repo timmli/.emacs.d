@@ -3496,6 +3496,16 @@ Yet I clearly prefer [[helm-org-rifle]] using the following function:
 
 This is added to [[hydra-org-roam]].
 
+
+**** Archiving
+
+In org-roam, you most probably end up either with a large number of small files, or with a small number of large files. Maintaining large files in org-roam is disadvantageous, because DB update takes longer and the long tail of unchanged headings with an ID will litter org-roam-find-file.  
+
+Since internal [[Archiving][archiving]] (by adding the tag ARCHIVE) is not recognized in org-roam, I decided using external archiving to keep working files lean.
+
+Plan
+- [ ] Optionally add archive files to search tools like helm-rifle 
+
 **** org-roam-protocol
 
 https://www.orgroam.com/manual.html#Org_002droam-Protocol
