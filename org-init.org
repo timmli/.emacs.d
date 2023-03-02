@@ -9611,8 +9611,8 @@ Search for org-mode files recursively:
 					 (setq output 
 								 (append output
 												 (-filter 								; filter files with org-extension
-													(lambda (x) (not (string-match "#" x))) 
-													(file-expand-wildcards (concat dir "*.org"))))))
+													(lambda (x) (not (string-match "#" x))) ; does not contain #-symbol
+													(file-expand-wildcards (concat dir "*.org*")))))) ; also include files with extension .org_archive 
 				 (dolist (file (directory-files dir nil nil t))
 					 (unless (member file '("." ".."))
 						 (let ((file (concat dir file "/")))
