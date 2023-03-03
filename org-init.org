@@ -6648,10 +6648,12 @@ https://github.com/djcb/mu/releases/tag/1.6.0
 
 Note that it is recommended to use the version of mu4e that is shipped together with the installed mu.
 
+Good examples of elaborate mu4e configurations:
+- https://config.daviwil.com/mail
+- https://github.com/munen/emacs.d/#mu4e
+
 Issues:
 - [ ] update to v1.8
-
-See https://github.com/munen/emacs.d/#mu4e for an elaborate example configuration.
 
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path (expand-file-name "lisp/mu4e" user-emacs-directory))
