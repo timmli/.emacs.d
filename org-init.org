@@ -915,9 +915,6 @@ Helm frontend for [[https://github.com/djcb/mu][Mu]] and [[mu4e]].
   :ensure t
   ;; :bind
   ;; (("C-c h h c" . 'helm-mu-contacts)
-  ;;  (:map mu4e-main-mode-map ("s" . 'helm-mu))
-  ;;  (:map mu4e-headers-mode-map ("s" . 'helm-mu))
-  ;;  (:map mu4e-view-mode-map ("s" . 'helm-mu))
 	;;  (mu4e-search-minor-mode-map "s" 'helm-mu))
 :config
 (setq helm-mu-append-implicit-wildcard t
@@ -6843,7 +6840,7 @@ Taken from https://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired.
 
 ***** Search messages
 
-There is a built-in search, but I prefer [[helm-mu]], which allows for incremental search.
+There is a built-in search, but I prefer [[helm-mu]], which allows for incremental search of mails and contacts.
 
 ***** COMMENT Multiple accounts 
 
