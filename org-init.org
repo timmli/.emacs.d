@@ -904,6 +904,29 @@ Does not work under windows so far.
 		:ensure t))
 #+END_SRC
 
+*** helm-mu
+
+https://github.com/emacs-helm/helm-mu
+
+Helm frontend for [[https://github.com/djcb/mu][Mu]] and [[mu4e]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-mu
+  :ensure t
+  ;; :bind
+  ;; (("C-c h h c" . 'helm-mu-contacts)
+  ;;  (:map mu4e-main-mode-map ("s" . 'helm-mu))
+  ;;  (:map mu4e-headers-mode-map ("s" . 'helm-mu))
+  ;;  (:map mu4e-view-mode-map ("s" . 'helm-mu))
+	;;  (mu4e-search-minor-mode-map "s" 'helm-mu))
+:config
+(setq helm-mu-append-implicit-wildcard t
+			helm-mu-default-search-string "(maildir:/INBOX OR maildir:/Sent)"
+			helm-mu-contacts-personal t	 ; Only show contacts who sent you emails directly
+			;; helm-mu-gnu-sed-program "gsed"
+			))
+#+END_SRC
+
 *** helm-org-rifle 
 
 https://github.com/alphapapa/org-rifle
@@ -6817,6 +6840,10 @@ Taken from https://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired.
 (setq gnus-dired-mail-mode 'mu4e-user-agent)
 (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
 #+END_SRC
+
+***** Search messages
+
+There is a built-in search, but I prefer [[helm-mu]], which allows for incremental search.
 
 ***** COMMENT Multiple accounts 
 
