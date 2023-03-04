@@ -11690,16 +11690,17 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
     ^^                                ^^                            ^^                          ╭──────────┐
      ^Navigation between notes^        ^Actions inside note^         ^General actions^          │ org-roam │
 	╭─^^────────────────────────────────^^────────────────────────────^^──────────────────────────┴──────────╯
-     _b_ backlinks                      _a_ add alias                 _g_ show graph
-     _c_ capture                        _i_ insert link               _s_ start UI server    
-     _d_ dailies                       _li_ insert citation link      _u_ update db    
-     		 _<_ previous day   					  _t_ add tag			                   
-         _>_ next day                   ^^                           ^^                          _q_:uit   
-     _f_ find note			 
-  	 _F_ full-text search
+     _b_ Backlinks                      _a+_ Add alias                 _g_ Show graph
+     _c_ Capture                        _a-_ Remove alias              _s_ Start UI server    
+     _d_ Dailies                         _i_ Insert link               _u_ Update db    
+     		 _<_ Previous day   				    _li_ Insert citation link           
+         _>_ Next day                	  _t+_ Add tag			             ^^                          _q_:uit   
+     _f_ Find note			 						    _t-_ Remove tag                      
+  	 _F_ Full-text search                _S_ Subtree to file
 "
   ("q" nil)
-	("a" org-roam-alias-add)
+	("a+" org-roam-alias-add)
+	("a-" org-roam-alias-remove)
 	("b" org-roam-buffer-toggle)
   ("c" org-roam-capture)
   ("d" org-roam-dailies-goto-today)
@@ -11711,7 +11712,9 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
   ("i" org-roam-node-insert)
   ("li" orb-insert-link)
   ("s" org-roam-ui-mode)
-	("t" org-roam-alias-add)
+	("t+" org-roam-alias-add)
+	("t-" org-roam-alias-remove)
+	("S" org-roam-extract-subtree)
   ("u" org-roam-db-sync)
 	)
 #+END_SRC
