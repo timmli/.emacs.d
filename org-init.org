@@ -750,7 +750,7 @@ https://github.com/EphramPerdition/helm-fuzzier
 Improves fuzzy matching even more by taking more candidates into account.
 
 Issues:
-- With helm v3.6.4, =helm-fuzzier= breaks the display of candidates in =helm-find-files=.
+- [ ] With helm v3.6.4, =helm-fuzzier= breaks the display of candidates in =helm-find-files=.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-fuzzier
@@ -762,8 +762,11 @@ Issues:
 
 *** helm-descbinds
 
+https://github.com/emacs-helm/helm-descbinds
+
+List active key bindings.
+
 #+BEGIN_SRC emacs-lisp
-;; list active key bindings 
 (use-package helm-descbinds
 	:ensure t
   :bind ("C-h b" . helm-descbinds))
@@ -824,9 +827,9 @@ Search buffer while showing matches in a separate buffer.
 
 *** swiper-helm 
 
-Swiper with Helm backend.
-
 https://github.com/abo-abo/swiper-helm
+
+Swiper with Helm backend.
 
 Issues:
 - [ ] Error: "swiper-helm: Cannot open load file: No such file or directory, helm-match-plugin"
@@ -839,6 +842,9 @@ Issues:
 
 *** helm-dash
 
+https://github.com/dash-docs-el/helm-dash
+
+Browse [[https://www.kapeli.com/dash][Dash]] docsets with helm. 
 =helm-dash= depends on =sqlite3= which you probably have to install manually:
 http://sqlite.org/download.html
 
@@ -853,11 +859,11 @@ http://sqlite.org/download.html
 	(add-hook 'latex-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
 	(add-hook 'TeX-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
 	(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Emacs Lisp"))))
-	(add-hook 'js2-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("JavaScript"))))
+	;; (add-hook 'js2-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("JavaScript"))))
 	(add-hook 'org-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Org_Mode"))))
 	(add-hook 'plantuml-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("PlantUML"))))
 	(add-hook 'sh-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Bash"))))
-	(add-hook 'perl-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Perl"))))
+	;; (add-hook 'perl-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Perl"))))
 	(add-hook 'python-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Python 3" "SciPy" "NumPy"))))
 	:bind
 	(("C-h d" . helm-dash))
@@ -984,12 +990,7 @@ Issues:
 
 ** Keys
 
-#+BEGIN_SRC emacs-lisp
-(use-package which-key
-	:ensure t
-	:config
-	(which-key-mode))
-#+END_SRC
+*** General settings
 
 #+BEGIN_SRC emacs-lisp
 ;; M-x in minibuffer quits the minibuffer
@@ -1015,6 +1016,19 @@ Issues:
 ;; (global-set-key (kbd "C-x C-b") 'switch-to-buffer) ; instead of 'list-buffers (see helm)
 ;; (global-set-key (kbd "C-x b") 'ibuffer)
 (global-set-key (kbd "C-x C-k") 'kill-buffer)  
+#+END_SRC
+
+*** which-key
+
+https://github.com/justbur/emacs-which-key
+
+Show possible completions of entered key sequences.
+
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+	:ensure t
+	:config
+	(which-key-mode))
 #+END_SRC
 
 * Major modes
