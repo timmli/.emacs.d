@@ -3470,7 +3470,10 @@ Knowledge management system similar to Roam and Zettelkästen. This configuratio
 
 Example of how it works: https://blog.jethro.dev/posts/how_to_take_smart_notes_org/
 
-**** Installation & configuration
+**** TODO Installation & configuration
+
+Issues
+- [ ] The face specified with propertize is not shown in org-roam-find-file.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-roam
@@ -3490,11 +3493,25 @@ Example of how it works: https://blog.jethro.dev/posts/how_to_take_smart_notes_o
               (("C-c n I" . org-roam-insert-immediate)))
 	:config
 	(require 'org-roam-protocol)
+
 	(setq org-roam-tag-sources '(prop vanilla)
-				org-roam-index-file (expand-file-name "index.org" org-roam-directory)
-				org-roam-node-template-prefixes '(("tags" . "#")("todo" . ""))
+				org-roam-index-file (expand-file-name "index.org" org-roam-directory))
+	;; The following adds a hierarchy view to org-roam-node-display-template
+	;; Taken from: https://github.com/org-roam/org-roam/wiki/User-contributed-Tricks#showing-node-hierarchy
+	(cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
+		(let ((level (org-roam-node-level node)))
+			(concat
+			 (when (> level 0) (concat (org-roam-node-file-title node) " > "))
+			 (when (> level 1) (concat (string-join (org-roam-node-olp node) " > ") " > "))
+			 (org-roam-node-title node))))
+	;; Setting the disply of org-roam-node-find
+	(setq org-roam-node-template-prefixes '(("tags" . "#")("todo" . ""))
 				org-roam-node-display-template
-				(concat "${todo:10} ${title:*} " (propertize "${tags:50}" 'face 'org-tag)) ; add tags to org-roam-node-find
+				(concat
+				 "${todo:10} "
+				 ;; "${title:*} "
+				 "${hierarchy:*}"													 ; provided by org-roam-node-hierarchy
+				 (propertize "${tags:50}" 'face 'org-tag)) ; add tags to org-roam-node-find
 				))
 #+END_SRC
 
@@ -3530,7 +3547,6 @@ Yet I clearly prefer [[helm-org-rifle]] using the following function:
 #+END_SRC
 
 This is added to [[hydra-org-roam]].
-
 
 **** Archiving
 
