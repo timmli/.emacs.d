@@ -6676,8 +6676,6 @@ A typing tutor inspired by [[https://monkeytype.com/][monkeytype.com]].
 
 *** Email
 
-Offlineimap or mbsync? http://pragmaticemacs.com/emacs/migrating-from-offlineimap-to-mbsync-for-mu4e/
-
 **** Interoperability with Thunderbird 
 
 The [[https://github.com/exteditor/exteditor][Exteditor]] plugin can be used in Thunderbird in order to open and edit an email in Emacs.
@@ -6698,6 +6696,9 @@ https://github.com/djcb/mu
 https://github.com/djcb/mu/releases/tag/1.6.0
 
 Note that it is recommended to use the version of mu4e that is shipped together with the installed mu.
+
+Mu4e and Mu do not synchronize local and remote mailboxes. Below I'm assuming that  [[https://isync.sourceforge.io/][mbsync]] is used for this purpose. (A popular alternative might be [[http://www.offlineimap.org/][offlineimap]].) The following tutorial gives an idea how to set up mbsync: 
+- http://pragmaticemacs.com/emacs/migrating-from-offlineimap-to-mbsync-for-mu4e/
 
 Good examples of elaborate mu4e configurations:
 - https://config.daviwil.com/mail
