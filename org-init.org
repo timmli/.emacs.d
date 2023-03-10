@@ -3510,7 +3510,7 @@ Issues
 				(concat
 				 "${todo:10} "
 				 ;; "${title:*} "
-				 "${hierarchy:*}"													 ; provided by org-roam-node-hierarchy
+				 "${hierarchy:*} "			 ; provided by org-roam-node-hierarchy
 				 (propertize "${tags:50}" 'face 'org-tag)) ; add tags to org-roam-node-find
 				))
 #+END_SRC
