@@ -6686,10 +6686,6 @@ Open eml-files with =org-mode= turned on:
 #+END_SRC
 
 **** TODO mu4e 
-:LOGBOOK:
-- State "TODO"       from              [2023-02-26 Sun 19:49]
-- State "INPROGRESS" from              [2020-12-18 Fri 00:21]
-:END:
 
 https://www.djcbsoftware.nl/code/mu/mu4e/index.html
 https://github.com/djcb/mu
@@ -6707,48 +6703,16 @@ Good examples of elaborate mu4e configurations:
 Issues:
 - [ ] update to v1.8
 
+***** Installation & general settings
+
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path (expand-file-name "lisp/mu4e" user-emacs-directory))
 (require 'mu4e)
-(require 'org-mu4e)
-(setq send-mail-function 'smtpmail-send-it)
 
-;; Default account on startup
-(setq
- mu4e-mu-home "~/.cache/mu" 			; as of v1.4
- ;; mu4e-maildir  "~/Maildir" ; deprecated in v1.4
- mu4e-sent-folder "/Sent"
- mu4e-drafts-folder "/Drafts"
- mu4e-trash-folder "/Trash")
-
-(setq smtpmail-debug-info t
-      mu4e-get-mail-command "mbsync -c ~/SOME_PATH/.mbsyncrc work"
-      ;; mu4e-attachment-dir "~/SOME_PATH/attachements"
-)
-
-;; Message viewer settings
-;; (setq mu4e-view-use-old t)							; use Gnus; since v1.6
-;; (setq mu4e-view-use-gnus t)						; deprecated in v1.6
-
-;; show full addresses in view message (instead of just names)
-;; toggle per name with M-RET
-(setq mu4e-view-show-addresses t)
-
-;; Update mails every 5 minutes and in the background
-(setq mu4e-update-interval (* 5 60))
-(setq mu4e-index-update-in-background t)
-
-;; Always sign outgoing emails
-;; (setq mu4e-compose-crypto-reply-plain-policy 'sign)
-
-;; Automatic line breaks when reading mail
-(add-hook 'mu4e-view-mode-hook 'visual-line-mode)
-
+;; Store org-mode links to messages
+(require 'org-mu4e)											
 ;; Store link to message if in header view, not to header query.
 (setq org-mu4e-link-query-in-headers-mode nil)
-
-;; Customize header fields to show in mu4e-view. This only adds :bcc.
-(setq mu4e-view-fields '(:from :to :cc :bcc :subject :flags :date :maildir :mailing-list :tags :attachments :signature :decryption))
 
 ;; Close mu4e without asking.
 (setq mu4e-confirm-quit nil)
@@ -6757,10 +6721,123 @@ Issues:
 (setq mu4e-headers-date-format "%+4Y-%m-%d")
 
 ;; This allows for using 'helm' to select mailboxes
-(setq mu4e-completing-read-function 'completing-read
+(setq mu4e-completing-read-function 'completing-read)
+
+;; Keybindings
+(define-key mu4e-headers-mode-map (kbd "M") #'mu4e)
+(define-key mu4e-view-mode-map (kbd "M") #'mu4e)
+(define-key mu4e-compose-mode-map (kbd "M") #'mu4e)
+#+END_SRC
+
+***** Accounts
+
+#+BEGIN_SRC emacs-lisp
+;; Default account on startup
+(setq
+ mu4e-mu-home "~/.cache/mu" 			; as of v1.4
+ ;; mu4e-maildir  "~/Maildir" ; deprecated in v1.4
+ mu4e-sent-folder "/Sent"
+ mu4e-drafts-folder "/Drafts"
+ mu4e-trash-folder "/Trash")
+
+(setq mu4e-get-mail-command "mbsync -c ~/SOME_PATH/.mbsyncrc work"
+      ;; mu4e-attachment-dir "~/SOME_PATH/attachements"
 )
-;; Leave sent message
-(setq message-kill-buffer-on-exit t)
+
+;; Update mails every 5 minutes and in the background
+(setq mu4e-update-interval (* 5 60))
+(setq mu4e-index-update-in-background t)
+
+;; Always sign outgoing emails
+;; (setq mu4e-compose-crypto-reply-plain-policy 'sign)
+#+END_SRC
+
+***** Contexts
+
+Contexts are bundles of settings that can, for example, represent different mail accounts. Contexts are defined in =mu4e-context=, see the manual for details: https://www.djcbsoftware.nl/code/mu/mu4e/What-are-contexts.html
+
+The context can be chosen automatically or manually. This is controlled by the variables =mu4e-context-policy= and =compose-context-policy=. See the manual for more details: https://www.djcbsoftware.nl/code/mu/mu4e/Context-policies.html
+
+#+BEGIN_SRC emacs-lisp
+(setq mu4e-context-policy 'always-ask
+			mu4e-compose-context-policy 'always-ask)
+#+END_SRC
+
+Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts-example.html) for how contexts are specified:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+ (setq mu4e-contexts
+    `( ,(make-mu4e-context
+          :name "Private"
+          :enter-func (lambda () (mu4e-message "Entering Private context"))
+          :leave-func (lambda () (mu4e-message "Leaving Private context"))
+          ;; we match based on the contact-fields of the message
+          :match-func (lambda (msg)
+                        (when msg
+                          (mu4e-message-contact-field-matches msg
+                            :to "aliced@home.example.com")))
+          :vars '( ( user-mail-address	    . "aliced@home.example.com"  )
+                   ( user-full-name	    . "Alice Derleth" )
+                   ( message-user-organization . "Homebase" )
+                   ( mu4e-compose-signature .
+                     (concat
+                       "Alice Derleth\n"
+                       "Lauttasaari, Finland\n"))))
+       ,(make-mu4e-context
+          :name "Work"
+          :enter-func (lambda () (mu4e-message "Switch to the Work context"))
+          ;; no leave-func
+          ;; we match based on the maildir of the message
+          ;; this matches maildir /Arkham and its sub-directories
+          :match-func (lambda (msg)
+                        (when msg
+                          (string-match-p "^/Arkham" (mu4e-message-field msg :maildir))))
+          :vars '( ( user-mail-address	     . "aderleth@miskatonic.example.com" )
+                   ( user-full-name	     . "Alice Derleth" )
+                   ( message-user-organization . "Miskatonic University" )
+                   ( mu4e-compose-signature  .
+                     (concat
+                       "Prof. Alice Derleth\n"
+                       "Miskatonic University, Dept. of Occult Sciences\n"))))
+
+       ,(make-mu4e-context
+          :name "Cycling"
+          :enter-func (lambda () (mu4e-message "Switch to the Cycling context"))
+          ;; no leave-func
+          ;; we match based on the maildir of the message; assume all
+          ;; cycling-related messages go into the /cycling maildir
+          :match-func (lambda (msg)
+                        (when msg
+                          (string= (mu4e-message-field msg :maildir) "/cycling")))
+          :vars '( ( user-mail-address	     . "aderleth@example.com" )
+                   ( user-full-name	     . "AliceD" )
+                   ( mu4e-compose-signature  . nil)))))
+
+  ;; set `mu4e-context-policy` and `mu4e-compose-policy` to tweak when mu4e should
+  ;; guess or ask the correct context, e.g.
+
+  ;; start with the first (default) context;
+  ;; default is to ask-if-none (ask when there's no context yet, and none match)
+  ;; (setq mu4e-context-policy 'pick-first)
+
+  ;; compose with the current context is no context matches;
+  ;; default is to ask
+  ;; (setq mu4e-compose-context-policy nil)
+#+END_SRC
+
+***** View messages
+
+#+BEGIN_SRC emacs-lisp
+;; Message viewer settings
+;; (setq mu4e-view-use-old t)							; use Gnus; since v1.6
+;; (setq mu4e-view-use-gnus t)						; deprecated in v1.6
+
+;; show full addresses in view message (instead of just names)
+;; toggle per name with M-RET
+(setq mu4e-view-show-addresses t)
+
+;; Customize header fields to show in mu4e-view. This only adds :bcc.
+(setq mu4e-view-fields '(:from :to :cc :bcc :subject :flags :date :maildir :mailing-list :tags :attachments :signature :decryption))
 
 ;; Show images inline
 (setq mu4e-view-show-images t)
@@ -6783,15 +6860,8 @@ Issues:
 (setq mu4e-split-view 'horizontal)
 ;; (mu4e-headers-split-view-grow 50)
 
-(add-hook 'mu4e-headers-mode-hook
-					#'(lambda ()
-							(setq-local truncate-lines t)
-							(mu4e-headers-split-view-grow 50)))
-
-;; Keybindings
-(define-key mu4e-headers-mode-map (kbd "M") #'mu4e)
-(define-key mu4e-view-mode-map (kbd "M") #'mu4e)
-(define-key mu4e-compose-mode-map (kbd "M") #'mu4e)
+;; Automatic line breaks when reading mail
+(add-hook 'mu4e-view-mode-hook 'visual-line-mode)
 #+END_SRC
 
 ***** Compose messages
@@ -6831,9 +6901,18 @@ Issues:
 (setq message-citation-line-function 'tl/message-insert-citation-line)
 ;; Alternatively, see https://www.djcbsoftware.nl/code/mu/mu4e/Writing-messages.html
 ;; (setq  message-citation-line-format "On %Y-%m-%d at %R %Z, %f wrote...")
+
+;; Look of mail headers
+(add-hook 'mu4e-headers-mode-hook
+					#'(lambda ()
+							(setq-local truncate-lines t)
+							(mu4e-headers-split-view-grow 50)))
+
+;; Leave sent message after sending
+(setq message-kill-buffer-on-exit t)
 #+END_SRC
 
-Attachments can be included directly from [[*dired][=dired=]] with the help of =gnus=. 
+Attachments can be included directly from [[*dired][dired]] with the help of =gnus=. 
 
 Taken from https://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired.
 
@@ -6854,6 +6933,13 @@ Taken from https://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired.
 
 (setq gnus-dired-mail-mode 'mu4e-user-agent)
 (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
+#+END_SRC
+
+***** Send messages
+
+#+BEGIN_SRC emacs-lisp
+(setq send-mail-function 'smtpmail-send-it
+			smtpmail-debug-info t)
 #+END_SRC
 
 ***** Search messages
