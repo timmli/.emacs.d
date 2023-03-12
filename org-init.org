@@ -6709,7 +6709,7 @@ Issues:
 (add-to-list 'load-path (expand-file-name "lisp/mu4e" user-emacs-directory))
 (require 'mu4e)
 
-;; Store org-mode links to messages
+;; Load org-mode integration
 (require 'org-mu4e)											
 ;; Store link to message if in header view, not to header query.
 (setq org-mu4e-link-query-in-headers-mode nil)
@@ -6752,6 +6752,13 @@ Issues:
 ;; (setq mu4e-compose-crypto-reply-plain-policy 'sign)
 #+END_SRC
 
+Note that each mail account must be indexed by mu before it can be accessed with mu4e:
+
+#+BEGIN_SRC bash :tangle no
+mu init --maildir=~/SOME_PATH/mbsyncmail/
+mu index
+#+END_SRC
+
 ***** Contexts
 
 Contexts are bundles of settings that can, for example, represent different mail accounts. Contexts are defined in =mu4e-context=, see the manual for details: https://www.djcbsoftware.nl/code/mu/mu4e/What-are-contexts.html
@@ -6759,8 +6766,8 @@ Contexts are bundles of settings that can, for example, represent different mail
 The context can be chosen automatically or manually. This is controlled by the variables =mu4e-context-policy= and =compose-context-policy=. See the manual for more details: https://www.djcbsoftware.nl/code/mu/mu4e/Context-policies.html
 
 #+BEGIN_SRC emacs-lisp
-(setq mu4e-context-policy 'always-ask
-			mu4e-compose-context-policy 'always-ask)
+(setq mu4e-context-policy 'ask
+			mu4e-compose-context-policy 'ask)
 #+END_SRC
 
 Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts-example.html) for how contexts are specified:
