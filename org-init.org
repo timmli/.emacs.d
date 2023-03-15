@@ -3960,7 +3960,7 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 				;; ontology
 				
 				(:startgroup . nil)
-				("topic" . nil)									; for headings that denote topics
+				("topic" . ?t)									; for headings that denote topics
 				(:endgroup . nil)				
 
 				(:startgroup . nil)
@@ -3968,7 +3968,7 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 				(:endgroup . nil)
 				
 				(:startgroup . nil)
-				("event" . ?e)
+				("event" . nil)
 				(:grouptags . nil)							; kinds of events
 				("appointment" . ?a)
 				("conference" . nil)
@@ -3989,9 +3989,9 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 				(:startgroup . nil)
 				("ressource" . ?r)
 				(:grouptags . nil)							; kinds of content
-				("data" . nil)
+				("data" . ?d)
 				("corpus" . nil)
-				("software" . nil)
+				("software" . ?s)
 				(:endgroup . nil)
 
 				;; topics
@@ -3999,44 +3999,11 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 				(:startgroup . nil)
 				("@work" . ?w)
 				(:grouptags . nil)
-				("administration" . ?d)
+				("administration" . ?v)
 				("research" . ?r)
-				("teaching" . ?t)
+				("teaching" . ?e)
 				(:endgroup . nil)
 				
-				(:startgroup . nil)
-				("research" . ?r)
-				(:grouptags . nil)							; areas of research
-				("cl/nlp" . nil)							  ; computational linguistics & natural language processing
-				("cs" . nil)										; computer science
-				("linguistics" . nil)
-				("logic/maths" . nil)
-				("philosophy" . nil)
-				(:endgroup . nil)
-
-				(:startgroup . nil)
-				("administration" . ?d)					
-				(:grouptags . nil)							;areas of administration
-				("bau" . nil)
-				("personal" . nil)
-				("pr" . nil)
-				(:endgroup . nil)
-
-				(:startgroup . nil)
-				("@home" . ?h)
-				(:grouptags . nil)
-				("spenden" . nil)
-				(:endgroup . nil)
-
-				(:startgroup . nil)
-				("software" . ?h)
-				(:grouptags . nil)
-				("emacs" . nil)
-				("linux" . nil)
-				("programming" . nil)
-				("windows" . nil)
-				(:endgroup . nil)
-
 				))
 #+END_SRC
 
