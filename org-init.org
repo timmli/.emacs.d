@@ -7095,9 +7095,12 @@ https://admiralakber.github.io/2018/09/20/myos-email/
 
 **** COMMENT Jabber
 
-https://github.com/legoscia/emacs-jabber
+https://codeberg.org/emacs-jabber/emacs-jabber
 
-- [ ] OMEMO support missing
+An XMPP/Jabber client for Emacs.
+
+Issues:
+- [ ] OMEMO support missing: https://codeberg.org/emacs-jabber/emacs-jabber/issues/9
 
 #+BEGIN_SRC emacs-lisp
 (use-package jabber
