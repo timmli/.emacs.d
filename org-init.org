@@ -6861,7 +6861,7 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
                                         (time-subtract (current-time) (days-to-time 300))))
 
 ;; Compose email in separate frame
-(setq mu4e-compose-in-new-frame nil)
+(setq mu4e-compose-in-new-frame t)
 
 ;; Automatically include a message-signature in new messages (if it is set).
 (setq mu4e-compose-signature-auto-include t)
