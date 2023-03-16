@@ -6680,6 +6680,9 @@ Issues:
 ;; Store link to message if in header view, not to header query.
 (setq org-mu4e-link-query-in-headers-mode nil)
 
+;; Refresh rate of emails
+(setq mu4e-update-interval (* 5 60))
+
 ;; Close mu4e without asking.
 (setq mu4e-confirm-quit nil)
 
@@ -6831,7 +6834,8 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 ;;  * anything else:   don’t split (show either headers or messages,
 ;; 		    not both)
 (setq mu4e-split-view 'horizontal)
-;; (mu4e-headers-split-view-grow 50)
+(setq mu4e-headers-visible-lines 10)
+(setq mu4e-headers-visible-columns 50)
 
 ;; Automatic line breaks when reading mail
 (add-hook 'mu4e-view-mode-hook 'visual-line-mode)
