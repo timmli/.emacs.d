@@ -442,6 +442,27 @@ Replace LaTeX commands by UTF8 symbols:
 ;; 	:ensure t)
 #+END_SRC
 
+*** Emojis
+
+**** emacs-emojify
+
+https://github.com/iqbalansari/emacs-emojify
+
+Display and insert emojis in Emacs.
+Tutorial: https://ianyepan.github.io/posts/emacs-emojis/
+
+#+BEGIN_SRC emacs-lisp
+(use-package emojify
+  :pin MELPA 
+  :ensure t  
+  ;; :hook (after-init . global-emojify-mode)
+  :config
+	(setq emojify-display-style 'unicode
+				emojify-emoji-styles '(unicode))
+	(global-set-key (kbd "C-c i e") 'emojify-insert-emoji)
+	)
+#+END_SRC
+
 ** Mode line and window labels
 
 Mode line:
@@ -9415,7 +9436,7 @@ F5 inserts the entity code."
 														 (format "%10s %s" (nth 6 element) element)
 														 element))))))
 					 sources))))
-(global-set-key (kbd "C-c i e") 'helm-insert-org-entity)
+(global-set-key (kbd "C-c i E") 'helm-insert-org-entity)
 #+END_SRC
 
 *** unicode-math-input
