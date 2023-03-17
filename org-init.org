@@ -1724,6 +1724,12 @@ Jump
       org-goto-max-level 10)
 #+END_SRC
 
+IDs
+#+BEGIN_SRC emacs-lisp
+(setq org-id-ts-format "%y%m%dT%H%M%S.%N"
+			org-id-method 'ts)
+#+END_SRC
+
 *** Agenda
 
 **** Appearance
