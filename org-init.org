@@ -8865,6 +8865,22 @@ https://github.com/alezost/mwim.el
 
 https://github.com/chuntaro/emacs-keypression
 
+** Lorem ipsum / Blindtext
+
+*** lorem-ipsum
+
+https://github.com/jschaf/emacs-lorem-ipsum
+
+Nam euismod tellus id erat.  
+
+#+BEGIN_SRC emacs-lisp
+(use-package lorem-ipsum
+	:ensure t
+	:config
+	(global-set-key (kbd "C-c i l") 'lorem-ipsum-insert-paragraphs)
+	)
+#+END_SRC
+
 ** Undo & remove
 
 *** undo-tree
