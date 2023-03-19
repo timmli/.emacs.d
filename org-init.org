@@ -6889,9 +6889,15 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 
 ;; Compose email in separate frame
 (setq mu4e-compose-in-new-frame t)
+;; Close buffer (unfortunately not the frame) after sending the email
+(setq message-kill-buffer-on-exit t)
 
 ;; Automatically include a message-signature in new messages (if it is set).
 (setq mu4e-compose-signature-auto-include t)
+
+;; Don't reply to yourself
+;; Presupposes: mu init --my-address=your.email@address
+(setq mu4e-compose-dont-reply-to-self t)
 
 ;; Format of the first line of citations
 (defun tl/message-insert-citation-line ()
@@ -6911,9 +6917,6 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 					#'(lambda ()
 							(setq-local truncate-lines t)
 							(mu4e-headers-split-view-grow 50)))
-
-;; Leave sent message after sending
-(setq message-kill-buffer-on-exit t)
 #+END_SRC
 
 Attachments can be included directly from [[*dired][dired]] with the help of =gnus=. 
