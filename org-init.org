@@ -1726,7 +1726,7 @@ Jump
 
 IDs
 #+BEGIN_SRC emacs-lisp
-(setq org-id-ts-format "%y%m%dT%H%M%S.%N"
+(setq org-id-ts-format (concat "%y%m%dT%H%M%S.%N-" user-acronym)
 			org-id-method 'ts)
 #+END_SRC
 
