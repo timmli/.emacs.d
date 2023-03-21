@@ -6828,6 +6828,27 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
   ;; (setq mu4e-compose-context-policy nil)
 #+END_SRC
 
+***** View headers
+
+#+BEGIN_SRC emacs-lisp
+;; How to show messages / headers.
+;; A symbol which is either:
+;;  * ‘horizontal’:    split horizontally (headers on top)
+;;  * ‘vertical’:      split vertically (headers on the left).
+;;  * ‘single-window’: view and headers in one window (mu4e will try not to
+;; 		    touch your window layout), main view in minibuffer
+;;  * anything else:   don’t split (show either headers or messages,
+;; 		    not both)
+(setq mu4e-split-view 'vertical)
+(setq mu4e-headers-visible-lines 10)
+(setq mu4e-headers-visible-columns 100)
+
+;; Look of mail headers
+(add-hook 'mu4e-headers-mode-hook
+					#'(lambda () 
+							(toggle-truncate-lines t)))
+#+END_SRC
+
 ***** View messages
 
 #+BEGIN_SRC emacs-lisp
@@ -6851,18 +6872,6 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 ;; to view selected message in the browser, no signin, just html mail
 (add-to-list 'mu4e-view-actions
   '("ViewInBrowser" . mu4e-action-view-in-browser) t)
-
-;; How to show messages / headers.
-;; A symbol which is either:
-;;  * ‘horizontal’:    split horizontally (headers on top)
-;;  * ‘vertical’:      split vertically (headers on the left).
-;;  * ‘single-window’: view and headers in one window (mu4e will try not to
-;; 		    touch your window layout), main view in minibuffer
-;;  * anything else:   don’t split (show either headers or messages,
-;; 		    not both)
-(setq mu4e-split-view 'horizontal)
-(setq mu4e-headers-visible-lines 10)
-(setq mu4e-headers-visible-columns 50)
 
 ;; Automatic line breaks when reading mail
 (add-hook 'mu4e-view-mode-hook 'visual-line-mode)
@@ -6915,12 +6924,6 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 (setq message-citation-line-function 'tl/message-insert-citation-line)
 ;; Alternatively, see https://www.djcbsoftware.nl/code/mu/mu4e/Writing-messages.html
 ;; (setq  message-citation-line-format "On %Y-%m-%d at %R %Z, %f wrote...")
-
-;; Look of mail headers
-(add-hook 'mu4e-headers-mode-hook
-					#'(lambda ()
-							(setq-local truncate-lines t)
-							(mu4e-headers-split-view-grow 50)))
 #+END_SRC
 
 Attachments can be included directly from [[*dired][dired]] with the help of =gnus=. 
@@ -6956,6 +6959,38 @@ Taken from https://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired.
 ***** Search messages
 
 There is a built-in search, but I prefer [[helm-mu]], which allows for incremental search of mails and contacts.
+
+***** mu4e-thread-folding
+
+https://github.com/rougier/mu4e-thread-folding
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'load-path (expand-file-name "lisp/mu4e-thread-folding" user-emacs-directory))
+(require 'mu4e-thread-folding)
+
+(add-to-list 'mu4e-header-info-custom
+             '(:empty . (:name "Empty"
+                         :shortname ""
+                         :function (lambda (msg) "  "))))
+(setq mu4e-headers-fields '((:empty         .    2)
+                            (:human-date    .   12)
+                            (:flags         .    6)
+                            (:mailing-list  .   10)
+                            (:from          .   22)
+                            (:subject       .   nil)))
+
+(define-key mu4e-headers-mode-map (kbd "<tab>")     'mu4e-headers-toggle-at-point)
+(define-key mu4e-headers-mode-map (kbd "<left>")    'mu4e-headers-fold-at-point)
+(define-key mu4e-headers-mode-map (kbd "<S-left>")  'mu4e-headers-fold-all)
+(define-key mu4e-headers-mode-map (kbd "<right>")   'mu4e-headers-unfold-at-point)
+(define-key mu4e-headers-mode-map (kbd "<S-right>") 'mu4e-headers-unfold-all)
+
+(add-hook 'mu4e-headers-mode-hook 'mu4e-thread-folding-mode)
+(add-hook 'mu4e-headers-found-hook 'mu4e-headers-fold-all)
+(add-hook 'mu4e-headers-found-hook
+					#'(lambda () 
+							(toggle-truncate-lines t)))
+#+END_SRC
 
 ***** COMMENT Multiple accounts 
 
@@ -7033,34 +7068,6 @@ https://raw.githubusercontent.com/iqbalansari/mu4e-alert/master/screenshots/mu4e
 	;; Mode Line display of unread emails
 	(add-hook 'after-init-hook #'mu4e-alert-enable-mode-line-display)
 	)
-#+END_SRC
-
-***** mu4e-thread-folding
-
-https://github.com/rougier/mu4e-thread-folding
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path (expand-file-name "lisp/mu4e-thread-folding" user-emacs-directory))
-(require 'mu4e-thread-folding)
-
-(add-to-list 'mu4e-header-info-custom
-             '(:empty . (:name "Empty"
-                         :shortname ""
-                         :function (lambda (msg) "  "))))
-(setq mu4e-headers-fields '((:empty         .    2)
-                            (:human-date    .   12)
-                            (:flags         .    6)
-                            (:mailing-list  .   10)
-                            (:from          .   22)
-                            (:subject       .   45)))
-
-(define-key mu4e-headers-mode-map (kbd "<tab>")     'mu4e-headers-toggle-at-point)
-(define-key mu4e-headers-mode-map (kbd "<left>")    'mu4e-headers-fold-at-point)
-(define-key mu4e-headers-mode-map (kbd "<S-left>")  'mu4e-headers-fold-all)
-(define-key mu4e-headers-mode-map (kbd "<right>")   'mu4e-headers-unfold-at-point)
-(define-key mu4e-headers-mode-map (kbd "<S-right>") 'mu4e-headers-unfold-all)
-
-(add-hook 'mu4e-headers-mode-hook 'mu4e-thread-folding-mode)
 #+END_SRC
 
 ***** COMMENT mu4e-maildirs-extension
