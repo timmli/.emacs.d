@@ -6744,7 +6744,6 @@ Issues:
 ;; Keybindings
 (define-key mu4e-headers-mode-map (kbd "M") #'mu4e)
 (define-key mu4e-view-mode-map (kbd "M") #'mu4e)
-(define-key mu4e-compose-mode-map (kbd "M") #'mu4e)
 #+END_SRC
 
 ***** Accounts
