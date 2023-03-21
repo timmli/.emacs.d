@@ -8410,6 +8410,9 @@ Grammar checking with [[https://www.languagetool.org/][LanguageTool]].
 
 *** smartparens
 
+https://github.com/Fuco1/smartparens
+
+Dealing with pairs of symbols (e.g. parens) in Emacs.
 Similar to [[embrace]].
 
 #+begin_src emacs-lisp
@@ -8425,6 +8428,7 @@ Similar to [[embrace]].
 						java-mode-hook
 						js-mode-hook
 						markdown-mode-hook
+						mu4e-compose-mode-hook
 						org-mode-hook
 						perl-mode-hook
 						plantuml-mode-hook
@@ -8445,7 +8449,7 @@ Similar to [[embrace]].
 	(sp-pair "{" nil :unless '(sp-point-before-word-p))
 	(sp-pair "\"" nil :unless '(sp-point-before-word-p sp-point-after-word-p))
 	;; org-mode
-	(sp-with-modes 'org-mode
+	(sp-with-modes '(org-mode mu4e-compose-mode)
 		(sp-local-pair "*" "*"
 									 ;; :actions '(insert wrap) ; Don't know what this is good for.
 									 :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-at-bol-p sp-in-math-p) )
