@@ -3804,6 +3804,28 @@ Following this excellent blog post: https://blog.aaronbieber.com/2017/03/19/orga
 			org-refile-allow-creating-parent-nodes 'confirm)
 #+END_SRC
 
+*** Search
+
+**** org-ql
+
+https://github.com/alphapapa/org-ql
+
+Search Org files with a powerful query language.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-ql
+  :quelpa (org-ql :fetcher github :repo "alphapapa/org-ql"
+            :files (:defaults (:exclude "helm-org-ql.el"))))
+#+END_SRC
+
+Helm support is available separately.
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-org-ql
+  :quelpa (helm-org-ql :fetcher github :repo "alphapapa/org-ql"
+                       :files ("helm-org-ql.el")))
+#+END_SRC
+
 *** Spell checking
 
 #+BEGIN_SRC emacs-lisp
