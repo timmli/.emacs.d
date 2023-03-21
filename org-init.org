@@ -6971,6 +6971,8 @@ Taken from https://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired.
 (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
 #+END_SRC
 
+Signing and encryption is done using [[https://www.gnu.org/software/emacs/manual/html_mono/emacs-mime.html][emacs-mime]], and can be selected in the attachment menu: https://www.djcbsoftware.nl/code/mu/mu4e/Signing-and-encrypting.html
+
 ***** Send messages
 
 #+BEGIN_SRC emacs-lisp
