@@ -6703,8 +6703,8 @@ Issues:
 (require 'mu4e)
 
 ;; Load org-mode integration
-(require 'org-mu4e)											
 ;; Store link to message if in header view, not to header query.
+(require 'mu4e-org)											
 (setq org-mu4e-link-query-in-headers-mode nil)
 
 ;; Refresh rate of emails
@@ -6874,9 +6874,13 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 (add-hook 'mu4e-compose-mode-hook
 					(defun my-do-compose-stuff ()
 						"My settings for message composition."
-						(org-mu4e-compose-org-mode)
+						;; (org-mu4e-compose-org-mode) ; OBSOLETE and UNSUPPORTED
+						(set-fill-column 72)
 						(flyspell-mode)
 						))
+
+;; Do not autosafe drafts
+(add-hook 'mu4e-compose-mode-hook #'(lambda () (auto-save-mode -1)))
 
 ;; Each paragraph is a single long line; at sending, emacs will add the special line continuation characters.
 (setq mu4e-compose-format-flowed t)
