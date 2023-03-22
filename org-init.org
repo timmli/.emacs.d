@@ -6714,6 +6714,7 @@ Mu4e and Mu do not synchronize local and remote mailboxes. Below I'm assuming th
 Good examples of elaborate mu4e configurations:
 - https://config.daviwil.com/mail
 - https://github.com/munen/emacs.d/#mu4e
+- https://github.com/rougier/dotemacs/blob/master/dotemacs.org#mail
 
 Issues:
 - [X] update to v1.8
@@ -6894,8 +6895,8 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 (setq mu4e-use-fancy-chars t)
 
 ;; to view selected message in the browser, no signin, just html mail
-(add-to-list 'mu4e-view-actions
-  '("ViewInBrowser" . mu4e-action-view-in-browser) t)
+;; (add-to-list 'mu4e-view-actions
+;;   '("ViewInBrowser" . mu4e-action-view-in-browser) t)
 
 ;; Automatic line breaks when reading mail. 
 ;; Disabled for now, because visual-line-mode may be invoked by w, if needed.
@@ -6911,7 +6912,8 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 						(company-mode) 							; Complete addresses with company
 						(save-excursion (message-goto-bcc) (insert user-mail-address))
 						(save-excursion (message-goto-cc))
-						(set-fill-column 72)
+						(turn-off-auto-fill)
+						(set-fill-column 79)
 						(flyspell-mode)
 						))
 
@@ -6920,12 +6922,13 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 
 ;; Each paragraph is a single long line; at sending, emacs will add the special line continuation characters.
 (setq mu4e-compose-format-flowed t)
-(setq fill-flowed-encode-column 998)
+;; (setq fill-flowed-encode-column 998)
 
-;; Only complete with mail addresses that have been used recently
-(setq mu4e-compose-complete-only-after (format-time-string
-                                        "%Y-%m-%d"
-                                        (time-subtract (current-time) (days-to-time 300))))
+;; Only complete with mail addresses that have been used recently and with personal contact
+(setq mu4e-compose-complete-only-personal t 
+			mu4e-compose-complete-only-after (format-time-string
+																				"%Y-%m-%d"
+																				(time-subtract (current-time) (days-to-time 300))))
 
 ;; Compose email in separate frame
 (setq mu4e-compose-in-new-frame t)
@@ -6940,17 +6943,19 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 (setq mu4e-compose-dont-reply-to-self t)
 
 ;; Format of the first line of citations
-(defun tl/message-insert-citation-line ()
-  "Based on `message-insert-citation-line`."
-  (when message-reply-headers
-    (insert "On " 
-						(format-time-string "%a, %Y-%m-%d, at %H:%M:%S" (date-to-time (mail-header-date message-reply-headers))) " ")
-    (insert (mail-header-from message-reply-headers) " wrote:")
-    (newline)
-    (newline)))
-(setq message-citation-line-function 'tl/message-insert-citation-line)
+;; (defun tl/message-insert-citation-line ()
+;;   "Based on `message-insert-citation-line`."
+;;   (when message-reply-headers
+;;     (insert "On " 
+;; 						(format-time-string "%a, %Y-%m-%d, at %H:%M:%S" (date-to-time (mail-header-date message-reply-headers))) " ")
+;;     (insert (mail-header-from message-reply-headers) " wrote:")
+;;     (newline)
+;;     (newline)))
+;; (setq message-citation-line-function 'tl/message-insert-citation-line)
+
 ;; Alternatively, see https://www.djcbsoftware.nl/code/mu/mu4e/Writing-messages.html
-;; (setq  message-citation-line-format "On %Y-%m-%d at %R %Z, %f wrote...")
+(setq  message-citation-line-format "On %Y-%m-%d at %H:%M:%S, %f wrote:"
+			 message-citation-line-function 'message-insert-formatted-citation-line)
 #+END_SRC
 
 Attachments can be included directly from [[*dired][dired]] with the help of =gnus=. 
@@ -6977,6 +6982,10 @@ Taken from https://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired.
 #+END_SRC
 
 Signing and encryption is done using [[https://www.gnu.org/software/emacs/manual/html_mono/emacs-mime.html][emacs-mime]], and can be selected in the attachment menu: https://www.djcbsoftware.nl/code/mu/mu4e/Signing-and-encrypting.html
+
+#+BEGIN_SRC emacs-lisp
+(setq  mm-sign-option 'guided)
+#+END_SRC
 
 ***** Send messages
 
