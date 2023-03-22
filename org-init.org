@@ -6872,6 +6872,9 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 (add-hook 'mu4e-headers-mode-hook
 					#'(lambda () 
 							(toggle-truncate-lines t)))
+
+;; Change some text faces
+(set-face-attribute 'mu4e-replied-face nil :inherit 'mu4e-header-value-face)
 #+END_SRC
 
 ***** View messages
