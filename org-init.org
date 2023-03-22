@@ -6998,9 +6998,11 @@ Signing and encryption is done using [[https://www.gnu.org/software/emacs/manual
 
 There is a built-in search, but I prefer [[helm-mu]], which allows for incremental search of mails and contacts.
 
-***** mu4e-thread-folding
+***** COMMENT mu4e-thread-folding
 
 https://github.com/rougier/mu4e-thread-folding
+
+Enable folding of threads.  
 
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path (expand-file-name "lisp/mu4e-thread-folding" user-emacs-directory))
@@ -7023,6 +7025,9 @@ https://github.com/rougier/mu4e-thread-folding
 (define-key mu4e-headers-mode-map (kbd "<right>")   'mu4e-headers-unfold-at-point)
 (define-key mu4e-headers-mode-map (kbd "<S-right>") 'mu4e-headers-unfold-all)
 
+(add-hook 'mu4e-thread-folding-mode-hook
+					#'(lambda () 
+							(toggle-truncate-lines t)))
 (add-hook 'mu4e-headers-mode-hook 'mu4e-thread-folding-mode)
 (add-hook 'mu4e-headers-found-hook 'mu4e-headers-fold-all)
 (add-hook 'mu4e-headers-found-hook
