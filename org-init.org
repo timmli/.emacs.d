@@ -7013,6 +7013,15 @@ Signing and encryption is done using [[https://www.gnu.org/software/emacs/manual
 
 There is a built-in search, but I prefer [[helm-mu]], which allows for incremental search of mails and contacts.
 
+More Bookmarks:
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'mu4e-bookmarks
+  '( :name "Flagged"
+     :key  ?f
+     :query "flag:flagged"))
+#+END_SRC
+
 ***** COMMENT mu4e-thread-folding
 
 https://github.com/rougier/mu4e-thread-folding
