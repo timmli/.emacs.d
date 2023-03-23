@@ -6929,6 +6929,12 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 						(company-mode) 							; Complete addresses with company
 						(save-excursion (message-goto-bcc) (insert user-mail-address))
 						(save-excursion (message-goto-cc))
+
+						;; Remove the date field.    
+						;; Otherwise, the date of the composing start is used!
+ 						;; https://github.com/djcb/mu/issues/2096
+						(message-remove-header "Date")
+
 						(turn-off-auto-fill)
 						(set-fill-column 79)
 						(flyspell-mode)
