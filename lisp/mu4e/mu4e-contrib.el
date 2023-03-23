@@ -1,6 +1,6 @@
-;;; mu4e-contrib.el -- part of mu4e, the mu mail user agent -*- lexical-binding: t -*-
+;;; mu4e-contrib.el -- part of mu4e -*- lexical-binding: t -*-
 
-;; Copyright (C) 2013-2021 Dirk-Jan C. Binnema
+;; Copyright (C) 2013-2022 Dirk-Jan C. Binnema
 
 ;; This file is not part of GNU Emacs.
 
@@ -28,11 +28,8 @@
 (require 'bookmark)
 (require 'eshell)
 
-;; Contributed by sabof
-(defvar bookmark-make-record-function)
-
+
 ;;; Various simple commands
-
 (defun mu4e-headers-mark-all-unread-read ()
   "Put a ! \(read) mark on all visible unread messages."
   (interactive)
@@ -48,67 +45,16 @@
   (mu4e-mark-execute-all t))
 
 (defun mu4e-headers-mark-all ()
-  "Mark all messages within current query results and ask user to execute which action."
+  "Mark all headers for some action.
+Ask user what action to execute."
   (interactive)
   (mu4e-headers-mark-for-each-if
    (cons 'something nil)
    (lambda (_msg _param) t))
   (mu4e-mark-execute-all))
 
-;;; Bookmark handlers
-;;
-;;  Allow bookmarking a mu4e buffer in regular emacs bookmarks.
 
-(defun mu4e~view-set-bookmark-make-record-fn ()
-  (set (make-local-variable 'bookmark-make-record-function)
-       'mu4e-view-bookmark-make-record))
-
-(defun mu4e~headers-set-bookmark-make-record-fn ()
-  (set (make-local-variable 'bookmark-make-record-function)
-       'mu4e-view-bookmark-make-record))
-
-;; Probably this can be moved to mu4e-view.el.
-(add-hook 'mu4e-view-mode-hook #'mu4e~view-set-bookmark-make-record-fn)
-;; And this can be moved to mu4e-headers.el.
-(add-hook 'mu4e-headers-mode-hook #'mu4e~headers-set-bookmark-make-record-fn)
-
-(defun mu4e-view-bookmark-make-record ()
-  "Make a bookmark entry for a mu4e buffer. Note that this is an
-emacs bookmark, not to be confused with `mu4e-bookmarks'."
-  (let* ((msg     (mu4e-message-at-point))
-         (maildir (plist-get msg :maildir))
-         (date    (format-time-string "%Y%m%d" (plist-get msg :date)))
-         (query   (format "maildir:%s date:%s" maildir date))
-         (docid   (plist-get msg :docid))
-         (mode    (symbol-name major-mode))
-         (subject (or (plist-get msg :subject) "No subject")))
-    `(,subject
-      ,@(bookmark-make-record-default 'no-file 'no-context)
-      (location . (,query . ,docid))
-      (mode . ,mode)
-      (handler . mu4e-bookmark-jump))))
-
-(defun mu4e-bookmark-jump (bookmark)
-  "Handler function for record returned by `mu4e-view-bookmark-make-record'.
-BOOKMARK is a bookmark name or a bookmark record."
-  (let* ((path  (bookmark-prop-get bookmark 'location))
-         (mode  (bookmark-prop-get bookmark 'mode))
-         (docid (cdr path))
-         (query (car path)))
-    (call-interactively 'mu4e)
-    (mu4e-headers-search query)
-    (sit-for 0.5)
-    (mu4e~headers-goto-docid docid)
-    (mu4e~headers-highlight docid)
-    (unless (string= mode "mu4e-headers-mode")
-      (call-interactively 'mu4e-headers-view-message)
-      (run-with-timer 0.1 nil
-                      (lambda (bmk)
-                        (bookmark-default-handler
-                         `("" (buffer . ,(current-buffer)) .
-                           ,(bookmark-get-bookmark-record bmk))))
-                      bookmark))))
-
+
 ;;; Bogofilter/SpamAssassin
 ;;
 ;; Support for handling spam with Bogofilter with the possibility
@@ -122,26 +68,26 @@ BOOKMARK is a bookmark name or a bookmark record."
 ;;              '("hMark as ham" . mu4e-register-msg-as-ham) t)
 
 (defvar mu4e-register-as-spam-cmd nil
-  "Command for invoking spam processor to register message as spam,
-for example for bogofilter, use \"/usr/bin/bogofilter -Ns < %s\" ")
+  "Command for invoking spam processor to register message as spam.
+For example for bogofilter, use \"/usr/bin/bogofilter -Ns < %s\"")
 
 (defvar mu4e-register-as-ham-cmd nil
   "Command for invoking spam processor to register message as ham.
 For example for bogofile, use \"/usr/bin/bogofilter -Sn < %s\"")
 
 (defun mu4e-register-msg-as-spam (msg)
-  "Mark message as spam."
+  "Register MSG  as spam."
   (interactive)
   (let* ((path (shell-quote-argument (mu4e-message-field msg :path)))
-         (command (format mu4e-register-as-spam-cmd path))) ;; re-register msg as spam
+         (command (format mu4e-register-as-spam-cmd path)))
     (shell-command command))
   (mu4e-mark-at-point 'delete nil))
 
 (defun mu4e-register-msg-as-ham (msg)
-  "Mark message as ham."
+  "Register MSG as ham."
   (interactive)
   (let* ((path (shell-quote-argument(mu4e-message-field msg :path)))
-         (command (format mu4e-register-as-ham-cmd path))) ;; re-register msg as ham
+         (command (format mu4e-register-as-ham-cmd path)))
     (shell-command command))
   (mu4e-mark-at-point 'something nil))
 
@@ -151,7 +97,7 @@ For example for bogofile, use \"/usr/bin/bogofilter -Sn < %s\"")
 ;;              '("hMark as ham" . mu4e-view-register-msg-as-ham) t)
 
 (defun mu4e-view-register-msg-as-spam (msg)
-  "Mark message as spam (view mode)."
+  "Register MSG as spam (view mode)."
   (interactive)
   (let* ((path (shell-quote-argument (mu4e-message-field msg :path)))
          (command (format mu4e-register-as-spam-cmd path)))
@@ -159,29 +105,43 @@ For example for bogofile, use \"/usr/bin/bogofilter -Sn < %s\"")
   (mu4e-view-mark-for-delete))
 
 (defun mu4e-view-register-msg-as-ham (msg)
-  "Mark message as ham (view mode)."
+  "Mark MSG as ham (view mode)."
   (interactive)
   (let* ((path (shell-quote-argument(mu4e-message-field msg :path)))
          (command (format mu4e-register-as-ham-cmd path)))
     (shell-command command))
   (mu4e-view-mark-for-something))
 
+
 ;;; Eshell functions
 ;;
 ;; Code for `gnus-dired-attached' modified to run from eshell,
 ;; allowing files to be attached to an email via mu4e using the
 ;; eshell.  Does not depend on gnus.
 
+
+(defun mu4e--active-composition-buffers ()
+  "Return all active mu4e composition buffers."
+  (let (buffers)
+    (save-excursion
+      (dolist (buffer (buffer-list t))
+        (set-buffer buffer)
+        (when (eq major-mode 'mu4e-compose-mode)
+          (push (buffer-name buffer) buffers))))
+    (nreverse buffers)))
+
 (defun eshell/mu4e-attach (&rest args)
-  "Attach files to a mu4e message using eshell. If no mu4e
-buffers found, compose a new message and then attach the file."
+  "Attach files to a mu4e message using eshell with ARGS.
+If no mu4e buffers found, compose a new message and then attach
+the file."
   (let ((destination nil)
         (files-str nil)
         (bufs nil)
         ;; Remove directories from the list
         (files-to-attach
          (delq nil (mapcar
-                    (lambda (f) (if (or (not (file-exists-p f)) (file-directory-p f))
+                    (lambda (f) (if (or (not (file-exists-p f))
+					(file-directory-p f))
                                nil
                              (expand-file-name f)))
                     (eshell-flatten-list (reverse args))))))
@@ -192,7 +152,7 @@ buffers found, compose a new message and then attach the file."
             (mapconcat
              (lambda (f) (file-name-nondirectory f))
              files-to-attach ", "))
-      (setq bufs (mu4e~active-composition-buffers))
+      (setq bufs (mu4e--active-composition-buffers))
       ;; set up destination mail composition buffer
       (if (and bufs
                (y-or-n-p "Attach files to existing mail composition buffer? "))
@@ -213,7 +173,8 @@ buffers found, compose a new message and then attach the file."
                  (goto-char (point-max)) ; attach at end of buffer
                  (while files-to-attach
                    (mml-attach-file (car files-to-attach)
-                                    (or (mm-default-file-encoding (car files-to-attach))
+                                    (or (mm-default-file-encoding
+					 (car files-to-attach))
                                         "application/octet-stream") nil)
                    (setq files-to-attach (cdr files-to-attach)))
                  (message "Attached file(s) %s" files-str))

@@ -1,6 +1,6 @@
 ;;; mu4e-draft.el -- part of mu4e, the mu mail user agent for emacs -*- lexical-binding: t -*-
 ;;
-;; Copyright (C) 2011-2020 Dirk-Jan C. Binnema
+;; Copyright (C) 2011-2022 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -27,16 +27,204 @@
 ;;; Code:
 
 (require 'cl-lib)
-(require 'mu4e-vars)
-(require 'mu4e-utils)
 (require 'mu4e-message)
+(require 'mu4e-contacts)
+(require 'mu4e-folders)
 (require 'message) ;; mail-header-separator
 
-;;; Options
+
+;;; Configuration
+(defgroup mu4e-compose nil
+  "Customizations for composing/sending messages."
+  :group 'mu4e)
+
+(defcustom mu4e-compose-reply-recipients 'ask
+  "Which recipients to use when replying to a message.
+May be a symbol `ask', `all', `sender'. Note that that only
+applies to non-mailing-list message; for those, mu4e always
+asks."
+  :type '(choice ask
+                 all
+                 sender)
+  :group 'mu4e-compose)
+
+(defcustom mu4e-compose-reply-to-address nil
+  "The Reply-To address.
+Useful when this is not equal to the From: address."
+  :type 'string
+  :group 'mu4e-compose)
+
+(defcustom mu4e-compose-forward-as-attachment nil
+  "Whether to forward messages as attachments instead of inline."
+  :type 'boolean
+  :group 'mu4e-compose)
+
+;; backward compatibility
+(make-obsolete-variable 'mu4e-reply-to-address
+                        'mu4e-compose-reply-to-address
+                        "v0.9.9")
+
+(defcustom mu4e-compose-keep-self-cc nil
+  "When non-nil. keep your e-mail address in Cc: when replying."
+  :type 'boolean
+  :group 'mu4e-compose)
+
+(defvar mu4e-compose-parent-message nil
+  "The parent message plist.
+This is the message being replied to, forwarded or edited; used
+in `mu4e-compose-pre-hook'. For new messages, it is nil.")
+
+(make-obsolete-variable 'mu4e-auto-retrieve-keys  "no longer used." "1.3.1")
+
+(defcustom mu4e-decryption-policy t
+  "Policy for dealing with replying/forwarding encrypted parts.
+The setting is a symbol:
+ * t:     try to decrypt automatically
+ * `ask': ask before decrypting anything
+ * nil:   don't try to decrypt anything."
+  :type '(choice (const :tag "Try to decrypt automatically" t)
+                 (const :tag "Ask before decrypting anything" ask)
+                 (const :tag "Don't try to decrypt anything" nil))
+  :group 'mu4e-compose)
+
+;;; Composing / Sending messages
+
+(defcustom mu4e-sent-messages-behavior 'sent
+  "Determines what mu4e does with sent messages.
+
+This is one of the symbols:
+* `sent'    move the sent message to the Sent-folder (`mu4e-sent-folder')
+* `trash'   move the sent message to the Trash-folder (`mu4e-trash-folder')
+* `delete'  delete the sent message.
+
+Note, when using GMail/IMAP, you should set this to either
+`trash' or `delete', since GMail already takes care of keeping
+copies in the sent folder.
+
+Alternatively, `mu4e-sent-messages-behavior' can be a function
+which takes no arguments, and which should return one of the mentioned
+symbols, for example:
+
+  (setq mu4e-sent-messages-behavior (lambda ()
+  (if (string= (message-sendmail-envelope-from) \"foo@example.com\")
+       \='delete \='sent)))
+
+The various `message-' functions from `message-mode' are available
+for querying the message information."
+  :type '(choice (const :tag "move message to mu4e-sent-folder" sent)
+                 (const :tag "move message to mu4e-trash-folder" trash)
+                 (const :tag "delete message" delete))
+  :group 'mu4e-compose)
+
+(defcustom mu4e-compose-context-policy 'ask
+  "Policy for determining the context when composing a new message.
+
+If the value is `always-ask', ask the user unconditionally.
+
+In all other cases, if any context matches (using its match
+function), this context is used. Otherwise, if none of the
+contexts match, we have the following choices:
+
+- `pick-first': pick the first of the contexts available (ie. the default)
+- `ask': ask the user
+- `ask-if-none': ask if there is no context yet, otherwise leave it as it is
+-  nil: return nil; leaves the current context as is.
+
+Also see `mu4e-context-policy'."
+  :type '(choice
+          (const :tag "Always ask what context to use" always-ask)
+          (const :tag "Ask if none of the contexts match" ask)
+          (const :tag "Ask when there's no context yet" ask-if-none)
+          (const :tag "Pick the first context if none match" pick-first)
+          (const :tag "Don't change the context when none match" nil))
+  :safe 'symbolp
+  :group 'mu4e-compose)
+
+(defcustom mu4e-compose-crypto-policy
+  '(encrypt-encrypted-replies sign-encrypted-replies)
+  "Policy to control when messages will be signed/encrypted.
+
+The value is a list, whose members determine the behaviour of
+`mu4e~compose-crypto-message'. Specifically, it might contain:
+
+- `sign-all-messages': Always add a signature.
+- `sign-new-messages': Add a signature to new message, ie.
+  messages that aren't responses to another message.
+- `sign-forwarded-messages': Add a signature when forwarding
+  a message
+- `sign-edited-messages': Add a signature to drafts
+- `sign-all-replies': Add a signature when responding to
+  another message.
+- `sign-plain-replies': Add a signature when responding to
+  non-encrypted messages.
+- `sign-encrypted-replies': Add a signature when responding
+  to encrypted messages.
+
+It should be noted that certain symbols have priorities over one
+another. So `sign-all-messages' implies `sign-all-replies', which
+in turn implies `sign-plain-replies'. Adding both to the set, is
+not a contradiction, but a redundant configuration.
+
+All `sign-*' options have a `encrypt-*' analogue."
+  :type '(set :greedy t
+              (const :tag "Sign all messages" sign-all-messages)
+              (const :tag "Encrypt all messages" encrypt-all-messages)
+              (const :tag "Sign new messages" sign-new-messages)
+              (const :tag "Encrypt new messages" encrypt-new-messages)
+              (const :tag "Sign forwarded messages" sign-forwarded-messages)
+              (const :tag "Encrypt forwarded messages" encrypt-forwarded-messages)
+              (const :tag "Sign edited messages" sign-edited-messages)
+              (const :tag "Encrypt edited messages" edited-forwarded-messages)
+              (const :tag "Sign all replies" sign-all-replies)
+              (const :tag "Encrypt all replies" encrypt-all-replies)
+              (const :tag "Sign replies to plain messages" sign-plain-replies)
+              (const :tag "Encrypt replies to plain messages" encrypt-plain-replies)
+              (const :tag "Sign replies to encrypted messages" sign-encrypted-replies)
+              (const :tag "Encrypt replies to encrypted messages" encrypt-encrypted-replies))
+  :group 'mu4e-compose)
+
+(make-obsolete-variable 'mu4e-compose-crypto-reply-encrypted-policy "The use of the
+ 'mu4e-compose-crypto-reply-encrypted-policy' variable is deprecated.
+ 'mu4e-compose-crypto-policy' should be used instead" "2020-03-06")
+
+(make-obsolete-variable 'mu4e-compose-crypto-reply-plain-policy "The use of the
+ 'mu4e-compose-crypto-reply-plain-policy' variable is deprecated.
+ 'mu4e-compose-crypto-policy' should be used instead"
+                        "2020-03-06")
+
+(make-obsolete-variable 'mu4e-compose-crypto-reply-policy "The use of the
+ 'mu4e-compose-crypto-reply-policy' variable is deprecated.
+ 'mu4e-compose-crypto-reply-plain-policy' and
+ 'mu4e-compose-crypto-reply-encrypted-policy' should be used instead"
+                        "2017-09-02")
+
+(defcustom mu4e-compose-format-flowed nil
+  "Whether to compose messages to be sent as format=flowed.
+\(Or with long lines if variable `use-hard-newlines' is set to
+nil). The variable `fill-flowed-encode-column' lets you customize
+the width beyond which format=flowed lines are wrapped."
+  :type 'boolean
+  :safe 'booleanp
+  :group 'mu4e-compose)
+
+(defcustom mu4e-compose-pre-hook nil
+  "Hook run just *before* message composition starts.
+If the compose-type is a symbol, either `reply' or `forward', the
+variable `mu4e-compose-parent-message' points to the message
+replied to / being forwarded / edited, and `mu4e-compose-type'
+contains the type of message to be composed.
+
+Note that there is no draft message yet when this hook runs, it
+is meant for influencing the how mu4e constructs the draft
+message. If you want to do something with the draft messages after
+it has been constructed, `mu4e-compose-mode-hook' would be the
+place to do that."
+  :type 'hook
+  :group 'mu4e-compose)
 
 (defcustom mu4e-compose-dont-reply-to-self nil
-  "If non-nil, don't include self.
-(as decided by `mu4e-personal-address-p')"
+  "If non-nil, do not include self.
+Selfness is decided by `mu4e-personal-address-p'"
   :type 'boolean
   :group 'mu4e-compose)
 
@@ -79,6 +267,11 @@ mu4e-specific version of `message-signature'."
 
 (defvar mu4e-view-date-format)
 
+(defvar mu4e-compose-type nil
+  "The compose-type for this buffer.
+This is a symbol, `new', `forward', `reply' or `edit'.")
+
+
 (defun mu4e~draft-cite-original (msg)
   "Return a cited version of the original message MSG as a plist.
 This function uses `mu4e-compose-cite-function', and as such all
@@ -119,6 +312,22 @@ one. Code borrowed from `message-shorten-1'."
   (setcdr (nthcdr (- cut 2) list)
           (nthcdr (+ (- cut 2) surplus 1) list)))
 
+
+(defun mu4e~fontify-signature ()
+  "Give the message signatures a distinctive color. This is used
+in the view and compose modes and will color each signature in
+digest messages adhering to RFC 1153."
+  (let ((inhibit-read-only t))
+    (save-excursion
+      ;; give the footer a different color...
+      (goto-char (point-min))
+      (while (re-search-forward "^-- *$" nil t)
+        (let ((p (point))
+              (end (or ;; 30 by RFC1153
+                    (re-search-forward "\\(^-\\{30\\}.*$\\)" nil t)
+                    (point-max))))
+          (add-text-properties p end '(face mu4e-footer-face)))))))
+
 (defun mu4e~draft-references-construct (msg)
   "Construct the value of the References: header based on MSG.
 This assumes a comma-separated string. Normally, this the concatenation of the
@@ -151,13 +360,7 @@ This is specified as a comma-separated list of e-mail addresses.
 If LST is nil, returns nil."
   (when lst
     (mapconcat
-     (lambda (addrcell)
-       (let ((name (car addrcell))
-             (email (cdr addrcell)))
-         (if name
-             (format "%s <%s>" (mu4e~rfc822-quoteit name) email)
-           (format "%s" email))))
-     lst ", ")))
+     (lambda (contact) (mu4e-contact-full contact)) lst ", ")))
 
 (defun mu4e~draft-address-cell-equal (cell1 cell2)
   "Return t if CELL1 and CELL2 have the same e-mail address.
@@ -165,8 +368,8 @@ The comparison is done case-insensitively. If the cells done
 match return nil. CELL1 and CELL2 are cons cells of the
 form (NAME . EMAIL)."
   (string=
-   (downcase (or (cdr cell1) ""))
-   (downcase (or (cdr cell2) ""))))
+   (downcase (or (mu4e-contact-email cell1) ""))
+   (downcase (or (mu4e-contact-email cell2) ""))))
 
 
 (defun mu4e~draft-create-to-lst (origmsg)
@@ -182,7 +385,7 @@ of the original, we simple copy the list form the original."
     (if mu4e-compose-dont-reply-to-self
         (cl-delete-if
          (lambda (to-cell)
-           (mu4e-personal-address-p (cdr to-cell)))
+           (mu4e-personal-address-p (mu4e-contact-email to-cell)))
          reply-to)
       reply-to)))
 
@@ -197,7 +400,7 @@ I.e. return all the addresses in ADDRS not matching
    ((functionp mu4e-compose-reply-ignore-address)
     (cl-remove-if
      (lambda (elt)
-       (funcall mu4e-compose-reply-ignore-address (cdr elt)))
+       (funcall mu4e-compose-reply-ignore-address (mu4e-contact-email elt)))
      addrs))
    (t
     ;; regexp or list of regexps
@@ -208,7 +411,7 @@ I.e. return all the addresses in ADDRS not matching
                      regexp)))
       (cl-remove-if
        (lambda (elt)
-         (string-match regexp (cdr elt)))
+         (string-match regexp (mu4e-contact-email elt)))
        addrs)))))
 
 (defun mu4e~draft-create-cc-lst (origmsg &optional reply-all include-from)
@@ -243,7 +446,7 @@ REPLY-ALL."
                 cc-lst
               (cl-delete-if
                (lambda (cc-cell)
-                 (mu4e-personal-address-p (cdr cc-cell)))
+                 (mu4e-personal-address-p (mu4e-contact-email cc-cell)))
                cc-lst))))
       cc-lst)))
 
@@ -261,53 +464,14 @@ message. Return nil if there are no recipients for the particular field."
      (otherwise
       (mu4e-error "Unsupported field")))))
 
-;;; RFC2822 handling of phrases in mail-addresses
-;;
-;; The optional display-name contains a phrase, it sits before the
-;; angle-addr as specified in RFC2822 for email-addresses in header
-;; fields.  Contributed by jhelberg.
-
-(defun mu4e~rfc822-phrase-type (ph)
-  "Return an atom or quoted-string for the phrase PH.
-This checks for empty string first. Then quotes around the phrase
-\(returning 'rfc822-quoted-string). Then whether there is a quote
-inside the phrase (returning 'rfc822-containing-quote).
-The reverse of the RFC atext definition is then tested.
-If it matches, nil is returned, if not, it is an 'rfc822-atom, which
-is returned."
-  (cond
-   ((= (length ph) 0) 'rfc822-empty)
-   ((= (aref ph 0) ?\")
-    (if (string-match "\"\\([^\"\\\n]\\|\\\\.\\|\\\\\n\\)*\"" ph)
-        'rfc822-quoted-string
-      'rfc822-containing-quote)) ; starts with quote, but doesn't end with one
-   ((string-match-p "[\"]" ph) 'rfc822-containing-quote)
-   ((string-match-p "[\000-\037()\*<>@,;:\\\.]+" ph) nil)
-   (t 'rfc822-atom)))
-
-(defun mu4e~rfc822-quoteit (ph)
-  "Quote an RFC822 phrase PH only if necessary.
-Atoms and quoted strings don't need quotes. The rest do.  In
-case a phrase contains a quote, it will be escaped."
-  (let ((type (mu4e~rfc822-phrase-type ph)))
-    (cond
-     ((eq type 'rfc822-atom) ph)
-     ((eq type 'rfc822-quoted-string) ph)
-     ((eq type 'rfc822-containing-quote)
-      (format "\"%s\""
-              (replace-regexp-in-string "\"" "\\\\\"" ph)))
-     (t (format "\"%s\"" ph)))))
-
-
 (defun mu4e~draft-from-construct ()
   "Construct a value for the From:-field of the reply.
 This is based on the variable `user-full-name' and
 `user-mail-address'; if the latter is nil, function returns nil."
   (when user-mail-address
-    (if user-full-name
-        (format "%s <%s>" (mu4e~rfc822-quoteit user-full-name) user-mail-address)
-      (format "%s" user-mail-address))))
-
+    (mu4e-contact-full (mu4e-contact-make
+                        user-full-name
+			user-mail-address))))
 
 ;;; Header separators
 
@@ -318,34 +482,34 @@ the body starts. Note, in `mu4e-compose-mode', we use
 `before-save-hook' and `after-save-hook' to ensure that this
 separator is never written to the message file. Also see
 `mu4e-remove-mail-header-separator'."
-  ;; we set this here explicitly, since (as it has happened) a wrong
-  ;; value for this (such as "") breaks address completion and other things
-  (set (make-local-variable 'mail-header-separator) "--text follows this line--")
-  (put 'mail-header-separator 'permanent-local t)
-  (save-excursion
-    ;; make sure there's not one already
-    (mu4e~draft-remove-mail-header-separator)
-    (let ((sepa (propertize mail-header-separator
-                            'intangible t
-                            ;; don't make this read-only, message-mode
-                            ;; seems to require it being writable in some cases
-                            ;;'read-only "Can't touch this"
-                            'rear-nonsticky t
-                            'font-lock-face 'mu4e-compose-separator-face)))
-      (widen)
-      ;; search for the first empty line
-      (goto-char (point-min))
-      (if (search-forward-regexp "^$" nil t)
-          (progn
-            (replace-match sepa)
-            ;; `message-narrow-to-headers` searches for a
-            ;; `mail-header-separator` followed by a new line. Therefore, we
-            ;; must insert a newline if on the last line of the buffer.
-            (when (= (point) (point-max))
-              (insert "\n")))
-        (progn ;; no empty line? then prepend one
-          (goto-char (point-max))
-          (insert "\n" sepa))))))
+    ;; we set this here explicitly, since (as it has happened) a wrong
+    ;; value for this (such as "") breaks address completion and other things
+    (set (make-local-variable 'mail-header-separator) "--text follows this line--")
+    (put 'mail-header-separator 'permanent-local t)
+    (save-excursion
+      ;; make sure there's not one already
+      (mu4e~draft-remove-mail-header-separator)
+      (let ((sepa (propertize mail-header-separator
+                              'intangible t
+                              ;; don't make this read-only, message-mode
+                              ;; seems to require it being writable in some cases
+                              ;;'read-only "Can't touch this"
+                              'rear-nonsticky t
+                              'font-lock-face 'mu4e-compose-separator-face)))
+	(widen)
+	;; search for the first empty line
+	(goto-char (point-min))
+	(if (search-forward-regexp "^$" nil t)
+            (progn
+              (replace-match sepa)
+              ;; `message-narrow-to-headers` searches for a
+              ;; `mail-header-separator` followed by a new line. Therefore, we
+              ;; must insert a newline if on the last line of the buffer.
+              (when (= (point) (point-max))
+		(insert "\n")))
+          (progn ;; no empty line? then prepend one
+            (goto-char (point-max))
+            (insert "\n" sepa))))))
 
 (defun mu4e~draft-remove-mail-header-separator ()
   "Remove `mail-header-separator'.
@@ -398,6 +562,8 @@ You can append flags."
 (defun mu4e~draft-common-construct ()
   "Construct the common headers for each message."
   (concat
+   (when-let ((organization (message-make-organization)))
+     (mu4e~draft-header "Organization" organization))
    (when mu4e-user-agent-string
      (mu4e~draft-header "User-agent" mu4e-user-agent-string))
    (mu4e~draft-header "Date" (message-make-date))))
@@ -440,12 +606,13 @@ mailing-list."
          (recipnum
           (+ (length (mu4e~draft-create-to-lst origmsg))
              (length (mu4e~draft-create-cc-lst origmsg t t))))
+	 (sender (mu4e-contact-full (car from)))
          (reply-type
           (mu4e-read-option
            "Reply to mailing-list "
-           `( (,(format "all %d recipient(s)" recipnum)     . all)
-              (,(format "list-only (%s)" (cdar list-post))  . list-only)
-              (,(format "sender-only (%s)" (cdar from))     . sender-only)))))
+           `( (,(format "all %d recipient(s)" recipnum)    . all)
+              (,(format "list-only (%s)" (cdar list-post)) . list-only)
+              (,(format "sender-only (%s)" sender)         . sender-only)))))
     (cl-case reply-type
       (all
        (concat
@@ -526,7 +693,7 @@ This is based on `mu4e-drafts-folder', which is evaluated once.")
 (defun mu4e~draft-open-file (path switch-function)
   "Open the the draft file at PATH."
   (let ((buf (find-file-noselect path)))
-    (funcall (or 
+    (funcall (or
               switch-function
               (and mu4e-compose-in-new-frame 'switch-to-buffer-other-frame)
               'switch-to-buffer)
@@ -558,13 +725,13 @@ will be created from either `mu4e~draft-reply-construct', or
        ;; case-1: re-editing a draft messages. in this case, we do know the
        ;; full path, but we cannot really know 'drafts folder'... we make a
        ;; guess
-       (setq draft-dir (mu4e~guess-maildir (mu4e-message-field msg :path)))
+       (setq draft-dir (mu4e--guess-maildir (mu4e-message-field msg :path)))
        (mu4e~draft-open-file (mu4e-message-field msg :path) switch-function))
 
       (resend
        ;; case-2: copy some exisisting message to a draft message, then edit
        ;; that.
-       (setq draft-dir (mu4e~guess-maildir (mu4e-message-field msg :path)))
+       (setq draft-dir (mu4e--guess-maildir (mu4e-message-field msg :path)))
        (let ((draft-path (mu4e~draft-determine-path draft-dir)))
          (copy-file (mu4e-message-field msg :path) draft-path)
          (mu4e~draft-open-file draft-path switch-function)))
