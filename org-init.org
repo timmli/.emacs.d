@@ -6878,6 +6878,8 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 
 ;; Change some text faces
 (set-face-attribute 'mu4e-replied-face nil :inherit 'mu4e-header-value-face)
+(set-face-attribute 'mu4e-related-face nil :inherit 'font-lock-comment-face)
+
 
 ;; Columns shown 
 (setq mu4e-headers-fields '(
@@ -8229,6 +8231,8 @@ Flycheck integration for [[https://github.com/errata-ai/vale][vale]], a natural 
 #+END_SRC
 
 ** Spell checking
+
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Spelling.html
 
 - Using multiple dictionaries:
       - http://aspell.net/man-html/Using-Multi-Dictionaries.html
