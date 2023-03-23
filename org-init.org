@@ -6877,7 +6877,8 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 							(toggle-truncate-lines t)))
 
 ;; Change some text faces
-(set-face-attribute 'mu4e-replied-face nil :inherit 'mu4e-header-value-face)
+(set-face-attribute 'mu4e-replied-face nil :inherit 'font-lock-function-name-face)
+(set-face-attribute 'mu4e-forwarded-face nil :inherit 'mu4e-header-value-face)
 (set-face-attribute 'mu4e-related-face nil :inherit 'font-lock-comment-face)
 
 
