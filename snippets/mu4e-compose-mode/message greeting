@@ -1,0 +1,9 @@
+# -*- mode: snippet -*-
+# name: message greeting
+# key: VG
+# expand-env: ((greeting-string (if (string= (guess-language-buffer) "de") "Viele Grüße" "Best,")))
+# --
+
+`greeting-string`
+
+Timm ${1:Lichte}$0

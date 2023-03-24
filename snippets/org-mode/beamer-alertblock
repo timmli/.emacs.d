@@ -1,0 +1,13 @@
+# -*- mode: snippet -*-
+# name: beamer alert block
+# key: <ba
+# --
+*** ${1:@@latex:@@}                                       :B_alertblock:
+:PROPERTIES:
+:BEAMER_env: alertblock
+:END:
+$0
+***                                                       :B_ignoreheading:
+:PROPERTIES:
+:BEAMER_env: ignoreheading
+:END:
