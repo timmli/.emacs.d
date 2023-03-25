@@ -52,6 +52,7 @@
       - [[#context-menu][Context menu]]
       - [[#cursor-actions][Cursor actions]]
       - [[#keystroke-visualizer][Keystroke visualizer]]
+      - [[#lorem-ipsum--blindtext][Lorem ipsum / Blindtext]]
       - [[#undo--remove][Undo & remove]]
       - [[#save-kill--yank][Save, kill & yank]]
       - [[#narrowing][Narrowing]]
@@ -3574,7 +3575,10 @@ Yet I clearly prefer [[helm-org-rifle]] using the following function:
 
 This is added to [[hydra-org-roam]].
 
-**** Archiving
+**** TODO Archiving
+:LOGBOOK:
+- State "TODO"       from              [2023-03-24 Fri 22:49]
+:END:
 
 In org-roam, you most probably end up either with a large number of small files, or with a small number of large files. Maintaining large files in org-roam is disadvantageous, because DB update takes longer and the long tail of unchanged headings with an ID will litter org-roam-find-file.  
 
@@ -3824,6 +3828,23 @@ Helm support is available separately.
 (use-package helm-org-ql
   :quelpa (helm-org-ql :fetcher github :repo "alphapapa/org-ql"
                        :files ("helm-org-ql.el")))
+#+END_SRC
+
+The most important use case for me is performing garbage collection on my agenda files. This is how DONE headings with clocks older than 60 days are searched for: 
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(org-ql-search (org-agenda-files) "todo:DONE and clocked:to=-60")	        ; Non-sexp syntax
+(org-ql-search (org-agenda-files) '(and (todo "DONE") (clocked :to -60))) ; Sexp syntax
+#+END_SRC
+
+Here is more complex example for searching headings with an old clock that are DONE or events not in projects: 
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(org-ql-search (org-agenda-files) '(and
+																		(or (todo "DONE") 
+																				(and (tags "event" "appointment") ; tag hierarchies are not yet supported: https://github.com/alphapapa/org-ql/issues/145
+																						 (not (ancestors (tags "project")))))
+																		(clocked :to -60)))
 #+END_SRC
 
 *** Spell checking
