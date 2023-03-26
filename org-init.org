@@ -11251,9 +11251,9 @@ Global org-mode keys:
  
      ^^  [_a_] agenda  ^^    [_j_] show journal   ^^  ^^   ^^  ^^  ^^  [_r_] reload org       	
      ^^  [_d_] deft    ^^    [_t_] show todos   ^^  ^^   ^^  ^^  ^^    [_u_] update agenda files
-     ^^  [_c_] capture ^^    [_w_/_h_] work/home notes ^^ ^^ ^^  ^^    [_C_] clocking...       
-     ^^  [_f_] search  ^^    [_:_] filter by tags ^^  ^^  ^^  ^^  ^^   [_n_] show notes      
-     ^^   ^^           ^^    [_e_] export agenda files  ^^ ^^ ^^ ^^ ^^ [_q_]uit
+     ^^  [_c_] capture ^^    [_:_] filter by tags ^^  ^^  ^^  ^^  ^^   [_C_] clocking...       
+     ^^  [_f_] search  ^^    [_e_] export agenda files                 [_n_] show notes      
+     ^^   ^^           ^^    ^^  ^^ ^^ ^^ ^^ ^^                                    [_q_]uit
 
 	"
 	("a" org-agenda-list-complete :exit t)
@@ -11274,8 +11274,7 @@ Global org-mode keys:
 	(":" org-tags-view :exit t)
 	("r" org-reload :exit t)
 	;; ("f" helm-org-rifle-agenda-files :exit t) 
-	("f" (lambda nil (interactive) 
-				 (helm-org-rifle-files org-files)) :exit t)
+	("f" hydra-org-search/body :exit t)
 	;; ("f" org-search-view :exit t)
 	("s" org-search-view :exit t)
 	("u" tl/update-org-agenda-files :exit t)
@@ -11807,6 +11806,26 @@ Download with [[org-download]].
 	("<" org-agenda-filter-by-category)
 	("r" org-agenda-redo)
 	("x" org-agenda-exit :color blue)
+	("q" nil :color blue)
+	)
+#+END_SRC
+
+*** hydra-org-search
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-org-search (:color blue :hint nil)
+	"Org-mode search"
+	("a"
+	 (lambda nil (interactive) 
+		 (helm-org-rifle-files org-agenda-files)) 
+	 "agenda files")
+	("g" (org-ql-search (org-agenda-files) '(and
+																					 (or (todo "DONE") 
+																							 (and (tags "event" "appointment")
+																										(not (ancestors (tags "project")))))
+																					 (clocked :to -60)))
+	 "garbage collection")
+	("f" helm-org-ql-search)
 	("q" nil :color blue)
 	)
 #+END_SRC
