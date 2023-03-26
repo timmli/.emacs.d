@@ -6969,7 +6969,8 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 
 ;; Each paragraph is a single long line; at sending, emacs will add the special line continuation characters.
 (setq mu4e-compose-format-flowed t)
-;; (setq fill-flowed-encode-column 998)
+;; This seems necessary to avoid unwanted whitespace and line breaks being inserted into the sent message.
+(setq fill-flowed-encode-column 998)
 
 ;; Only complete with mail addresses that have been used recently and with personal contact
 (setq mu4e-compose-complete-only-personal t 
