@@ -3844,7 +3844,7 @@ Here is more complex example for searching headings with an old clock that are D
 																		(or (todo "DONE") 
 																				(and (tags "event" "appointment") ; tag hierarchies are not yet supported: https://github.com/alphapapa/org-ql/issues/145
 																						 (not (ancestors (tags "project")))))
-																		(clocked :to -60)))
+																		(not (clocked :from -60))))
 #+END_SRC
 
 *** Spell checking
@@ -11821,11 +11821,12 @@ Download with [[org-download]].
 	 "agenda files")
 	("g" (org-ql-search (org-agenda-files) '(and
 																					 (or (todo "DONE") 
-																							 (and (tags "event" "appointment")
+																							 (and (tags "event" "appointment") 
 																										(not (ancestors (tags "project")))))
-																					 (clocked :to -60)))
+																					 (not (clocked :from -60))))
 	 "garbage collection")
-	("f" helm-org-ql-search)
+	("f" (lambda nil (interactive)
+				 (helm-org-ql org-files)) "free search")
 	("q" nil :color blue)
 	)
 #+END_SRC
