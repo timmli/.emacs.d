@@ -3840,11 +3840,13 @@ The most important use case for me is performing garbage collection on my agenda
 Here is more complex example for searching headings with an old clock that are DONE or events not in projects: 
 
 #+BEGIN_SRC emacs-lisp :tangle no
-(org-ql-search (org-agenda-files) '(and
-																		(or (todo "DONE") 
-																				(and (tags "event" "appointment") ; tag hierarchies are not yet supported: https://github.com/alphapapa/org-ql/issues/145
-																						 (not (ancestors (tags "project")))))
-																		(not (clocked :from -60))))
+(org-ql-search (org-agenda-files)
+	'(and (and (or (todo "DONE")
+								 ;; tag hierarchies are not yet supported: https://github.com/alphapapa/org-ql/issues/145 
+								 (tags "event" "appointment") 
+								 )
+						 (not (ancestors (tags "project"))))
+				(not (clocked :from -60))))
 #+END_SRC
 
 *** Spell checking
@@ -11819,11 +11821,23 @@ Download with [[org-download]].
 	 (lambda nil (interactive) 
 		 (helm-org-rifle-files org-agenda-files)) 
 	 "agenda files")
-	("g" (org-ql-search (org-agenda-files) '(and
-																					 (or (todo "DONE") 
-																							 (and (tags "event" "appointment") 
-																										(not (ancestors (tags "project")))))
-																					 (not (clocked :from -60))))
+	("g" (org-ql-search
+				 (org-agenda-files)
+				 '(and
+					 ;; Heading is DONE or an event not in a (potentially ongoing) project
+					 (and (or (todo "DONE")
+										;; Event must be in the past
+										(and
+										 ;; Tag hierarchies are not yet supported:
+										 ;; https://github.com/alphapapa/org-ql/issues/145
+										 (tags "event" "appointment")
+										 (not (ts-active :from -60)))
+										)
+								(not (ancestors (tags "project"))))
+					 ;; Heading has no recent clocks
+					 (not (clocked :from -60))
+					 ;; Descendents have no recent clocks
+					 (not (descendants (clocked :from -60)))))
 	 "garbage collection")
 	("f" (lambda nil (interactive)
 				 (helm-org-ql org-files)) "free search")
