@@ -7057,7 +7057,10 @@ I'm binding this to =O= in =mu4e-view-mode-map=, since =o= is already bound to d
 					(defun my-mu4e-compose-settings ()
 						"My settings for message composition."
 						(company-mode) 							; Complete addresses with company
-						(save-excursion (message-goto-bcc) (insert user-mail-address))
+						(save-excursion (message-goto-bcc)
+														(when (not (looking-at "[[:blank:]]*$"))        
+															(kill-line)) ; Avoid double insertions
+														(insert user-mail-address))
 						(save-excursion (message-goto-cc))
 
 						;; Remove the date field.    
