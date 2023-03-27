@@ -8393,7 +8393,20 @@ Comparisons of spell checkers:
 - http://aspell.net/test/cur/
 - https://battlepenguin.com/tech/aspell-and-hunspell-a-tale-of-two-spell-checkers/
 
-Note on =aspell=: Unfortunately, =ispell-program-name= does not allow for also specifying =aspell= options. This would be desirable for changing, e.g., =home-dir=.
+Note on =aspell=: 
+- Unfortunately, =ispell-program-name= does not allow for also specifying =aspell= options. This would be desirable for changing, e.g., =home-dir=. 
+- Newer versions of aspell do not have the CL option =home-dir= any more. Instead, a configuration file =.apell.conf= in the home directory should be used.
+
+The following sets the =home-dir= option via =.aspell.conf=:
+#+BEGIN_SRC emacs-lisp
+(if (and (file-exists-p "~/.aspell.conf")
+				 personal-dictionary-dir)
+		(with-temp-buffer
+			(insert (concat "home-dir " personal-dictionary-dir))
+			(write-region (point-min) (point-max) "~/.aspell.conf")))
+#+END_SRC
+
+**** COMMENT Deprecated
 
 Specify the private dictionary file (use the system defaults when set to =nil=):
 #+BEGIN_SRC emacs-lisp
