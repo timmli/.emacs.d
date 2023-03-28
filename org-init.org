@@ -7164,6 +7164,13 @@ More Bookmarks:
      :query "flag:flagged"))
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'mu4e-bookmarks
+  '( :name "With attachment"
+     :key  ?a
+     :query "flag:attach"))
+#+END_SRC
+
 ***** COMMENT mu4e-thread-folding
 
 https://github.com/rougier/mu4e-thread-folding
