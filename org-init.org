@@ -11199,6 +11199,8 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 		(hydra-elisp/body))
 	 ((string-equal (buffer-mode) "pdf-view-mode")
 		(hydra-pdftools/body))
+	 ((string-equal (buffer-mode) "mu4e-headers-mode")
+		(hydra-mu4e-headers/body))
 	 ((or t) (message (concat "no hydra defined for major mode"))))
 	)
 #+END_SRC
@@ -12759,10 +12761,57 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	)
 #+END_SRC
 
-** TODO hydra-mu4e
-:LOGBOOK:
-- State "TODO"       from              [2023-02-26 Sun 23:08]
-:END:
+** hydra-mu4e
+
+*** hydra-mu4e-headers
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-mu4e-headers (:hint nil :color blue)
+	"
+     ^^                           ^^                          ^^                             ╭─────────────┐   
+     ^Header^                    ^Navigation^                ^Filter^                        │ mu4e-header │
+	╭──^^───────────────────────────^^──────────────────────────^^─────────────────────────────┴─────────────╯ 
+     _C_ Compose                 _p_ Previous _[_ unread       _g_ Refresh                       _H_ Help
+     _R_ Reply                   _n_ Next _]_ unread           _s_ Search                        _q_ quit
+     _F_ Forward                 _j_ Jump to mailbox         _b_ Search with bookmarks        
+     ^^                          _;_ Switch context          _P_ Toggle threading
+     ^Mark for^                  ^^                          _W_ Toggle show related
+         _d_/_=_ Trash/Untrash 
+         _!_/_?_ Read/Unread   
+         _+_/_-_ Flag/Unflag   
+     _u_ Unmark                
+     _U_ Unmark all            
+     _T_ Mark whole thread     
+     _x_ Execute marks
+"         
+	("p" mu4e-headers-prev :color pink)
+	("n" mu4e-headers-next :color pink)
+	("s" mu4e-search)
+	("g" mu4e-search-rerun)
+	("j" mu4e~headers-jump-to-maildir)
+	("b" mu4e-search-bookmark)
+	("C" mu4e-compose-new)
+	("R" mu4e-compose-reply)
+	("F" mu4e-compose-forward)
+	("P" mu4e-headers-toggle-threading)
+	("W" mu4e-headers-toggle-include-related)
+	("H" mu4e-display-manual)
+	("+" mu4e-headers-mark-for-flag)
+	("-" mu4e-headers-mark-for-unflag)
+	("d" mu4e-headers-mark-for-trash)
+	("=" mu4e-headers-mark-for-untrash)
+	("u" mu4e-headers-mark-for-unmark)
+	("U" mu4e-headers-unmark-all)
+	("T" mu4e-headers-mark-thread)
+	("x" mu4e-mark-execute-all)
+	("!" mu4e-headers-mark-for-read)
+	("?" mu4e-headers-mark-for-unread)
+	(";" mu4e-context-switch)
+	("[" mu4e-headers-prev-unread :color pink)
+	("]" mu4e-headers-next-unread :color pink)
+	("q" nil :color blue)
+	)
+#+END_SRC
 
 ** hydra-flycheck
 
