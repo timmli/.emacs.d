@@ -7144,6 +7144,36 @@ Signing and encryption is done using [[https://www.gnu.org/software/emacs/manual
 (setq  mm-sign-option 'guided)
 #+END_SRC
 
+Paste images from clipboard:
+
+#+BEGIN_SRC emacs-lisp
+;; Taken from https://emacs.stackexchange.com/a/73068 and slightly modified 
+(defun my/clip-to-PNG ()
+  (interactive)
+  (when (string-match-p (regexp-quote "image/png") (shell-command-to-string "xclip -selection clipboard -o -t TARGETS"))
+    (let
+        ((image-file (concat "/tmp/" (format-time-string "tmp_%Y%m%d_%H%M%S.png"))))
+      (shell-command-to-string (concat "xclip -o -selection clipboard -t image/png > " image-file))
+      image-file)))
+
+(defun my/mu4e-attach-image-from-clipboard ()
+  (interactive)
+  (let ((image-file (my/clip-to-PNG)) ;; paste clipboard to temp file
+        (pos (point-marker)))
+    (when image-file
+			;; Add image as an external attachment
+      ;; (goto-char (point-max))
+      ;; (mail-add-attachment image-file)
+
+			;; Add image as an internal attachment
+			(mml-attach-file image-file "image/png" nil "inline")
+
+			)))
+#+END_SRC
+
+#+RESULTS:
+: my/mu4e-attach-image-from-clipboard
+
 ***** Send messages
 
 #+BEGIN_SRC emacs-lisp
