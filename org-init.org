@@ -11297,7 +11297,7 @@ Deprecated:
  
        [_a_] address book       [_d_] dired/file browser     [_t_] pomodoro timer      [m] mail
        [_b_] new buffer         [_e_] emacs shell            [_l_] dictionary          [v] vterm
-       [_i_] buffer overview    [_s_] system shell           [_B_] bookmarks
+       [_i_] buffer overview    [_s_] system shell           [_B_] bookmarks            
        [_c_] calendar           [_S_] external shell        [_gl_] magit buffer log 
        [_p_] projectile         [_f_] search files          [_hb_] bibliography     
        [_P_] pandoc             [_r_] elfeed                 [_j_] Jupyter notebook
@@ -12808,10 +12808,10 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
      _C_ Compose                 _p_ Previous _[_ unread       _g_ Refresh                       _H_ Help
      _R_ Reply                   _n_ Next _]_ unread           _s_ Search                        _q_ quit
      _F_ Forward                 _j_ Jump to mailbox         _b_ Search with bookmarks        
-     ^^                          _;_ Switch context          _P_ Toggle threading
-     ^Mark for^                  ^^                          _W_ Toggle show related
-         _d_/_=_ Trash/Untrash 
-         _!_/_?_ Read/Unread   
+     ^^                          _;_ Switch context          _c_ Contacts
+     ^Mark for^                  ^^                          
+         _d_/_=_ Trash/Untrash                               _P_ Toggle threading   
+         _!_/_?_ Read/Unread                                 _W_ Toggle show related
          _+_/_-_ Flag/Unflag   
      _u_ Unmark                
      _U_ Unmark all            
@@ -12825,6 +12825,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("g" mu4e-search-rerun)
 	("j" mu4e~headers-jump-to-maildir)
 	("b" mu4e-search-bookmark)
+	("c" helm-mu-contacts)
 	("C" mu4e-compose-new)
 	("R" mu4e-compose-reply)
 	("F" mu4e-compose-forward)
@@ -12860,10 +12861,10 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
      _C_ Compose                 _p_ Previous _[_ unread       _g_ Refresh                       _H_ Help
      _R_ Reply                   _n_ Next _]_ unread           _s_ Search                        _q_ quit
      _F_ Forward                 _j_ Jump to mailbox         _b_ Search with bookmarks
-     ^^                          _;_ Switch context          _P_ Toggle threading
-     ^Mark for^                  ^^                          _W_ Toggle show related
-         _d_/_=_ Trash/Untrash 
-         _!_/_?_ Read/Unread       _._ View raw
+     ^^                          _;_ Switch context          _c_ Contacts
+     ^Mark for^                  ^^                          
+         _d_/_=_ Trash/Untrash                               _P_ Toggle threading     
+         _!_/_?_ Read/Unread       _._ View raw              _W_ Toggle show related  
          _+_/_-_ Flag/Unflag
      _u_ Unmark
      _U_ Unmark all
@@ -12877,6 +12878,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("g" mu4e-search-rerun)
 	("j" mu4e~headers-jump-to-maildir)
 	("b" mu4e-search-bookmark)
+	("c" helm-mu-contacts)
 	("C" mu4e-compose-new)
 	("R" mu4e-compose-reply)
 	("F" mu4e-compose-forward)
