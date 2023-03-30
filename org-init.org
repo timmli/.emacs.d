@@ -11231,6 +11231,10 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 		(hydra-pdftools/body))
 	 ((string-equal (buffer-mode) "mu4e-headers-mode")
 		(hydra-mu4e-headers/body))
+	 ((string-equal (buffer-mode) "mu4e-view-mode")
+		(hydra-mu4e-view/body))
+	 ((string-equal (buffer-mode) "mu4e-compose-mode")
+		(hydra-mu4e-compose/body))
 	 ((or t) (message (concat "no hydra defined for major mode"))))
 	)
 #+END_SRC
@@ -12811,7 +12815,8 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
          _+_/_-_ Flag/Unflag   
      _u_ Unmark                
      _U_ Unmark all            
-     _T_ Mark whole thread     
+     _T_ Mark whole thread
+     _A_ Action   
      _x_ Execute marks
 "         
 	("p" mu4e-headers-prev :color pink)
@@ -12839,9 +12844,97 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	(";" mu4e-context-switch)
 	("[" mu4e-headers-prev-unread :color pink)
 	("]" mu4e-headers-next-unread :color pink)
+	("A" mu4e-headers-mark-for-action)
 	("q" nil :color blue)
 	)
 #+END_SRC
+
+*** hydra-mu4e-view
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-mu4e-view (:hint nil :color blue)
+	"
+     ^^                           ^^                          ^^                             ╭───────────┐   
+     ^Mail^                    ^Navigation^                ^Filter^                          │ mu4e-view │
+	╭──^^───────────────────────────^^──────────────────────────^^─────────────────────────────┴───────────╯ 
+     _C_ Compose                 _p_ Previous _[_ unread       _g_ Refresh                       _H_ Help
+     _R_ Reply                   _n_ Next _]_ unread           _s_ Search                        _q_ quit
+     _F_ Forward                 _j_ Jump to mailbox         _b_ Search with bookmarks
+     ^^                          _;_ Switch context          _P_ Toggle threading
+     ^Mark for^                  ^^                          _W_ Toggle show related
+         _d_/_=_ Trash/Untrash 
+         _!_/_?_ Read/Unread       _._ View raw
+         _+_/_-_ Flag/Unflag
+     _u_ Unmark
+     _U_ Unmark all
+     _T_ Mark whole thread
+     _A_ Action
+     _x_ Execute marks
+"
+	("p" mu4e-view-headers-prev :color pink)
+	("n" mu4e-view-headers-next :color pink)
+	("s" mu4e-search)
+	("g" mu4e-search-rerun)
+	("j" mu4e~headers-jump-to-maildir)
+	("b" mu4e-search-bookmark)
+	("C" mu4e-compose-new)
+	("R" mu4e-compose-reply)
+	("F" mu4e-compose-forward)
+	("P" mu4e-headers-toggle-threading)
+	("W" mu4e-headers-toggle-include-related)
+	("+" mu4e-view-mark-for-flag)
+	("-" mu4e-view-mark-for-unflag)
+	("d" mu4e-view-mark-for-trash)
+	("=" mu4e-view-mark-for-untrash)
+	("u" mu4e-view-unmark)
+	("U" mu4e-view-unmark-all)
+	("T" mu4e-view-mark-thread)
+	("x" mu4e-view-marked-execute)
+	("!" mu4e-view-mark-for-read)
+	("?" mu4e-view-mark-for-unread)
+	(";" mu4e-context-switch)
+	("." mu4e-view-raw-message)
+	("[" mu4e-view-headers-prev-unread :color pink)
+	("]" mu4e-view-headers-next-unread :color pink)
+	("A" mu4e-headers-mark-for-action)
+	("H" mu4e-display-manual)
+	("q" nil :color blue)
+	)
+#+END_SRC
+
+*** hydra-mu4e-compose
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-mu4e-compose (:hint nil :color blue)
+	"
+     ^^                        ^^                          ^^                      ╭───────────┐   
+     ^Actions^                 ^Attach^                    ^Contents^              │ mu4e-view │
+	╭──^^────────────────────────^^──────────────────────────^^──────────────────────┴───────────╯ 
+     _C-c C-c_ Send            _af_ File                   _S_ Sign                   _H_ Help
+     _C-c C-d_ Pospone         _ab_ Buffer                 _C_ Encrypt                _q_ quit
+     _C-c C-j_ Delay           _ac_ Clipoard               _E_ Sign & encrypt
+     _C-c C-k_ Kill            _aC_ Captured message      _is_ Insert screenshot
+     ^^                        ^^                         _ic_ Insert text with CAESAR13
+
+"         
+	("C-c C-c" message-send-and-exit)
+	("C-c C-d" message-dont-send)
+	("C-c C-j" gnus-delay-article)
+	("C-c C-k" mu4e-message-kill-buffer)
+	("af" mml-attach-file)
+	("ab" mml-attach-buffer)
+	("ac" my/mu4e-attach-image-from-clipboard)
+	("aC" mu4e-compose-attach-captured-message)
+	("S" mml-secure-sign) 
+   ("C" mml-secure-encrypt)
+	 ("E" mml-secure-message-sign-encrypt)
+	("is" message-insert-screenshot)
+   ("ic" message-caesar-buffer-body)
+	("H" mu4e-display-manual)
+	("q" nil :color blue)
+	)
+#+END_SRC
+
 
 ** hydra-flycheck
 
