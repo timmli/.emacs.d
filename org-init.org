@@ -7171,8 +7171,12 @@ Paste images from clipboard:
 			)))
 #+END_SRC
 
-#+RESULTS:
-: my/mu4e-attach-image-from-clipboard
+In mu4e, line breaks are handled in a way that is very unusual when coming from, e.g., Thunderbird. Namely, line breaks are *ignored* if they are preceded by trailing whitespace, which may lead to an unexpected paragraph structure in the sent message. (This is probably an effect of using format=flowed above.) In order to preserve the line breaks that one intentionally makes when writing the message, the following code therefore adds =delete-trailing-whitespace= to =message-send-hook=: 
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'message-send-hook
+          'delete-trailing-whitespace)
+#+END_SRC 
 
 ***** Send messages
 
