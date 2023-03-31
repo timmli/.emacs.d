@@ -12808,13 +12808,13 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
      _C_ Compose                 _p_ Previous _[_ unread       _g_ Refresh                       _H_ Help
      _R_ Reply                   _n_ Next _]_ unread           _s_ Search                        _q_ quit
      _F_ Forward                 _j_ Jump to mailbox         _b_ Search with bookmarks        
-     ^^                          _;_ Switch context          _c_ Contacts
-     ^Mark for^                  ^^                          
-         _d_/_=_ Trash/Untrash                               _P_ Toggle threading   
-         _!_/_?_ Read/Unread                                 _W_ Toggle show related
-         _+_/_-_ Flag/Unflag   
-     _u_ Unmark                
-     _U_ Unmark all            
+     ^^                          _;_ Switch context   _M-<left>_ Previous search
+     ^Mark for^                  ^^                  _M-<right>_ Next search       
+         _d_/_=_ Trash/Untrash                               
+         _!_/_?_ Read/Unread                                 _c_ Contacts					
+         _+_/_-_ Flag/Unflag                                 _P_ Toggle threading   	 	    
+     _u_ Unmark                	^^													 _W_ Toggle show related		
+     _U_ Unmark all            																
      _T_ Mark whole thread
      _A_ Action   
      _x_ Execute marks
@@ -12845,6 +12845,8 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	(";" mu4e-context-switch)
 	("[" mu4e-headers-prev-unread :color pink)
 	("]" mu4e-headers-next-unread :color pink)
+	("M-<left>" mu4e-search-prev :color pink)
+  ("M-<right>" mu4e-search-next :color pink)
 	("A" mu4e-headers-mark-for-action)
 	("q" nil :color blue)
 	)
@@ -12917,7 +12919,6 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
      _C-c C-j_ Delay           _ac_ Clipoard               _E_ Sign & encrypt
      _C-c C-k_ Kill            _aC_ Captured message      _is_ Insert screenshot
      ^^                        ^^                         _ic_ Insert text with CAESAR13
-
 "         
 	("C-c C-c" message-send-and-exit)
 	("C-c C-d" message-dont-send)
@@ -12936,7 +12937,6 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("q" nil :color blue)
 	)
 #+END_SRC
-
 
 ** hydra-flycheck
 
