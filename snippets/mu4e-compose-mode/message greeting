@@ -4,8 +4,16 @@
 # expand-env: ((greeting-string (if (string= (guess-language-buffer) "de") "Viele Grüße" "Best,")))
 # --
 
-`greeting-string`
+`(if (string= (guess-language-buffer) "de")
+   (yas-choose-value '("Viele Grüße"
+	 				             "Mit freundlichen Grüßen"
+											 "Herzliche Grüße"
+											 "Danke und Viele Grüße"
+											 ))
+	 (yas-choose-value '("Best,"
+	                     "Kind regards,"
+											 "Thanks,"
+											 )))
+`
 
 Timm ${1:Lichte}$0
-
-
