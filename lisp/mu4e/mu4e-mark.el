@@ -98,31 +98,23 @@ is the target directory (for \"move\")")
 
 (defun mu4e--mark-find-headers-buffer ()
   "Find the headers buffer, if any."
-  (seq-find (lambda (b)
-	      (with-current-buffer b
-		(eq major-mode 'mu4e-headers-mode)))
-	    (buffer-list)))
+  (seq-find (lambda (_)
+              (mu4e-current-buffer-type-p 'headers))
+            (buffer-list)))
 
 (defmacro mu4e--mark-in-context (&rest body)
   "Evaluate BODY in the context of the headers buffer.
 The current buffer must be either a headers or view buffer."
   `(cond
-    ((eq major-mode 'mu4e-headers-mode) ,@body)
-    ((eq major-mode 'mu4e-view-mode)
+    ((mu4e-current-buffer-type-p 'headers) ,@body)
+    ((mu4e-current-buffer-type-p 'view)
      (when (buffer-live-p (mu4e-get-headers-buffer))
        (let* ((msg (mu4e-message-at-point))
               (docid (mu4e-message-field msg :docid)))
          (with-current-buffer (mu4e-get-headers-buffer)
-           (if (mu4e~headers-goto-docid docid)
-               ,@body
-             (mu4e-error "Cannot find message in headers buffer"))))))
-    (t
-     ;; even in other modes (e.g. mu4e-main-mode we try to find
-     ;; the headers buffer
-     (let ((hbuf (mu4e--mark-find-headers-buffer)))
-       (if (buffer-live-p hbuf)
-           (with-current-buffer hbuf ,@body)
-         ,@body)))))
+           (when (mu4e~headers-goto-docid docid)
+             ,@body
+             )))))))
 
 (defconst mu4e-marks
   '((refile
@@ -158,7 +150,7 @@ The current buffer must be either a headers or view buffer."
      :prompt "dtrash"
      :dyn-target (lambda (target msg) (mu4e-get-trash-folder msg))
      :action (lambda (docid msg target)
-	       (mu4e--server-move docid
+               (mu4e--server-move docid
                                   (mu4e--mark-check-target target) "+T-N")))
     (unflag
      :char    ("-" . "➖")
@@ -267,7 +259,7 @@ The following marks are available, and the corresponding props:
         (remhash docid mu4e--mark-map)
         ;; remove possible mark overlays
         (remove-overlays (line-beginning-position) (line-end-position)
-			 'mu4e-mark t)
+                         'mu4e-mark t)
         ;; now, let's set a mark (unless we were unmarking)
         (unless (eql mark 'unmark)
           (puthash docid (cons mark target) mu4e--mark-map)
@@ -288,17 +280,12 @@ The following marks are available, and the corresponding props:
 
 (defun mu4e--mark-get-move-target ()
   "Ask for a move target, and propose to create it if it does not exist."
-  (interactive)
-  ;;  (mu4e-message-at-point) ;; raises error if there is none
   (let* ((target (mu4e-ask-maildir "Move message to: "))
          (target (if (string= (substring target 0 1) "/")
                      target
                    (concat "/" target)))
-         (fulltarget (concat (mu4e-root-maildir) target)))
-    (when (or (file-directory-p fulltarget)
-              (and (yes-or-no-p
-                    (format "%s does not exist.  Create now?" fulltarget))
-                   (mu4e--server-mkdir fulltarget)))
+         (fulltarget (mu4e-join-paths (mu4e-root-maildir) target)))
+    (when (mu4e-create-maildir-maybe fulltarget)
       target)))
 
 (defun mu4e--mark-ask-target (mark)
@@ -374,7 +361,7 @@ user which one)."
 
 (defun mu4e--mark-check-target (target)
   "Check if TARGET exists; if not, offer to create it."
-  (let ((fulltarget (concat (mu4e-root-maildir) target)))
+  (let ((fulltarget (mu4e-join-paths (mu4e-root-maildir) target)))
     (if (not (mu4e-create-maildir-maybe fulltarget))
         (mu4e-error "Target dir %s does not exist " fulltarget)
       target)))
@@ -393,7 +380,7 @@ work well.
 If NO-CONFIRMATION is non-nil, don't ask user for confirmation."
   (interactive "P")
   (mu4e--mark-in-context
-   (let* ((marknum (hash-table-count mu4e--mark-map))
+   (let* ((marknum (mu4e-mark-marks-num))
           (prompt (format "Are you sure you want to execute %d mark%s?"
                           marknum (if (> marknum 1) "s" ""))))
      (if (zerop marknum)
@@ -417,28 +404,31 @@ If NO-CONFIRMATION is non-nil, don't ask user for confirmation."
                              docid msg target))
                 (mu4e-error "Unrecognized mark %S" mark))))
           mu4e--mark-map))
-       (mu4e-mark-unmark-all)
+       (mu4e-mark-unmark-all 'no-confirm)
        (message nil)))))
 
-(defun mu4e-mark-unmark-all ()
+(defun mu4e-mark-unmark-all (&optional no-confirmation)
   "Unmark all marked messages."
   (interactive)
   (mu4e--mark-in-context
-   (when (or (null mu4e--mark-map) (zerop (hash-table-count mu4e--mark-map)))
+   (when (zerop (mu4e-mark-marks-num))
      (mu4e-warn "Nothing is marked"))
-   (maphash
-    (lambda (docid _val)
-      (save-excursion
-        (when (mu4e~headers-goto-docid docid)
-          (mu4e-mark-set 'unmark))))
-    mu4e--mark-map)
-   ;; in any case, clear the marks map
-   (mu4e--mark-clear)))
+   (let* ((marknum (hash-table-count mu4e--mark-map))
+          (prompt (format "Are you sure you want to unmark %d message%s?"
+                          marknum (if (> marknum 1) "s" ""))))
+     (when (or no-confirmation (y-or-n-p prompt))
+       (maphash
+        (lambda (docid _val)
+          (save-excursion
+            (when (mu4e~headers-goto-docid docid)
+              (mu4e-mark-set 'unmark))))
+        mu4e--mark-map)
+       ;; in any case, clear the marks map
+       (mu4e--mark-clear)))))
 
 (defun mu4e-mark-docid-marked-p (docid)
   "Is the given DOCID marked?"
   (when (gethash docid mu4e--mark-map) t))
-
 
 (defun mu4e-mark-marks-num ()
   "Return the number of mark-instances in the current buffer."

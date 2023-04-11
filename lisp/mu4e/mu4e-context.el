@@ -1,6 +1,6 @@
 ;;; mu4e-context.el -- part of mu4e, the mu mail user agent -*- lexical-binding: t -*-
 
-;; Copyright (C) 2015-2022 Dirk-Jan C. Binnema
+;; Copyright (C) 2015-2023 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -28,6 +28,8 @@
 ;;; Code:
 
 (require 'mu4e-helpers)
+(require 'mu4e-modeline)
+(require 'mu4e-query-items)
 
 
 ;;; Configuration
@@ -41,9 +43,9 @@ function), this context is used. Otherwise, if none of the
 contexts match, we have the following choices:
 
 - `pick-first': pick the first of the contexts available (ie. the default)
-- `ask': ask the user
-- `ask-if-none': ask if there is no context yet, otherwise leave it as it is
--  nil: return nil; leaves the current context as is.
+- `ask': ask the user `ask-if-none': ask if there is no context yet,
+   otherwise leave it as it is
+- nil: return nil; eaves the current context as is.
 
 Also see `mu4e-compose-context-policy'."
   :type '(choice
@@ -82,14 +84,6 @@ none."
                     (if ctx (mu4e-context-name ctx) "<none>")))
     ctx))
 
-(defun mu4e-context-label ()
-  "Propertized string with the current context name.
-An empty string \"\" if there is none."
-  (if (mu4e-context-current)
-      (concat "[" (propertize (mu4e-quote-for-modeline
-                               (mu4e-context-name (mu4e-context-current)))
-                              'face 'mu4e-context-face) "]") ""))
-
 (cl-defstruct mu4e-context
   "A mu4e context object with the following members:
 - `name': the name of the context, eg. \"Work\" or \"Private\".
@@ -124,7 +118,7 @@ An empty string \"\" if there is none."
   "Switch to a context with NAME.
 Context must be part of `mu4e-contexts'; if NAME is nil, query user.
 
-If the new context is the same and the current context, only
+If the new context is the same as the current context, only
 switch (run associated functions) when prefix argument FORCE is
 non-nil."
   (interactive "P")
@@ -133,12 +127,13 @@ non-nil."
   (let* ((names (seq-map (lambda (context)
                            (cons (mu4e-context-name context) context))
                         mu4e-contexts))
+         (old-context mu4e--context-current) ; i.e., context before switch
          (context
           (if name
               (cdr-safe (assoc name names))
             (mu4e--context-ask-user "Switch to context: "))))
     (unless context (mu4e-error "No such context"))
-    ;; if new context is same as old one one switch with FORCE is set.
+    ;; if new context is same as old one, only switch with FORCE
     (when (or force (not (eq context (mu4e-context-current))))
       (when (and (mu4e-context-current)
                  (mu4e-context-leave-func mu4e--context-current))
@@ -151,10 +146,13 @@ non-nil."
                 (set (car cell) (cdr cell)))
               (mu4e-context-vars context)))
       (setq mu4e--context-current context)
-
       (run-hooks 'mu4e-context-changed-hook)
-      (mu4e-message "Switched context to %s" (mu4e-context-name context))
-      (force-mode-line-update))
+      ;; refresh the cached query items if there was a context before; we have
+      ;; have different bookmarks/maildirs now.
+      (when old-context
+           (mu4e--query-items-refresh 'reset-baseline))
+      (mu4e-message "Switched context to %s"
+                    (mu4e-context-name context)))
     context))
 
 (defun mu4e--context-autoswitch (&optional msg policy)
@@ -204,13 +202,6 @@ as it is."
                           (mu4e--context-ask-user "Select context: ")))
          (_ nil))))))
 
-(defun mu4e-context-in-modeline ()
-  "Display the mu4e-context (if any) in a (buffer-specific)
-global-mode-line."
-  (add-to-list
-   (make-local-variable 'global-mode-string)
-   '(:eval (mu4e-context-label))))
-
 (defmacro with-mu4e-context-vars (context &rest body)
   "Evaluate BODY, with variables let-bound for CONTEXT (if any).
 `funcall'."
@@ -221,17 +212,31 @@ global-mode-line."
          (mapcar (lambda(cell) (cdr cell)) vars)
        (eval ,@body))))
 
+(defun mu4e--context-modeline-item ()
+  "Propertized string with the current context or nil."
+  (when-let* ((ctx (mu4e-context-current))
+              (name (and ctx (mu4e-context-name ctx))))
+    (concat
+     "<"
+     (propertize
+      name
+      'face 'mu4e-context-face
+      'help-echo (format  "mu4e context: %s" name))
+     ">")))
+
 (define-minor-mode mu4e-context-minor-mode
   "Mode for switching the mu4e context."
   :global nil
   :init-value nil ;; disabled by default
   :group 'mu4e
   :lighter ""
-  :keymap
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd";") #'mu4e-context-switch)
-    map)
-  (mu4e-context-in-modeline))
+  (mu4e--modeline-register #'mu4e--context-modeline-item))
+
+(defvar mu4e--context-menu-items
+  '("--"
+    ["Switch-context" mu4e-context-switch
+     :help "Switch the mu4e context"])
+  "Easy menu items for mu4e-context.")
 
 ;;;
 (provide 'mu4e-context)

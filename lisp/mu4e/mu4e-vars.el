@@ -1,6 +1,6 @@
 ;;; mu4e-vars.el -- part of mu4e, the mu mail user agent -*- lexical-binding: t -*-
 
-;; Copyright (C) 2011-2022 Dirk-Jan C. Binnema
+;; Copyright (C) 2011-2023 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -32,28 +32,47 @@
   "Mu4e - an email-client for Emacs."
   :group 'mail)
 
-(defcustom mu4e-headers-include-related t
-  "Wether to include \"related\" messages in queries.
-With this option set to non-nil, not just return the matches for
-a searches, but also messages that are related (through their
-references) to these messages. This can be useful e.g. to include
-sent messages into message threads."
+(defcustom mu4e-confirm-quit t
+  "Whether to confirm to quit mu4e."
   :type 'boolean
-  :group 'mu4e-headers)
+  :group 'mu4e)
 
-(defcustom mu4e-headers-skip-duplicates t
-  "Whether to skip duplicate messages.
-With this option set to non-nil, show only one of duplicate
-messages. This is useful when you have multiple copies of the same
-message, which is a common occurrence for example when using Gmail
-and offlineimap."
+(defcustom mu4e-modeline-support t
+  "Support for showing information in the modeline."
   :type 'boolean
-  :group 'mu4e-headers)
+  :group 'mu4e)
+
+(defcustom mu4e-notification-support nil
+  "Support for new-message notifications."
+  :type 'boolean
+  :group 'mu4e)
+
+(defcustom mu4e-org-support t
+  "Support Org-mode links."
+  :type 'boolean
+  :group 'mu4e)
+
+(defcustom mu4e-speedbar-support nil
+  "Support having a speedbar to navigate folders/bookmarks."
+  :type 'boolean
+  :group 'mu4e)
+
+(defcustom mu4e-eldoc-support nil
+  "Support eldoc help in the headers-view."
+  :type 'boolean
+  :group 'mu4e)
 
 (defcustom mu4e-date-format-long "%c"
   "Date format to use in the message view.
 Follows the format of `format-time-string'."
   :type 'string
+  :group 'mu4e)
+
+(defcustom mu4e-dim-when-loading t
+  "Dim buffer text when loading new data.
+If non-nil, dim some buffers during data retrieval and rendering,
+and show some \"Loading\" banner."
+  :type 'boolean
   :group 'mu4e)
 
 
@@ -122,7 +141,13 @@ I.e. a message with the draft flag set."
 
 (defface mu4e-header-key-face
   '((t :inherit message-header-name :weight bold))
-  "Face for a header key (such as \"Foo\" in \"Subject:\ Foo\")."
+  "Face used to highlight items in various places."
+  :group 'mu4e-faces)
+
+(defface mu4e-header-field-face
+  '((t :weight bold))
+  "Face for a header field name (such as \"Subject:\" in \"Subject:\
+Foo\")."
   :group 'mu4e-faces)
 
 (defface mu4e-header-value-face
@@ -349,7 +374,7 @@ header-view, not including, for instance, the message body.")
 
 ;;; Internals
 
-(defvar mu4e~headers-view-win nil
+(defvar-local mu4e~headers-view-win nil
   "The view window connected to this headers view.")
 
 ;; It's useful to have the current view message available to
@@ -357,8 +382,8 @@ header-view, not including, for instance, the message body.")
 ;; before calling `mu4e-view-mode'.  However, changing the major mode
 ;; clobbers any local variables.  Work around that by declaring the
 ;; variable permanent-local.
-(defvar mu4e~view-message nil "The message being viewed in view mode.")
-(put 'mu4e~view-message 'permanent-local t)
+(defvar-local mu4e--view-message nil "The message being viewed in view mode.")
+(put 'mu4e--view-message 'permanent-local t)
 ;;; _
 (provide 'mu4e-vars)
 ;;; mu4e-vars.el ends here

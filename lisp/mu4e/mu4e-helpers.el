@@ -1,6 +1,6 @@
 ;;; mu4e-helpers.el -- part of mu4e -*- lexical-binding: t -*-
 
-;; Copyright (C) 2022 Dirk-Jan C. Binnema
+;; Copyright (C) 2022-2023  Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -32,29 +32,59 @@
 (require 'cl-lib)
 (require 'bookmark)
 
+(require 'mu4e-window)
 (require 'mu4e-config)
 
 ;;; Customization
 
 (defcustom mu4e-debug nil
-  "When set to non-nil, log debug information to the mu4e log  buffer."
+  "When set to non-nil, log debug information to the mu4e log buffer."
   :type 'boolean
   :group 'mu4e)
 
-(defcustom mu4e-modeline-max-width 42
-  "Determines the maximum length of the modeline string.
-If the string exceeds this limit, it will be truncated to fit."
-  :type 'integer
-  :group 'mu4e)
-
-(defcustom mu4e-completing-read-function 'ido-completing-read
+(defcustom mu4e-completing-read-function #'ido-completing-read
   "Function to be used to receive user-input during completion.
+
 Suggested possible values are:
- * `completing-read':      built-in completion method
- * `ido-completing-read':  dynamic completion within the minibuffer."
+ * `completing-read':      emacs built-in completion method
+ * `ido-completing-read':  dynamic completion within the minibuffer.
+
+The function is used in two contexts -
+1) directly - for instance in when listing _other_ maildirs
+   in `mu4e-ask-maildir'
+2) if  `mu4e-read-option-use-builtin' is nil, it is used
+   as part of `mu4e-read-option' in many places.
+
+Set it to `completing-read' when you want to use completion
+frameworks such as Helm, Ivy or Vertico. In that case, you
+might want to add soemthing like the following in your configuration.
+
+   (setq mu4e-read-option-use-builtin nil
+         mu4e-completing-read-function \\='completing-read)
+."
   :type 'function
   :options '(completing-read ido-completing-read)
   :group 'mu4e)
+
+(defcustom mu4e-read-option-use-builtin t
+  "Whether to use mu4e's traditional completion for
+`mu4e-read-option'.
+
+If nil, use the value of `mu4e-completing-read-function', integrated
+into mu4e.
+
+Many of the third-party completion frameworks such as Helm, Ivy
+and Vertico influence `completion-read', so to have mu4e follow
+your overall settings, try the equivalent of
+
+   (setq mu4e-read-option-use-builtin nil
+         mu4e-completing-read-function \\='completing-read)
+
+Tastes differ, but without any such frameworks, the unaugmented
+Emacs `completing-read' is rather Spartan."
+  :type 'boolean
+  :group 'mu4e)
+
 
 (defcustom mu4e-use-fancy-chars nil
   "When set, allow fancy (Unicode) characters for marks/threads.
@@ -63,11 +93,6 @@ You can customize the exact fancy characters used with
 `mu4e-headers..-prefix' variables."
   :type 'boolean
   :group 'mu4e)
-
-(defcustom mu4e-display-update-status-in-modeline nil
-  "Non-nil value will display the update status in the modeline."
-  :group 'mu4e
-  :type 'boolean)
 
 ;; maybe move the next ones... but they're convenient
 ;; here because they're needed in multiple buffers.
@@ -85,92 +110,25 @@ marked as read-only, or non-nil otherwise."
           function)
   :group 'mu4e-view)
 
-
-(defcustom mu4e-split-view 'horizontal
-  "How to show messages / headers.
-A symbol which is either:
- * `horizontal':    split horizontally (headers on top)
- * `vertical':      split vertically (headers on the left).
- * `single-window': view and headers in one window (mu4e will try not to
-        touch your window layout), main view in minibuffer
- * a function:      the function is responsible to return some window for
-        the view.
- * anything else:   don't split (show either headers or messages,
-        not both).
-Also see `mu4e-headers-visible-lines'
-and `mu4e-headers-visible-columns'."
-  :type '(choice (const :tag "Split horizontally" horizontal)
-                 (const :tag "Split vertically" vertical)
-                 (const :tag "Single window" single-window)
-                 (const :tag "Don't split" nil))
-  :group 'mu4e-headers)
 
-;;; Buffers
-
-(defconst mu4e-main-buffer-name " *mu4e-main*"
-  "Name of the mu4e main buffer.
-The default name starts with SPC and therefore is not visible in
-buffer list.")
-(defconst mu4e-headers-buffer-name "*mu4e-headers*"
-  "Name of the buffer for message headers.")
-(defconst mu4e-embedded-buffer-name " *mu4e-embedded*"
-  "Name for the embedded message view buffer.")
-(defconst mu4e-view-buffer-name "*Article*"
-  "Name of the view buffer.")
-
-(defun mu4e-get-headers-buffer ()
-  "Get the buffer object from `mu4e-headers-buffer-name'."
-  (get-buffer mu4e-headers-buffer-name))
-
-(defun mu4e-get-view-buffer ()
-  "Get the buffer object from `mu4e-view-buffer-name'."
-  (get-buffer mu4e-view-buffer-name))
 
 (defun mu4e-select-other-view ()
   "Switch between headers view and message view."
   (interactive)
   (let* ((other-buf
           (cond
-           ((eq major-mode 'mu4e-headers-mode)
+           ((mu4e-current-buffer-type-p 'view)
+            (mu4e-get-headers-buffer))
+           ((mu4e-current-buffer-type-p 'headers)
             (mu4e-get-view-buffer))
-           ((eq major-mode 'mu4e-view-mode)
-            (mu4e-get-headers-buffer))))
+           (t (mu4e-error "This window is neither the headers nor the view window."))))
          (other-win (and other-buf (get-buffer-window other-buf))))
     (if (window-live-p other-win)
         (select-window other-win)
       (mu4e-message "No window to switch to"))))
 
 
-;;; Windows
-(defun mu4e-hide-other-mu4e-buffers ()
-  "Bury mu4e buffers.
-Hide (main, headers, view) (and delete all windows displaying
-it). Do _not_ bury the current buffer, though."
-  (interactive)
-  (unless (eq mu4e-split-view 'single-window)
-    (let ((curbuf (current-buffer)))
-      ;; note: 'walk-windows' does not seem to work correctly when modifying
-      ;; windows; therefore, the doloops here
-      (dolist (frame (frame-list))
-        (dolist (win (window-list frame nil))
-          (with-current-buffer (window-buffer win)
-            (unless (eq curbuf (current-buffer))
-              (when (member major-mode '(mu4e-headers-mode mu4e-view-mode))
-                (when (eq t (window-deletable-p win))
-                  (delete-window win))))))) t)))
-
-;;; Modeline
 
-(defun mu4e-quote-for-modeline (str)
-  "Quote STR to be used literally in the modeline.
-The string will be shortened to fit if its length exceeds
-`mu4e-modeline-max-width'."
-  (replace-regexp-in-string
-   "%" "%%"
-   (truncate-string-to-width str mu4e-modeline-max-width 0 nil t)))
-
-
-
 ;;; Messages, warnings and errors
 (defun mu4e-format (frm &rest args)
   "Create [mu4e]-prefixed string based on format FRM and ARGS."
@@ -199,8 +157,6 @@ Create [mu4e]-prefixed error based on format FRM and ARGS. Does a
 local-exit and does not return, and raises a
 debuggable (backtrace) error."
   (mu4e-log 'error (apply 'mu4e-format frm args))
-  ;; opportunistically close the "loading" window.
-  (mu4e~loading-close)
   (error "%s" (apply 'mu4e-format frm args)))
 
 (defun mu4e-warn (frm &rest args)
@@ -211,119 +167,157 @@ Does a local-exit and does not return."
 
 ;;; Reading user input
 
-(defun mu4e--read-char-choice (prompt choices)
+(defun mu4e--plist-get (lst prop)
+  "Get PROP from plist LST and raise an error if not present."
+  (or (plist-get lst prop)
+      (if (plist-member lst prop)
+          nil
+        (mu4e-error "Missing property %s in %s" prop lst))))
+
+(defun mu4e--matching-choice (choices kar)
+  "Does KAR match any of the  CHOICES?
+
+KAR is a character and CHOICES is an alist as describe in
+`mu4e--read-choice-builting'.
+
+First try an exact match, but if there isn't, try
+case-insensitive.
+
+Return the cdr (value) of the matching cell, if any."
+  (let* ((match) (match-ci))
+    (catch 'found
+      (seq-do
+       (lambda (choice)
+         ;; first try an exact match
+         (let ((case-fold-search nil))
+           (if (char-equal kar (caadr choice))
+               (progn
+                 (setq match choice)
+                 (throw 'found choice)) ;; found it - quit.
+             ;; perhaps case-insensitive?
+             (let ((case-fold-search t))
+               (when (and (not match-ci) (char-equal kar (caadr choice)))
+                 (setq match-ci choice))))))
+       choices))
+    (if match (cdadr match)
+      (when match-ci (cdadr match-ci)))))
+
+(defun mu4e--read-choice-completing-read (prompt choices)
   "Read and return one of CHOICES, prompting for PROMPT.
+
+PROMPT describes a multiple-choice question to the user. CHOICES
+is an alist of the fiorm
+  ( ( <display-string>  ( <shortcut> . <value> ))
+     ... )
 Any input that is not one of CHOICES is ignored. This is mu4e's
-version of `read-char-choice' which becomes case-insentive after
-trying an exact match."
-  (let ((choice) (chosen) (inhibit-quit nil))
+version of `read-char-choice' which becomes case-insensitive
+after trying an exact match.
+
+Return the matching choice value (cdr of the cell)."
+  (let* ((metadata `(metadata
+                     (display-sort-function . ,#'identity)
+                     (cycle-sort-function .   ,#'identity)))
+         (quick-result)
+         (result
+          (minibuffer-with-setup-hook
+              (lambda ()
+                (add-hook 'post-command-hook
+                          (lambda ()
+                            ;; Exit directly if a quick key is pressed
+                            (let ((prefix (minibuffer-contents-no-properties)))
+                              (unless (string-empty-p prefix)
+                                (setq quick-result
+                                      (mu4e--matching-choice choices (string-to-char prefix)))
+                                (when quick-result
+                                  (exit-minibuffer)))))
+                          -1 'local))
+            (funcall mu4e-completing-read-function
+             prompt
+             ;; Use function with metadata to disable sorting.
+             (lambda (input predicate action)
+               (if (eq action 'metadata)
+                   metadata
+                 (complete-with-action action choices input predicate)))
+             ;; Require confirmation, if the input does not match a suggestion
+             nil t nil nil nil))))
+    (or quick-result
+        (cdr (assoc result choices)))))
+
+(defun mu4e--read-choice-builtin (prompt choices)
+  "Read and return one of CHOICES, prompting for PROMPT.
+
+PROMPT describes a multiple-choice question to the user. CHOICES
+is an alist of the fiorm
+  ( ( <display-string>  ( <shortcut> . <value> ))
+     ... )
+Any input that is not one of CHOICES is ignored. This is mu4e's
+version of `read-char-choice' which becomes case-insensitive
+after trying an exact match.
+
+Return the matching choice value (cdr of the cell)."
+  (let ((chosen) (inhibit-quit nil)
+        (prompt (format "%s%s"
+                        (mu4e-format prompt)
+                        (mapconcat #'car choices ", "))))
     (while (not chosen)
-      (message nil);; this seems needed...
-      (setq choice (read-char-exclusive prompt))
-      (if (eq choice 27) (keyboard-quit)) ;; quit if ESC is pressed
-      (setq chosen (or (member choice choices)
-                       (member (downcase choice) choices)
-                       (member (upcase choice) choices))))
-    (car chosen)))
+      (message nil) ;; this seems needed...
+      (when-let ((kar (read-char-exclusive prompt)))
+        (setq chosen (mu4e--matching-choice choices kar))))
+    chosen))
 
 (defun mu4e-read-option (prompt options)
   "Ask user for an option from a list on the input area.
+
 PROMPT describes a multiple-choice question to the user. OPTIONS
 describe the options, and is a list of cells describing
 particular options. Cells have the following structure:
 
-   (OPTIONSTRING . RESULT)
+   (OPTION . RESULT)
 
-where OPTIONSTRING is a non-empty string describing the
-option. The first character of OPTIONSTRING is used as the
-shortcut, and obviously all shortcuts must be different, so you
-can prefix the string with an uniquifying character.
+where OPTIONS is a non-empty string describing the option. The
+first character of OPTION is used as the shortcut, and obviously
+all shortcuts must be different, so you can prefix the string
+with an uniquifying character.
 
 The options are provided as a list for the user to choose from;
 user can then choose by typing CHAR.  Example:
   (mu4e-read-option \"Choose an animal: \"
-              \='((\"Monkey\" . monkey) (\"Gnu\" . gnu) (\"xMoose\" . moose)))
+              \\='((\"Monkey\" . monkey) (\"Gnu\" . gnu) (\"xMoose\" . moose)))
 
 User now will be presented with a list: \"Choose an animal:
    [M]onkey, [G]nu, [x]Moose\".
 
-Function returns the cdr of the list element."
-  (let* ((prompt (mu4e-format "%s" prompt))
-         (optionsstr
-          (mapconcat
+If optional character KEY is provied, use that instead of asking
+the user.
+
+Function returns the value (cdr) of the matching cell."
+  (let* ((choices ;; ((<display> ( <key> . <value> ) ...)
+          (seq-map
            (lambda (option)
-             ;; try to detect old-style options, and warn
-             (when (characterp (car-safe (cdr-safe option)))
-               (mu4e-error
-                (concat "Please use the new format for options/actions; "
-                        "see the manual")))
-             (let ((kar (substring (car option) 0 1)))
-               (concat
-                "[" (propertize kar 'face 'mu4e-highlight-face) "]"
-                (substring (car option) 1))))
-           options ", "))
-         (response
-          (mu4e--read-char-choice
-           (concat prompt optionsstr
-                   " [" (propertize "C-g" 'face 'mu4e-highlight-face)
-                   " to cancel]")
-           ;; the allowable chars
-           (seq-map (lambda(elm) (string-to-char (car elm))) options)))
-         (chosen
-          (seq-find
-           (lambda (option) (eq response (string-to-char (car option))))
-           options)))
-    (if chosen
-        (cdr chosen)
-      (mu4e-warn "Unknown shortcut '%c'" response))))
+             (list
+              (concat ;; <display>
+               "[" (propertize (substring (car option) 0 1)
+                               'face 'mu4e-highlight-face)
+               "]"
+               (substring (car option) 1))
+              (cons
+               (string-to-char (car option)) ;; <key>
+               (cdr option))))               ;; <value>
+           options))
+         (response (funcall
+                    (if mu4e-read-option-use-builtin
+                        #'mu4e--read-choice-builtin
+                      #'mu4e--read-choice-completing-read)
+                    prompt choices)))
+    (or response
+        (mu4e-warn "invalid input"))))
 
-
-
-;;; Server properties
-(defvar mu4e--server-props nil
-  "Metadata we receive from the mu4e server.")
-
-(defun mu4e-server-properties ()
-  "Get the server metadata plist."
-  mu4e--server-props)
-
-(defun mu4e-root-maildir()
-  "Get the root maildir."
-  (or (and mu4e--server-props
-           (plist-get mu4e--server-props :root-maildir))
-      (mu4e-error "Root maildir unknown; did you start mu4e?")))
-
-(defun mu4e-database-path()
-  "Get the root maildir."
-  (or (and mu4e--server-props
-           (plist-get mu4e--server-props :database-path))
-      (mu4e-error "Root maildir unknown; did you start mu4e?")))
-
-(defun mu4e-server-version()
-  "Get the root maildir."
-  (or (and mu4e--server-props
-           (plist-get mu4e--server-props :version))
-      (mu4e-error "Version unknown; did you start mu4e?")))
-
-(defun mu4e-last-query-results ()
-  "Get the results (counts) of the last cached queries.
-
-The cached queries are the bookmark / maildir queries that are
-used to populated the read/unread counts in the main view. They
-are refreshed when calling `(mu4e)', i.e., when going to the main
-view.
-
-The results are a list of elements of the form
-   (:query \"query string\"
-            :count  <total number matching count>
-            :unread <number of unread messages in count>)"
-  (plist-get mu4e--server-props :queries))
-
-(defun mu4e-last-query-result (query)
-  "Get the last result for some QUERY or nil if not found."
-  (seq-find
-   (lambda (elm) (string= (plist-get elm :query) query))
-   (mu4e-last-query-results)))
+(defun mu4e-filter-single-key (lst)
+  "Return a list consisting of LST items with a `characterp' :key prop."
+  ;; This works for bookmarks and maildirs.
+  (seq-filter (lambda (item)
+                (characterp (plist-get item :key)))
+              lst))
 
 
 ;;; Logging / debugging
@@ -399,7 +393,7 @@ log-buffer. See `mu4e-show-log'."
   (let ((buf (get-buffer mu4e--log-buffer-name)))
     (unless (buffer-live-p buf)
       (mu4e-warn "No debug log available"))
-    (switch-to-buffer buf)))
+    (display-buffer buf)))
 
 
 
@@ -416,18 +410,18 @@ http://cr.yp.to/proto/maildir.html."
    (seq-mapcat
     (lambda (flag)
       (pcase flag
-	(`draft     "D")
-	(`flagged   "F")
-	(`new       "N")
-	(`passed    "P")
-	(`replied   "R")
-	(`seen      "S")
-	(`trashed   "T")
-	(`attach    "a")
-	(`encrypted "x")
-	(`signed    "s")
-	(`unread    "u")
-	(_          "")))
+        (`draft     "D")
+        (`flagged   "F")
+        (`new       "N")
+        (`passed    "P")
+        (`replied   "R")
+        (`seen      "S")
+        (`trashed   "T")
+        (`attach    "a")
+        (`encrypted "x")
+        (`signed    "s")
+        (`unread    "u")
+        (_          "")))
     (seq-uniq flags) 'string)))
 
 (defun mu4e-string-to-flags (str)
@@ -441,14 +435,14 @@ http://cr.yp.to/proto/maildir.html."
     (seq-mapcat
      (lambda (kar)
        (list
-	(pcase kar
-	  ('?D   'draft)
-	  ('?F   'flagged)
-	  ('?P   'passed)
-	  ('?R   'replied)
-	  ('?S   'seen)
-	  ('?T   'trashed)
-	  (_     nil))))
+        (pcase kar
+          ('?D   'draft)
+          ('?F   'flagged)
+          ('?P   'passed)
+          ('?R   'replied)
+          ('?S   'seen)
+          ('?T   'trashed)
+          (_     nil))))
      str))))
 
 
@@ -458,8 +452,9 @@ http://cr.yp.to/proto/maildir.html."
 If there is not e-mail address at point, do nothing."
   (interactive)
   (let* ((thing (and (thing-at-point 'email)
-		     (string-trim (thing-at-point 'email 'no-props) "<" ">")))
-	 (thing (or thing (thing-at-point 'url 'no-props))))
+                     (string-trim (thing-at-point 'email 'no-props) "<" ">")))
+         (thing (or thing (get-text-property (point) 'shr-url)))
+         (thing (or thing (thing-at-point 'url 'no-props))))
     (when thing
       (kill-new thing)
       (mu4e-message "Copied '%s' to kill-ring" thing))))
@@ -516,7 +511,7 @@ The file will self-destruct in a short while, enough to open it
 in an external program."
   (let ((tmpfile (make-temp-file "mu4e-" nil (concat "." ext))))
     (run-at-time "30 sec" nil
-		 (lambda () (ignore-errors (delete-file tmpfile))))
+                 (lambda () (ignore-errors (delete-file tmpfile))))
     tmpfile))
 
 (defsubst mu4e-is-mode-or-derived-p (mode)
@@ -538,12 +533,12 @@ Or go to the top level if there is none."
 (defun mu4e--make-bookmark-record ()
   "Create a bookmark for the message at point."
   (let* ((msg     (mu4e-message-at-point))
-	 (subject (or (plist-get msg :subject) "No subject"))
-	 (date	  (plist-get msg :date))
-	 (date	  (if date (format-time-string "%F: " date) ""))
-	 (title	  (format "%s%s" date subject))
-	 (msgid	  (or (plist-get msg :message-id)
-		      (mu4e-error "Cannot bookmark message without message-id"))))
+         (subject (or (plist-get msg :subject) "No subject"))
+         (date	  (plist-get msg :date))
+         (date	  (if date (format-time-string "%F: " date) ""))
+         (title	  (format "%s%s" date subject))
+         (msgid	  (or (plist-get msg :message-id)
+                      (mu4e-error "Cannot bookmark message without message-id"))))
     `(,title
       ,@(bookmark-make-record-default 'no-file 'no-context)
       (message-id . ,msgid)
@@ -562,6 +557,40 @@ Or go to the top level if there is none."
 (defmacro mu4e-setq-if-nil (var val)
   "Set VAR to VAL if VAR is nil."
   `(unless ,var (setq ,var ,val)))
+
+
+
+;;; Misc
+(defun mu4e-join-paths (directory &rest components)
+  "Append COMPONENTS to DIRECTORY and return the resulting string.
+
+This is mu4e's version of Emacs 28's `file-name-concat' with the
+difference it also handles slashes at the beginning of
+COMPONENTS."
+  (replace-regexp-in-string
+   "//+" "/"
+   (mapconcat (lambda (part) (if (stringp part) part ""))
+              (cons directory components) "/")))
+
+(defun mu4e-string-replace (from-string to-string in-string)
+  "Replace FROM-STRING with TO-STRING in IN-STRING each time it occurs.
+Mu4e version of emacs 28's string-replace."
+  (replace-regexp-in-string (regexp-quote from-string)
+                            to-string in-string nil 'literal))
+
+(defun mu4e-key-description (cmd)
+  "Get the textual form of current binding to interactive function CMD.
+If it is unbound, return nil. If there are multiple bindings,
+return the shortest.
+
+Rougly does what `substitute-command-keys' does, but picks
+shorter keys in some cases where there are multiple bindings."
+  ;; not a perfect heuristic: e.g. '<up>' is longer that 'C-p'
+  (car-safe
+   (seq-sort (lambda (b1 b2)
+               (< (length b1) (length b2)))
+             (seq-map #'key-description
+                      (where-is-internal cmd)))))
 
 (provide 'mu4e-helpers)
 ;;; mu4e-helpers.el ends here

@@ -1,6 +1,6 @@
 ;;; mu4e-bookmarks.el -- part of mu4e -*- lexical-binding: t -*-
 
-;; Copyright (C) 2011-2022 Dirk-Jan C. Binnema
+;; Copyright (C) 2011-2023 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -24,6 +24,9 @@
 
 ;;; Code:
 (require 'mu4e-helpers)
+(require 'mu4e-modeline)
+(require 'mu4e-folders)
+(require 'mu4e-query-items)
 
 
 ;;; Configuration
@@ -34,35 +37,40 @@
 
 (defcustom mu4e-bookmarks
   '(( :name  "Unread messages"
-             :query "flag:unread AND NOT flag:trashed"
-             :key ?u)
+      :query "flag:unread AND NOT flag:trashed"
+      :key ?u)
     ( :name "Today's messages"
-            :query "date:today..now"
-            :key ?t)
+      :query "date:today..now"
+      :key ?t)
     ( :name "Last 7 days"
-            :query "date:7d..now"
-            :hide-unread t
-            :key ?w)
+      :query "date:7d..now"
+      :hide-unread t
+      :key ?w)
     ( :name "Messages with images"
-            :query "mime:image/*"
-            :key ?p))
+      :query "mime:image/*"
+      :key ?p))
   "List of pre-defined queries that are shown on the main screen.
 
 Each of the list elements is a plist with at least:
 `:name'  - the name of the query
-`:query' - the query expression or function
-`:key'   - the shortcut key.
+`:query' - the query expression string or function
+`:key'   - the shortcut key (single character)
 
-Note that the :query parameter can be a function/lambda.
+Optionally, you can add the following:
 
-Optionally, you can add the following: `:hide' - if t, the
-bookmark is hidden from the main-view and speedbar.
-`:hide-unread' - do not show the counts of unread/total number of
-matches for the query in the main-view. This can be useful if a
-bookmark uses a very slow query.
+- `:favorite' - if t, monitor the results of this query, and make
+it eligible for showing its status in the modeline. At most
+one bookmark should have this set to t (otherwise the _first_
+bookmark is the implicit favorite). The query for the `:favorite'
+item must be unique among `mu4e-bookmarks' and
+`mu4e-maildir-shortcuts'.
+- `:hide' - if t, the bookmark is hidden from the main-view and
+speedbar.
+- `:hide-unread' - do not show the counts of
+unread/total number of matches for the query in the main-view.
+This can be useful if a bookmark uses a very slow query.
 
-`:hide-unread' is implied from `:hide'. Furthermore, it is
-implied when `:query' is a function.
+`:hide-unread' is implied from `:hide'.
 
 Note: for efficiency, queries used to determine the unread/all
 counts do not discard duplicate or unreadable messages. Thus, the
@@ -71,40 +79,30 @@ query."
   :type '(repeat (plist))
   :group 'mu4e-bookmarks)
 
-
- (defun mu4e-ask-bookmark (prompt)
-  "Ask the user for a bookmark (using PROMPT) as defined in
-`mu4e-bookmarks', then return the corresponding query."
+
+(defun mu4e-ask-bookmark (prompt)
+  "Ask user for bookmark using PROMPT.
+Return the corresponding query. The bookmark are as defined in
+`mu4e-bookmarks'."
   (unless (mu4e-bookmarks) (mu4e-error "No bookmarks defined"))
-  (let* ((prompt (mu4e-format "%s" prompt))
-         (bmarks
-          (mapconcat
-           (lambda (bm)
-             (concat
-              "[" (propertize (make-string 1 (plist-get bm :key))
-                              'face 'mu4e-highlight-face)
-              "]"
-              (plist-get bm :name))) (mu4e-bookmarks) ", "))
-         (kar (read-char (concat prompt bmarks))))
-    (mu4e-get-bookmark-query kar)))
+  (let* ((bmarks (seq-map (lambda (bm)
+                            (cons (format "%c%s"
+                                          (plist-get bm :key)
+                                          (plist-get bm :name))
+                                  (plist-get bm :query)))
+                          (mu4e-filter-single-key (mu4e-bookmarks)))))
+    (mu4e-read-option prompt bmarks)))
 
 (defun mu4e-get-bookmark-query (kar)
   "Get the corresponding bookmarked query for shortcut KAR.
 Raise an error if none is found."
-  (let* ((chosen-bm
-          (or (seq-find
-               (lambda (bm)
-                 (= kar (plist-get bm :key)))
-               (mu4e-bookmarks))
-              (mu4e-warn "Unknown shortcut '%c'" kar)))
-         (expr (plist-get chosen-bm :query))
-         (expr (if (not (functionp expr)) expr
-                 (funcall expr)))
-         (query (eval expr)))
-    (if (stringp query)
-        query
-      (mu4e-warn "Expression must evaluate to query string ('%S')" expr))))
-
+  (let ((chosen-bm
+         (or (seq-find
+              (lambda (bm)
+                (= kar (plist-get bm :key)))
+              (mu4e-bookmarks))
+             (mu4e-warn "Unknown shortcut '%c'" kar))))
+    (mu4e--bookmark-query chosen-bm)))
 
 (defun mu4e-bookmark-define (query name key)
   "Define a bookmark for QUERY with NAME and shortcut KEY.
@@ -127,7 +125,71 @@ Convert from the old format if needed."
              (if (and (listp item) (= (length item) 3))
                  `(:name  ,(nth 1 item) :query ,(nth 0 item)
                           :key   ,(nth 2 item))
-               item)) mu4e-bookmarks))
+               item))
+           mu4e-bookmarks))
+
+(defun mu4e-bookmark-favorite ()
+  "Find the favorite bookmark."
+  ;; note, use query-items, which will have picked a favorite
+  ;; even if user did not provide one explictly
+  (seq-find
+   (lambda (item)
+     (plist-get item :favorite))
+   (mu4e-query-items 'bookmarks)))
+
+;; for Zero-Inbox afficionados
+(defvar mu4e-modeline-all-clear                   '("C:" . "🌀")
+  "No more messages at all for this query.")
+(defvar mu4e-modeline-all-read                    '("R:" . "✅")
+  "No unread messages left.")
+(defvar mu4e-modeline-unread-items                '("U:" . "📫")
+  "There are some unread items.")
+(defvar mu4e-modeline-new-items                   '("N:" . "🔥")
+  "There are some new items after the baseline.
+I.e., very new messages.")
+
+(declare-function mu4e-search-bookmark "mu4e-search")
+(defun mu4e-jump-to-favorite ()
+  "Jump to to the favorite bookmark, if any."
+  (interactive)
+  (when-let ((fav (mu4e--bookmark-query (mu4e-bookmark-favorite))))
+    (mu4e-search-bookmark fav)))
+
+(defun mu4e--bookmarks-modeline-item ()
+  "Modeline item showing message counts for the favorite bookmark.
+
+This uses the one special ':favorite' bookmark, and if there is
+one, creates a propertized string for display in the modeline."
+  (when-let ((fav ;; any results for the favorite bookmark item?
+              (seq-find (lambda (bm) (plist-get bm :favorite))
+                        (mu4e-query-items 'bookmarks))))
+    (cl-destructuring-bind (&key unread count delta-unread
+                                 &allow-other-keys) fav
+      (propertize
+       (format "%s%s "
+               (funcall (if mu4e-use-fancy-chars 'cdr 'car)
+                        (cond
+                         ((> delta-unread 0)  mu4e-modeline-new-items)
+                         ((> unread 0) mu4e-modeline-unread-items)
+                         ((> count 0) mu4e-modeline-all-read)
+                         (t mu4e-modeline-all-clear)))
+               (mu4e--query-item-display-counts fav))
+       'help-echo
+       (format
+        (concat
+         "mu4e favorite bookmark '%s':\n"
+         "\t%s\n\n"
+         "number of matches: %d\n"
+         "unread messages: %d\n"
+         "changes since baseline: %+d\n")
+        (plist-get fav :name)
+        (mu4e--bookmark-query fav)
+        count unread  delta-unread)
+       'mouse-face 'mode-line-highlight
+       'keymap '(mode-line keymap
+                           (mouse-1 . mu4e-jump-to-favorite)
+                           (mouse-2 . mu4e-jump-to-favorite)
+                           (mouse-3 . mu4e-jump-to-favorite))))))
 
 (provide 'mu4e-bookmarks)
 ;;; mu4e-bookmarks.el ends here

@@ -6727,9 +6727,9 @@ Open eml-files with =org-mode= turned on:
 
 https://www.djcbsoftware.nl/code/mu/mu4e/index.html
 https://github.com/djcb/mu
-https://github.com/djcb/mu/releases/tag/1.6.0
 
 Note that it is recommended to use the version of mu4e that is shipped together with the installed mu.
+Currently supported version: 1.10.x
 
 Mu4e and Mu do not synchronize local and remote mailboxes. Below I'm assuming that  [[https://isync.sourceforge.io/][mbsync]] is used for this purpose. (A popular alternative might be [[http://www.offlineimap.org/][offlineimap]].) The following tutorial gives an idea how to set up mbsync: 
 - http://pragmaticemacs.com/emacs/migrating-from-offlineimap-to-mbsync-for-mu4e/
@@ -6739,14 +6739,16 @@ Good examples of elaborate mu4e configurations:
 - https://github.com/munen/emacs.d/#mu4e
 - https://github.com/rougier/dotemacs/blob/master/dotemacs.org#mail
 
-Issues:
-- [X] update to v1.8
-
 ***** Installation & general settings
 
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path (expand-file-name "lisp/mu4e" user-emacs-directory))
 (require 'mu4e)
+
+;; Home of the Xapian index
+;; Note that mu does not like to expand ~, as explained here: 
+;; https://github.com/djcb/mu/blob/release/1.10/NEWS.org#110-releases-on-march-26-2023
+(setq mu4e-mu-home "/home/USER/.cache/mu")
 
 ;; Load org-mode integration
 ;; Store link to message if in header view, not to header query.
@@ -7049,6 +7051,19 @@ I'm binding this to =O= in =mu4e-view-mode-map=, since =o= is already bound to d
 #+BEGIN_SRC emacs-lisp
 (define-key mu4e-view-mode-map "O" 'mu4e-view-save-all-attachments)
 #+END_SRC 
+
+Since v1.10, messages can be detached in =mu4e-view-mode=. The following functions detaches a messages and opens it in new frame:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/mu4e-detach-and-view-message-in-new-frame ()
+	(interactive)
+	(when (mu4e--view-mode-p)
+		(mu4e-view-detach)
+		(make-frame)
+		(view-buffer "*mu4e-headers*")
+		(keyboard-escape-quit)))
+(define-key mu4e-view-mode-map "z" 'tl/mu4e-detach-and-view-message-in-new-frame)
+#+END_SRC
 
 ***** Compose messages
 
@@ -12816,8 +12831,8 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
      ^Mark for^                  ^^                  _M-<right>_ Next search       
          _d_/_=_ Trash/Untrash                               
          _!_/_?_ Read/Unread                                 _c_ Contacts					
-         _+_/_-_ Flag/Unflag                                 _P_ Toggle threading   	 	    
-     _u_ Unmark                	^^													 _W_ Toggle show related		
+         _+_/_-_ Flag/Unflag                                 _Pt_ Toggle threading   	 	    
+     _u_ Unmark                	^^													 _Pr_ Toggle show related		
      _U_ Unmark all            																
      _T_ Mark whole thread
      _A_ Action   
@@ -12833,8 +12848,8 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("C" mu4e-compose-new)
 	("R" mu4e-compose-reply)
 	("F" mu4e-compose-forward)
-	("P" mu4e-headers-toggle-threading)
-	("W" mu4e-headers-toggle-include-related)
+	("Pt" mu4e-headers-toggle-threading)
+	("Pr" mu4e-headers-toggle-include-related)
 	("H" mu4e-display-manual)
 	("+" mu4e-headers-mark-for-flag)
 	("-" mu4e-headers-mark-for-unflag)
@@ -12869,8 +12884,8 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
      _F_ Forward                 _j_ Jump to mailbox         _b_ Search with bookmarks
      ^^                          _;_ Switch context          _c_ Contacts
      ^Mark for^                  ^^                          
-         _d_/_=_ Trash/Untrash                               _P_ Toggle threading     
-         _!_/_?_ Read/Unread       _._ View raw              _W_ Toggle show related  
+         _d_/_=_ Trash/Untrash     _z_ Detach view           _Pt_ Toggle threading     
+         _!_/_?_ Read/Unread       _._ View raw              _Pr_ Toggle show related  
          _+_/_-_ Flag/Unflag
      _u_ Unmark
      _U_ Unmark all
@@ -12888,8 +12903,8 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("C" mu4e-compose-new)
 	("R" mu4e-compose-reply)
 	("F" mu4e-compose-forward)
-	("P" mu4e-headers-toggle-threading)
-	("W" mu4e-headers-toggle-include-related)
+	("Pt" mu4e-headers-toggle-threading)
+	("Pr" mu4e-headers-toggle-include-related)
 	("+" mu4e-view-mark-for-flag)
 	("-" mu4e-view-mark-for-unflag)
 	("d" mu4e-view-mark-for-trash)
@@ -12898,6 +12913,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("U" mu4e-view-unmark-all)
 	("T" mu4e-view-mark-thread)
 	("x" mu4e-view-marked-execute)
+  ("z" tl/mu4e-detach-and-view-message-in-new-frame)
 	("!" mu4e-view-mark-for-read)
 	("?" mu4e-view-mark-for-unread)
 	(";" mu4e-context-switch)

@@ -130,6 +130,22 @@ For example for bogofile, use \"/usr/bin/bogofilter -Sn < %s\"")
           (push (buffer-name buffer) buffers))))
     (nreverse buffers)))
 
+
+
+;; backward compat until 27.1 is univeral.
+(defalias 'mu4e--flatten-list
+  (if (fboundp 'flatten-list)
+      #'flatten-list
+    (with-no-warnings
+      #'eshell-flatten-list)))
+
+;; backward compat ntil 28.1 is universal.
+(defalias 'mu4e--mm-default-file-type
+  (if (fboundp 'mm-default-file-type)
+      #'mm-default-file-type
+    (with-no-warnings
+      #'mm-default-file-encoding)))
+
 (defun eshell/mu4e-attach (&rest args)
   "Attach files to a mu4e message using eshell with ARGS.
 If no mu4e buffers found, compose a new message and then attach
@@ -141,9 +157,9 @@ the file."
         (files-to-attach
          (delq nil (mapcar
                     (lambda (f) (if (or (not (file-exists-p f))
-					(file-directory-p f))
-                               nil
-                             (expand-file-name f)))
+                                        (file-directory-p f))
+                                    nil
+                                  (expand-file-name f)))
                     (eshell-flatten-list (reverse args))))))
     ;; warn if user tries to attach without any files marked
     (if (null files-to-attach)
@@ -174,7 +190,7 @@ the file."
                  (while files-to-attach
                    (mml-attach-file (car files-to-attach)
                                     (or (mm-default-file-encoding
-					 (car files-to-attach))
+                                         (car files-to-attach))
                                         "application/octet-stream") nil)
                    (setq files-to-attach (cdr files-to-attach)))
                  (message "Attached file(s) %s" files-str))

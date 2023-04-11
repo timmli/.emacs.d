@@ -45,7 +45,7 @@ session."
 
 Changes to this value only take effect after (re)starting the mu
 session."
-  :type 'file
+  :type '(file :must-match t)
   :group 'mu4e
   :safe 'stringp)
 
@@ -57,10 +57,6 @@ Changes to this value only take effect after (re)starting the mu
 session."
   :type 'boolean
   :group 'mu4e)
-
-(make-obsolete-variable
- 'mu4e-maildir
- "determined by server; see `mu4e-root-maildir'." "1.3.8")
 
 (defcustom mu4e-change-filenames-when-moving nil
   "Change message file names when moving them.
@@ -107,8 +103,6 @@ passed the docid and the draft-path of the sent message.")
 The function is passed a message sexp as argument. See
 `mu4e--server-filter' for the format.")
 
-(make-obsolete-variable 'mu4e-header-func "mu4e-headers-append-func" "1.7.4")
-
 (defvar mu4e-headers-append-func nil
   "Function called with a list of headers to append.
 The function is passed a list of message plists as argument. See
@@ -138,13 +132,52 @@ from the server process.")
 (defvar mu4e-pong-func nil
   "Function called for each (:pong type ....) sexp received.")
 
+(defvar mu4e-queries-func nil
+  "Function called for each (:queries type ....) sexp received.")
+
 (defvar mu4e-contacts-func nil
-  "A function called for each (:contacts (<list-of-contacts>)
+  "A function called for each (:contacts (<list-of-contacts>))
 sexp received from the server process.")
 
-(make-obsolete-variable 'mu4e-temp-func "No longer used" "1.7.0")
 
-;;; Internal vars
+;;; Dealing with Server properties
+(defvar mu4e--server-props nil
+  "Metadata we receive from the mu4e server.")
+
+(defun mu4e-server-properties ()
+  "Get the server metadata plist."
+  mu4e--server-props)
+
+(defun mu4e-root-maildir()
+  "Get the root maildir."
+  (or (and mu4e--server-props
+           (plist-get mu4e--server-props :root-maildir))
+      (mu4e-error "Root maildir unknown; did you start mu4e?")))
+
+(defun mu4e-database-path()
+  "Get the root maildir."
+  (or (and mu4e--server-props
+           (plist-get mu4e--server-props :database-path))
+      (mu4e-error "Root maildir unknown; did you start mu4e?")))
+
+(defun mu4e-server-version()
+  "Get the root maildir."
+  (or (and mu4e--server-props
+           (plist-get mu4e--server-props :version))
+      (mu4e-error "Version unknown; did you start mu4e?")))
+
+;;; remember queries result.
+(defvar mu4e--server-query-items nil
+  "Query items results we receive from the mu4e server.
+Those are the results from the counting-queries
+for bookmarks and maildirs.")
+
+(defun mu4e-server-query-items ()
+  "Get the latest server query items."
+  mu4e--server-query-items)
+
+
+;;; Handling raw server data
 
 (defvar mu4e--server-buf nil
   "Buffer (string) for data received from the backend.")
@@ -162,7 +195,7 @@ sexp received from the server process.")
 <`mu4e--server-cookie-pre'><length-in-hex><`mu4e--server-cookie-post'>.")
 (defconst mu4e--server-cookie-matcher-rx
   (concat mu4e--server-cookie-pre "\\([[:xdigit:]]+\\)"
-	  mu4e--server-cookie-post)
+          mu4e--server-cookie-post)
   "Regular expression matching the length cookie.
 Match 1 will be the length (in hex).")
 
@@ -171,8 +204,7 @@ Match 1 will be the length (in hex).")
 Checks whether the server process is live."
   (and mu4e--server-process
        (memq (process-status mu4e--server-process)
-             '(run open listen connect stop))
-       t))
+             '(run open listen connect stop)) t))
 
 (defsubst mu4e--server-eat-sexp-from-buf ()
   "'Eat' the next s-expression from `mu4e--server-buf'.
@@ -293,8 +325,13 @@ The server output is as follows:
 
          ;; received a pong message
          ((plist-get sexp :pong)
-	  (setq mu4e--server-props (plist-get sexp :props))
+          (setq mu4e--server-props (plist-get sexp :props))
           (funcall mu4e-pong-func sexp))
+
+         ;; receive queries info
+         ((plist-get sexp :queries)
+          (setq mu4e--server-query-items (plist-get sexp :queries))
+          (funcall mu4e-queries-func sexp))
 
          ;; received a contacts message
          ;; note: we use 'member', to match (:contacts nil)
@@ -341,39 +378,69 @@ As per issue #2198."
   (seq-each
    (lambda(proc)
      (when (and (process-live-p proc)
-		(string-prefix-p mu4e--server-name (process-name proc)))
+                (string-prefix-p mu4e--server-name (process-name proc)))
        (mu4e-message "killing stale mu4e server")
        (ignore-errors
-	 (signal-process proc 'SIGINT) ;; nicely
-	 (sit-for 1.0)
-	 (signal-process proc 'SIGKILL)))) ;; forcefully
+         (signal-process proc 'SIGINT) ;; nicely
+         (sit-for 1.0)
+         (signal-process proc 'SIGKILL)))) ;; forcefully
    (process-list)))
+
+(defun mu4e--server-args()
+  "Return the command line args for the command  to start the mu4e-server."
+  ;; [--debug] server [--muhome=..]
+  (seq-filter #'identity ;; filter out nil
+              `(,(when mu4e-mu-debug "--debug")
+                "server"
+                ,(when mu4e-mu-home (format "--muhome=%s" mu4e-mu-home)))))
+
+(defun mu4e--version-check ()
+  ;; sanity-check 1
+  (let ((default-directory temporary-file-directory)) ;;ensure it's local.
+    (unless (and mu4e-mu-binary (file-executable-p mu4e-mu-binary))
+      (mu4e-error
+       "Cannot find mu, please set `mu4e-mu-binary' to the mu executable path"))
+    ;; sanity-check 2
+    (let ((version (let ((s (shell-command-to-string
+                             (concat mu4e-mu-binary " --version"))))
+                     (and (string-match "version \\([.0-9]+\\)" s)
+                          (match-string 1 s)))))
+      (if (not (string= version mu4e-mu-version))
+          (mu4e-error
+           (concat
+            "Found mu version %s, but mu4e needs version %s"
+            "; please set `mu4e-mu-binary' "
+            "accordingly")
+           version mu4e-mu-version)
+        (mu4e-message "Found mu version %s" version)))))
+
+(defun mu4e-server-repl ()
+  "Start a mu4e-server repl.
+
+This is meant for debugging/testing - the repl is designed for
+machines, not for humans.
+
+You cannot run the repl when mu4e is running (or vice-versa)."
+  (interactive)
+  (if (mu4e-running-p)
+      (mu4e-error "Cannot run repl when mu4e is running")
+    (progn
+      (mu4e--version-check)
+      (let ((cmd (string-join (cons mu4e-mu-binary (mu4e--server-args)) " ")))
+        (term cmd)
+        (rename-buffer "*mu4e-repl*" 'unique)
+        (message "invoked: '%s'" cmd)))))
 
 (defun mu4e--server-start ()
   "Start the mu server process."
-  (let ((default-directory temporary-file-directory)) ;;ensure it's local.
-    ;; sanity-check 1
-  (unless (and mu4e-mu-binary (file-executable-p mu4e-mu-binary))
-    (mu4e-error
-     "Cannot find mu, please set `mu4e-mu-binary' to the mu executable path"))
-  ;; sanity-check 2
-  (let ((version (let ((s (shell-command-to-string
-			   (concat mu4e-mu-binary " --version"))))
-                   (and (string-match "version \\([.0-9]+\\)" s)
-                        (match-string 1 s)))))
-    (unless (string= version mu4e-mu-version)
-      (mu4e-error
-       (concat
-        "Found mu version %s, but mu4e needs version %s"
-	"; please set `mu4e-mu-binary' "
-        "accordingly") version mu4e-mu-version)))
+  (mu4e--version-check)
   ;; kill old/stale servers, if any.
   (mu4e--kill-stale)
   (let* ((process-connection-type nil) ;; use a pipe
-         (args (when mu4e-mu-home `(,(format"--muhome=%s" mu4e-mu-home))))
-         (args (if mu4e-mu-debug (cons "--debug" args) args))
-         (args (cons "server" args)))
+         (args (mu4e--server-args)))
     (setq mu4e--server-buf "")
+    (mu4e-log 'misc "* invoking '%s' with parameters %s" mu4e-mu-binary
+              (mapconcat (lambda (arg) (format "'%s'" arg)) args " "))
     (setq mu4e--server-process (apply 'start-process
                                       mu4e--server-name mu4e--server-name
                                       mu4e-mu-binary args))
@@ -383,7 +450,7 @@ As per issue #2198."
     (set-process-query-on-exit-flag mu4e--server-process nil)
     (set-process-coding-system mu4e--server-process 'binary 'utf-8-unix)
     (set-process-filter mu4e--server-process 'mu4e--server-filter)
-    (set-process-sentinel mu4e--server-process 'mu4e--server-sentinel))))
+    (set-process-sentinel mu4e--server-process 'mu4e--server-sentinel)))
 
 (defun mu4e--server-kill ()
   "Kill the mu server process."
@@ -408,6 +475,7 @@ As per issue #2198."
 (defun mu4e--server-sentinel (proc _msg)
   "Function called when the server process PROC terminates with MSG."
   (let ((status (process-status proc)) (code (process-exit-status proc)))
+    (mu4e-log 'misc "* famous last words from server: '%s'" mu4e--server-buf)
     (setq mu4e--server-process nil)
     (setq mu4e--server-buf "") ;; clear any half-received sexps
     (cond
@@ -415,16 +483,18 @@ As per issue #2198."
       (cond
        ((or(eq code 9) (eq code 2)) (message nil))
        ;;(message "the mu server process has been stopped"))
-       (t (error (format "mu server process received signal %d" code)))))
+       (t (mu4e-error (format "server process received signal %d" code)))))
      ((eq status 'exit)
       (cond
        ((eq code 0)
         (message nil)) ;; don't do anything
+       ((eq code 11)
+        (error "schema mismatch; please re-init mu from command-line"))
        ((eq code 19)
-        (error "Database is locked by another process"))
-       (t (error "Mu server process ended with exit code %d" code))))
+        (error "mu database is locked by another process"))
+       (t (error "mu server process ended with exit code %d" code))))
      (t
-      (error "Something bad happened to the mu server process")))))
+      (error "something bad happened to the mu server process")))))
 
 (defun mu4e--server-call-mu (form)
   "Call the mu server with some command FORM."
@@ -471,7 +541,7 @@ get at most MAX contacts."
      :maxnum   ,(or maxnum nil))))
 
 (defun mu4e--server-find (query threads sortfield sortdir maxnum skip-dups
-				include-related)
+                                include-related)
   "Run QUERY with THREADS SORTFIELD SORTDIR MAXNUM SKIP-DUPS INCLUDE-RELATED.
 
 If THREADS is non-nil, show results in threaded fashion,
@@ -510,11 +580,14 @@ added or removed), since merely editing a message does not update
 the directory time stamp."
   (mu4e--server-call-mu
    `(index :cleanup ,(and cleanup t)
-	   :lazy-check ,(and lazy-check t))))
+           :lazy-check ,(and lazy-check t))))
 
-(defun mu4e--server-mkdir (path)
-  "Create a new maildir-directory at filesystem PATH."
-  (mu4e--server-call-mu `(mkdir :path ,path)))
+(defun mu4e--server-mkdir (path &optional update)
+  "Create a new maildir-directory at filesystem PATH.
+When UPDATE is non-nil, send a update when completed."
+  (mu4e--server-call-mu `(mkdir
+                          :path ,path
+                          :update ,(or update nil))))
 
 (defun mu4e--server-move (docid-or-msgid &optional maildir flags no-view)
   "Move message identified by DOCID-OR-MSGID.
@@ -552,7 +625,8 @@ Returns either (:update ... ) or (:error ) sexp, which are handled my
   (unless (or maildir flags)
     (mu4e-error "At least one of maildir and flags must be specified"))
   (unless (or (not maildir)
-              (file-exists-p (concat (mu4e-root-maildir) "/" maildir "/")))
+              (file-exists-p
+               (mu4e-join-paths (mu4e-root-maildir) maildir)))
     (mu4e-error "Target dir does not exist"))
   (mu4e--server-call-mu
    `(move
@@ -563,11 +637,15 @@ Returns either (:update ... ) or (:error ) sexp, which are handled my
      :rename  ,(and maildir mu4e-change-filenames-when-moving t)
      :no-view ,(and no-view t))))
 
-(defun mu4e--server-ping (&optional queries)
-  "Sends a ping to the mu server, expecting a (:pong ...) in response.
+(defun mu4e--server-ping ()
+  "Sends a ping to the mu server, expecting a (:pong ...) in response."
+  (mu4e--server-call-mu `(ping)))
+
+(defun mu4e--server-queries (queries)
+  "Sends queries to the mu server, expecting a (:queries ...) in response.
 QUERIES is a list of queries for the number of results with
 read/unread status are returned in the pong-response."
-  (mu4e--server-call-mu `(ping :queries ,queries)))
+  (mu4e--server-call-mu `(queries :queries ,queries)))
 
 (defun mu4e--server-remove (docid)
   "Remove message  with DOCID.

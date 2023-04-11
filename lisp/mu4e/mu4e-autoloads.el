@@ -51,9 +51,6 @@ HEADER and VALUE are strings.
 CONTINUE, if non-nil, says to continue editing a message already
 being composed.  Interactively, CONTINUE is the prefix argument.
 
-SWITCH-FUNCTION, if non-nil, is a function to use to
-switch to and display the buffer used for mail composition.
-
 YANK-ACTION, if non-nil, is an action to perform, if and when
 necessary, to insert the raw text of the message being replied
 to. It has the form (FUNCTION . ARGS). The user agent will apply
@@ -69,7 +66,7 @@ caller.  It has the form (FUNCTION . ARGS).  The function is
 called after the mail has been sent or put aside, and the mail
 buffer buried.
 
-\(fn &optional TO SUBJECT OTHER-HEADERS CONTINUE SWITCH-FUNCTION YANK-ACTION SEND-ACTIONS RETURN-ACTION)" nil nil)
+\(fn &optional TO SUBJECT OTHER-HEADERS CONTINUE SWITCH-ACTION YANK-ACTION SEND-ACTIONS RETURN-ACTION)" nil nil)
 
 (define-mail-user-agent 'mu4e-user-agent 'mu4e~compose-mail 'message-send-and-exit 'message-kill-buffer 'message-send-hook)
 
@@ -140,7 +137,7 @@ buffer buried.
 (autoload 'mu4e-icalendar-setup "mu4e-icalendar" "\
 Perform the necessary initialization to use mu4e-icalendar." nil nil)
 
-(register-definition-prefixes "mu4e-icalendar" '("mu4e"))
+(register-definition-prefixes "mu4e-icalendar" '("mu4e-"))
 
 ;;;***
 
@@ -172,10 +169,33 @@ Perform the necessary initialization to use mu4e-icalendar." nil nil)
 
 ;;;***
 
+;;;### (autoloads nil "mu4e-modeline" "mu4e-modeline.el" (0 1 0 0))
+;;; Generated autoloads from mu4e-modeline.el
+
+(register-definition-prefixes "mu4e-modeline" '("mu4e-"))
+
+;;;***
+
+;;;### (autoloads nil "mu4e-notification" "mu4e-notification.el"
+;;;;;;  (0 1 0 0))
+;;; Generated autoloads from mu4e-notification.el
+
+(register-definition-prefixes "mu4e-notification" '("mu4e-"))
+
+;;;***
+
 ;;;### (autoloads nil "mu4e-org" "mu4e-org.el" (0 1 0 0))
 ;;; Generated autoloads from mu4e-org.el
 
 (register-definition-prefixes "mu4e-org" '("mu4e-"))
+
+;;;***
+
+;;;### (autoloads nil "mu4e-query-items" "mu4e-query-items.el" (0
+;;;;;;  1 0 0))
+;;; Generated autoloads from mu4e-query-items.el
+
+(register-definition-prefixes "mu4e-query-items" '("mu4e-"))
 
 ;;;***
 
@@ -226,10 +246,14 @@ Create buttons for any mu4e BUFFER.
 
 ;;;***
 
-;;;### (autoloads nil "org-mu4e" "org-mu4e.el" (0 1 0 0))
-;;; Generated autoloads from org-mu4e.el
+;;;### (autoloads nil "mu4e-window" "mu4e-window.el" (0 1 0 0))
+;;; Generated autoloads from mu4e-window.el
 
-(register-definition-prefixes "org-mu4e" '("org"))
+(register-definition-prefixes "mu4e-window" '("mu4e-"))
+
+;;;***
+
+;;;### (autoloads nil nil ("mu4e-obsolete.el") (0 1 0 0))
 
 ;;;***
 

@@ -1,6 +1,6 @@
 ;;; mu4e.el --- part of mu4e, the mu mail user agent -*- lexical-binding: t -*-
 
-;; Copyright (C) 2011-2022 Dirk-Jan C. Binnema
+;; Copyright (C) 2011-2023 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -24,36 +24,25 @@
 ;;; Commentary:
 
 ;;; Code:
+(require 'mu4e-obsolete)
 
 (require 'mu4e-vars)
+(require 'mu4e-window)
 (require 'mu4e-helpers)
 (require 'mu4e-folders)
 (require 'mu4e-context)
 (require 'mu4e-contacts)
 (require 'mu4e-headers)
+(require 'mu4e-search)
 (require 'mu4e-view)
 (require 'mu4e-compose)
 (require 'mu4e-bookmarks)
 (require 'mu4e-update)
 (require 'mu4e-main)
+(require 'mu4e-notification)
 (require 'mu4e-server)     ;; communication with backend
 
 
-
-(defcustom mu4e-confirm-quit t
-  "Whether to confirm to quit mu4e."
-  :type 'boolean
-  :group 'mu4e)
-
-(defcustom mu4e-org-support t
-  "Support Org-mode links."
-  :type 'boolean
-  :group 'mu4e)
-
-(defcustom mu4e-speedbar-support nil
-  "Support having a speedbar to navigate folders/bookmarks."
-  :type 'boolean
-  :group 'mu4e)
 
 (when mu4e-speedbar-support
   (require 'mu4e-speedbar)) ;; support for speedbar
@@ -65,6 +54,7 @@
 (with-eval-after-load 'desktop
   (eval '(add-to-list 'desktop-modes-not-to-save 'mu4e-compose-mode)))
 
+
 ;;;###autoload
 (defun mu4e (&optional background)
   "If mu4e is not running yet, start it.
@@ -73,7 +63,8 @@ is non-nil."
   (interactive "P")
   ;; start mu4e, then show the main view
   (mu4e--init-handlers)
-  (mu4e--start (unless background 'mu4e--main-view)))
+  (mu4e--start
+   (unless background #'mu4e--main-view)))
 
 (defun mu4e-quit()
   "Quit the mu4e session."
@@ -102,7 +93,7 @@ is non-nil."
       (mu4e-error "Please set %S" var))
     (unless (functionp (symbol-value var)) ;; functions are okay, too
       (let* ((dir (symbol-value var))
-             (path (concat (mu4e-root-maildir) dir)))
+             (path (mu4e-join-paths (mu4e-root-maildir) dir)))
         (unless (string= (substring dir 0 1) "/")
           (mu4e-error "%S must start with a '/'" dir))
         (unless (mu4e-create-maildir-maybe path)
@@ -130,27 +121,29 @@ If `mu4e-contexts' have been defined, but we don't have a context
 yet, switch to the matching one, or none matches, the first. If
 mu4e is already running, invoke FUNC (if non-nil).
 
-Otherwise, check requirements, then start mu4e. When successful,
-invoke
+Otherwise, check requirements, then start mu4e. When successful, invoke
  FUNC (if non-nil) afterwards."
   (unless (mu4e-context-current)
     (mu4e--context-autoswitch nil mu4e-context-policy))
-  (setq mu4e-pong-func (lambda (info) (mu4e--pong-handler info func)))
-  (mu4e--server-ping
-   (mapcar ;; send it a list of queries we'd like to see read/unread info for
-    (lambda (bm)
-      (funcall (or mu4e-query-rewrite-function #'identity)
-               (plist-get bm :query)))
-    ;; exclude bookmarks that are not strings, and with certain flags
-    (seq-filter (lambda (bm)
-                  (and (stringp (plist-get bm :query))
-                       (not (or (plist-get bm :hide)
-				(plist-get bm :hide-unread)))))
-                (append (mu4e-bookmarks)
-                        (mu4e--maildirs-with-query)))))
+  (setq mu4e-pong-func
+        (lambda (info) (mu4e--pong-handler info func)))
+  ;; show some notification?
+  (when mu4e-notification-support
+    (add-hook 'mu4e-query-items-updated-hook #'mu4e--notification))
+  ;; modeline support
+  (when mu4e-modeline-support
+    (mu4e--modeline-register #'mu4e--bookmarks-modeline-item 'global)
+    (mu4e-modeline-mode)
+    (add-hook 'mu4e-query-items-updated-hook #'mu4e--modeline-update))
+  (mu4e-modeline-mode (if mu4e-modeline-support 1 -1))
+  ;; redraw main buffer if there is one.
+  (add-hook 'mu4e-query-items-updated-hook #'mu4e--main-redraw)
+  (mu4e--query-items-refresh 'reset-baseline)
+  (mu4e--server-ping)
   ;; maybe request the list of contacts, automatically refreshed after
   ;; reindexing
-  (unless mu4e--contacts-set (mu4e--request-contacts-maybe)))
+  (unless mu4e--contacts-set
+    (mu4e--request-contacts-maybe)))
 
 (defun mu4e--stop ()
   "Stop mu4e."
@@ -158,15 +151,20 @@ invoke
     (cancel-timer mu4e--update-timer)
     (setq mu4e--update-timer nil))
   (mu4e-clear-caches)
+  (remove-hook 'mu4e-query-items-updated-hook #'mu4e--main-redraw)
+  (remove-hook 'mu4e-query-items-updated-hook #'mu4e--modeline-update)
+  (remove-hook 'mu4e-query-items-updated-hook #'mu4e--notification)
+  (mu4e-kill-update-mail)
+  (mu4e-modeline-mode -1)
   (mu4e--server-kill)
   ;; kill all mu4e buffers
   (mapc
    (lambda (buf)
-     ;; When using the Gnus-based viewer, the view buffer has the
-     ;; kill-buffer-hook function mu4e~view-kill-buffer-hook-fn which kills the
-     ;; mm-* buffers created by Gnus' article mode.  Those have been returned by
-     ;; `buffer-list' but might already be deleted in case the view buffer has
-     ;; been killed first.  So we need a `buffer-live-p' check here.
+     ;; the view buffer has the kill-buffer-hook function
+     ;; mu4e--view-kill-mime-handles which kills the mm-* buffers created by
+     ;; Gnus' article mode. Those have been returned by `buffer-list' but might
+     ;; already be deleted in case the view buffer has been killed first. So we
+     ;; need a `buffer-live-p' check here.
      (when (buffer-live-p buf)
        (with-current-buffer buf
          (when (member major-mode
@@ -177,7 +175,7 @@ invoke
 ;;; Handlers
 (defun mu4e--default-handler (&rest args)
   "Dummy handler function with arbitrary ARGS."
-  (mu4e-error "Not handled: %S" args))
+  (mu4e-error "Not handled: %s" args))
 
 (defun mu4e--error-handler (errcode errmsg)
   "Handler function for showing an error with ERRCODE and ERRMSG."
@@ -190,18 +188,17 @@ invoke
 (defun mu4e--update-status (info)
   "Update the status message with INFO."
   (setq mu4e-index-update-status
-	`(:tstamp ,(current-time)
-	  :checked ,(plist-get info :checked)
+        `(:tstamp ,(current-time)
+          :checked ,(plist-get info :checked)
           :updated  ,(plist-get info :updated)
-	  :cleaned-up ,(plist-get info :cleaned-up))))
+          :cleaned-up ,(plist-get info :cleaned-up))))
 
 (defun mu4e--info-handler (info)
   "Handler function for (:INFO ...) sexps received from server."
   (let* ((type (plist-get info :info))
          (checked (plist-get info :checked))
          (updated (plist-get info :updated))
-         (cleaned-up (plist-get info :cleaned-up))
-         (mainbuf (get-buffer mu4e-main-buffer-name)))
+         (cleaned-up (plist-get info :cleaned-up)))
     (cond
      ((eq type 'add) t) ;; do nothing
      ((eq type 'index)
@@ -209,22 +206,21 @@ invoke
           (mu4e-index-message
            "Indexing... checked %d, updated %d" checked updated)
         (progn ;; i.e. 'complete
-	  (mu4e--update-status info)
+          (mu4e--update-status info)
           (mu4e-index-message
            "%s completed; checked %d, updated %d, cleaned-up %d"
            (if mu4e-index-lazy-check "Lazy indexing" "Indexing")
            checked updated cleaned-up)
+          ;; index done; grab updated queries
+          (mu4e--query-items-refresh)
           (run-hooks 'mu4e-index-updated-hook)
-	  ;; backward compatibility...
-	  (unless (zerop (+ updated cleaned-up))
-	    mu4e-message-changed-hook)
-	  (unless (and (not (string= mu4e--contacts-tstamp "0"))
+          ;; backward compatibility...
+          (unless (zerop (+ updated cleaned-up))
+            mu4e-message-changed-hook)
+          (unless (and (not (string= mu4e--contacts-tstamp "0"))
                        (zerop (plist-get info :updated)))
             (mu4e--request-contacts-maybe))
-          (when (and (buffer-live-p mainbuf) (get-buffer-window mainbuf))
-            (save-window-excursion
-              (select-window (get-buffer-window mainbuf))
-              (mu4e--main-view 'refresh))))))
+          (mu4e--main-redraw))))
      ((plist-get info :message)
       (mu4e-index-message "%s" (plist-get info :message))))))
 
@@ -240,11 +236,13 @@ chance."
   (mu4e-setq-if-nil mu4e-found-func            #'mu4e~headers-found-handler)
   (mu4e-setq-if-nil mu4e-erase-func            #'mu4e~headers-clear)
 
-  (mu4e-setq-if-nil mu4e-sent-func     #'mu4e--default-handler)
-  (mu4e-setq-if-nil mu4e-compose-func  #'mu4e~compose-handler)
-  (mu4e-setq-if-nil mu4e-contacts-func #'mu4e--update-contacts)
-  (mu4e-setq-if-nil mu4e-info-func     #'mu4e--info-handler)
-  (mu4e-setq-if-nil mu4e-pong-func     #'mu4e--default-handler))
+  (mu4e-setq-if-nil mu4e-sent-func             #'mu4e--default-handler)
+  (mu4e-setq-if-nil mu4e-compose-func          #'mu4e~compose-handler)
+  (mu4e-setq-if-nil mu4e-contacts-func         #'mu4e--update-contacts)
+  (mu4e-setq-if-nil mu4e-info-func             #'mu4e--info-handler)
+  (mu4e-setq-if-nil mu4e-pong-func             #'mu4e--default-handler)
+
+  (mu4e-setq-if-nil mu4e-queries-func      #'mu4e--query-items-queries-handler))
 
 (defun mu4e-clear-caches ()
   "Clear any cached resources."
@@ -252,6 +250,7 @@ chance."
    mu4e-maildir-list nil
    mu4e--contacts-set nil
    mu4e--contacts-tstamp "0"))
-;;; _
+
+;;;
 (provide 'mu4e)
 ;;; mu4e.el ends here

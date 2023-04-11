@@ -59,13 +59,8 @@ Useful when this is not equal to the From: address."
   :type 'boolean
   :group 'mu4e-compose)
 
-;; backward compatibility
-(make-obsolete-variable 'mu4e-reply-to-address
-                        'mu4e-compose-reply-to-address
-                        "v0.9.9")
-
 (defcustom mu4e-compose-keep-self-cc nil
-  "When non-nil. keep your e-mail address in Cc: when replying."
+  "When non-nil, keep your e-mail address in Cc: when replying."
   :type 'boolean
   :group 'mu4e-compose)
 
@@ -73,8 +68,6 @@ Useful when this is not equal to the From: address."
   "The parent message plist.
 This is the message being replied to, forwarded or edited; used
 in `mu4e-compose-pre-hook'. For new messages, it is nil.")
-
-(make-obsolete-variable 'mu4e-auto-retrieve-keys  "no longer used." "1.3.1")
 
 (defcustom mu4e-decryption-policy t
   "Policy for dealing with replying/forwarding encrypted parts.
@@ -107,7 +100,7 @@ symbols, for example:
 
   (setq mu4e-sent-messages-behavior (lambda ()
   (if (string= (message-sendmail-envelope-from) \"foo@example.com\")
-       \='delete \='sent)))
+       \\='delete \\='sent)))
 
 The various `message-' functions from `message-mode' are available
 for querying the message information."
@@ -183,21 +176,6 @@ All `sign-*' options have a `encrypt-*' analogue."
               (const :tag "Encrypt replies to encrypted messages" encrypt-encrypted-replies))
   :group 'mu4e-compose)
 
-(make-obsolete-variable 'mu4e-compose-crypto-reply-encrypted-policy "The use of the
- 'mu4e-compose-crypto-reply-encrypted-policy' variable is deprecated.
- 'mu4e-compose-crypto-policy' should be used instead" "2020-03-06")
-
-(make-obsolete-variable 'mu4e-compose-crypto-reply-plain-policy "The use of the
- 'mu4e-compose-crypto-reply-plain-policy' variable is deprecated.
- 'mu4e-compose-crypto-policy' should be used instead"
-                        "2020-03-06")
-
-(make-obsolete-variable 'mu4e-compose-crypto-reply-policy "The use of the
- 'mu4e-compose-crypto-reply-policy' variable is deprecated.
- 'mu4e-compose-crypto-reply-plain-policy' and
- 'mu4e-compose-crypto-reply-encrypted-policy' should be used instead"
-                        "2017-09-02")
-
 (defcustom mu4e-compose-format-flowed nil
   "Whether to compose messages to be sent as format=flowed.
 \(Or with long lines if variable `use-hard-newlines' is set to
@@ -253,14 +231,6 @@ mu4e-specific version of `message-signature'."
   :type 'boolean
   :group 'mu4e-compose)
 
-(make-obsolete-variable 'mu4e-compose-auto-include-date
-                        "This is done unconditionally now" "1.3.5")
-
-(defcustom mu4e-compose-in-new-frame nil
-  "Whether to compose messages in a new frame."
-  :type 'boolean
-  :group 'mu4e-compose)
-
 (defvar mu4e-user-agent-string
   (format "mu4e %s; emacs %s" mu4e-mu-version emacs-version)
   "The User-Agent string for mu4e, or nil.")
@@ -278,8 +248,7 @@ This function uses `mu4e-compose-cite-function', and as such all
 its settings apply."
   (with-temp-buffer
     (when (fboundp 'mu4e-view-message-text) ;; keep bytecompiler happy
-      (let ((mu4e-view-date-format "%Y-%m-%dT%T%z"))
-        (insert (mu4e-view-message-text msg)))
+      (insert (mu4e-view-message-text msg))
       (message-yank-original)
       (goto-char (point-min))
       (push-mark (point-max))
@@ -294,12 +263,21 @@ its settings apply."
 
 (defun mu4e~draft-header (hdr val)
   "Return a header line of the form \"HDR: VAL\".
+If VAL is a non-empty list, unpack it.
 If VAL is nil, return nil."
   ;; note: the propertize here is currently useless, since gnus sets its own
   ;; later.
-  (when val (format "%s: %s\n"
-                    (propertize hdr 'face 'mu4e-header-key-face)
-                    (propertize val 'face 'mu4e-header-value-face))))
+  (when-let ((val
+               (if (stringp val)
+                   val
+                 ;; otherwise, convert list into comma sep'd list
+                 ;; of e-mail addresses
+                 (unless (null val)
+                   (mapconcat
+                    (lambda (contact) (mu4e-contact-full contact)) val ", ")))))
+    (format "%s: %s\n"
+            (propertize hdr 'face 'mu4e-header-key-face)
+            (propertize val 'face 'mu4e-header-value-face))))
 
 (defconst mu4e~max-reference-num 21
   "Specifies the maximum number of References:.
@@ -353,14 +331,6 @@ References. If both are empty, return nil."
 
 
 ;;; Determine the recipient fields for new messages
-
-(defun mu4e~draft-recipients-list-to-string (lst)
-  "Convert a lst LST of address cells into a string.
-This is specified as a comma-separated list of e-mail addresses.
-If LST is nil, returns nil."
-  (when lst
-    (mapconcat
-     (lambda (contact) (mu4e-contact-full contact)) lst ", ")))
 
 (defun mu4e~draft-address-cell-equal (cell1 cell2)
   "Return t if CELL1 and CELL2 have the same e-mail address.
@@ -424,7 +394,9 @@ REPLY-ALL."
              (append
               (plist-get origmsg :to)
               (plist-get origmsg :cc)
-              (when include-from(plist-get origmsg :from))
+              (when include-from
+                (or (plist-get origmsg :reply-to)
+                    (plist-get origmsg :from)))
               (plist-get origmsg :list-post))
              :test #'mu4e~draft-address-cell-equal))
            ;; now we have the basic list, but we must remove
@@ -455,14 +427,13 @@ REPLY-ALL."
 \(which is a symbol, :to or :cc), based on the original message ORIGMSG,
 and (optionally) REPLY-ALL which indicates this is a reply-to-all
 message. Return nil if there are no recipients for the particular field."
-  (mu4e~draft-recipients-list-to-string
-   (cl-case field
-     (:to
-      (mu4e~draft-create-to-lst origmsg))
-     (:cc
-      (mu4e~draft-create-cc-lst origmsg reply-all include-from))
-     (otherwise
-      (mu4e-error "Unsupported field")))))
+  (cl-case field
+    (:to
+     (mu4e~draft-create-to-lst origmsg))
+    (:cc
+     (mu4e~draft-create-cc-lst origmsg reply-all include-from))
+    (otherwise
+     (mu4e-error "Unsupported field"))))
 
 (defun mu4e~draft-from-construct ()
   "Construct a value for the From:-field of the reply.
@@ -471,7 +442,7 @@ This is based on the variable `user-full-name' and
   (when user-mail-address
     (mu4e-contact-full (mu4e-contact-make
                         user-full-name
-			user-mail-address))))
+                        user-mail-address))))
 
 ;;; Header separators
 
@@ -496,17 +467,17 @@ separator is never written to the message file. Also see
                               ;;'read-only "Can't touch this"
                               'rear-nonsticky t
                               'font-lock-face 'mu4e-compose-separator-face)))
-	(widen)
-	;; search for the first empty line
-	(goto-char (point-min))
-	(if (search-forward-regexp "^$" nil t)
+        (widen)
+        ;; search for the first empty line
+        (goto-char (point-min))
+        (if (search-forward-regexp "^$" nil t)
             (progn
               (replace-match sepa)
               ;; `message-narrow-to-headers` searches for a
               ;; `mail-header-separator` followed by a new line. Therefore, we
               ;; must insert a newline if on the last line of the buffer.
               (when (= (point) (point-max))
-		(insert "\n")))
+                (insert "\n")))
           (progn ;; no empty line? then prepend one
             (goto-char (point-max))
             (insert "\n" sepa))))))
@@ -573,7 +544,8 @@ You can append flags."
 
 (defun mu4e~draft-reply-construct-recipients (origmsg)
   "Determine the to/cc recipients for a reply message."
-  (let* ((reply-to-self (mu4e-message-contact-field-matches-me origmsg :from))
+  (let* ((return-to (or (plist-get origmsg :reply-to) (plist-get origmsg :from)))
+         (reply-to-self (mu4e-personal-address-p (plist-get return-to :email)))
          ;; reply-to-self implies reply-all
          (reply-all (or reply-to-self
                         (eq mu4e-compose-reply-recipients 'all)
@@ -583,10 +555,8 @@ You can append flags."
      (if reply-to-self
          ;; When we're replying to ourselves, simply keep the same headers.
          (concat
-          (mu4e~draft-header "To" (mu4e~draft-recipients-list-to-string
-                                   (mu4e-message-field origmsg :to)))
-          (mu4e~draft-header "Cc" (mu4e~draft-recipients-list-to-string
-                                   (mu4e-message-field origmsg :cc))))
+          (mu4e~draft-header "To" return-to)
+          (mu4e~draft-header "Cc" (mu4e-message-field origmsg :cc)))
 
        ;; if there's no-one in To, copy the CC-list
        (if (zerop (length (mu4e~draft-create-to-lst origmsg)))
@@ -594,19 +564,20 @@ You can append flags."
                                     :cc origmsg reply-all))
          ;; otherwise...
          (concat
-          (mu4e~draft-header "To" (mu4e~draft-recipients-construct :to origmsg))
-          (mu4e~draft-header "Cc" (mu4e~draft-recipients-construct :cc origmsg reply-all))))))))
+          (mu4e~draft-header "To" return-to)
+          (mu4e~draft-header "Cc" (mu4e~draft-recipients-construct
+                                   :cc origmsg reply-all))))))))
 
 (defun mu4e~draft-reply-construct-recipients-list (origmsg)
   "Determine the to/cc recipients for a reply message to a
 mailing-list."
   (let* ( ;; reply-to-self implies reply-all
          (list-post (plist-get origmsg :list-post))
-         (from      (plist-get origmsg :from))
+         (return-to (or (plist-get origmsg :reply-to) (plist-get origmsg :from)))
          (recipnum
           (+ (length (mu4e~draft-create-to-lst origmsg))
              (length (mu4e~draft-create-cc-lst origmsg t t))))
-	 (sender (mu4e-contact-full (car from)))
+         (sender (mu4e-contact-full (car return-to)))
          (reply-type
           (mu4e-read-option
            "Reply to mailing-list "
@@ -619,11 +590,9 @@ mailing-list."
         (mu4e~draft-header "To" (mu4e~draft-recipients-construct :to origmsg))
         (mu4e~draft-header "Cc" (mu4e~draft-recipients-construct :cc origmsg t t))))
       (list-only
-       (mu4e~draft-header "To"
-                          (mu4e~draft-recipients-list-to-string list-post)))
+       (mu4e~draft-header "To" list-post))
       (sender-only
-       (mu4e~draft-header "To"
-                          (mu4e~draft-recipients-list-to-string from))))))
+       (mu4e~draft-header "To" return-to)))))
 
 (defun mu4e~draft-reply-construct (origmsg)
   "Create a draft message as a reply to ORIGMSG.
@@ -690,14 +659,9 @@ will be the same as in the original."
   "The drafts-folder for this compose buffer.
 This is based on `mu4e-drafts-folder', which is evaluated once.")
 
-(defun mu4e~draft-open-file (path switch-function)
+(defun mu4e~draft-open-file (path)
   "Open the the draft file at PATH."
-  (let ((buf (find-file-noselect path)))
-    (funcall (or
-              switch-function
-              (and mu4e-compose-in-new-frame 'switch-to-buffer-other-frame)
-              'switch-to-buffer)
-             buf)))
+  (find-file-noselect path))
 
 
 (defun mu4e~draft-determine-path (draft-dir)
@@ -706,7 +670,7 @@ This is based on `mu4e-drafts-folder', which is evaluated once.")
           (mu4e-root-maildir) draft-dir (mu4e~draft-message-filename-construct "DS")))
 
 
-(defun mu4e-draft-open (compose-type &optional msg switch-function)
+(defun mu4e-draft-open (compose-type &optional msg)
   "Open a draft file for a message MSG.
 In case of a new message (when COMPOSE-TYPE is `reply', `forward'
  or `new'), open an existing draft (when COMPOSE-TYPE is `edit'),
@@ -717,8 +681,11 @@ concatenation of `(mu4e-root-maildir)' and `mu4e-drafts-folder' (the
 latter will be evaluated). The message file name is a unique name
 determined by `mu4e-send-draft-file-name'. The initial contents
 will be created from either `mu4e~draft-reply-construct', or
-`mu4e~draft-forward-construct' or `mu4e~draft-newmsg-construct'."
-  (let ((draft-dir nil))
+`mu4e~draft-forward-construct' or `mu4e~draft-newmsg-construct'.
+
+Returns the newly-created draft buffer."
+  (let ((draft-dir nil)
+        (draft-buffer))
     (cl-case compose-type
 
       (edit
@@ -726,7 +693,7 @@ will be created from either `mu4e~draft-reply-construct', or
        ;; full path, but we cannot really know 'drafts folder'... we make a
        ;; guess
        (setq draft-dir (mu4e--guess-maildir (mu4e-message-field msg :path)))
-       (mu4e~draft-open-file (mu4e-message-field msg :path) switch-function))
+       (setq draft-buffer (mu4e~draft-open-file (mu4e-message-field msg :path))))
 
       (resend
        ;; case-2: copy some exisisting message to a draft message, then edit
@@ -734,7 +701,7 @@ will be created from either `mu4e~draft-reply-construct', or
        (setq draft-dir (mu4e--guess-maildir (mu4e-message-field msg :path)))
        (let ((draft-path (mu4e~draft-determine-path draft-dir)))
          (copy-file (mu4e-message-field msg :path) draft-path)
-         (mu4e~draft-open-file draft-path switch-function)))
+         (setq draft-buffer (mu4e~draft-open-file draft-path))))
 
       ((reply forward new)
        ;; case-3: creating a new message; in this case, we can determine
@@ -746,7 +713,8 @@ will be created from either `mu4e~draft-reply-construct', or
                 (reply   (mu4e~draft-reply-construct msg))
                 (forward (mu4e~draft-forward-construct msg))
                 (new     (mu4e~draft-newmsg-construct)))))
-         (mu4e~draft-open-file draft-path switch-function)
+         (setq draft-buffer (mu4e~draft-open-file draft-path))
+         (set-buffer draft-buffer)
          (insert initial-contents)
          (newline)
          ;; include the message signature (if it's set)
@@ -764,7 +732,9 @@ will be created from either `mu4e~draft-reply-construct', or
     (set (make-local-variable 'mu4e~draft-drafts-folder) draft-dir)
     (put 'mu4e~draft-drafts-folder 'permanent-local t)
     (unless mu4e~draft-drafts-folder
-      (mu4e-error "Failed to determine drafts folder"))))
+      (mu4e-error "Failed to determine drafts folder"))
+    ;; return the name of the draft buffer
+    draft-buffer))
 
 ;;; _
 (provide 'mu4e-draft)

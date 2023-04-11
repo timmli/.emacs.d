@@ -76,7 +76,7 @@
 (require 'mu4e-message)
 (require 'mu4e-draft)
 (require 'mu4e-context)
-
+(require 'mu4e-window)
 
 ;;; Configuration
 ;; see mu4e-drafts.el
@@ -134,7 +134,7 @@ If needed, set the Fcc header, and register the handler function."
             ('trash (mu4e-get-trash-folder mu4e-compose-parent-message))
             ('sent (mu4e-get-sent-folder mu4e-compose-parent-message))
             (_ (mu4e-error
-		"Unsupported value %S for `mu4e-sent-messages-behavior'"
+                "Unsupported value %S for `mu4e-sent-messages-behavior'"
                 mu4e-sent-messages-behavior))))
          (fccfile (and mdir
                        (concat (mu4e-root-maildir) mdir "/cur/"
@@ -150,7 +150,7 @@ If needed, set the Fcc header, and register the handler function."
                   (old-handler message-fcc-handler-function))
               (lambda (file)
                 (setq message-fcc-handler-function old-handler)
-		;; reset the fcc handler
+                ;; reset the fcc handler
                 (let ((mdir-path (concat (mu4e-root-maildir) maildir)))
                   ;; Create the full maildir structure for the sent folder if it
                   ;; doesn't exist. `mu4e--server-mkdir` runs asynchronously but
@@ -280,7 +280,7 @@ removing the In-Reply-To header."
           (define-key map (kbd "C-S-u")   'mu4e-update-mail-and-index)
           (define-key map (kbd "C-c C-u") 'mu4e-update-mail-and-index)
           (define-key map (kbd "C-c C-k") 'mu4e-message-kill-buffer)
-	  (define-key map (kbd "C-c ;")   'mu4e-compose-context-switch)
+          (define-key map (kbd "C-c ;")   'mu4e-compose-context-switch)
           (define-key map (kbd "M-q")     'mu4e-fill-paragraph)
           map)))
 
@@ -315,35 +315,21 @@ set, this simply executes `fill-paragraph'."
 Our parent `message-mode' uses font-locking for the compose
 buffers; lets remap its faces so it uses the ones for mu4e."
   ;; normal headers
-  (face-remap-add-relative 'message-header-name
-                           '((:inherit mu4e-header-key-face)))
-  (face-remap-add-relative 'message-header-other
-                           '((:inherit mu4e-header-value-face)))
+  (face-remap-add-relative 'message-header-name 'mu4e-header-field-face)
+  (face-remap-add-relative 'message-header-other 'mu4e-header-value-face)
   ;; special headers
-  (face-remap-add-relative 'message-header-from
-                           '((:inherit mu4e-contact-face)))
-  (face-remap-add-relative 'message-header-to
-                           '((:inherit mu4e-contact-face)))
-  (face-remap-add-relative 'message-header-cc
-                           '((:inherit mu4e-contact-face)))
-  (face-remap-add-relative 'message-header-bcc
-                           '((:inherit mu4e-contact-face)))
-  (face-remap-add-relative 'message-header-subject
-                           '((:inherit mu4e-special-header-value-face)))
-  ;; citation
-  (face-remap-add-relative 'message-cited-text
-                           '((:inherit mu4e-cited-1-face))))
+  (face-remap-add-relative 'message-header-from 'mu4e-contact-face)
+  (face-remap-add-relative 'message-header-to 'mu4e-contact-face)
+  (face-remap-add-relative 'message-header-cc 'mu4e-contact-face)
+  (face-remap-add-relative 'message-header-bcc 'mu4e-contact-face)
+  (face-remap-add-relative 'message-header-subject 'mu4e-special-header-value-face))
 
 (define-derived-mode mu4e-compose-mode message-mode "mu4e:compose"
   "Major mode for the mu4e message composition, derived from `message-mode'.
 \\{message-mode-map}."
   (progn
     (use-local-map mu4e-compose-mode-map)
-
     (mu4e-context-minor-mode)
-    (define-key mu4e-context-minor-mode-map (kbd ";") nil)
-    (define-key mu4e-context-minor-mode-map (kbd "C-c C-;")
-      #'mu4e-compose-context-switch)
 
     (set (make-local-variable 'message-signature) mu4e-compose-signature)
     ;; set this to allow mu4e to work when gnus-agent is unplugged in gnus
@@ -358,7 +344,7 @@ buffers; lets remap its faces so it uses the ones for mu4e."
     ;; offer completion for e-mail addresses
     (when mu4e-compose-complete-addresses
       (unless mu4e--contacts-set
-	;; work-around for https://github.com/djcb/mu/issues/1016
+        ;; work-around for https://github.com/djcb/mu/issues/1016
         (mu4e--request-contacts-maybe))
       (mu4e~compose-setup-completion))
     (if mu4e-compose-format-flowed
@@ -453,12 +439,12 @@ buffers; lets remap its faces so it uses the ones for mu4e."
          (subj (unless (and subj (string-match "^[:blank:]*$" subj)) subj))
          (str (or subj
                   (pcase compose-type
-                    ('reply       "*reply*")
-                    ('forward     "*forward*")
-                    (_             "*draft*")))))
+                    ('reply       "*mu4e-reply*")
+                    ('forward     "*mu4e-forward*")
+                    (_             "*mu4e-draft*")))))
     (rename-buffer (generate-new-buffer-name
                     (truncate-string-to-width
-		     str mu4e~compose-buffer-max-name-length)
+                     str mu4e~compose-buffer-max-name-length)
                     (buffer-name)))))
 
 (defun mu4e-compose-crypto-message (parent compose-type)
@@ -486,7 +472,7 @@ See `mu4e-compose-crypto-policy' for more details."
               ;; encrypted replies
               (and (eq compose-type 'reply) encrypted-p
                    (memq 'encrypt-encrypted-replies
-			 mu4e-compose-crypto-policy))))
+                         mu4e-compose-crypto-policy))))
          (sign
           (or (memq 'sign-all-messages mu4e-compose-crypto-policy)
               ;; new messages
@@ -512,8 +498,7 @@ See `mu4e-compose-crypto-policy' for more details."
           (sign (mml-secure-message-sign))
           (encrypt (mml-secure-message-encrypt)))))
 
-(cl-defun mu4e~compose-handler (compose-type &optional original-msg includes
-                                             switch-function)
+(cl-defun mu4e~compose-handler (compose-type &optional original-msg includes)
   "Create a new draft message, or open an existing one.
 
 COMPOSE-TYPE determines the kind of message to compose and is a
@@ -549,79 +534,81 @@ are optional."
                             mu4e-compose-context-policy)
   (run-hooks 'mu4e-compose-pre-hook)
   ;; this opens (or re-opens) a message with all the basic headers set.
-  (let ((winconf (current-window-configuration)))
-    (condition-case nil
-        (mu4e-draft-open compose-type original-msg switch-function)
-      (quit (set-window-configuration winconf)
-            (mu4e-message "Operation aborted")
-            (cl-return-from mu4e~compose-handler))))
-  ;; insert mail-header-separator, which is needed by message mode to separate
-  ;; headers and body. will be removed before saving to disk
-  (mu4e~draft-insert-mail-header-separator)
+  (let ((draft-buffer))
+    (let ((winconf (current-window-configuration)))
+      (condition-case nil
+          (setq draft-buffer (mu4e-draft-open compose-type original-msg))
+        (quit (set-window-configuration winconf)
+              (mu4e-message "Operation aborted")
+              (cl-return-from mu4e~compose-handler))))
+    (set-buffer draft-buffer)
+    ;; insert mail-header-separator, which is needed by message mode to separate
+    ;; headers and body. will be removed before saving to disk
+    (mu4e~draft-insert-mail-header-separator)
 
-  ;; maybe encrypt/sign replies
-  (mu4e-compose-crypto-message original-msg compose-type)
+    ;; maybe encrypt/sign replies
+    (mu4e-compose-crypto-message original-msg compose-type)
 
-  ;; include files -- e.g. when inline forwarding a message with
-  ;; attachments, we take those from the original.
-  (save-excursion
-    (goto-char (point-max)) ;; put attachments at the end
+    ;; include files -- e.g. when inline forwarding a message with
+    ;; attachments, we take those from the original.
+    (save-excursion
+      (goto-char (point-max)) ;; put attachments at the end
 
-    (if (and (eq compose-type 'forward) mu4e-compose-forward-as-attachment)
-        (mu4e-compose-attach-message original-msg)
-      (dolist (att includes)
-        (let ((file-name (plist-get att :file-name))
-              (mime (plist-get att :mime-type))
-              (description (plist-get att :description))
-              (disposition (plist-get att :disposition)))
-          (if file-name
-              (mml-attach-file file-name mime description disposition)
-            (mml-attach-buffer (plist-get att :buffer-name)
-                               mime description disposition))))))
+      (if (and (eq compose-type 'forward) mu4e-compose-forward-as-attachment)
+          (mu4e-compose-attach-message original-msg)
+        (dolist (att includes)
+          (let ((file-name (plist-get att :file-name))
+                (mime (plist-get att :mime-type))
+                (description (plist-get att :description))
+                (disposition (plist-get att :disposition)))
+            (if file-name
+                (mml-attach-file file-name mime description disposition)
+              (mml-attach-buffer (plist-get att :buffer-name)
+                                 mime description disposition))))))
 
-  (mu4e~compose-set-friendly-buffer-name compose-type)
+    (mu4e~compose-set-friendly-buffer-name compose-type)
 
-  ;; bind to `mu4e-compose-parent-message' of compose buffer
-  (set (make-local-variable 'mu4e-compose-parent-message) original-msg)
-  (put 'mu4e-compose-parent-message 'permanent-local t)
-  ;; set mu4e-compose-type once more for this buffer,
-  (set (make-local-variable 'mu4e-compose-type) compose-type)
-  (put 'mu4e-compose-type 'permanent-local t)
+    ;; bind to `mu4e-compose-parent-message' of compose buffer
+    (set (make-local-variable 'mu4e-compose-parent-message) original-msg)
+    (put 'mu4e-compose-parent-message 'permanent-local t)
+    ;; set mu4e-compose-type once more for this buffer,
+    (set (make-local-variable 'mu4e-compose-type) compose-type)
+    (put 'mu4e-compose-type 'permanent-local t)
 
-  ;; hide some headers
-  (mu4e~compose-hide-headers)
-  ;; switch on the mode
-  (mu4e-compose-mode)
+    ;; hide some headers
+    (mu4e~compose-hide-headers)
+    ;; switch on the mode
+    (mu4e-compose-mode)
 
-  ;; now jump to some useful positions, and start writing that mail!
-  (if (member compose-type '(new forward))
-      (message-goto-to)
-    ;; otherwise, it depends...
-    (pcase message-cite-reply-position
-      ((or 'above 'traditional) (message-goto-body))
-      (_ (when (message-goto-signature) (forward-line -2)))))
+    ;; now jump to some useful positions, and start writing that mail!
+    (if (member compose-type '(new forward))
+        (message-goto-to)
+      ;; otherwise, it depends...
+      (pcase message-cite-reply-position
+        ((or 'above 'traditional) (message-goto-body))
+        (_ (when (message-goto-signature) (forward-line -2)))))
 
-  ;; don't allow undoing anything before this.
-  (setq buffer-undo-list nil)
+    ;; don't allow undoing anything before this.
+    (setq buffer-undo-list nil)
 
-  (when mu4e-compose-in-new-frame
-    ;; make sure to close the frame when we're done with the message these are
-    ;; all buffer-local;
-    (push 'delete-frame message-exit-actions)
-    (push 'delete-frame message-postpone-actions))
+    (when mu4e-compose-in-new-frame
+      ;; make sure to close the frame when we're done with the message these are
+      ;; all buffer-local;
+      (push 'delete-frame message-exit-actions)
+      (push 'delete-frame message-postpone-actions))
 
-  ;; buffer is not user-modified yet
-  (set-buffer-modified-p nil))
+    ;; buffer is not user-modified yet
+    (set-buffer-modified-p nil)
+    (mu4e-display-buffer draft-buffer t)))
 
 (defun mu4e~switch-back-to-mu4e-buffer ()
   "Try to go back to some previous buffer, in the order view->headers->main."
-  (unless (eq mu4e-split-view 'single-window)
-    (if (buffer-live-p (mu4e-get-view-buffer))
-        (switch-to-buffer (mu4e-get-view-buffer))
-      (if (buffer-live-p (mu4e-get-headers-buffer))
-          (switch-to-buffer (mu4e-get-headers-buffer))
-        ;; if all else fails, back to the main view
-        (when (fboundp 'mu4e) (mu4e))))))
+  (if (buffer-live-p (mu4e-get-view-buffer))
+      (mu4e-display-buffer (mu4e-get-view-buffer) t)
+    (if (buffer-live-p (mu4e-get-headers-buffer))
+        (mu4e-display-buffer (mu4e-get-headers-buffer) t)
+      ;; if all else fails, back to the main view
+      (when (fboundp 'mu4e) (mu4e)))))
 
 (defun mu4e-compose-context-switch (&optional force name)
   "Change the context for the current draft message.
@@ -644,22 +631,22 @@ the file under our feet, which is a bit fragile."
   (let ((old-context (mu4e-context-current)))
     (unless (and name (not force) (eq old-context name))
       (unless (and (not force)
-		   (eq old-context (mu4e-context-switch nil name)))
-	(save-excursion
-	  ;; Change From / Organization if needed.
-	  (message-replace-header "Organization"
-				  (or (message-make-organization) "")
-				  '("Subject")) ;; keep in same place
-	  (message-replace-header "From"
-				  (or (mu4e~draft-from-construct) ""))
-	  ;; Update signature.
-	  (when (message-goto-signature) ;; delete old signature.
-	    (if message-signature-insert-empty-line
-		(forward-line -2) (forward-line -1))
-	    (delete-region (point) (point-max)))
-	  (if (and mu4e-compose-signature-auto-include mu4e-compose-signature)
-	      (let ((message-signature mu4e-compose-signature))
-		(save-excursion (message-insert-signature)))))))))
+                   (eq old-context (mu4e-context-switch nil name)))
+        (save-excursion
+          ;; Change From / Organization if needed.
+          (message-replace-header "Organization"
+                                  (or (message-make-organization) "")
+                                  '("Subject")) ;; keep in same place
+          (message-replace-header "From"
+                                  (or (mu4e~draft-from-construct) ""))
+          ;; Update signature.
+          (when (message-goto-signature) ;; delete old signature.
+            (if message-signature-insert-empty-line
+                (forward-line -2) (forward-line -1))
+            (delete-region (point) (point-max)))
+          (if (and mu4e-compose-signature-auto-include mu4e-compose-signature)
+              (let ((message-signature mu4e-compose-signature))
+                (save-excursion (message-insert-signature)))))))))
 
 (defun mu4e-sent-handler (docid path)
   "Handler called with DOCID and PATH for the just-sent message.
@@ -682,8 +669,11 @@ appropriate flag at the message forwarded or replied-to."
   "Wrapper around `message-kill-buffer'.
 It restores mu4e window layout after killing the compose-buffer."
   (interactive)
-  (let ((current-buffer (current-buffer)))
+  (let ((current-buffer (current-buffer))
+        (win (selected-window)))
     (message-kill-buffer)
+    (when (window-live-p win)
+      (delete-window win))
     ;; Compose buffer killed
     (when (not (equal current-buffer (current-buffer)))
       ;; Restore mu4e
@@ -765,10 +755,7 @@ Symbol `edit' is only allowed for draft messages."
         ;; composing a new message, so that one will be replaced by the compose
         ;; window. The 10-or-so line headers buffer is not a good place to write
         ;; it...
-        (unless (eq mu4e-split-view 'single-window)
-          (let ((viewwin (get-buffer-window (mu4e-get-view-buffer))))
-            (when (window-live-p viewwin)
-              (select-window viewwin))))
+        ;; (mu4e-display-buffer (mu4e-get-view-buffer))
         ;; talk to the backend
         (mu4e--server-compose compose-type decrypt docid)))))
 
@@ -808,8 +795,7 @@ draft message."
 
 ;;;###autoload
 (defun mu4e~compose-mail (&optional to subject other-headers _continue
-                                    switch-function yank-action
-				    _send-actions _return-action)
+                                    _switch-action yank-action _send-actions _return-action)
   "This is mu4e's implementation of `compose-mail'.
 Quoting its docstring:
 
@@ -824,9 +810,6 @@ HEADER and VALUE are strings.
 
 CONTINUE, if non-nil, says to continue editing a message already
 being composed.  Interactively, CONTINUE is the prefix argument.
-
-SWITCH-FUNCTION, if non-nil, is a function to use to
-switch to and display the buffer used for mail composition.
 
 YANK-ACTION, if non-nil, is an action to perform, if and when
 necessary, to insert the raw text of the message being replied
@@ -844,11 +827,11 @@ called after the mail has been sent or put aside, and the mail
 buffer buried."
 
   (unless (mu4e-running-p)
-     (mu4e))
+    (mu4e))
 
   ;; create a new draft message 'resetting' (as below) is not actually needed in
   ;; this case, but let's prepare for the re-edit case as well
-  (mu4e~compose-handler 'new nil nil switch-function)
+  (mu4e~compose-handler 'new nil nil)
 
   (when (message-goto-to) ;; reset to-address, if needed
     (message-delete-line))
@@ -860,14 +843,14 @@ buffer buried."
 
   ;; add any other headers specified
   (seq-each (lambda(hdr)
-	      (let ((field (capitalize(car hdr))) (value (cdr hdr)))
-		;; fix in-reply without <>
-		(when (and (string= field "In-Reply-To")
-			   (string-match-p "\\`[^ @]+@[^ @]+\\'" value)
-			   (not (string-match-p "\\`<.*>\\'" value)))
-		  (setq value (concat "<" value ">")))
-		(message-add-header (concat (capitalize field) ": " value "\n"))))
-	    other-headers)
+              (let ((field (capitalize(car hdr))) (value (cdr hdr)))
+                ;; fix in-reply without <>
+                (when (and (string= field "In-Reply-To")
+                           (string-match-p "\\`[^ @]+@[^ @]+\\'" value)
+                           (not (string-match-p "\\`<.*>\\'" value)))
+                  (setq value (concat "<" value ">")))
+                (message-add-header (concat (capitalize field) ": " value "\n"))))
+            other-headers)
 
   ;; yank message
   (if (bufferp yank-action)
@@ -939,6 +922,16 @@ is supplied, or Transient Mark mode is enabled and the mark is active."
 
 (define-key mu4e-compose-mode-map
   (vector 'remap 'end-of-buffer) 'mu4e-compose-goto-bottom)
+
+(defvar mu4e--compose-menu-items
+  '("--"
+    ["Compose new" mu4e-compose-new
+     :help "Compose new message"]
+    ["Reply" mu4e-compose-reply
+     :help "Reply to message"]
+    ["Forward" mu4e-compose-forward
+     :help "Forward message"])
+  "Easy menu items for search.")
 
 ;;; _
 (provide 'mu4e-compose)

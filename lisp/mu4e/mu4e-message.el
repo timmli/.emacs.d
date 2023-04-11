@@ -28,6 +28,7 @@
 
 (require 'mu4e-vars)
 (require 'mu4e-contacts)
+(require 'mu4e-window)
 (require 'flow-fill)
 (require 'shr)
 (require 'pp)
@@ -36,13 +37,6 @@
 (declare-function mu4e-warn  "mu4e-helpers")
 (declare-function mu4e-personal-address-p "mu4e-contacts")
 (declare-function mu4e-make-temp-file  "mu4e-helpers")
-
-(make-obsolete-variable 'mu4e-html2text-command "No longer in use" "1.7.0")
-(make-obsolete-variable 'mu4e-view-prefer-html "No longer in use" "1.7.0")
-(make-obsolete-variable 'mu4e-view-html-plaintext-ratio-heuristic
-			"No longer in use" "1.7.0")
-(make-obsolete-variable 'mu4e-message-body-rewrite-functions
-			"No longer in use" "1.7.0")
 
 ;;; Message fields
 
@@ -116,7 +110,7 @@ no such message. If optional NOERROR is non-nil, do not raise an
 error when there is no message at point."
   (or (cond
        ((eq major-mode 'mu4e-headers-mode) (get-text-property (point) 'msg))
-       ((eq major-mode 'mu4e-view-mode) mu4e~view-message))
+       ((eq major-mode 'mu4e-view-mode) mu4e--view-message))
       (unless noerror (mu4e-warn "No message at point"))))
 
 (defsubst mu4e-message-field-at-point (field)
@@ -148,7 +142,7 @@ expressions, in which case any of those are tried for a match."
     (seq-find
      (lambda (ct)
        (let ((name (mu4e-contact-name ct))
-	     (email (mu4e-contact-email ct))
+             (email (mu4e-contact-email ct))
              ;; the 'rx' may be some `/rx/` from mu4e-personal-addresses;
              ;; so let's detect and extract in that case.
              (rx (if (string-match-p  "^\\(.*\\)/$" rx)
@@ -166,7 +160,7 @@ of the of the contacts in field CFIELD (either :to, :from, :cc or
 which `mu4e-personal-address-p' return t. Returns the contact
 cell that matched, or nil."
   (seq-find (lambda (cell)
-	      (mu4e-personal-address-p (mu4e-contact-email cell)))
+              (mu4e-personal-address-p (mu4e-contact-email cell)))
             (mu4e-message-field msg cfield)))
 
 (defun mu4e-message-sent-by-me (msg)
@@ -198,9 +192,6 @@ Either in the headers buffer or the view buffer. Field is a
 symbol, see `mu4e-header-info'."
   (plist-get (mu4e-message-at-point) field))
 
-;;; Html2Text
-(make-obsolete 'mu4e-shr2text "No longer in use" "1.7.0")
-
 (defun mu4e-message-readable-path (&optional msg)
   "Get a readable path to MSG or raise an error.
 If MSG is nil, use `mu4e-message-at-point'."
@@ -216,18 +207,20 @@ If MSG is nil, use `mu4e-message-at-point'."
     (kill-new path)
     (mu4e-message "Saved '%s' to kill-ring" path)))
 
-(defconst mu4e--sexp-buffer-name " *mu4e-sexp-at-point"
-  "Buffer name for sexp buffers.")
-
 (defun mu4e-sexp-at-point ()
   "Show or hide the s-expression for the message-at-point, if any."
   (interactive)
   (if-let ((win (get-buffer-window mu4e--sexp-buffer-name)))
       (delete-window win)
     (when-let ((msg (mu4e-message-at-point 'noerror)))
-      (with-current-buffer-window mu4e--sexp-buffer-name nil nil
-	;; the "pretty-printing" is not very pretty...
-	(insert (pp-to-string msg))))))
+      (when (buffer-live-p mu4e--sexp-buffer-name)
+        (kill-buffer mu4e--sexp-buffer-name))
+      (with-current-buffer-window (get-buffer-create mu4e--sexp-buffer-name) nil nil
+        (lisp-data-mode)
+        (insert (pp-to-string msg))
+        (font-lock-ensure)
+        ;; add basic `quit-window' bindings
+        (view-mode 1)))))
 
 ;;;
 (provide 'mu4e-message)
