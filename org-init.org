@@ -6972,7 +6972,7 @@ Download all attachments to =mu4e-attachment-dir=:
    (downcase sub)))
 
 (defun mu4e-view-save-all-attachments (&optional arg)
-  "Save all MIME parts from current mu4e gnus view buffer."
+  "Save all MIME parts from currsent mu4e gnus view buffer."
   ;; Copied from mu4e-view-save-attachments
   (interactive "P")
   (cl-assert (and (eq major-mode 'mu4e-view-mode)
@@ -6980,14 +6980,14 @@ Download all attachments to =mu4e-attachment-dir=:
   (let* ((msg (mu4e-message-at-point))
          (id (cleanse-subject (mu4e-message-field msg :subject)))
          (attachdir (concat bulk-saved-attachments-dir "/" id))
-	 (parts (mu4e~view-gather-mime-parts))
+				 (parts (mu4e--view-gather-mime-parts))
          (handles '())
          (files '())
          dir)
     (mkdir attachdir t)
     (dolist (part parts)
       (let ((fname (or 
-		    (cdr (assoc 'filename (assoc "attachment" (cdr part))))
+										(cdr (assoc 'filename (assoc "attachment" (cdr part))))
                     (seq-find #'stringp
                               (mapcar (lambda (item) (cdr (assoc 'name item)))
                                       (seq-filter 'listp (cdr part)))))))
@@ -6997,13 +6997,13 @@ Download all attachments to =mu4e-attachment-dir=:
     (if files
         (progn
           (setq dir
-		(if arg (read-directory-name "Save to directory: ")
-		  attachdir))
+								(if arg (read-directory-name "Save to directory: ")
+									attachdir))
           (cl-loop for (f . h) in handles
                    when (member f files)
                    do (mm-save-part-to-file h
-					    (sje-next-free
-					     (expand-file-name f dir)))))
+																						(sje-next-free
+																						 (expand-file-name f dir)))))
       (mu4e-message "No attached files found"))))
 
 
@@ -7024,15 +7024,15 @@ and then increment it."
     ;; othwerwise need to iterate through f-1.pdf
     ;; f-2.pdf, f-3.pdf ... until we no longer find a file.
     (let ((prefix (file-name-sans-extension file))
-	  (suffix (file-name-extension file))
-	  (looking t)
-	  (n 0)
-	  (f)
-	  )
+					(suffix (file-name-extension file))
+					(looking t)
+					(n 0)
+					(f)
+					)
       (while looking
-	(setq n (1+ n))
-	(setq f (concat prefix "-" (number-to-string n) "." suffix))
-	(setq looking (file-exists-p f)))
+				(setq n (1+ n))
+				(setq f (concat prefix "-" (number-to-string n) "." suffix))
+				(setq looking (file-exists-p f)))
       f
       )))
 
@@ -7044,6 +7044,7 @@ and then increment it."
       (write-region "hello" nil f)
       )))
 ;; (sje-test-next-free)
+
 #+END_SRC
 
 I'm binding this to =O= in =mu4e-view-mode-map=, since =o= is already bound to downloading single attachments:
