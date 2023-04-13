@@ -12485,36 +12485,36 @@ Copied from https://github.com/cmcmahan/elisp/blob/master/emacs-hydra.el:
 #+BEGIN_SRC emacs-lisp
 (global-set-key
  (kbd "C-c d")
- (defhydra hydra-insert-date (:exit t :hint nil)
+ (defhydra hydra-insert-date (:exit t :hint none)
    "
 
       Insert Date
     ╭─────────────╯
-      [_1_] 170930                            [_o_] org inactive stamp
-      [_2_] 2017-09-30                         [_O_] org active stamp
-      [_3_] 2017-09-30 Sa                   
-      [_4_] 2017-09-30 Sa 23:35             [_._] 30.09.2017
-      [_5_] 2017-09-30T23:47:53+02:00                    [_/_] 30/09/2017  
-      [_6_] September 30, 2017
-      [_7_] Saturday, September 30, 2017             
-      ^^                                          [_q_] quit
+      [_1_] ?1?                             [_o_] ?o? 
+      [_2_] ?2?                         [_O_] ?O?
+      [_3_] ?3?                   
+      [_4_] ?4?               [_._] ?.?
+      [_5_] ?5?           [_/_] ?/?  
+      [_6_] ?6?
+      [_7_] ?7?                                                         [_q_] quit
    "
-	 ("1" (insert-date "%y%m%d"))
-	 ("2" (insert-date "%Y-%m-%d"))
-   ("3" (insert-date))
-   ("5" (insert-date-time))
-	 ("6" (insert-date "%B %d, %Y"))
-	 ("7" (insert-date "%A, %B %d, %Y"))
-	 ;; inspired from http://ergoemacs.org/emacs/elisp_insert-date-time.html
-	 ("4" (progn
-					(when (use-region-p) (delete-region (region-beginning) (region-end)))
-					(insert (concat
-									 (format-time-string "%Y-%m-%dT%T")
-									 (funcall (lambda ($x) (format "%s:%s" (substring $x 0 3) (substring $x 3 5))) (format-time-string "%z"))))))
-	 ("o" (insert-date "[%Y-%m-%d %a %k:%M]"))
-	 ("O" (insert-date "<%Y-%m-%d %a %k:%M>"))
-	 ("/" (insert-date "%d/%m/%Y"))
-	 ("." (insert-date "%d.%m.%Y"))
+	 ("1" (insert-date "%y%m%d") (format-time-string "%y%m%d"))
+	 ("2" (insert-date "%Y-%m-%d") (format-time-string "%Y-%m-%d"))
+   ("3" (insert-date) (format-time-string "%Y-%m-%d %a"))
+	 ("4" (insert-date "%Y-%m-%d %a %H:%M") (format-time-string "%Y-%m-%d %a %H:%M"))
+   ("5" (insert-date-time) (format-time-string "%Y-%m-%dT%T%z"))
+	 ("6" (insert-date "%B %d, %Y") (format-time-string "%B %d, %Y"))
+	 ("7" (insert-date "%A, %B %d, %Y") (format-time-string "%A, %B %d, %Y"))
+	 ;; ;; inspired from http://ergoemacs.org/emacs/elisp_insert-date-time.html
+	 ;; ("4" (progn
+	 ;; 				(when (use-region-p) (delete-region (region-beginning) (region-end)))
+	 ;; 				(insert (concat
+	 ;; 								 (format-time-string "%Y-%m-%dT%T")
+	 ;; 								 (funcall (lambda ($x) (format "%s:%s" (substring $x 0 3) (substring $x 3 5))) (format-time-string "%z"))))))
+	 ("o" (insert-date "[%Y-%m-%d %a %k:%M]") (format-time-string "[%Y-%m-%d %a %k:%M]"))
+	 ("O" (insert-date "<%Y-%m-%d %a %k:%M>") (format-time-string "<%Y-%m-%d %a %k:%M>"))
+	 ("/" (insert-date "%d/%m/%Y") (format-time-string "%d/%m/%Y"))
+	 ("." (insert-date "%d.%m.%Y") (format-time-string "%d.%m.%Y"))
 	 ("q" nil)))
 (global-set-key (kbd "C-c i d") 'hydra-insert-date/body)
 #+END_SRC
