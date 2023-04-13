@@ -7053,7 +7053,7 @@ I'm binding this to =O= in =mu4e-view-mode-map=, since =o= is already bound to d
 (define-key mu4e-view-mode-map "O" 'mu4e-view-save-all-attachments)
 #+END_SRC 
 
-Since v1.10, messages can be detached in =mu4e-view-mode=. The following functions detaches a messages and opens it in new frame:
+Since v1.10, messages can be detached in =mu4e-view-mode=. The following functions detaches a displayed message and opens it in new frame:
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/mu4e-detach-and-view-message-in-new-frame ()
@@ -12820,7 +12820,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 *** hydra-mu4e-headers
 
 #+BEGIN_SRC emacs-lisp
-(defhydra hydra-mu4e-headers (:hint nil :color blue)
+(defhydra hydra-mu4e-headers (:hint none :color blue)
 	"
      ^^                           ^^                          ^^                             ╭─────────────┐   
      ^Header^                    ^Navigation^                ^Filter^                        │ mu4e-header │
@@ -12831,9 +12831,9 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
      ^^                          _;_ Switch context   _M-<left>_ Previous search
      ^Mark for^                  ^^                  _M-<right>_ Next search       
          _d_/_=_ Trash/Untrash                               
-         _!_/_?_ Read/Unread                                 _c_ Contacts					
-         _+_/_-_ Flag/Unflag                                 _Pt_ Toggle threading   	 	    
-     _u_ Unmark                	^^													 _Pr_ Toggle show related		
+         _!_/_?_ Read/Unread      _Sv_ ?Sv? Split vertic.       _c_ Contacts					
+         _+_/_-_ Flag/Unflag      _Sh_ ?Sh? Split horiz.       _Pt_ Toggle threading   	 	    
+     _u_ Unmark                	^^			                    _Pr_ Toggle show related		
      _U_ Unmark all            																
      _T_ Mark whole thread
      _A_ Action   
@@ -12851,6 +12851,8 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("F" mu4e-compose-forward)
 	("Pt" mu4e-headers-toggle-threading)
 	("Pr" mu4e-headers-toggle-include-related)
+	("Sv" (setq mu4e-split-view 'vertical) (if (eq 'vertical mu4e-split-view) "[x]" "[ ]"))
+	("Sh" (setq mu4e-split-view 'horizontal) (if (eq 'horizontal mu4e-split-view) "[x]" "[ ]"))
 	("H" mu4e-display-manual)
 	("+" mu4e-headers-mark-for-flag)
 	("-" mu4e-headers-mark-for-unflag)
