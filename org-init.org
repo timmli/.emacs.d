@@ -7047,14 +7047,9 @@ and then increment it."
       (write-region "hello" nil f)
       )))
 ;; (sje-test-next-free)
-
 #+END_SRC
 
-I'm binding this to =O= in =mu4e-view-mode-map=, since =o= is already bound to downloading single attachments:
-
-#+BEGIN_SRC emacs-lisp
-(define-key mu4e-view-mode-map "O" 'mu4e-view-save-all-attachments)
-#+END_SRC 
+I'm binding this to a key in [[hydra-mu4e-view]].
 
 Since v1.10, messages can be detached in =mu4e-view-mode=. The following functions detaches a displayed message and opens it in new frame:
 
@@ -12892,8 +12887,8 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
      ^Mark for^                  ^^                          
          _d_/_=_ Trash/Untrash     _z_ Detach view           _Pt_ Toggle threading     
          _!_/_?_ Read/Unread       _._ View raw              _Pr_ Toggle show related  
-         _+_/_-_ Flag/Unflag
-     _u_ Unmark
+         _+_/_-_ Flag/Unflag       _ee_ Save attachment        _O_ Change Sorting
+     _u_ Unmark                  _ea_ Save all attachments 
      _U_ Unmark all
      _T_ Mark whole thread
      _A_ Action
@@ -12907,8 +12902,11 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("b" mu4e-search-bookmark)
 	("c" helm-mu-contacts)
 	("C" mu4e-compose-new)
+	("ee" mu4e-view-save-attachments)
+	("ea" mu4e-view-save-all-attachments)
 	("R" mu4e-compose-reply)
 	("F" mu4e-compose-forward)
+	("O" mu4e-search-change-sorting)
 	("Pt" mu4e-headers-toggle-threading)
 	("Pr" mu4e-headers-toggle-include-related)
 	("+" mu4e-view-mark-for-flag)
