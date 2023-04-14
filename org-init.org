@@ -12832,7 +12832,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
          _!_/_?_ Read/Unread      _Sv_ ?Sv? Split vertic.       _c_ Contacts					
          _+_/_-_ Flag/Unflag      _Sh_ ?Sh? Split horiz.       _Pt_ Toggle threading   	 	    
      _u_ Unmark                	^^			                    _Pr_ Toggle show related		
-     _U_ Unmark all            																
+     _U_ Unmark all            	^^                           _O_ Change Sorting															
      _T_ Mark whole thread
      _A_ Action   
      _x_ Execute marks
@@ -12849,6 +12849,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("F" mu4e-compose-forward)
 	("Pt" mu4e-headers-toggle-threading)
 	("Pr" mu4e-headers-toggle-include-related)
+	("O" mu4e-search-change-sorting)
 	("Sv" (setq mu4e-split-view 'vertical) (if (eq 'vertical mu4e-split-view) "[x]" "[ ]"))
 	("Sh" (setq mu4e-split-view 'horizontal) (if (eq 'horizontal mu4e-split-view) "[x]" "[ ]"))
 	("H" mu4e-display-manual)
