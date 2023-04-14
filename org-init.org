@@ -6893,16 +6893,16 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 (setq mu4e-headers-visible-lines 10)
 (setq mu4e-headers-visible-columns 100)
 
-;; ;; Look of mail headers
-;; ;; The following is an attempt to truncate lines in mu4e-headers-mode.
-;; ;; Unfortunately, this seems to have buffer-nonlocal side effects, 
-;; ;; contrary to what is documented for toggle-truncate-lines.  
-;; (add-hook 'mu4e-headers-mode-hook
-;; 					#'(lambda () 
-;; 							(toggle-truncate-lines t)))
-;; (add-hook 'mu4e-headers-found-hook
-;; 					#'(lambda () 
-;; 							(toggle-truncate-lines t)))
+;; Look of mail headers
+;; The following is an attempt to truncate lines in mu4e-headers-mode.
+(add-hook 'mu4e-headers-mode-hook
+					#'(lambda ()
+							(with-current-buffer "*mu4e-headers*"
+								(toggle-truncate-lines t))))
+(add-hook 'mu4e-headers-found-hook
+					#'(lambda ()
+							(with-current-buffer "*mu4e-headers*"
+								(toggle-truncate-lines t))))
 
 ;; Change some text faces
 (set-face-attribute 'mu4e-replied-face nil :inherit 'font-lock-function-name-face)
@@ -7064,7 +7064,7 @@ Since v1.10, messages can be detached in =mu4e-view-mode=. The following functio
 	(when (mu4e--view-mode-p)
 		(mu4e-view-detach)
 		(make-frame)
-		(view-buffer "*mu4e-headers*")
+		(view-buffer "*mu4e-headers*") 			; Interestingly does not work with with-current-buffer 
 		(keyboard-escape-quit)))
 (define-key mu4e-view-mode-map "z" 'tl/mu4e-detach-and-view-message-in-new-frame)
 #+END_SRC
