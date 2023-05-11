@@ -7085,9 +7085,9 @@ Since v1.10, messages can be detached in =mu4e-view-mode=. The following functio
 
 						;; Replace citation line place keeper.
 						(save-excursion
-								(beginning-of-buffer)
-								(re-search-forward message-citation-line-format nil t)
-								(replace-match (tl/message-citation-line-string) t))
+							(beginning-of-buffer)
+							(when (re-search-forward message-citation-line-format nil t)
+								(replace-match (tl/message-citation-line-string) t)))
 
 						(turn-off-auto-fill)
 						(set-fill-column 79)
