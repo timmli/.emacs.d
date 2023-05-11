@@ -7083,6 +7083,12 @@ Since v1.10, messages can be detached in =mu4e-view-mode=. The following functio
  						;; https://github.com/djcb/mu/issues/2096
 						(message-remove-header "Date")
 
+						;; Replace citation line place keeper.
+						(save-excursion
+								(beginning-of-buffer)
+								(re-search-forward message-citation-line-format nil t)
+								(replace-match (tl/message-citation-line-string) t))
+
 						(turn-off-auto-fill)
 						(set-fill-column 79)
 						(flyspell-mode)
@@ -7113,21 +7119,44 @@ Since v1.10, messages can be detached in =mu4e-view-mode=. The following functio
 ;; Don't reply to yourself
 ;; Presupposes: mu init --my-address=your.email@address
 (setq mu4e-compose-dont-reply-to-self t)
+#+END_SRC
 
-;; Format of the first line of citations
-;; (defun tl/message-insert-citation-line ()
-;;   "Based on `message-insert-citation-line`."
-;;   (when message-reply-headers
-;;     (insert "On " 
-;; 						(format-time-string "%a, %Y-%m-%d, at %H:%M:%S" (date-to-time (mail-header-date message-reply-headers))) " ")
-;;     (insert (mail-header-from message-reply-headers) " wrote:")
-;;     (newline)
-;;     (newline)))
-;; (setq message-citation-line-function 'tl/message-insert-citation-line)
+Citation lines precede cited contents of replied or forwarded messages. Out of the box, Mu4e only includes the sender, which can be adjusted with =message-citation-line-format=:
 
+#+BEGIN_SRC emacs-lisp
 ;; Alternatively, see https://www.djcbsoftware.nl/code/mu/mu4e/Writing-messages.html
 (setq  message-citation-line-format "On %Y-%m-%d at %H:%M:%S, %f wrote:"
 			 message-citation-line-function 'message-insert-formatted-citation-line)
+#+END_SRC
+
+For adding further fields of a message to the citation line, I replace a special citation line with the output of the function =tl/message-citation-line-string= using =mu4e-compose-mode-hook= (see above) :
+
+#+BEGIN_SRC emacs-lisp
+(setq message-citation-line-format "MU4E: REPLACE THIS CITATION LINE!")
+(defun tl/mail-address-plist-to-string (address)
+  "Convert the plist ADDRESS with keys :name and :email into a string."
+	(let ((email (plist-get address ':email))
+				(name  (plist-get address ':name)))
+		(concat
+		 (or name email)
+		 " "
+		 "<" email ">")))
+
+(defun tl/message-citation-line-string ()
+	"Generate citation text for current message with mu4e functions."
+	(let* ((msg mu4e-compose-parent-message)
+				 (from (mu4e-message-field msg :from))
+				 (to (mu4e-message-field msg :to))
+				 (cc (mu4e-message-field msg :cc))
+				 (subject (mu4e-message-field msg :subject))
+				 (date (mu4e-message-field msg :date)))
+		(concat "From: " (mapconcat 'tl/mail-address-plist-to-string from ", ") "\n"
+						"Date: " (format-time-string "%A, %Y-%m-%d, at %H:%M" date) "\n"
+						"To: " (mapconcat 'tl/mail-address-plist-to-string to ", ") "\n"
+						(when cc (concat "Cc: " (mapconcat 'tl/mail-address-plist-to-string cc ", ") "\n"))
+						"Subject: " subject
+						))
+	)
 #+END_SRC
 
 Attachments can be included directly from [[*dired][dired]] with the help of =gnus=. 
