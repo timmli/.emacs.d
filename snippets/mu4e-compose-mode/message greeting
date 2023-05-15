@@ -1,8 +1,13 @@
 # -*- mode: snippet -*-
 # name: message greeting
 # key: VG
-# expand-env: ((greeting-string (if (string= (guess-language-buffer) "de") "Viele Grüße" "Best,")))
 # --
+`(progn
+	(remove-newlines-or-blank-lines-dwim)
+	(remove-newlines-or-blank-lines-dwim)
+	(newline)
+	(newline))
+`
 
 `(if (string= (guess-language-buffer) "de")
    (yas-choose-value '("Viele Grüße"
@@ -17,3 +22,10 @@
 `
 
 Timm ${1:Lichte}$0
+
+`(progn
+	(remove-newlines-or-blank-lines-dwim)
+	(remove-newlines-or-blank-lines-dwim)
+	(newline)
+	(newline))
+`
