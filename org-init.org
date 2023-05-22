@@ -932,6 +932,9 @@ https://github.com/emacs-helm/helm-mu
 
 Helm frontend for [[https://github.com/djcb/mu][Mu]] and [[mu4e]].
 
+Issues:
+- [ ] Does not find emails when using =--muhome=.
+
 #+BEGIN_SRC emacs-lisp
 (use-package helm-mu
   :ensure t
