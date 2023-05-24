@@ -12858,7 +12858,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
      _F_ Forward                 _j_ Jump to mailbox         _b_ Search with bookmarks        
      ^^                          _;_ Switch context   _M-<left>_ Previous search
      ^Mark for^                  ^^                  _M-<right>_ Next search       
-         _d_/_=_ Trash/Untrash                               
+         _d_/_=_ Trash/Untrash                               _f_ Search with helm-mu
          _!_/_?_ Read/Unread      _Sv_ ?Sv? Split vertic.       _c_ Contacts					
          _+_/_-_ Flag/Unflag      _Sh_ ?Sh? Split horiz.       _Pt_ Toggle threading   	 	    
      _u_ Unmark                	^^			                    _Pr_ Toggle show related		
@@ -12870,6 +12870,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("p" mu4e-headers-prev :color pink)
 	("n" mu4e-headers-next :color pink)
 	("s" mu4e-search)
+	("f" helm-mu)
 	("g" mu4e-search-rerun)
 	("j" mu4e~headers-jump-to-maildir)
 	("b" mu4e-search-bookmark)
