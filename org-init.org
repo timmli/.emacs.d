@@ -7252,6 +7252,23 @@ More Bookmarks:
      :query "flag:attach"))
 #+END_SRC
 
+***** Export messages
+
+The following function (written by Dirk-Jan Binnema, copied from https://notes.baty.net/notes/saving-a-maildir-email-as-.eml-using-mu4e/) exports an email at point to an eml file.
+
+#+BEGIN_SRC emacs-lisp
+(defun djcb-mu4e-copy-message-at-point (&optional dir)
+  "Copy message at point to somewhere else as <date>_<subject>.eml."
+  (interactive)
+  (let* ((msg (mu4e-message-at-point))
+         (target (format "%s_%s.eml"
+                         (format-time-string "%F" (mu4e-message-field msg :date))
+                         (or (mu4e-message-field msg :subject) "No subject"))))
+    (copy-file
+     (mu4e-message-field msg :path)
+     (format "%s/%s" (or dir (read-directory-name "Copy message to: ")) target) 1)))
+#+END_SRC
+
 ***** COMMENT mu4e-thread-folding
 
 https://github.com/rougier/mu4e-thread-folding
