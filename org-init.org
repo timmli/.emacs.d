@@ -1696,9 +1696,14 @@ Selection
 (setq org-support-shift-select t)
 #+END_SRC
 
-Block
+Fold headings at startup
 #+BEGIN_SRC emacs-lisp
-(setq org-hide-block-startup t) 				; hide blocks at startup
+(setq org-startup-folded 'show2levels)
+#+END_SRC
+
+Hide blocks at startup
+#+BEGIN_SRC emacs-lisp
+(setq org-hide-block-startup t)
 #+END_SRC
 
 Indent automatically
