@@ -7230,6 +7230,8 @@ In mu4e, line breaks are handled in a way that is very unusual when coming from,
           'delete-trailing-whitespace)
 #+END_SRC 
 
+Edit-as-new feature: this is currently an open issue in the mu repository: https://github.com/djcb/mu/issues/2274
+
 ***** Send messages
 
 #+BEGIN_SRC emacs-lisp
