@@ -12243,7 +12243,8 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
      		 _<_ Previous day   				    _li_ Insert citation link           
          _>_ Next day                	  _t+_ Add tag			             ^^                          _q_:uit   
      _f_ Find note			 						    _t-_ Remove tag                      
-  	 _F_ Full-text search                _S_ Subtree to file
+  	 _F_ Full-text search                _P_ Promote heading to file
+      ^^                                 _D_ Demote file to heading
 "
   ("q" nil)
 	("a+" org-roam-alias-add)
@@ -12261,7 +12262,8 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
   ("s" org-roam-ui-mode)
 	("t+" org-roam-alias-add)
 	("t-" org-roam-alias-remove)
-	("S" org-roam-extract-subtree)
+	("P" org-roam-extract-subtree)
+	("D" org-roam-demote-entire-buffer)
   ("u" org-roam-db-sync)
 	)
 #+END_SRC
