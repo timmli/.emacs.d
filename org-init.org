@@ -12985,7 +12985,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("." mu4e-view-raw-message)
 	("[" mu4e-view-headers-prev-unread :color pink)
 	("]" mu4e-view-headers-next-unread :color pink)
-	("A" mu4e-headers-mark-for-action)
+	("A" mu4e-view-action)
 	("H" mu4e-display-manual)
 	("q" nil :color blue)
 	)
