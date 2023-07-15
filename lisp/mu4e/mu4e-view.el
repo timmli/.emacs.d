@@ -654,7 +654,8 @@ As a side-effect, a message that is being viewed loses its
         (mu4e-error "Cannot get a message view"))
       (select-window mu4e~headers-view-win)))
   (with-current-buffer gnus-article-buffer
-    (run-hooks 'mu4e-view-rendered-hook)))
+    (let ((inhibit-read-only t))
+      (run-hooks 'mu4e-view-rendered-hook))))
 
 (defun mu4e-view-message-text (msg)
   "Return the pristine MSG as a string."
@@ -868,14 +869,20 @@ This is useful for advising some Gnus-functionality that does not work in mu4e."
   "Quit the mu4e-view buffer."
   (interactive)
   (if (memq mu4e-split-view '(horizontal vertical))
-      (kill-buffer-and-window)
+      (ignore-errors ;; try, don't error out.
+        (kill-buffer-and-window))
     ;; single-window case
-    (when mu4e-linked-headers-buffer ;; re-use mu4e-view-detach?
-      (with-current-buffer mu4e-linked-headers-buffer
-        (when (eq (selected-window) mu4e~headers-view-win)
-          (setq mu4e~headers-view-win nil)))
-      (setq mu4e-linked-headers-buffer nil)
-      (kill-buffer))))
+    (let ((docid (mu4e-field-at-point :docid)))
+      (when mu4e-linked-headers-buffer ;; re-use mu4e-view-detach?
+        (with-current-buffer mu4e-linked-headers-buffer
+          (when (eq (selected-window) mu4e~headers-view-win)
+            (setq mu4e~headers-view-win nil)))
+        (setq mu4e-linked-headers-buffer nil)
+        (kill-buffer)
+        ;; attempt to move point to just-viewed message.
+        (when docid
+          (ignore-errors
+            (mu4e~headers-goto-docid docid)))))))
 
 (defvar mu4e-view-mode-map
   (let ((map (make-keymap)))
