@@ -681,7 +681,7 @@ Emacs framework for incremental completions and narrowing selections.
   :diminish helm-mode
   :init
   (progn
-    (require 'helm-config)
+    ;; (require 'helm-config) ; Obsolete since v3.9.1: https://github.com/emacs-helm/helm/commit/e81fbbc687705595ab65ae5cd3bdf93c17a90743
     (setq helm-candidate-number-limit 100)
     ;; From https://gist.github.com/antifuchs/9238468
     (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
@@ -3440,14 +3440,14 @@ xdg-mime default org-protocol.desktop x-scheme-handler/org-protocol
 
 *** org-ref
 
-- [X] =org-ref-prefer-bracket-links= does not work?
-- [X] =org-ref-cite-color= is not used 
+https://github.com/jkitchin/org-ref
+
+Add all kinds of reference types (citations, text references, indexes, ...) to Org.
 
 #+BEGIN_SRC emacs-lisp
-;; (setq org-ref-completion-library 'org-ref-ivy-cite) ; must appear before org-ref
 (use-package org-ref
 	:ensure t
-	;; :pin MELPA
+	:pin MELPA ; v2.0.0 is not compatible with helm v3.9.1
 	:after org
 	:init
 	(require 'org-ref) 										; don't know why I need this
@@ -3458,19 +3458,24 @@ xdg-mime default org-protocol.desktop x-scheme-handler/org-protocol
 				org-ref-default-ref-type "autoref"
 				)
 	:config
-	:bind (:map org-mode-map
-							("C-c ]" . org-ref-helm-insert-cite-link)
-							("C-c )" . org-ref-helm-insert-ref-link)
-							("C-c (" . org-ref-helm-insert-label-link))
+	(define-key org-mode-map (kbd "C-c ]") org-ref-insert-cite-function)
+	(define-key org-mode-map (kbd "C-c )") org-ref-insert-ref-function)
+	(define-key org-mode-map (kbd "C-c (") org-ref-insert-label-function)
+	;; :bind (:map org-mode-map
+	;; ("C-c ]" . org-ref-helm-insert-cite-link) ; Obsolete since > v2.0.0
+	;; ("C-c )" . org-ref-helm-insert-ref-link)	; Obsolete since > v2.0.0
+	;; ("C-c (" . org-ref-helm-insert-label-link) ; Obsolete since > v2.0.0
+	;; )
 	)
 #+END_SRC
 
 Add \citeauthoryear and  \citealtauthoryear to org-ref:
 #+BEGIN_SRC emacs-lisp
-(org-ref-define-citation-link "citeauthoryear")
-(add-to-list 'org-ref-cite-types "citeauthoryear")
-(org-ref-define-citation-link "citealtauthoryear")
-(add-to-list 'org-ref-cite-types "citealtauthoryear")
+;; Obsolete since > v2.0.0
+;; (org-ref-define-citation-link "citeauthoryear")
+;; (add-to-list 'org-ref-cite-types "citeauthoryear")
+;; (org-ref-define-citation-link "citealtauthoryear")
+;; (add-to-list 'org-ref-cite-types "citealtauthoryear")
 #+END_SRC
 
 Set colors:
