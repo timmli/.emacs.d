@@ -3144,7 +3144,7 @@ Here's my own version, which uses =org-table-wrap-region=. This was superseded b
   )
 #+END_SRC
 
-*** org-appear
+*** COMMENT org-appear
 
 https://github.com/awth13/org-appear
 
