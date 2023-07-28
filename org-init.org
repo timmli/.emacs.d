@@ -3152,7 +3152,6 @@ Automatically toggle visibility of emphasis markers and links under point.
 
 Issues
 - [ ] Links not shown with Org v9.6.1: https://github.com/awth13/org-appear/issues/46
-- [X] Links not shown with Org v9.6: https://github.com/awth13/org-appear/issues/46
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-appear
@@ -4360,7 +4359,9 @@ Also supports org-mode links to khard entries.
 
 **** bbdb
 
-http://sachachua.com/notebook/emacs/bbdb-config.el
+http://savannah.nongnu.org/projects/bbdb/
+
+Built-in address book in Emacs. 
 
 #+BEGIN_SRC emacs-lisp
 (use-package bbdb
@@ -4391,14 +4392,28 @@ http://sachachua.com/notebook/emacs/bbdb-config.el
 					bbdb-offer-save 1  ; Always save
 					bbdb-electric-p t)
 		))
-
-  (use-package bbdb-vcard
-    :ensure t)
 #+END_SRC
 
+https://github.com/tohojo/bbdb-vcard
+https://github.com/trebb/bbdb-vcard
+
+Import and export vCards to/from bbdb.
+
+Issues:
+- [ ] Uses bbdb-join instead of bbdb-concat. 
+
 #+BEGIN_SRC emacs-lisp
-  (use-package helm-bbdb
-    :ensure t)
+(use-package bbdb-vcard
+  :ensure t)
+#+END_SRC
+
+https://github.com/emacs-helm/helm-bbdb
+
+A Helm interface to bbdb.
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-bbdb
+  :ensure t)
   (global-set-key (kbd "<f7> a") 'helm-bbdb)
 #+END_SRC
 
