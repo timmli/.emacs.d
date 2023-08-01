@@ -7252,6 +7252,26 @@ In mu4e, line breaks are handled in a way that is very unusual when coming from,
 
 Edit-as-new feature: this is currently an open issue in the mu repository: https://github.com/djcb/mu/issues/2274
 
+Checks
+- [ ] Warn when attachment is not included, evern though the email mentions it.
+
+Check whether the message has a subject:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/mu4e-check-empty-subject ()
+	"Check whether the message has a subject."
+  (let ((subject (message-field-value "Subject")))
+    (when (or (not subject) 
+							(string-empty-p subject))
+      (message "Warning: Subject is missing! Please provide a subject before sending.")
+      (sit-for 2) ; Display the warning for 2 seconds
+			(message-goto-subject)
+      (error "Cannot send the email without a subject"))))
+
+(add-hook 'message-send-hook
+          'tl/mu4e-check-empty-subject)
+#+END_SRC
+
 ***** Send messages
 
 #+BEGIN_SRC emacs-lisp
