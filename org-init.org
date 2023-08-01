@@ -4395,15 +4395,12 @@ Built-in address book in Emacs.
 #+END_SRC
 
 https://github.com/tohojo/bbdb-vcard
-https://github.com/trebb/bbdb-vcard
 
 Import and export vCards to/from bbdb.
 
-Issues:
-- [ ] Uses bbdb-join instead of bbdb-concat. 
-
 #+BEGIN_SRC emacs-lisp
 (use-package bbdb-vcard
+	:pin MELPA 
   :ensure t)
 #+END_SRC
 
@@ -5113,6 +5110,8 @@ for better autocompletion
 Autocompletion: see [[company]].
 
 **** TODO reftex
+
+https://www.gnu.org/software/auctex/reftex.html
 
 - [ ] Issue: =\section=, =\frametitle= etc. are not shown in TOC when not being line-inital or preceded by whitespaces.
 - [ ] Issue: =\begin{frame}= ist not recognized.
