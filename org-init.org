@@ -7251,8 +7251,35 @@ In mu4e, line breaks are handled in a way that is very unusual when coming from,
 
 Edit-as-new feature: this is currently an open issue in the mu repository: https://github.com/djcb/mu/issues/2274
 
-Checks
-- [ ] Warn when attachment is not included, evern though the email mentions it.
+Check whether the message has an attachment if it mentions one:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/mu4e-message-has-attachment-p ()
+	"Check whether the message has an attachment."
+	(save-excursion
+		(message-goto-body-1)
+		(search-forward-regexp "<#part .* disposition=attachment" nil t)))
+
+(defun tl/mu4e-message-mentions-attachment-p ()
+	"Check whether the message mentions an attachment."
+	(save-excursion
+		(message-goto-body-1)
+		(let ((case-fold-search nil))
+			(search-forward-regexp
+			 "\\(attached\\|attachment\\|angehängt\\|Anhang\\|anbei\\|häng.*an\\)"
+			 nil t))))
+
+(defun tl/mu4e-check-attachment ()
+	"Check whether the message has an attachment if it mentions one."
+	(when (and (tl/mu4e-message-mentions-attachment-p)
+						 (not (tl/mu4e-message-has-attachment-p)))
+		(when (yes-or-no-p "Warning: Attachement is mentioned, but not yet added! Do you want to add an attachment?")
+			(error "Please add an attachment before sending the email!")
+			)))
+
+(add-hook 'message-send-hook
+          'tl/mu4e-check-attachment)
+#+END_SRC
 
 Check whether the message has a subject:
 
