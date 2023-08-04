@@ -180,6 +180,10 @@ Don't show toolbar:
 
 *** dashboard
 
+https://github.com/emacs-dashboard/emacs-dashboard
+
+An extensible Emacs startup screen. 
+
 #+BEGIN_SRC emacs-lisp
 (use-package dashboard
 	:ensure t
@@ -933,7 +937,7 @@ https://github.com/emacs-helm/helm-mu
 Helm frontend for [[https://github.com/djcb/mu][Mu]] and [[mu4e]].
 
 Issues:
-- [ ] Does not find emails when using =--muhome=.
+- [X] Does not find emails when using a non-standard mu folder.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-mu
@@ -943,6 +947,7 @@ Issues:
 	(setq helm-mu-append-implicit-wildcard t
 				helm-mu-default-search-string "(maildir:/INBOX OR maildir:/Sent)"
 				helm-mu-contacts-personal t	 ; Only show contacts who sent you emails directly
+				helm-mu-command-arguments (concat "--muhome=" mu4e-mu-home) ; Search in `mu4e-mu-home' when calling `mu'
 				;; helm-mu-gnu-sed-program "gsed"
 				)
 	(define-key mu4e-main-mode-map "f" 'helm-mu)
