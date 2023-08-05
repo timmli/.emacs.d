@@ -6305,6 +6305,25 @@ https://github.com/jpkotta/openwith
 	(openwith-mode 1)))
 #+END_SRC
 
+**** Duplicate file
+
+Duplicate file at point while changing the file name. 
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/dired-duplicate-this-file ()
+  "Duplicate file on this line.
+Taken from https://emacs.stackexchange.com/a/60663/12336."
+  (interactive)
+  (let* ((this  (dired-get-filename t))
+         (ctr   1)
+         (new   (format "%s[%d]" this ctr)))
+    (while (file-exists-p new)
+      (setq ctr  (1+ ctr)
+            new  (format "%s[%d]" this ctr)))
+    (dired-copy-file this new nil))
+  (revert-buffer))
+#+END_SRC
+
 **** Special keys
 ***** Copy path
 
@@ -11730,7 +11749,8 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
             _<down>_     ^^             _W_: copy path      _c_/_Z_: compress      _of_: open in other frame
   ^^                     ^^             ^^                  _=_: diff
    _._: home  _j_: jump  _f_: find        _$_: wdired         _am_: attach to mail    ^^
-   ^^         ^^         ^^             ^^                    _af_: goto attached heading      _q_: quit hydra 
+   ^^         ^^         ^^             ^^                    _af_: goto attached heading
+   ^^         ^^         ^^             ^^                    _&_: clone file                 _q_: quit hydra 
 -^----------^------------------------^----^---------------^-------^-------------^----^---------------------
 "
 	("<left>" (lambda () (interactive) (find-alternate-file "..")))
@@ -11757,6 +11777,7 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
 	("(" dired-hide-details-mode)
 	(")" dired-collapse-mode)
 	("$" wdired-change-to-wdired-mode :color blue)
+	("&" tl/dired-duplicate-this-file :color blue)
 	("f" helm-find)
 	("." (find-file home-directory))
 	("=" hydra-dired-diff/body :color blue)  
