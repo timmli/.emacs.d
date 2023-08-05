@@ -12627,7 +12627,7 @@ Copied from https://github.com/cmcmahan/elisp/blob/master/emacs-hydra.el:
 	 ("2" (insert-date "%Y-%m-%d") (format-time-string "%Y-%m-%d"))
    ("3" (insert-date) (format-time-string "%Y-%m-%d %a"))
 	 ("4" (insert-date "%Y-%m-%d %a %H:%M") (format-time-string "%Y-%m-%d %a %H:%M"))
-   ("5" (insert-date-time) (format-time-string "%Y-%m-%dT%T%z"))
+   ("5" (insert-date "%Y-%m-%dT%T%z") (format-time-string "%Y-%m-%dT%T%z"))
 	 ("6" (insert-date "%B %d, %Y") (format-time-string "%B %d, %Y"))
 	 ("7" (insert-date "%A, %B %d, %Y") (format-time-string "%A, %B %d, %Y"))
 	 ;; ;; inspired from http://ergoemacs.org/emacs/elisp_insert-date-time.html
