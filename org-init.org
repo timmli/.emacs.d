@@ -7284,13 +7284,23 @@ Check whether the message has an attachment if it mentions one:
 		(message-goto-body-1)
 		(search-forward-regexp "<#part .* disposition=attachment" nil t)))
 
+(require 'subr-x)
 (defun tl/mu4e-message-mentions-attachment-p ()
 	"Check whether the message mentions an attachment."
 	(save-excursion
 		(message-goto-body-1)
 		(let ((case-fold-search nil))
 			(search-forward-regexp
-			 "\\(attached\\|attachment\\|angehängt\\|Anhang\\|anbei\\|häng.*an\\)"
+			 (concat "^[^>]*"	; do not search in quoted messages
+               ;; Keywords
+							 "\\(" (string-join '("attached"
+																		"attachment"
+																		"angehängt"
+																		"Anhang"
+																		"anbei"
+																		"häng.*an")
+																	"\\|")
+							 "\\)")
 			 nil t))))
 
 (defun tl/mu4e-check-attachment ()
