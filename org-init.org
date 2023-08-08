@@ -7298,7 +7298,7 @@ Check whether the message has an attachment if it mentions one:
 											"häng.*an")))
 			(search-forward-regexp
 			 (concat "^\\("
-							 "[^>]\\{2\\}.*" ; do not search in quoted messages (yes, [^>] has to appear twice)
+							 "[^>]\\{2\\}.*" ; do not search in quoted messages (yes, [^>] has to appear twice here)
 							 "\\(" (string-join keywords "\\|") "\\)"
 							 "\\|"
 							 "\\(" (string-join keywords "\\|") "\\)"
@@ -11347,14 +11347,16 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
    ╭─────^^─────────^^─────────^^──╯     └─────────^^───^^───────^^───────^^───────^^─────╯
  
       [_e_] compilation errors      [_c_] code checking     [_s_] spell checking 
-      [_#_] count words             [_r_] recover file      [_=_] inline calculator       [_q_]uit
+     [_#m_] count matches           [_r_] recover file      [_=_] inline calculator       [_q_]uit
+     [_#w_] count words/lines/chars
 	"
 	("e" hydra-compilation-error/body :exit t)
 	("c" hydra-flycheck/body :exit t)
 	("r" recover-this-file :exit t)
 	("s" hydra-flyspell/body :exit t)
 	("=" literate-calc-minor-mode :exit t)
-	("#" count-words :exit t)
+	("#w" count-words :exit t)
+	("#m" count-matches :exit t)
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
 	("<f2>" hydra-f2/body :exit t)
