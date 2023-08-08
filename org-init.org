@@ -5189,6 +5189,8 @@ Autocompletion: see [[*company]].
 
 **** bibtex
 
+http://www.jonathanleroux.org/bibtex-mode.html
+
 #+BEGIN_SRC emacs-lisp
 (setq bibtex-dialect 'biblatex)
 #+END_SRC
@@ -5225,16 +5227,22 @@ Key generation:
 #+BEGIN_SRC emacs-lisp
 (setq
  ;; name part
- bibtex-autokey-names 2						; maximal number of names used
- bibtex-autokey-preserve-case t		
- bibtex-autokey-name-separator ":" 
+ bibtex-autokey-names 1						; maximal number of names used
+ bibtex-autokey-names-stretch 1		; additionally used names, if then all names are used
+ bibtex-autokey-preserve-case t		; probably deprecatedd; instead use bibtex-autokey-name-case-convert
+ bibtex-autokey-name-case-convert 'identity 
+ bibtex-autokey-name-separator ":"
+ bibtex-autokey-additional-names ":etal"
  ;; year part
  bibtex-autokey-year-length 2 			; size of year part (from the right)
  bibtex-autokey-name-year-separator ":" 
  bibtex-autokey-year-use-crossref-entry t ; use year from crossref (depends on bibtex-maintain-sorted-entries)
-;; title part
- bibtex-autokey-titleword-length 0			; number of used titlewords
-)
+ ;; title part
+ bibtex-autokey-year-title-separator "-"
+ bibtex-autokey-titleword-length 5			; number of characters from title words
+ bibtex-autokey-titlewords 5						; number of used title words
+ bibtex-autokey-titleword-case-convert-function 'downcase
+ )
 #+END_SRC
 
 Sorting entries:
@@ -5242,7 +5250,7 @@ Sorting entries:
 (setq bibtex-maintain-sorted-entries t)
 #+END_SRC
 
-***** import
+***** Import
 
 Taken from http://www.anghyflawn.net/blog/2014/emacs-give-a-doi-get-a-bibtex-entry/:
 
@@ -5266,10 +5274,23 @@ Taken from http://www.anghyflawn.net/blog/2014/emacs-give-a-doi-get-a-bibtex-ent
  (bibtex-fill-entry))
 #+END_SRC
 
-***** entry templates
+***** Entry templates
 
+Function to add timestamp:
+#+BEGIN_SRC emacs-lisp
+(defun tl/bibtex-add-timestamp ()
+	(interactive)
+	(bibtex-set-field "timestamp" (format-time-string "%Y-%m-%d" (current-time))) 
+)
+#+END_SRC
+
+Use =bibtex-entry= when inserting entry templates:
+#+BEGIN_SRC emacs-lisp
+(define-key bibtex-mode-map (kbd "C-c C-e") 'bibtex-entry)
+#+END_SRC
+
+Documentation of =bibtex-entry-field-alist=:
 #+BEGIN_QUOTE
-Documentation of bibtex-entry-field-alist:
 Alist of BibTeX entry types and their associated fields.
 Elements are lists (ENTRY-TYPE DOC REQUIRED CROSSREF OPTIONAL).
 ENTRY-TYPE is the type of a BibTeX entry.
@@ -5291,6 +5312,230 @@ which is called to determine the initial content of the field.
 ALTERNATIVE if non-nil is an integer that numbers sets of
 alternatives, starting from zero.
 #+END_QUOTE
+
+****** MUSS
+
+See https://github.com/timmli/biblatex-muss
+
+#+BEGIN_SRC emacs-lisp
+(defvar bibtex-muss-entry-alist 
+	`(("Article" "Article in a journal"
+		 ;; required
+		 (("author")
+			("title" "Title of the article (BibTeX converts it to lowercase)"))
+		 ;; required without crossref
+		 (("journal")
+			("year"))
+		 ;; optional
+		 (("volume" "Volume of the journal")
+			("number" "Number of the journal (only allowed if entry contains volume)")
+			("pages" "Pages in the journal")
+			("url")
+			("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+
+		("Book" "A book with one or more authors where the authors share credit for the work as a whole"
+		 ;; required
+		 (("author")
+			("title")
+			("year")
+			("doi" nil nil 1)
+			("url" nil nil 1)
+			("publisher" nil nil 1)
+			)
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("volume" "Volume of the book in the series")
+			("number" "Number of the book in a small series (overwritten by volume)")
+			("series" "Series in which the book appeared")
+			("edition" "Edition of the book as a capitalized English word")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+
+		("Collection" "A collection with multiple, self-contained contributions by distinct authors which have their own title"
+		 ;; required
+		 (("editor")
+			("booktitle")
+			("year")
+			("doi" nil nil 1)
+			("url" nil nil 1)
+			("publisher" nil nil 1))
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("volume" "Volume of the book in the series")
+			("number" "Number of the book in a small series (overwritten by volume)")
+			("series" "Series in which the book appeared")
+			("edition" "Edition of the book as a capitalized English word")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+
+		("Proceedings" "Conference Proceedings"
+		 ;; required
+		 (("booktitle")
+			("year")
+			("doi" nil nil 1)
+			("url" nil nil 1)
+			("publisher" nil nil 1))
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("editor")
+			("volume" "Volume of the conference proceedings in the series")
+			("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+			("series" "Series in which the conference proceedings appeared")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+
+		("InProceedings" "Paper in conference proceedings"
+		 ;; required
+		 (("author")
+			("title" "Title of the paper")
+			("pages" "Pages in the conference proceedings")
+			)
+		 ;; required without crossref
+		 (("booktitle" "Name of the paper")
+			("year")
+			("doi" nil nil 1)
+			("url" nil nil 1)
+			("publisher" nil nil 1))
+		 ;; optional
+		 (("volume" "Volume of the conference proceedings in the series")
+			("number" "Number of the conference proceedings in a small series (overwritten by volume)")
+			("series" "Series in which the conference proceedings appeared")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+
+		("InCollection" "Contribution in a collection"
+		 ;; required
+		 (("author")
+			("title" "Title of the contribution")
+			("pages" "Pages in the collection"))
+		 ;; required without crossref
+		 (("booktitle" "Title of the collection")
+			("editor")
+			("doi" nil nil 1)
+			("url" nil nil 1)
+			("publisher" nil nil 1)
+			("year"))
+		 ;; optional
+		 (("volume" "Volume of the collection in the series")
+			("number" "Number of the collection in a small series (overwritten by volume)")
+			("series" "Series in which the collection appeared")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+		
+		("Thesis" "Thesis"
+		 ;; required
+		 (("author")
+			("title" "Title of the thesis")
+			("type" "Type of the thesis")
+			("school" "School where the thesis was written" nil 1)
+			("institution" "Institution where the thesis was written" nil 1)
+			("year"))
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("url")
+			("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+
+		("PhDThesis" "PhD Thesis"
+		 ;; required
+		 (("author")
+			("title" "Title of the thesis")
+			("type" "Type of the thesis")
+			("school" "School where the thesis was written" nil 1)
+			("institution" "Institution where the thesis was written" nil 1)
+			("year"))
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("url")
+			("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+
+		("Report" "Technical Report"
+		 ;; required
+		 (("author")
+			("title" "Title of the technical report")
+			("year")
+			("type")
+			("institution"))
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("url")
+			("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+		
+		("TechReport" "Technical Report"
+		 ;; required
+		 (("author")
+			("title" "Title of the technical report")
+			("year")
+			("type")
+			("institution"))
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("url")
+			("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+
+		("Manual" "Manual"
+		 ;; required
+		 (("title" "Title of the manual")
+			("author")
+			("year")
+			("url")
+			("urldate"))
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+
+		
+		("Online" "Online resource"
+		 ;; required
+		 (("title" "Title of the online resource")
+			("author")
+			("year")
+			("url")
+			("urldate"))
+		 ;; required without crossref
+		 nil
+		 ;; optional
+		 (("doi")
+			("timestamp" nil ,(format-time-string "%Y-%m-%d" (current-time)))
+			("note")))
+		
+	  )
+	"Entry types following the formatting rules of MUSS (https://github.com/timmli/biblatex-muss)."
+	)
+#+END_SRC
+
+Activate MUSS dialect:
+
+#+BEGIN_SRC emacs-lisp
+(defvar bibtex-muss-field-alist bibtex-biblatex-field-alist)
+(add-to-list 'bibtex-muss-field-alist '("timestamp" "Date of creation or modification of the entry."))
+
+(add-to-list 'bibtex-dialect-list 'muss)
+(setq bibtex-dialect 'muss)
+#+END_SRC
+
+****** COMMENT Langsci
+
+See https://github.com/langsci/bib-db
 
 #+BEGIN_SRC emacs-lisp
 (defvar bibtex-langsci-entry-alist 
@@ -5521,19 +5766,6 @@ Activate langsci dialect:
 
 (add-to-list 'bibtex-dialect-list 'langsci)
 (setq bibtex-dialect 'langsci)
-#+END_SRC
-
-Function to add timestamp:
-#+BEGIN_SRC emacs-lisp
-(defun tl/bibtex-add-timestamp ()
-	(interactive)
-	(bibtex-set-field "timestamp" (format-time-string "%Y-%m-%d" (current-time))) 
-)
-#+END_SRC
-
-Use =bibtex-entry= when inserting entry templates:
-#+BEGIN_SRC emacs-lisp
-(define-key bibtex-mode-map (kbd "C-c C-e") 'bibtex-entry)
 #+END_SRC
 
 **** helm-bibtex
