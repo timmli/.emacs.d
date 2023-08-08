@@ -7289,17 +7289,19 @@ Check whether the message has an attachment if it mentions one:
 	"Check whether the message mentions an attachment."
 	(save-excursion
 		(message-goto-body-1)
-		(let ((case-fold-search nil))
+		(let ((case-fold-search nil)
+					(keywords '("attached"
+											"attachment"
+											"angehängt"
+											"Anhang"
+											"anbei"
+											"häng.*an")))
 			(search-forward-regexp
-			 (concat "^[^>]*"	; do not search in quoted messages
-               ;; Keywords
-							 "\\(" (string-join '("attached"
-																		"attachment"
-																		"angehängt"
-																		"Anhang"
-																		"anbei"
-																		"häng.*an")
-																	"\\|")
+			 (concat "^\\("
+							 "[^>]\\{2\\}.*" ; do not search in quoted messages (yes, [^>] has to appear twice)
+							 "\\(" (string-join keywords "\\|") "\\)"
+							 "\\|"
+							 "\\(" (string-join keywords "\\|") "\\)"
 							 "\\)")
 			 nil t))))
 
