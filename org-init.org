@@ -6067,6 +6067,10 @@ Just try it out with =latex-table-wizard-do= inside a LaTeX buffer:
 
 **** markdown-mode
 
+https://jblevins.org/projects/markdown-mode/
+
+Major mode for editing Markdown-formatted text.
+
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-mode
   :ensure t
@@ -6079,6 +6083,10 @@ Just try it out with =latex-table-wizard-do= inside a LaTeX buffer:
 #+END_SRC
 
 **** markdown-toc
+
+https://github.com/ardumont/markdown-toc
+
+Insert TOC in a markdown file.
 
 #+BEGIN_SRC emacs-lisp
 (use-package markdown-toc
@@ -11250,6 +11258,32 @@ A Helm interface to the package manager of your operating system.
 	:pin MELPA)
 #+END_SRC
 
+** Guix
+
+https://github.com/alezost/guix.el
+
+Emacs front-end for the Guix package manager.
+
+#+BEGIN_SRC emacs-lisp
+(use-package guix
+	:ensure t
+	:pin MELPA)
+#+END_SRC
+
+=guix= requires =geiser-guile= which oddly enough is not automatically installed as a dependency:
+
+#+BEGIN_SRC emacs-lisp
+(use-package geiser-guile 
+	:ensure t)
+#+END_SRC
+
+Also make sure that evironment variables are properly set (maybe restart required):
+
+#+BEGIN_SRC bash :tangle no
+export GUIX_PROFILE=$HOME/.guix-profile
+source $GUIX_PROFILE/etc/profile
+#+END_SRC
+
 * Tags
 
 ** etags
@@ -11713,6 +11747,7 @@ Deprecated:
        [_p_] projectile         [_f_] search files          [_hb_] bibliography     
        [_P_] pandoc             [_r_] elfeed                 [_j_] Jupyter notebook
        [_o_] open externally    [_R_] R repl                [_gs_] magit status         [_q_]uit
+       [_G_] guix
 	" 
 	("a" helm-bbdb :exit t)
 	("c" (lambda ()
@@ -11730,6 +11765,7 @@ Deprecated:
 	("j" tl/open-jupyter-notebook :exit t)
 	("l" dictcc :exit t)
 	("m" mu4e :exit t)
+	("G" guix :exit t)
 	("gs" magit-status :exit t)
 	("gl" magit-log-buffer-file :exit t)
 	("e" tl/eshell :exit t)
