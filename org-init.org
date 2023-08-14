@@ -14360,6 +14360,12 @@ https://github.com/publicus/emacs-org-mode-for-the-laity
 
 *** Startup
 
+**** --debug-init
+
+#+BEGIN_SRC bash :tangle no
+emacs --debug-init
+#+END_SRC
+
 **** pkill
 
 It has proven surprisingly useful to debug problems within Emacs from outside, namely by invoking =pkill= from a shell like this:
@@ -14393,6 +14399,12 @@ Toggle whether to enter Lisp debugger when an error is signaled.
 *** Org
 
 https://orgmode.org/manual/Feedback.html#Feedback
+
+**** Delete =org-persist= files
+
+If you experience strange crashes when starting emacs, it has proven effective to delete the content of the folder =~/.cache/org-persist.= Don't ask me why.
+
+=org-persist= is used to store cached data across Emacs sessions.
 
 * Private settings 
 
