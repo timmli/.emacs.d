@@ -14377,6 +14377,12 @@ pkill -SIGUSR2 emacs
 I learned about this way of debugging Emacs from a question on StackOverflow:
 https://stackoverflow.com/q/65815662/6452961
 
+**** Delete =org-persist= files
+
+If you experience strange crashes when starting emacs, it has proven effective to delete the content of the folder =~/.cache/org-persist.= Don't ask me why.
+
+=org-persist= is used to store cached data across Emacs sessions.
+
 *** Functions
 
 **** debug-on-entry
@@ -14399,12 +14405,6 @@ Toggle whether to enter Lisp debugger when an error is signaled.
 *** Org
 
 https://orgmode.org/manual/Feedback.html#Feedback
-
-**** Delete =org-persist= files
-
-If you experience strange crashes when starting emacs, it has proven effective to delete the content of the folder =~/.cache/org-persist.= Don't ask me why.
-
-=org-persist= is used to store cached data across Emacs sessions.
 
 * Private settings 
 
