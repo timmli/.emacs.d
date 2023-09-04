@@ -8348,21 +8348,29 @@ https://github.com/minad/osm
 
 OpenStreeMap viewer for Emacs.
 
-- [ ] v0.3: too buggy so far, but interesting project 
+- [ ] v0.13: too buggy so far, but interesting project 
 
 #+BEGIN_SRC emacs-lisp
 (use-package osm
 	:ensure t
 	:pin MELPA
-  ;; :bind (("C-c m h" . osm-home)
+
+	;; :bind (("C-c m h" . osm-home)
   ;;        ("C-c m s" . osm-search)
   ;;        ("C-c m v" . osm-server)
   ;;        ("C-c m t" . osm-goto)
   ;;        ("C-c m j" . osm-bookmark-jump))
+
   :init
   ;; Load Org link support
   (with-eval-after-load 'org
-    (require 'osm-ol)))
+    (require 'osm-ol))
+
+	:custom
+  ;; Take a look at the customization group `osm' for more options.
+  (osm-server 'default) ;; Configure the tile server
+  (osm-copyright t)     ;; Display the copyright information
+	)
 #+END_SRC
 
 * Minor modes
