@@ -5212,7 +5212,7 @@ Cleaning actions:
 #+BEGIN_SRC emacs-lisp
 (setq bibtex-entry-format
 			'(opts-or-alts ; delete empty optional and alternative fields
-				required-fields ; signal an error if a required field is missing.
+				;; required-fields ; signal an error if a required field is missing.
 				numerical-fields ; delete delimiters around numeral fields
 				inherit-booktitle ; insert booktitle if it is in the crossref
 				realign						; realign entries
@@ -5239,8 +5239,8 @@ Key generation:
  bibtex-autokey-year-use-crossref-entry t ; use year from crossref (depends on bibtex-maintain-sorted-entries)
  ;; title part
  bibtex-autokey-year-title-separator "-"
- bibtex-autokey-titleword-length 5			; number of characters from title words
- bibtex-autokey-titlewords 5						; number of used title words
+ bibtex-autokey-titleword-length 20	  ; max. number of used characters from title words
+ bibtex-autokey-titlewords 5						; max. number of used title words
  bibtex-autokey-titleword-case-convert-function 'downcase
  )
 #+END_SRC
