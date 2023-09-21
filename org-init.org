@@ -11925,13 +11925,14 @@ Global org-mode keys:
 	╭─^^────────────────────────^^──────────────────────────^^──────────────────────────┴────────╯
     _f_ New                   _+_ New...                  _s_ Sort entries
     _k_ Kill                  _c_ Clean                   _h_ Open helm-bibtex
-    _o_ Remove OPT/ALT        _w_ Kill                    _O_ org-ref hydra...
-    _t_ Add timestamp         _x_ Goto crossref           _F_ File actions...
-    _y_ Yank                  _i_ Import from DOI         ^ ^                           
-    _?_ Help                  ^ ^                         ^ ^                          _q_ Quit
+    _o_ Remove OPT/ALT       _uc_ Clean & generate key    _O_ org-ref hydra...
+    _t_ Add timestamp         _w_ Kill                    _F_ File actions...
+    _y_ Yank                  _x_ Goto crossref           ^ ^
+    _?_ Help                  _i_ Import from DOI         ^ ^                          _q_ Quit
 "
 	("o" bibtex-remove-OPT-or-ALT)
 	("c" bibtex-clean-entry)
+	("uc" (bibtex-clean-entry '(4)))
 	("f"  bibtex-make-field)
 	("C-k"  bibtex-kill-field)
 	("k"  bibtex-kill-field)
