@@ -254,7 +254,7 @@ This variable should be changed in private-emacs-settings.el.")
 (if (file-exists-p custom-file)
     (load custom-file)
   (message "Warning: custom.el not found.")
-)
+	)
 
 ;;==========================================================
 ;;      PACKAGE MANAGEMENT
@@ -299,7 +299,7 @@ This variable should be changed in private-emacs-settings.el.")
 		)
 	)
 ;; upgrade packages (this slows down start-up somewhat)
-;(paradox-upgrade-packages)
+;; (paradox-upgrade-packages)
 
 ;; upgrade org-mode if necessary
 ;; (require 'org)
@@ -342,6 +342,15 @@ This variable should be changed in private-emacs-settings.el.")
       (goto-char (point-max))
       (eval-print-last-sexp)))
   (load bootstrap-file nil 'nomessage))
+
+;; ;; el-get
+;; ;; https://github.com/dimitri/el-get
+;; (use-package el-get
+;; 	:pin MELPA
+;; 	:ensure t)
+;; ;; (add-to-list 'el-get-recipe-path "~/.emacs.d/el-get/el-get/recipes")
+;; ;; (setq el-get-recipe-path '("~/.emacs.d/el-get/el-get/recipes"))
+;; (el-get 'sync)
 
 ;;==========================================================
 ;;      LOAD REMAINING SETTINGS
