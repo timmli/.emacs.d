@@ -8080,6 +8080,42 @@ Elfeed interface to Youtube subscriptions.
          ("F" . elfeed-tube-fetch)
          ([remap save-buffer] . elfeed-tube-save)))
 #+END_SRC
+
+*** Slack
+
+**** COMMENT emacs-slack
+
+https://github.com/yuya373/emacs-slack
+
+Slack client for Emacs.
+
+- [ ] error: El-get can not find a recipe for package "helm-slack"
+
+#+BEGIN_SRC emacs-lisp
+(el-get-bundle yuya373/helm-slack) ;; optional
+(use-package helm-slack :after (slack)) ;; optional
+(use-package slack
+	:pin MELPA
+	:ensure t
+  :commands (slack-start)
+  :init
+  (setq slack-buffer-emojify t) ;; if you want to enable emoji, default nil
+  (setq slack-prefer-current-team t)
+  ;; :config
+  ;; (slack-register-team
+  ;;  :name "emacs-slack"
+  ;;  :default t
+  ;;  :token "xoxs-sssssssssss-88888888888-hhhhhhhhhhh-jjjjjjjjjj"
+  ;;  :subscribed-channels '(test-rename rrrrr)
+  ;;  :full-and-display-names t)
+
+  ;; (slack-register-team
+  ;;  :name "test"
+  ;;  :token "xoxs-yyyyyyyyyy-zzzzzzzzzzz-hhhhhhhhhhh-llllllllll"
+  ;;  :subscribed-channels '(hoge fuga)
+	)
+#+END_SRC
+
 ** Viewing (and editing)
 
 *** CoNNLL-U
