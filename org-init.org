@@ -166,6 +166,7 @@
 - http://ivanmalison.github.io/dotfiles/
 - https://github.com/novoid/dot-emacs/blob/master/config.org 
 - http://www.coli.uni-saarland.de/~slemaguer/emacs/main.html
+- https://github.com/progfolio/.emacs.d
 
 * General appearence
 
