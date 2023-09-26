@@ -5845,7 +5845,7 @@ Support for CSL, see https://github.com/tmalsburg/helm-bibtex/issues/235#issueco
 
 #+NAME: helm-bibtex-csl
 #+BEGIN_SRC emacs-lisp :tangle no
-(defvar helm-bibtex-csl-style "~/.emacs.d/csl/unified-style-sheet-for-linguistics.csl")
+(defvar helm-bibtex-csl-style "~/.emacs.d/csl/minimal-unified-style-sheet-for-computational-linguistics.csl")
 
 (defvar helm-bibtex-csl-locale-dir "~/.emacs.d/csl")
 
