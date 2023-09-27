@@ -506,18 +506,6 @@ Tutorial: https://ianyepan.github.io/posts/emacs-emojis/
 
 ** Mode line and window labels
 
-Mode line:
-#+BEGIN_SRC emacs-lisp
-(use-package smart-mode-line
-	:ensure t
-	:init
-	;; (setq sml/theme 'dark)
-	(setq sml/no-confirm-load-theme t)
-	:config
-	(sml/setup)
-	)
-#+END_SRC
-
 Show file path in window title:
 #+BEGIN_SRC emacs-lisp
 (setq frame-title-format
@@ -538,9 +526,29 @@ Fringe style:
 ;; (set-face-attribute 'fringe nil :background "#3F3F3F" :foreground "#3F3F3F")
 #+END_SRC
 
+*** smart-mode-line
+
+https://github.com/Malabarba/smart-mode-line/
+
+Make the mode line nicer and better readable.
+
+#+BEGIN_SRC emacs-lisp
+(use-package smart-mode-line
+	:ensure t
+	:init
+	;; (setq sml/theme 'dark)
+	(setq sml/no-confirm-load-theme t)
+	:config
+	(sml/setup))
+#+END_SRC
+
 ** Distraction-free mode
 
 *** writeroom-mode
+
+https://github.com/joostkremers/writeroom-mode
+
+A minor mode for Emacs that implements a distraction-free writing mode similar to the famous Writeroom editor for OS X. 
 
 #+BEGIN_SRC emacs-lisp
 (use-package writeroom-mode
