@@ -478,6 +478,7 @@ Inspired by https://ogbe.net/blog/toggle-serif.html
 *** UTF8 support
 
 Replace LaTeX commands by UTF8 symbols:
+
 #+BEGIN_SRC emacs-lisp
 ;; (use-package latex-pretty-symbols
 ;; 	:ensure t)
@@ -566,6 +567,12 @@ A minor mode for Emacs that implements a distraction-free writing mode similar t
 
 ** Overlays
 
+*** COMMENT ov
+
+https://github.com/emacsorphanage/ov
+
+Package for manipulating overlays. However, it does not affect font-lock or text-properties.
+
 #+BEGIN_SRC emacs-lisp
 (use-package ov
   :ensure t)
@@ -612,7 +619,9 @@ Shorten yes/no answers to y/n:
 
 ** ido, ivy
 
-*** ido
+Currently, I'm using neither of the two.
+
+*** COMMENT ido
 
 #+BEGIN_SRC emacs-lisp
 ;; ;; ido improves buffer switching experience
@@ -697,9 +706,28 @@ Smex helps to remember often used commands; used by ido and counsel
 
 ** imenu
 
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Imenu.html
+
+Imenu is built into Emacs and helps to navigate between "definitions", e.g. defun statements in lisp code, within a buffer. 
+
+*** imenu-anywhere
+
+https://github.com/vspinu/imenu-anywhere
+
+Imenu navigation across buffers of the same type (major mode, project).
+
 #+BEGIN_SRC emacs-lisp
 (use-package imenu-anywhere
 	:ensure t)
+#+END_SRC
+
+*** COMMENT imenu-list
+
+https://github.com/bmag/imenu-list
+
+Creates an buffer called *Ilist* that is populated with the current buffer's imenu entries. 
+
+#+BEGIN_SRC emacs-lisp
 (use-package imenu-list
 	:ensure t
 	:bind
@@ -1129,16 +1157,18 @@ Show possible completions of entered key sequences.
 
 ** org-mode
 
+https://orgmode.org/
+
+Major mode for writing notes and much much more.
+
 Must appear before LaTeX stuff!
 
 Documentation and examples:
-http://ehneilsen.net/notebook/orgExamples/org-examples.html
-http://pages.sachachua.com/.emacs.d/Sacha.html#orgfe5d909
-http://doc.norang.ca/org-mode.html#Setup
-http://doc.rix.si/cce/cce-org.html
+- http://pages.sachachua.com/.emacs.d/Sacha.html#orgfe5d909
+- http://doc.norang.ca/org-mode.html#Setup
 
 Historical remark on taking notes:
-http://takingnotenow.blogspot.com/2008/07/note-keeping-in-1786-blumenbachs-system.html
+- Blumenbach system: https://web.archive.org/web/20191208033603/http://takingnotenow.blogspot.com/2008/07/note-keeping-in-1786-blumenbachs-system.html
 
 *** My GTD setup in org-mode
 
