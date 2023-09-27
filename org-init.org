@@ -6,6 +6,7 @@
 
 * Table of contents                                                :TOC_2_gh:
 - [[#good-examples][Good examples]]
+- [[#general-settings][General settings]]
 - [[#general-appearence][General appearence]]
       - [[#toolbar][Toolbar]]
       - [[#start-up][Start-up]]
@@ -168,6 +169,10 @@
 - https://github.com/novoid/dot-emacs/blob/master/config.org 
 - http://www.coli.uni-saarland.de/~slemaguer/emacs/main.html
 - https://github.com/progfolio/.emacs.d
+
+* General settings
+
+General settings concerning startup, special variables, package management etc. are stored in an extra file. [[file:init.el]]
 
 * General appearence
 
