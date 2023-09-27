@@ -100,6 +100,7 @@
 - [[#system-management][System management]]
       - [[#proced][proced]]
       - [[#helm-system-packages][helm-system-packages]]
+      - [[#guix][Guix]]
 - [[#tags][Tags]]
       - [[#etags][etags]]
 - [[#web-browsing][Web browsing]]
