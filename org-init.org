@@ -278,6 +278,11 @@ Apply syntax highlighting to all buffers:
 
 *** highlight-symbol
 
+https://github.com/nschum/highlight-symbol.el
+
+Quickly highlight a symbol – most likely the word under point – throughout the buffer and cycle through its locations.
+There is a hydra attached to it: [[hydra-highlight-symbol]]
+
 #+BEGIN_SRC emacs-lisp
 (use-package highlight-symbol
   :ensure t
@@ -300,22 +305,46 @@ Soft-wrap lines:
 (global-visual-line-mode t)
 #+END_SRC
 
-Line numbers:
+Display line numbers in the modeline:
+#+BEGIN_SRC emacs-lisp
+(line-number-mode t)
+#+END_SRC
+
+*** Line numbers in the margin
+
+Before Emacs v26, the (sometimes slow) linum package was used for displaying the line numbers in the margin of the window:  
+
 #+BEGIN_SRC emacs-lisp
 ;; ;; before Emacs 26
 ;; (global-linum-mode t)
 ;; (setq linum-format " %3d ")
+#+END_SRC
 
+With Emcas v26, the display of line numbers is built-in and much faster:
+
+#+BEGIN_SRC emacs-lisp
 ;; ;; with Emacs 26
 ;; (global-display-line-numbers-mode)
 #+END_SRC
 
-*** linum-relative
+Line numbering can be turned on/off with =M-x display-line-numbers-mode.=
+
+Relative line numbers will be displayed after setting =display-line-numbers= as follows:
+
+#+BEGIN_SRC emacs-lisp  :tangle no
+(setq display-line-numbers 'relative)
+#+END_SRC 
+
+**** COMMENT linum-relative (DEPRECATED)
+
+https://github.com/coldnew/linum-relative
+
+Display relative line numbers.
+Note that this package uses the deprecated linum package. 
 
 #+BEGIN_SRC emacs-lisp
 (use-package linum-relative
-	:ensure t
-)
+	:ensure t)
 #+END_SRC
 
 ** Cursor
@@ -10861,7 +10890,7 @@ I don't use this right now.
 	("C-c C-k C-b" . sr-speedbar-toggle)
 	:config
 	(setq sr-speedbar-right-side nil)                          ; always on left side
-	(add-hook 'speedbar-mode-hook '(lambda () (linum-mode 0))) ; disable linum for speedbar
+	;; (add-hook 'speedbar-mode-hook '(lambda () (linum-mode 0))) ; disable linum for speedbar (DEPRECATED)
 	(setq speedbar-show-unknown-files t)                       ; show all files
 	(setq sr-speedbar-width 30)                                ; default width
 	)
@@ -11023,7 +11052,7 @@ An Emacs port of the Sublime Text plugin [[https://github.com/jisaacks/GitGutter
 	:ensure t
 	:config
 	(global-git-gutter-mode +1)
-	;; (git-gutter:linum-setup) ; git-gutter is struggling with linum-mode
+	;; (git-gutter:linum-setup) ; git-gutter is struggling with linum-mode (DEPRECATED)
 	(custom-set-variables
 	 '(git-gutter:update-interval 2))
 	:bind
@@ -11616,7 +11645,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
          [_d_] .emacs.d              [_u_] upgrade packages        [_fp_] proportional font
          [_c_] customize emacs       [_t_] load theme              [_s_] system packages
         [_lv_] visual line mode     [_ln_] line numbers            [_P_] private settings
-        [_lt_] truncate lines       [_lr_] toggle relative line numbers        [_q_]uit
+        [_lt_] truncate lines        ^ ^                                  [_q_]uit
 	"
 	("i" (find-file (expand-file-name org-init-file user-emacs-directory)) :exit t)
 	("d" (find-file user-emacs-directory) :exit t)
