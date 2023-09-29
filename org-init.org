@@ -178,7 +178,7 @@ General settings concerning startup, special variables, package management etc. 
 
 ** Toolbar
 
-Don't show toolbar:
+Don't show the toolbar:
 #+BEGIN_SRC emacs-lisp
 (tool-bar-mode 0)
 #+END_SRC
@@ -258,14 +258,14 @@ Show dashboard when also starting a client:
 
 ** Signals
 
-No beep:
+No beeping:
 #+BEGIN_SRC emacs-lisp
 (setq visible-bell nil)
 #+END_SRC
 
 ** Syntax highlighting
 
-Brackets:
+Show matching brackets:
 #+BEGIN_SRC emacs-lisp
 (show-paren-mode 1)
 (setq show-paren-delay 0)
@@ -349,7 +349,7 @@ Note that this package uses the deprecated linum package.
 
 ** Cursor
 
-Cursor blinking:
+Let the cursor blink forever:
 #+BEGIN_SRC emacs-lisp
 (blink-cursor-mode 1)										; blink
 (setq blink-cursor-blinks 0)						; blink forever
@@ -478,7 +478,6 @@ Inspired by https://ogbe.net/blog/toggle-serif.html
 *** UTF8 support
 
 Replace LaTeX commands by UTF8 symbols:
-
 #+BEGIN_SRC emacs-lisp
 ;; (use-package latex-pretty-symbols
 ;; 	:ensure t)
@@ -612,7 +611,6 @@ Interactive debugger for font-lock keywords.
 ** General
 
 Shorten yes/no answers to y/n:
-
 #+BEGIN_SRC emacs-lisp
 (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
@@ -4392,6 +4390,7 @@ Observe dependencies between TODOs:
 
 *** Last modified
 
+If the file keyword =#+LAST_MODIFIED= is present within the first 20 lines, the following timestamp gets updated when saving the file:
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook (lambda ()
 													 (set (make-local-variable 'time-stamp-pattern)
@@ -4402,6 +4401,8 @@ Observe dependencies between TODOs:
 ** Accounting
 
 *** Ledger
+
+https://github.com/ledger/ledger-mode
 
 [[http://ledger-cli.org][Ledger]] is a powerful, double-entry accounting system.
 
@@ -4442,6 +4443,8 @@ Also supports org-mode links to khard entries.
 http://savannah.nongnu.org/projects/bbdb/
 
 Built-in address book in Emacs. 
+
+***** bbdb-vcard
 
 #+BEGIN_SRC emacs-lisp
 (use-package bbdb
@@ -4484,6 +4487,8 @@ Import and export vCards to/from bbdb.
   :ensure t)
 #+END_SRC
 
+***** helm-bbdb
+
 https://github.com/emacs-helm/helm-bbdb
 
 A Helm interface to bbdb.
@@ -4499,7 +4504,7 @@ A Helm interface to bbdb.
 https://www.gnu.org/software/emacs/manual/html_node/emacs/Calendar_002fDiary.html
 
 #+BEGIN_SRC emacs-lisp
-  (setq calendar-week-start-day 1)
+  (setq calendar-week-start-day 1)			; weeks start on Mondays
 
   (setq calendar-intermonth-text
         '(propertize
@@ -4531,11 +4536,13 @@ Adds German holidays to the calendar.
 
 *** iCalendar import
 
-- iCalendar files can be imported via [[calfw]].
-- Via diary: import ics-files from caldav servers into the diary file. This will eventually be shown in org-agenda thanks to =org-agenda-include-diary=.
-      - =icalendar-import-file=
+iCalendar files can be imported
+- via [[calfw]].
+- via the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Diary.html][Emacs diary]]: =icalendar-import-file= imports ics-files from caldav servers into the diary file. This will eventually be shown in org-agenda based on the variable =org-agenda-include-diary=.
 
 *** iCalendar export
+
+I now and then export the dates of my [[org-agenda]] and push them to a CalDAV server with [[https://github.com/pimutils/vdirsyncer][vdirsyncer]].
 
 Issues: 
 - [X] Error "Unable to resolve link": Some broken links will terminate the export for no good reason.
@@ -10042,7 +10049,6 @@ Support of [[https://github.com/CriticMarkup/CriticMarkup-toolkit][CriticMarkup]
 (use-package ov-highlight)
 #+END_SRC
 
-
 *** Inline comments with links
 
 http://kitchingroup.cheme.cmu.edu/blog/2015/04/24/Commenting-in-org-files/
@@ -10282,6 +10288,10 @@ F5 inserts the entity code."
 
 *** unicode-math-input
 
+https://github.com/astoff/unicode-math-input.el
+
+Insert mathematical symbols as Unicode characters.
+
 #+BEGIN_SRC emacs-lisp
 (use-package unicode-math-input
 	:ensure t
@@ -10308,6 +10318,8 @@ Issues:
 ** Thesauri
 *** synosaurus
 
+https://github.com/hpdeifel/synosaurus
+
 Thesaurus frontend for Emacs with pluggable backends:
 - OpenThesaurus for German (online)
 - WordNet for English (http://wordnet.princeton.edu/wordnet/download/current-version)
@@ -10322,6 +10334,8 @@ Thesaurus frontend for Emacs with pluggable backends:
 #+END_SRC
 
 *** powerthesaurus 
+
+https://github.com/SavchenkoValeriy/emacs-powerthesaurus
 
 Uses [[https://www.powerthesaurus.org/][powerthesaurus.org]] for English.
 
