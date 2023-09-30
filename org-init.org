@@ -8810,7 +8810,7 @@ Add fuzzy matching capabilities with =flx=:
 
 https://github.com/vspinu/company-math
 
-Add company completions for LaTeX and unicode math symbols. $\frac$ 
+Add company completions for LaTeX and unicode math symbols. 
 
 #+BEGIN_SRC emacs-lisp
 (use-package company-math
@@ -8929,10 +8929,11 @@ Execute when all backends added to =company-backends=.
 
 https://github.com/nashamri/academic-phrases
 
+Choose from a collection of academic phrases.
+
 #+BEGIN_SRC emacs-lisp
 (use-package academic-phrases
-	:ensure t
-)
+	:ensure t)
 #+END_SRC
 
 *** COMMENT auto-complete
@@ -8956,6 +8957,11 @@ Sequence is important!
 
 *** flycheck
 
+https://www.flycheck.org/en/latest/
+
+Syntax checking extension for Emacs, intended as a replacement of Flymake. 
+Additional syntax checking programs for the [[https://www.flycheck.org/en/latest/languages.html#flycheck-languages][supported programming languages]] are required for Flycheck to work. 
+
 #+begin_src emacs-lisp
 (use-package flycheck
 	:ensure t
@@ -8967,6 +8973,10 @@ Sequence is important!
 
 *** flycheck-plantuml
 
+https://github.com/alexmurray/flycheck-plantuml
+
+Flycheck support of [[PlantUML]] code.
+
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck-plantuml
   :ensure t
@@ -8975,6 +8985,8 @@ Sequence is important!
 #+END_SRC
 
 *** flycheck-vale
+
+https://github.com/abingham/flycheck-vale
 
 Flycheck integration for [[https://github.com/errata-ai/vale][vale]], a natural language linter.
 =flycheck-vale= currently supports =text-mode=, =markdown-mode=, =rst-mode=, and =org-mode=.
@@ -9011,7 +9023,7 @@ Comparisons of spell checkers:
 
 Note on =aspell=: 
 - Unfortunately, =ispell-program-name= does not allow for also specifying =aspell= options. This would be desirable for changing, e.g., =home-dir=. 
-- Newer versions of aspell do not have the CL option =home-dir= any more. Instead, a configuration file =.apell.conf= in the home directory should be used.
+- Newer versions of aspell do not have the CL option =home-dir= any more. Instead, a configuration file =.aspell.conf= in the home directory should be used.
 
 The following sets the =home-dir= option via =.aspell.conf=:
 #+BEGIN_SRC emacs-lisp
@@ -9140,7 +9152,7 @@ Flyspell face:
 
 https://github.com/d12frosted/flyspell-correct
 
-Correcting misspelled words with flyspell using favourite interface.
+Correcting misspelled words with flyspell using your favourite interface. Mine is [[helm]]. 
 
 #+BEGIN_SRC emacs-lisp
 (use-package flyspell-correct
@@ -9174,7 +9186,7 @@ This mode assumes that [[flyspell]] is activated and configured for all relevant
 	:diminish guess-language-mode)
 #+END_SRC
 
-To see what dictionaries are installed , call
+To see what dictionaries are installed, call
 #+BEGIN_SRC emacs-lisp
 (mapcar 'car ispell-dictionary-alist)
 #+END_SRC
@@ -9201,7 +9213,9 @@ Deprecated. I instead use =flyspell-correct=.
 
 *** spell-fu
 
-https://gitlab.com/ideasman42/emacs-spell-fu
+https://codeberg.org/ideasman42/emacs-spell-fu
+
+Fast spell checking without external programs.
 
 ** Grammar checking
 
@@ -9209,12 +9223,14 @@ https://gitlab.com/ideasman42/emacs-spell-fu
 
 *** emacs-langtool
 
-Grammar checking with [[https://www.languagetool.org/][LanguageTool]].
+Grammar checking with [[https://www.languagetool.org/][LanguageTool]]. It requires to download resources from here: https://languagetool.org/download/
 
 #+BEGIN_SRC emacs-lisp
 (use-package langtool
 	:ensure t
-	:config (setq langtool-language-tool-jar (expand-file-name (concat (getenv "WEMACS_LANGUAGETOOL_PATH") "/languagetool-commandline.jar"))))
+	:config
+	(setq langtool-language-tool-jar
+				(expand-file-name (concat langtool-dir "/languagetool-commandline.jar"))))
 #+END_SRC
 
 ** Paren handling
@@ -9334,10 +9350,12 @@ Similar to [[embrace]].
 - State "TODO"       from              [2018-09-03 Mo 23:13]
 :END:
 
-- [ ] Still does not load correctly in =org-mode=. 
+https://github.com/cute-jumper/embrace.el
 
 Add/Change/Delete pairs based on =expand-region=, similar to =evil-surround= and [[smartparens]].
-https://github.com/cute-jumper/embrace.el
+
+Issues:
+- [ ] Still does not load correctly in =org-mode=. 
 
 #+BEGIN_SRC emacs-lisp
 (use-package embrace 
@@ -9429,6 +9447,8 @@ Shift/delete indentation at cursor position or region:
 
 *** aggressive-indent
 
+https://github.com/Malabarba/aggressive-indent-mode
+
 =aggressive-indent-mode= is a minor mode that keeps your code always indented.
 Not sure whether I want to auto-indent whole files ...
 
@@ -9487,7 +9507,7 @@ https://github.com/rejeep/drag-stuff.el
 
 Drag around marked stuff (words, region, lines) with the keyboard.
 
-There is a irreconcilable conflict in the key bindings of =drag-stuff= and =org-mode=, see [[https://github.com/rejeep/drag-stuff.el/issues/6#issuecomment-254298391][here]]. I have therefore added [[hydra-drag-stuff]] an will use it in [[hydra-transpose]]. 
+There is a irreconcilable conflict in the key bindings of =drag-stuff= and =org-mode=, see [[https://github.com/rejeep/drag-stuff.el/issues/6#issuecomment-254298391][here]]. I have therefore added [[hydra-drag-stuff]] and will use it in [[hydra-transpose]]. 
 
 #+BEGIN_SRC emacs-lisp
 (use-package drag-stuff
@@ -9502,7 +9522,7 @@ There is a irreconcilable conflict in the key bindings of =drag-stuff= and =org-
 
 https://github.com/victorhge/iedit
 
-Edit regions with identical content in the same way simultaneously. 
+Edit regions with identical content in the same way simultaneously. Cool!
 
 #+BEGIN_SRC emacs-lisp
 (use-package iedit

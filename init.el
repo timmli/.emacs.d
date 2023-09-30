@@ -149,6 +149,11 @@ This variable should be changed in private-emacs-settings-before.el.")
 	"Path to directory with personal dictionaries that is used by ispell.
 This variable should be changed in private-emacs-settings-before.el.")
 
+(defvar langtool-dir
+	nil
+	"Path to directory with langtool resources.
+This variable should be changed in private-emacs-settings-before.el.")
+
 
 ;;==========================================================
 ;;      PRIVATE SETTINGS: USER INFO (outside .emacs.d)
