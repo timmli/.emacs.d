@@ -4905,6 +4905,10 @@ Important limitations:
 
 **** clojure-mode
 
+https://github.com/clojure-emacs/clojure-mode/
+
+Font-lock (syntax highlighting), indentation, navigation and refactoring support for Clojure(Script).
+
 #+BEGIN_SRC emacs-lisp
 (use-package clojure-mode
   :ensure t
@@ -4916,6 +4920,10 @@ Important limitations:
 
 **** clj-refactor
 
+https://github.com/clojure-emacs/clj-refactor.el
+
+Powerful refactoring functionality for Clojure projects which complements clojure-mode and CIDER.
+
 #+BEGIN_SRC emacs-lisp
 (use-package clj-refactor
   :defer t
@@ -4926,6 +4934,9 @@ Important limitations:
 
 **** cider
 
+https://github.com/clojure-emacs/cider
+
+CIDER is the Clojure(Script) Interactive Development Environment that Rocks! AKA REPL.
 A basic configuration of Cider is shown here: http://ccann.github.io/2015/10/18/cider.html
 
 #+BEGIN_SRC emacs-lisp
@@ -4951,6 +4962,8 @@ A basic configuration of Cider is shown here: http://ccann.github.io/2015/10/18/
 
 **** cider-eval-sexp-fu
 
+https://github.com/clojure-emacs/cider-eval-sexp-fu
+
 From the README: "=eval-sexp-fu= provides tiny improvements to expression evaluation - e.g. the expression you've just evaluated would briefly flash and so on."
 
 #+BEGIN_SRC emacs-lisp
@@ -4965,12 +4978,24 @@ From the README: "=eval-sexp-fu= provides tiny improvements to expression evalua
 
 https://github.com/emacsorphanage/gnuplot
 
+Major mode for [[http://www.gnuplot.info/][gnuplot]] files.
+
 #+BEGIN_SRC emacs-lisp
 (use-package gnuplot
 	:ensure t
 	:mode	"\\.\\(gp\\|gnuplot|plt\\)$"
 	)
 #+END_SRC
+
+Example:
+
+#+BEGIN_SRC gnuplot :file tests/gnuplot-example.png
+f(x) = x**2
+plot f(x)
+#+END_SRC
+
+#+RESULTS:
+[[file:tests/gnuplot-example.png]]
 
 **** COMMENT gnuplot-mode
 
@@ -4982,7 +5007,12 @@ https://github.com/mkmcc/gnuplot-mode
 	:mode	"\\.\\(gp\\|gnuplot|plt\\)$"
 	)
 #+END_SRC
+
 *** Graphviz/dot
+
+https://github.com/ppareit/graphviz-dot-mode
+
+Major mode for [[https://www.graphviz.org/][graphiz/dot]] code.
 
 #+BEGIN_SRC emacs-lisp
 (use-package graphviz-dot-mode
@@ -4993,6 +5023,8 @@ https://github.com/mkmcc/gnuplot-mode
 *** JavaScript
 
 **** js2-mode
+
+https://github.com/mooz/js2-mode
 
 Major mode for JavaScript files.
 
@@ -5006,6 +5038,10 @@ Major mode for JavaScript files.
 	(add-hook 'js2-mode-hook #'js2-imenu-extras-mode)
 )
 #+END_SRC
+
+**** js2-refactor
+
+https://github.com/js-emacs/js2-refactor.el
 
 #+BEGIN_SRC emacs-lisp
 (use-package js2-refactor
