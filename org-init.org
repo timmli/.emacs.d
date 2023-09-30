@@ -8238,6 +8238,10 @@ Slack client for Emacs.
 
 *** CoNNLL-U
 
+https://github.com/odanoburu/conllu-mode
+
+Major mode for [[https://universaldependencies.org/format.html][CoNLL-U files]].  
+
 #+BEGIN_SRC emacs-lisp
 (use-package conllu-mode
 	:ensure t
@@ -8603,16 +8607,6 @@ Scrolling:
 (setq scroll-error-top-bottom t)
 #+end_src
 
-Show vertical line per indentation level: 
-#+begin_src emacs-lisp
-(use-package highlight-indent-guides
-	:ensure t
-	:config
-	(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-	(setq highlight-indent-guides-method 'character)
-	)
-#+end_src
-
 ** General buffer actions
 
 Open untitled new buffer:
@@ -8664,17 +8658,11 @@ https://github.com/killdash9/buffer-flip.el
 
 Flip through Emacs buffers Alt-Tab style. 
 
-*** TODO COMMENT bufler
-:LOGBOOK:
-- State "TODO"       from              [2021-10-27 Wed 21:49]
-:END:
+*** bufler
 
 https://github.com/alphapapa/bufler.el
 
 Show open buffers in a more structured way.
-
-Issues:
-- [ ] Waiting for v.0.3.
 
 #+BEGIN_SRC emacs-lisp
 (use-package bufler
@@ -9469,6 +9457,21 @@ Not sure whether I want to auto-indent whole files ...
 	)
 #+END_SRC
 
+*** highlight-indent-guides
+
+https://github.com/DarthFennec/highlight-indent-guides
+
+Show vertical line per indentation level.
+
+#+begin_src emacs-lisp
+(use-package highlight-indent-guides
+	:ensure t
+	:config
+	(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
+	(setq highlight-indent-guides-method 'character)
+	)
+#+end_src
+
 ** Selection
 
 *** expand-region
@@ -9578,6 +9581,8 @@ Unfortunately, =ctxmenu= lets my Emacs crash.
 #+END_SRC
 
 *** lacarte
+
+https://www.emacswiki.org/emacs/download/lacarte.el
 
 Menu completion at the keyboard
 
