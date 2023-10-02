@@ -6480,6 +6480,8 @@ Quickly browsing, filtering, and editing directories of plain text notes.
 
 *** dired
 
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][Dired]] is a powerful file browser in Emacs. Needless to say, with some tweaking, it has become my favourite file browser by far.   
+
 The following prevents Emacs from throwing =Symbol's value as variable is void: dired-mode-map=: 
 
 #+BEGIN_SRC emacs-lisp
@@ -7136,7 +7138,7 @@ Minor mode within [[*dired][dired]] that makes available a hierarchical, column-
 
 **** COMMENT tomatinho
 
-Tomatinho brings the promodoro technique to Emacs. I prefer pomidor though.
+Tomatinho brings the Pomodoro technique to Emacs. I prefer pomidor though.
 
 #+BEGIN_SRC emacs-lisp
 (use-package tomatinho
@@ -7146,7 +7148,10 @@ Tomatinho brings the promodoro technique to Emacs. I prefer pomidor though.
 
 **** pomidor
 
-Pomidor brings the promodoro technique to Emacs:
+https://github.com/TatriX/pomidor/
+
+Pomidor brings the Pomodoro technique to Emacs.
+
 #+BEGIN_SRC emacs-lisp
 (use-package pomidor
 	:ensure t
@@ -7156,6 +7161,7 @@ Pomidor brings the promodoro technique to Emacs:
 				pomidor-sound-overwork t)
 	)
 #+END_SRC
+
 *** Typing tutor
 
 **** gtypist
