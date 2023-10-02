@@ -11190,7 +11190,7 @@ Non-interactive frame and window functions.
 
 * Bookmarks
 
-[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Bookmarks.html][Bookmarks]] are built into Emacs are similar to [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Registers.html][registers]]: they store positions one can jump back to. "Unlike registers, they have long names, and they persist automatically from one Emacs session to the next."
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Bookmarks.html][Bookmarks]] are built into Emacs and similar to [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Registers.html][registers]]: they store positions one can jump back to. "Unlike registers, they have long names, and they persist automatically from one Emacs session to the next."
 
 ** General settings
 
