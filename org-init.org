@@ -11706,7 +11706,7 @@ Comparison of Transient and Hydra (by the author of Transient): https://magit.vc
 
 ** hydra-f1
 
-- [ ] add =finder-commentary=
+Hydra in case you need help/documentation.
 
 See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_real_cool_hydras_to_share/cspqaly/
 
@@ -11724,7 +11724,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
     _m_ode          single _k_eybinding        _a_propros       _i_nfo              _S_ystem 
     _p_ackage       available _b_indings       _f_unction       _d_ocsets           _E_macs
     _c_ursor        _w_here is key             _v_ariable       _n_: man
-    ^^              _y_asnippets
+    ^^              _y_asnippets               _L_ibrary
 
   "
 	;; Boring help commands...
@@ -11751,6 +11751,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 	("v" describe-variable nil)
 	("f" describe-function nil)
 	;; ("S" describe-syntax nil)
+	("L" finder-commentary nil)
 
 	;; Describe
 	("p" describe-package nil)
