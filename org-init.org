@@ -9665,6 +9665,11 @@ This is supposed to accelerate cursor movement (https://emacs.stackexchange.com/
 
 *** ace-jump
 
+https://github.com/winterTTr/ace-jump-mode
+
+Fasting moving of the cursor to any position in the buffer.
+Just type the first character of the word or line, and then type the shown jump code.
+
 #+begin_src emacs-lisp
 (use-package ace-jump-mode
 	:ensure t
@@ -9758,7 +9763,9 @@ Cursor position history (LOCAL)
 
 *** goto-last-change
 
-Cursor position undo history:
+https://github.com/camdez/goto-last-change.el
+
+Move cursor position back in undo history.
 
 #+begin_src emacs-lisp
 (use-package goto-last-change
@@ -9804,7 +9811,8 @@ point reaches the beginning or end of the buffer, stop there."
 
 https://github.com/atykhonov/iregister.el
 
-Helper functions to use the Emacs register interactively.
+Helper functions to use the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Registers.html][Emacs register]] (to save positions, text and more) interactively. 
+They are primarily used in [[hydra-position-register]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package iregister
@@ -9813,9 +9821,9 @@ Helper functions to use the Emacs register interactively.
 
 *** COMMENT mwim
 
-Move Where I Mean: switch between various line positions, like moving to the beginning/end of code, line or comment.
-
 https://github.com/alezost/mwim.el
+
+Move Where I Mean: switch between various line positions, like moving to the beginning/end of code, line or comment.
 
 ** Keystroke visualizer
 
@@ -10189,6 +10197,8 @@ http://kitchingroup.cheme.cmu.edu/blog/2015/04/24/Commenting-in-org-files/
 ** Line actions
 *** Delete line
 
+Some general keys (I barely use):
+
 #+begin_src emacs-lisp
 ;; (global-set-key (kbd "C-d C-o") 'delete-blank-lines) ; not allowed here, see underi-mode.el
 ;; (global-set-key (kbd "C-d C-m") 'delete-blank-lines)
@@ -10197,10 +10207,12 @@ http://kitchingroup.cheme.cmu.edu/blog/2015/04/24/Commenting-in-org-files/
 (global-set-key (kbd "C-S-d") 'kill-whole-line)
 #+end_src
 
-Copy/cut whole line or region:
+Copy/cut whole line or region (I mostly use):
+
 #+begin_src emacs-lisp
 (global-set-key (kbd "C-w") 'xah-cut-line-or-region) ; cut
 (global-set-key (kbd "M-w") 'xah-copy-line-or-region) ; copy
+
 (defun xah-cut-line-or-region ()
   "Cut current line, or text selection.
 When `universal-argument' is called first, cut whole buffer (respects `narrow-to-region').
@@ -10214,6 +10226,7 @@ Version 2015-06-10"
     (progn (if (use-region-p)
                (kill-region (region-beginning) (region-end) t)
              (kill-region (line-beginning-position) (line-beginning-position 2))))))
+
 (defun xah-copy-line-or-region ()
   "Copy current line, or text selection.
 When called repeatedly, append copy subsequent lines.
@@ -10256,6 +10269,7 @@ Version 2016-06-18"
 (global-set-key (kbd "C-S-<return>") 'smart-open-line-above)
 (global-set-key (kbd "C-o") 'smart-open-line)
 (global-set-key (kbd "C-S-o") 'smart-open-line-above)
+
 ;; http://emacsredux.com/blog/2013/03/26/smarter-open-line/
 (defun smart-open-line ()
   "Insert an empty line after the current line.
@@ -10263,6 +10277,7 @@ Position the cursor at its beginning, according to the current mode."
   (interactive)
   (move-end-of-line nil)
   (newline-and-indent))
+
 ;; http://emacsredux.com/blog/2013/06/15/open-line-above/
 (defun smart-open-line-above ()
   "Insert an empty line above the current line.
@@ -10286,6 +10301,10 @@ This  comes from vanilla Emacs:
 
 **** move-text
 
+https://github.com/emacsfodder/move-text
+
+Move line or region up and down in a buffer using =M-<up>= and =M-<down>=.
+
 #+BEGIN_SRC emacs-lisp
 (use-package move-text
 	:ensure t
@@ -10302,7 +10321,7 @@ http://xahlee.info/emacs/emacs/modernization_upcase-word.html
 
 Cycle through different kinds of capitalization. Requires [[titlecase]].
 
- #+begin_src emacs-lisp
+#+begin_src emacs-lisp
 (global-set-key (kbd "C-7") 'xah-toggle-letter-case)
 
 (defun xah-toggle-letter-case ()
@@ -10481,6 +10500,10 @@ Uses [[https://www.powerthesaurus.org/][powerthesaurus.org]] for English.
 
 *** dictcc
 
+https://github.com/martenlienen/dictcc.el
+
+Look up translations in the lexica of [[https://www.dict.cc/][dict.cc]].
+
 #+BEGIN_SRC emacs-lisp
 (use-package dictcc
 	:ensure t
@@ -10538,7 +10561,7 @@ Translation framework for Emacs.
 https://github.com/tmalsburg/txl.el
 
 High-quality machine translation in Emacs via DeepL's REST API.
-Requires access to DeepL's REST API.
+Requires access to DeepL's REST API. [[go-translates]] is easier to use.
 
 #+BEGIN_SRC emacs-lisp
 (straight-use-package
@@ -11114,10 +11137,7 @@ From the project decription: This package provides tools to save and restore fra
 	:pin MELPA)
 #+END_SRC
 
-** TODO emacs-everywhere
-:LOGBOOK:
-- State "TODO"       from              [2021-10-04 Mon 22:23]
-:END:
+** emacs-everywhere
 
 https://github.com/tecosaur/emacs-everywhere
 https://emacstil.com/til/2021/10/04/edit-text-everywhere-with-emacs/
@@ -11135,6 +11155,7 @@ One can evoke =emacs-everywhere= from everywhere with:
 emacsclient --eval "(emacs-everywhere)"
 #+END_SRC
 
+I have bound this to =Super-e=.
 Under Linux, make sure that the dependencies are satisfied:
 
 #+BEGIN_SRC bash :tangle no 
@@ -11168,6 +11189,8 @@ Non-interactive frame and window functions.
 #+END_SRC
 
 * Bookmarks
+
+[[https://www.gnu.org/software/emacs/manual/html_node/emacs/Bookmarks.html][Bookmarks]] are built into Emacs are similar to [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Registers.html][registers]]: they store positions one can jump back to. "Unlike registers, they have long names, and they persist automatically from one Emacs session to the next."
 
 ** General settings
 
@@ -11403,7 +11426,7 @@ See discussion [[https://emacs.stackexchange.com/a/7652/12336][here]].
 
 https://github.com/akermu/emacs-libvterm
 
-A native linux shell inside Emacs.
+A _native_ linux shell inside Emacs.
 
 #+BEGIN_SRC emacs-lisp
 (use-package vterm
@@ -11582,7 +11605,10 @@ https://www.gnu.org/software/emacs/manual/html_node/emacs/Tags-Tables.html
 
 ** atomic-chrome
 
+https://github.com/alpha22jp/atomic-chrome
+
 Edit text areas of the browser in Emacs.
+A similar tool ist [[emacs-everywhere]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package atomic-chrome
