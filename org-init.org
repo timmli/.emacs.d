@@ -4972,6 +4972,62 @@ From the README: "=eval-sexp-fu= provides tiny improvements to expression evalua
   :defer t)
 #+END_SRC
 
+*** EditorConfig
+
+[[https://editorconfig.org/][EditorConfig]] helps specifying and sharing coding styles for consistent coding.
+Coding styles are stored in a file named =.editorconfig= that is located in the directory of the opened file or in some parent directory. 
+
+Here is an example from the website:
+
+#+BEGIN_SRC conf :tangle no 
+# EditorConfig is awesome: https://EditorConfig.org
+
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+# Matches multiple files with brace expansion notation
+# Set default charset
+[*.{js,py}]
+charset = utf-8
+
+# 4 space indentation
+[*.py]
+indent_style = space
+indent_size = 4
+
+# Tab indentation (no size specified)
+[Makefile]
+indent_style = tab
+
+# Indentation override for all JS under lib directory
+[lib/**.js]
+indent_style = space
+indent_size = 2
+
+# Matches the exact files either package.json or .travis.yml
+[{package.json,.travis.yml}]
+indent_style = space
+indent_size = 2
+#+END_SRC
+
+**** editorconfig-emacs
+
+https://github.com/editorconfig/editorconfig-emacs
+
+[[https://editorconfig.org/][EditorConfig]] plugin for Emacs.
+
+#+BEGIN_SRC emacs-lisp
+(use-package editorconfig
+  :ensure t
+  :config
+  (editorconfig-mode 1))
+#+END_SRC
+
 *** Gnuplot
 
 **** gnuplot
