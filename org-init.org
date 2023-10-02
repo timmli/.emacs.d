@@ -9612,7 +9612,10 @@ This is supposed to accelerate cursor movement (https://emacs.stackexchange.com/
 
 *** dump-jump
 
-Jump to definition without using tags.
+https://github.com/jacktasia/dumb-jump
+
+Jump to definition without using tags. Requires external programs (=ag=, =rg=). 
+This packages uses the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Xref.html][xref interface]] of Emacs.
 
 #+BEGIN_SRC emacs-lisp
 (use-package dumb-jump
@@ -9622,12 +9625,17 @@ Jump to definition without using tags.
          ("M-g x" . dumb-jump-go-prefer-external)
          ("M-g z" . dumb-jump-go-prefer-external-other-window))
   :config
+	(add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
 	(setq dumb-jump-selector 'helm
 				dumb-jump-max-find-time 10)
 	)
 #+END_SRC
 
 *** multiple-cursors
+
+https://github.com/magnars/multiple-cursors.el
+
+Multiple cursors for Emacs. Super cool!
 
 #+begin_src emacs-lisp
 (use-package multiple-cursors
@@ -9689,7 +9697,7 @@ Cursor position history (LOCAL)
 *** goto-last-change
 
 Cursor position undo history:
- 
+
 #+begin_src emacs-lisp
 (use-package goto-last-change
 	:ensure t
@@ -9731,6 +9739,8 @@ point reaches the beginning or end of the buffer, stop there."
 #+END_SRC
 
 *** iregister
+
+https://github.com/atykhonov/iregister.el
 
 Helper functions to use the Emacs register interactively.
 
