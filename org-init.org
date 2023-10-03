@@ -11689,13 +11689,18 @@ A better help buffer.
 
 * Hydras
 
+https://github.com/abo-abo/hydra
+
+Hydras are contextual keybindings that are displayed in the minibuffer. Both the keybindings and the minibuffer display can be flexibly set.    
+
 Nice examples:
-https://github.com/rubensts/.emacs.d#hydra
-https://github.com/jojojames/hydra-integrations (Deprecated, moved to Transient)
+- https://github.com/rubensts/.emacs.d#hydra
 
 Comparison of Transient and Hydra (by the author of Transient): https://magit.vc/manual/transient/Comparison-With-Other-Packages.html#Hydra
 
 ** hydra: begin
+
+Lets start by activating the hydra package.
 
 #+BEGIN_SRC emacs-lisp
 	(use-package hydra
@@ -11704,7 +11709,13 @@ Comparison of Transient and Hydra (by the author of Transient): https://magit.vc
 
 #+END_SRC
 
-** hydra-f1
+** Hydras for function keys
+
+The function keys are assigned to general hydras.
+
+[[file:hydra-example.png]]
+
+*** hydra-f1
 
 Hydra in case you need help/documentation.
 
@@ -11776,7 +11787,7 @@ See also https://www.reddit.com/r/emacs/comments/3ba645/does_anybody_have_any_re
 (global-set-key (kbd "<f1>") #'hydra-f1/body)
 #+END_SRC
 
-** hydra-f2
+*** hydra-f2
 
 Hydra for everything about windows and frames.
 
@@ -11842,7 +11853,7 @@ Hydra for everything about windows and frames.
 (global-set-key (kbd "C-S-l") 'hydra-scroll/body)
 #+END_SRC
 
-** hydra-f3
+*** hydra-f3
 
 Hydra for everything about configurating Emacs.
 
@@ -11905,7 +11916,7 @@ Hydra for everything about configurating Emacs.
 		(setq display-line-numbers t)))
 #+END_SRC
 
-** hydra-f4
+*** hydra-f4
 
 Hydra for everything about checking buffer contents.
 
@@ -11944,19 +11955,20 @@ Hydra for everything about checking buffer contents.
 (global-set-key (kbd "<f4>") 'hydra-f4/body)
 #+END_SRC
 
-*** hydra-lookup
+**** hydra-lookup
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-lookup (:hint nil)
-	"Add bookmark"
+	"Lookup in online resources"
 	("d" tl/dictcc-at-point "translation dictionary")
-	("t" powerthesaurus-hydra/body "powerthesaurus" :exit t)
+	("p" powerthesaurus-hydra/body "powerthesaurus" :exit t)
 	("g" xah-lookup-google "google" :exit t)
+  ("t" gts-do-translate :exit t)
 	("w" xah-lookup-wikipedia "wikipedia" :exit t)
 	("q" nil :exit t))
 #+END_SRC
 
-** hydra-f6
+*** hydra-f6
 
 Hydra for functions specific to the buffer major mode.
 
@@ -12021,37 +12033,7 @@ For using a hydra within =helm=:
 (define-key helm-map (kbd "<f6>") 'hydra-helm/body)
 #+END_SRC
 
-Deprecated:
-#+BEGIN_SRC 
-(defvar hydra-f6-menu
-	"
-         ^^         ^^         ^^       ^^        ^^     ╭────┐       
-     _<f1>_   _<f2>_     _<f3>_     _<f4>_    _<f5>_     │<f6>│  _<f7>_   _<f8>_   _<f9>_ 
-     Help^^   Window^^   Config^^   Check^^   Refresh^^  │Mode│  Open^^   Mark^^   Org^^
-   ╭─────^^─────────^^─────────^^────────^^──────────^^──╯    └────^^─────────^^──────^^─╯
- 
-    ^^ _<f6>_: hydra for major mode ^^ ^^ ^^ ^^ ^^ ^^                         [_q_]uit
-	"
-)
-
-	(defhydra hydra-f6-old
-		(:hint nil
-					 :idle 0.2)
-(concat hydra-f6-menu) 
-	("q" nil :color blue)
-	("<f1>" hydra-f1/body :exit t)
-	("<f2>" hydra-f2/body :exit t)
-	("<f3>" hydra-f3/body :exit t)
-	("<f4>" hydra-f4/body :exit t)
-	("<f5>" revert-buffer :exit t)
-	("<f6>" hydra-for-major-mode :exit t)
-	("<f7>" hydra-f7/body :exit t)
-	("<f8>" hydra-f8/body :exit t)
-	("<f9>" hydra-f9/body :exit t)
-)
-#+END_SRC
-
-** hydra-f7
+*** hydra-f7
 
 Hydra for opening a new buffer.
 
@@ -12124,7 +12106,7 @@ This presupposes a running Jupyter server on localhost."
 	(ein:notebooklist-open))
 #+END_SRC
 
-** hydra-f8
+*** hydra-f8
 
 Hydra for marking contents of a buffer.
 
@@ -12175,7 +12157,7 @@ Hydra for marking contents of a buffer.
 	(global-set-key (kbd "<f8>") 'hydra-f8/body)
 #+END_SRC
 
-** hydra-f9
+*** hydra-f9
 
 Hydra for global org-mode keys:
 
