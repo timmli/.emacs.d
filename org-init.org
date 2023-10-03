@@ -3321,9 +3321,12 @@ https://orgmode.org/worg/org-contrib/babel/languages/ob-doc-plantuml.html
 
 PlantUML example:
 
-#+BEGIN_SRC plantuml :tangle no :file plantuml-example.png 
+#+BEGIN_SRC plantuml :tangle no :file tests/plantuml-example.png 
 Bob -> Alice : Hello World!
 #+END_SRC
+
+#+RESULTS:
+[[file:tests/plantuml-example.png]]
 
 **** Python support
 
