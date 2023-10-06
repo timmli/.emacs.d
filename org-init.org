@@ -1743,7 +1743,7 @@ Function to only unfold current heading and its content:
 	(define-key org-mode-map (kbd "C-n") 'org-next-visible-heading )
 	(define-key org-mode-map (kbd "C-p") 'org-previous-visible-heading )
 	(define-key org-mode-map (kbd "C-S-p") 'org-backward-heading-same-level)
-	(define-key org-mode-map (kbd "C-S-n") '(lambda () (interactive) (org-backward-heading-same-level -1)))
+	(define-key org-mode-map (kbd "C-S-n") #'(lambda () (interactive) (org-backward-heading-same-level -1)))
 	(define-key org-mode-map (kbd "C-c C-f") 'org-footnote-action )
 	(define-key org-mode-map (kbd "C-c C-t") 'org-todo )
 	(define-key org-mode-map (kbd "C-c C-x C-b") 'org-tree-to-indirect-buffer )
@@ -2295,7 +2295,7 @@ Helper function to collect today's clocked times:
 #+BEGIN_SRC emacs-lisp
 (defun tl/org-agenda-files-clock-sum-today ()
 	(apply '+ (mapcar
-					 '(lambda (file)
+					 #'(lambda (file)
 							(save-window-excursion
 								(find-file file)
 								(org-clock-sum-today)))
@@ -4710,11 +4710,11 @@ Define a key to update calendars from within calfw:
 
 #+BEGIN_SRC emacs-lisp
 (define-key cfw:calendar-mode-map (kbd "u") 
-	'(lambda () (interactive)
-		 (when (fboundp 'tl/update-my-calendars) ; tl/update-my-calendars can be redefined in private-emacs-settings-after.el
-			 (tl/update-my-calendars))
-		 (my-open-calfw)
-		 ))
+	#'(lambda () (interactive)
+			(when (fboundp 'tl/update-my-calendars) ; tl/update-my-calendars can be redefined in private-emacs-settings-after.el
+				(tl/update-my-calendars))
+			(my-open-calfw)
+			))
 #+END_SRC
 
 Calendars are defined in =my-private-calendars=:
@@ -6192,7 +6192,7 @@ Delete environment at point (https://www.reddit.com/r/emacs/comments/5f99nv/help
 
 <tab> should always insert a tab (instead of indentation):
 #+BEGIN_SRC emacs-lisp
-;; (add-hook 'LaTeX-mode-hook '(lambda () (setq-local tab-always-indent nil)))
+;; (add-hook 'LaTeX-mode-hook #'(lambda () (setq-local tab-always-indent nil)))
 #+END_SRC
 
 Usefull extras, e.g., org-mode-like folding:
@@ -6313,7 +6313,7 @@ sudo pip install pylint virtualenv epc # Zamansky's recommendation
 	;; 	(add-hook 'elpy-mode-hook 'flycheck-mode))
 	(define-key python-mode-map (kbd "C-h f") 'python-eldoc-at-point)
 	;; highlight-indentation is ugly
-	(add-hook 'elpy-mode-hook '(lambda () (highlight-indentation-mode -1)))
+	(add-hook 'elpy-mode-hook #'(lambda () (highlight-indentation-mode -1)))
 	;; jedi is great
 	(setq elpy-rpc-backend "jedi")
 	;; tell elpy to use python3 (or install python-is-python3 under GNU/Linux)
@@ -6523,7 +6523,7 @@ Show details of files and directories:
 
 Don't break lines:
 #+BEGIN_SRC emacs-lisp
-(add-hook 'dired-initial-position-hook '(lambda () (setq truncate-lines t)))
+(add-hook 'dired-initial-position-hook #'(lambda () (setq truncate-lines t)))
 ;; (add-hook 'dired-mode-hook (lambda () (setq truncate-lines t)))
 #+END_SRC
 
@@ -8899,7 +8899,7 @@ Add company completions for citations and label references in LaTeX based on Ref
 Unfortunately, this really slows down eshell a lot.
 
 #+begin_src emacs-lisp
-(add-hook 'eshell-mode-hook '(lambda () (setq company-idle-delay 0)))
+(add-hook 'eshell-mode-hook #'(lambda () (setq company-idle-delay 0)))
 #+end_src
 
 **** COMMENT org-mode
@@ -9013,7 +9013,7 @@ Additional syntax checking programs for the [[https://www.flycheck.org/en/latest
 	:ensure t
 	:config
 	(global-flycheck-mode t)
-	(add-hook 'text-mode-hook '(lambda ()(flycheck-mode 0)))
+	(add-hook 'text-mode-hook #'(lambda ()(flycheck-mode 0)))
 	)
 #+end_src
 
@@ -10137,12 +10137,12 @@ Poporg lets one edit comments in a separate buffer.
 	:init
 	(setq-default poporg-edit-hook 'org-mode)
 	(add-hook 'TeX-mode-hook 
-						'(lambda ()
+						#'(lambda ()
 							 "poporg configuration"
 							 (define-key TeX-mode-map (kbd "C-c '") 'poporg-dwim)
 							 (setq poporg-edit-hook 'TeX-mode)))
 	(add-hook 'LaTeX-mode-hook 
-						'(lambda ()
+						#'(lambda ()
 							 "poporg configuration"
 							 (define-key LaTeX-mode-map (kbd "C-c '") 'poporg-dwim)
 							 (setq poporg-edit-hook 'LaTeX-mode)))
@@ -11388,7 +11388,7 @@ Some tweaks of the built-in Eshell.
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'eshell-mode-hook
-					'(lambda () (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)))
+					#'(lambda () (define-key eshell-mode-map (kbd "<tab>") 'completion-at-point)))
 (setq eshell-cmpl-dir-ignore "\`\\(CVS\\)/\\'") ; in order to complete `..` to `../`
 (defun tl/eshell ()										; http://emacs.stackexchange.com/a/28603/12336
   (interactive)
@@ -14340,18 +14340,18 @@ Opinionated Emacs key bindings just for this init file.
 						;; delete 
 						(define-key map (kbd "C-d") nil)
 						(define-key map (kbd "C-d C-k") 'kill-line)
-						(define-key map (kbd "C-d <up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
+						(define-key map (kbd "C-d <up>") #'(lambda () (interactive) (tl/kill-forward-line -1)))
 						(define-key map (kbd "C-d <left>") 'delete-backward-char)
 						(define-key map (kbd "C-d <right>") 'delete-forward-char)
-						(define-key map (kbd "C-d <down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
-						(define-key map (kbd "C-d C-<up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
+						(define-key map (kbd "C-d <down>") #'(lambda () (interactive) (tl/kill-forward-line 1)))
+						(define-key map (kbd "C-d C-<up>") #'(lambda () (interactive) (tl/kill-forward-line -1)))
 						(define-key map (kbd "C-d C-<left>") 'delete-backward-char)
 						(define-key map (kbd "C-d C-<right>") 'delete-forward-char)
-						(define-key map (kbd "C-d C-<down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
+						(define-key map (kbd "C-d C-<down>") #'(lambda () (interactive) (tl/kill-forward-line 1)))
 						(define-key map (kbd "C-d C-o") 'delete-blank-lines)
 						(define-key map (kbd "C-d C-m") 'remove-newlines-or-blank-lines-dwim)
 						(define-key map (kbd "C-d C-<return>") 'remove-newlines-or-blank-lines-dwim)
-						(define-key map (kbd "C-d C-a") '(lambda () (interactive) (kill-line 0)))
+						(define-key map (kbd "C-d C-a") #'(lambda () (interactive) (kill-line 0)))
 						(define-key map (kbd "C-d C-e") 'kill-line)
 						(define-key map (kbd "C-S-d") 'kill-whole-line)
 						(define-key map (kbd "C-d SPC") 'tl/remove-extra-spaces-dwim)
@@ -14394,7 +14394,7 @@ Opinionated Emacs key bindings just for this init file.
 						;; navigation
 						(define-key map (kbd "C-j") 'hydra-jump/body)
 						(define-key map (kbd "C-S-j") 'ace-jump-line-mode)
-						(define-key map (kbd "H-i") '(lambda ()
+						(define-key map (kbd "H-i") #'(lambda ()
 																					 (interactive)
 																					 (if (string= (buffer-mode) "org-mode")
 																							 (progn
@@ -14437,15 +14437,15 @@ Key bindings in the minibuffer:
 		;; delete 
 		(define-key map (kbd "C-d") nil)
 		(define-key map (kbd "C-d C-k") 'kill-line)
-		(define-key map (kbd "C-d <up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
+		(define-key map (kbd "C-d <up>") #'(lambda () (interactive) (tl/kill-forward-line -1)))
 		(define-key map (kbd "C-d <left>") 'delete-backward-char)
 		(define-key map (kbd "C-d <right>") 'delete-forward-char)
-		(define-key map (kbd "C-d <down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
-		(define-key map (kbd "C-d C-<up>") '(lambda () (interactive) (tl/kill-forward-line -1)))
+		(define-key map (kbd "C-d <down>") #'(lambda () (interactive) (tl/kill-forward-line 1)))
+		(define-key map (kbd "C-d C-<up>") #'(lambda () (interactive) (tl/kill-forward-line -1)))
 		(define-key map (kbd "C-d C-<left>") 'delete-backward-char)
 		(define-key map (kbd "C-d C-<right>") 'delete-forward-char)
-		(define-key map (kbd "C-d C-<down>") '(lambda () (interactive) (tl/kill-forward-line 1)))
-		(define-key map (kbd "C-d C-a") '(lambda () (interactive) (kill-line 0)))
+		(define-key map (kbd "C-d C-<down>") #'(lambda () (interactive) (tl/kill-forward-line 1)))
+		(define-key map (kbd "C-d C-a") #'(lambda () (interactive) (kill-line 0)))
 		(define-key map (kbd "C-S-d") 'kill-whole-line)
 		(define-key map (kbd "C-d [") 'sp-unwrap-sexp)
 		(define-key map (kbd "C-d ]") 'sp-unwrap-sexp)
@@ -14501,8 +14501,8 @@ Inspired by: http://ergoemacs.org/emacs/emacs_useful_user_keybinding.html
 						;; more cursor keys
 						(define-key map (kbd "M-n") 'scroll-up-command)
 						(define-key map (kbd "M-p") 'scroll-down-command)
-						(define-key map (kbd "C-M-n") '(lambda () (interactive) (scroll-up 3)))
-						(define-key map (kbd "C-M-p") '(lambda () (interactive) (scroll-down 3)))
+						(define-key map (kbd "C-M-n") #'(lambda () (interactive) (scroll-up 3)))
+						(define-key map (kbd "C-M-p") #'(lambda () (interactive) (scroll-down 3)))
 						(define-key map (kbd "M-o") 'point-redo)
 						(define-key map (kbd "M-u") 'point-undo)
 						(define-key map (kbd "M-z") 'goto-last-change)
@@ -14567,7 +14567,7 @@ Key bindings roughly following the conventions of the Windows habitat.
 						(define-key map (kbd "C-S-s") 'write-file)
 
 						;; search and replace
-						(define-key map (kbd "C-f") '(lambda () 
+						(define-key map (kbd "C-f") #'(lambda () 
 																					 (interactive)
 																					 (if (string= (buffer-mode) "pdf-view-mode")
 																							 ;; helm-swoop does not work here
