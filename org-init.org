@@ -10165,17 +10165,17 @@ Support of [[https://github.com/CriticMarkup/CriticMarkup-toolkit][CriticMarkup]
 
 *** COMMENT scimax-editmarks
 
+https://github.com/jkitchin/scimax/blob/master/scimax-editmarks.org
+file:lisp/scimax-editmarks.org
+
 - Similar to [[*Critical markup][cm-mode]].
-- Commit: e72be97
-- Issue: Is not loaded with =(require 'scimax-editmarks)=: "Wrong type argument: keymapp, nil"
+- Commit: 43d91a4
+- Issues
+      - [ ] error during start-up: Symbol's value as variable is void: scimax-flyspell-predicates
 
 #+BEGIN_SRC emacs-lisp
 (eval-after-load 'org 
 	(org-babel-load-file (expand-file-name "lisp/scimax-editmarks.org" user-emacs-directory))
-	(defun my-sem-hydra-start ()
-		(interactive)
-		(require 'scimax-editmarks)
-		(sem-hydra))
 	)
 #+END_SRC
 
