@@ -6380,11 +6380,29 @@ https://ess.r-project.org/index.php?Section=home
 
 *** Shell scripts
 
+The associated major modes is =sh-mode=, for which =shell-script-mode= is an alias.
+
 Make script files (e.g. Bash scripts) with the hash-bang notation exectuable when saving them:
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'after-save-hook
   'executable-make-buffer-file-executable-if-script-p)
+#+END_SRC
+
+**** COMMENT flymake-shellcheck
+
+https://github.com/federicotdn/flymake-shellcheck
+
+Add-on for [[flymake]] for linting shell scripts with [[https://github.com/koalaman/shellcheck][ShellCheck]], which needs to be installed separately.
+I'm using [[flycheck]] instead,  which can [[https://www.flycheck.org/en/latest/languages.html#syntax-checker-sh-shellcheck][apparently]] also use ShellCheck.
+
+#+BEGIN_SRC emacs-lisp
+(when (executable-find "shellcheck")
+	(use-package flymake-shellcheck
+		:ensure t
+		:commands flymake-shellcheck-load
+		:init
+		(add-hook 'sh-mode-hook 'flymake-shellcheck-load)))
 #+END_SRC
 
 *** Web development
@@ -9000,6 +9018,12 @@ Sequence is important!
 #+end_src
 
 ** Syntax checking
+
+*** flymake
+
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Flymake.html
+
+Flymake is a built-in syntax checker for many programming languages. I'm currently using [[flycheck]].
 
 *** flycheck
 
