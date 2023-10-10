@@ -6380,11 +6380,29 @@ https://ess.r-project.org/index.php?Section=home
 
 *** Shell scripts
 
+The associated major modes is =sh-mode=, for which =shell-script-mode= is an alias.
+
 Make script files (e.g. Bash scripts) with the hash-bang notation exectuable when saving them:
 
 #+BEGIN_SRC emacs-lisp
 (add-hook 'after-save-hook
   'executable-make-buffer-file-executable-if-script-p)
+#+END_SRC
+
+**** COMMENT flymake-shellcheck
+
+https://github.com/federicotdn/flymake-shellcheck
+
+Add-on for [[flymake]] for linting shell scripts with [[https://github.com/koalaman/shellcheck][ShellCheck]], which needs to be installed separately.
+I'm using [[flycheck]] instead,  which can [[https://www.flycheck.org/en/latest/languages.html#syntax-checker-sh-shellcheck][apparently]] also use ShellCheck.
+
+#+BEGIN_SRC emacs-lisp
+(when (executable-find "shellcheck")
+	(use-package flymake-shellcheck
+		:ensure t
+		:commands flymake-shellcheck-load
+		:init
+		(add-hook 'sh-mode-hook 'flymake-shellcheck-load)))
 #+END_SRC
 
 *** Web development
@@ -9001,6 +9019,12 @@ Sequence is important!
 
 ** Syntax checking
 
+*** flymake
+
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Flymake.html
+
+Flymake is a built-in syntax checker for many programming languages. I'm currently using [[flycheck]].
+
 *** flycheck
 
 https://www.flycheck.org/en/latest/
@@ -10165,17 +10189,17 @@ Support of [[https://github.com/CriticMarkup/CriticMarkup-toolkit][CriticMarkup]
 
 *** COMMENT scimax-editmarks
 
+https://github.com/jkitchin/scimax/blob/master/scimax-editmarks.org
+file:lisp/scimax-editmarks.org
+
 - Similar to [[*Critical markup][cm-mode]].
-- Commit: e72be97
-- Issue: Is not loaded with =(require 'scimax-editmarks)=: "Wrong type argument: keymapp, nil"
+- Commit: 43d91a4
+- Issues
+      - [ ] error during start-up: Symbol's value as variable is void: scimax-flyspell-predicates
 
 #+BEGIN_SRC emacs-lisp
 (eval-after-load 'org 
 	(org-babel-load-file (expand-file-name "lisp/scimax-editmarks.org" user-emacs-directory))
-	(defun my-sem-hydra-start ()
-		(interactive)
-		(require 'scimax-editmarks)
-		(sem-hydra))
 	)
 #+END_SRC
 

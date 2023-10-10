@@ -1,10 +1,18 @@
+(defun scimax-editmarks-flyspell-verify ()
+  "Return non-nil if point has an sem-editmark property.
+In flyspell, continue if not on an editmark."
+   (not (get-text-property (point) 'sem-editmark)))
+
+
+(add-to-list 'scimax-flyspell-predicates #'scimax-editmarks-flyspell-verify)
+
 ;;; scimax-editmarks.el --- Editmarks for scimax
 
 ;;; Commentary:
 ;;
 
 ;;; Code
-(require 'cl)
+(require 'cl-lib)
 (require 'color)
 (require 'easymenu)
 
@@ -23,7 +31,8 @@
     ["Jump to visible" sem-jump-to-visible-editmark t]
     ["Jump to editmark" sem-jump-to-editmark t])
   "Items for the menu bar and popup menu."
-  :group 'sem)
+  :group 'sem
+  :type '(repeat (vector string function boolean)))
 
 
 (defun sem-popup-command (event)
@@ -83,7 +92,7 @@
 	    :help-echo "Deletion. Right-click, s-click or s-o for menu."
 	    :accept-func sem-delete-editmark
 	    :reject-func sem-clear-editmark
-	    :export sem-export-delete )
+	    :export sem-export-delete)
 
     (insert :open-marker "{>+" :close-marker "+<}"
 	    :marker-face (:foreground "blue" :weight ultra-light)
@@ -180,12 +189,14 @@
 		     (define-key map (kbd "C-n") 'sem-next-editmark)
 		     (define-key map (kbd "C-p") 'sem-previous-editmark)
 		     map)))
+
   "The default editmarks")
 
-(defun sem-editmark-plist ()
-  "Read a plist in an editmark.
-Converts the content into a plist. If the contents are not a
-plist, this may not do what you want.
+(defun sem-editmark-plist-from-string (content)
+  "Convert CONTENT into a plist.
+We split the string into words, and reassemble it into a plist.
+This is a very minimal parser to get away with not quoting things
+inside editmarks.
 
 I assume the content of the edit mark is all a plist like this
 
@@ -197,31 +208,43 @@ plist above will end up as:
 
 Then, this gets read by elisp to make the plist. The downside of
 this is it is not feasible to have a key without a value."
+  (let* ((words (split-string content " " t "\s+"))
+	 (sexp '())
+	 (s '())
+	 (tempstr)
+	 this-word)
+    (while words
+      ;; pop words off one at a time
+      (setq this-word (pop words))
+      (if (not (s-starts-with? ":" this-word))
+	  ;; Accumulate in a list of words
+	  (push this-word s)
+	;; word is not a :keyword
+	(when s
+	  (setq tempstr (s-join " " (reverse  s)))
+	  (if (string= tempstr (format "%s" (string-to-number tempstr)))
+	      (push (string-to-number tempstr) sexp)
+	    (push tempstr sexp)))
+	(setq s '())
+	(push (intern this-word) sexp)))
+    ;; make sure we get the last s...
+    (when s
+      (setq tempstr (s-join " " (reverse  s)))
+      (if (string= tempstr (format "%s" (string-to-number tempstr)))
+	  (push (string-to-number tempstr) sexp)
+	(push tempstr sexp)))
+    (-flatten (reverse sexp))))
+
+
+(defun sem-editmark-plist ()
+  "Read a plist in an editmark.
+Converts the content into a plist. If the contents are not a
+plist, this may not do what you want."
   (let* ((bounds (sem-editmark-bounds))
 	 (content-bounds (sem-content-bounds))
 	 (content (s-trim (buffer-substring-no-properties
-			   (car content-bounds) (cdr content-bounds))))
-	 (splits (split-string content ":" t "\s+"))
-	 ;; This nonsense is so I don't have to quote these in text. It might be a bad idea.
-	 (data (mapcar (lambda (pair)
-			 (let ((fields (split-string pair " " t "\s+")))
-			   (if (= 1 (length (cdr fields)))
-			       (cond
-				;; number
-				((string-match "^[0-9]+$" (cadr fields))
-				 (list
-				  (format ":%s" (car fields))
-				  (cadr fields)))
-				(t
-				 (list
-				  (format ":%s" (car fields))
-				  (format "\"%s\"" (cadr fields)))))
-			     ;; it has to be quoted
-			     (list
-			      (format ":%s" (car fields))
-			      (format "\"%s\"" (s-join " " (cdr fields)))))))
-		       splits)))
-    (read (format "%s" (-flatten data)))))
+			   (car content-bounds) (cdr content-bounds)))))
+    (sem-editmark-plist-from-string content)))
 
 (defvar sem-editmark-audio-map
   (let ((map (copy-keymap org-mode-map)))
@@ -332,7 +355,7 @@ this is it is not feasible to have a key without a value."
     (if other
 	(find-file-other-window fname)
       (find-file fname))
-    (goto-line (plist-get plist :line))
+    (forward-line (plist-get plist :line))
     (when-let  (col (plist-get plist :column))
       (move-to-column col))))
 
@@ -457,13 +480,14 @@ we go with the font color."
 	 (fg-color (or (plist-get (get-text-property (point) 'face) :foreground) "black"))
 	 (bg-color (plist-get (get-text-property (point) 'face) :background))
 	 (fg-rgb (color-name-to-rgb fg-color))
-	 (fg-hex (apply 'color-rgb-to-hex fg-rgb))
+	 ;; the append (2) makes it use 24-bit color I think
+	 (fg-hex (apply 'color-rgb-to-hex (append fg-rgb '(2))))
 	 bg-rgb
 	 ;; this is white
 	 (bg-hex "#ffffff"))
     (when bg-color
       (setq bg-rgb (color-name-to-rgb bg-color)
-	    bg-hex (apply 'color-rgb-to-hex bg-rgb)))
+	    bg-hex (apply 'color-rgb-to-hex (append bg-rgb '(2)))))
 
     (cond
      ((eq 'latex backend)
@@ -471,9 +495,9 @@ we go with the font color."
 	    (concat
 	     (format "@@latex:\\definecolor{%s}{rgb}{%s,%s,%s}%s{%s}{\\parbox{\\textwidth}{%s:@@"
 		     (or bg-color fg-color)
-		     (if bg-color (first bg-rgb) (first fg-rgb))
-		     (if bg-color (second bg-rgb) (second fg-rgb))
-		     (if bg-color (third bg-rgb) (third fg-rgb))
+		     (if bg-color (cl-first bg-rgb) (cl-first fg-rgb))
+		     (if bg-color (cl-second bg-rgb) (cl-second fg-rgb))
+		     (if bg-color (cl-third bg-rgb) (cl-third fg-rgb))
 		     (if bg-color
 			 "\\colorbox"
 		       "\\textcolor")
@@ -493,10 +517,12 @@ we go with the font color."
 	    (mapconcat
 	     (lambda (s)
 	       (format "@@html:<span style=\"color: %s; background-color: %s\">%s</span>@@"
-		       fg-hex bg-hex s)
-	       (s-split "\n" (buffer-substring-no-properties (car content-bounds)
-							     (cdr content-bounds)))
-	       "@@html:<br>@@")))))))
+		       fg-hex
+		       bg-hex
+		       s))
+	     (s-split "\n" (buffer-substring-no-properties (car content-bounds)
+							   (cdr content-bounds)))
+	     "@@html:<br>@@"))))))
 
 ;; these should get removed when a region is unfontified.
 (add-to-list 'font-lock-extra-managed-props 'sem-content)
@@ -548,6 +574,156 @@ we go with the font color."
 	     )))
    sem-editmarks))
 
+(defun sem-set-editmark-parameters (type &rest parameters)
+  "Add or update an editmark.
+TYPE is a symbol for the name of the editmark
+PARAMETERS is a set of keyword value pairs
+"
+  (let ((data (assoc type sem-editmarks)))
+    (if data
+	;; update the editmark
+	(setcdr data (org-combine-plists (cdr data) parameters))
+      ;; New editmark
+      (cl-pushnew `(,type ,@parameters) sem-editmarks)
+      (font-lock-remove-keywords nil (sem-font-lock-keywords))
+      (font-lock-add-keywords nil (sem-font-lock-keywords)))))
+
+(defvar sem-editmark-contact-map
+  (let ((map (copy-keymap org-mode-map)))
+    (define-key map (kbd "<return>") 'sem-contact/body)
+    (define-key map (kbd "s-e") 'sem-contact-email)
+    (define-key map (kbd "s-t") 'sem-contact-email-to)
+    (define-key map (kbd "s-f") 'sem-contact-email-from)
+    (define-key map (kbd "s-r") 'sem-contact-related)
+    map)
+  "Map for actions on editmark contact.")
+
+
+(sem-set-editmark-parameters 'contact
+			     :open-marker "{@>" :close-marker "<@}"
+			     :marker-face '(:foreground "OrangeRed1" :weight ultra-light)
+			     :face '(:foreground "OrangeRed1" :weight bold)
+			     :keymap 'sem-editmark-contact-map
+			     :help-echo "An editmark contact."
+			     :export nil)
+
+
+(defun sem-contact-insert ()
+  "Insert a contact edit mark"
+  (interactive)
+  (let* ((contacts (org-db-contacts-candidates))
+	 (choice (cdr (assoc (ivy-read "Contact: "  contacts) contacts))))
+    (insert (format "%s %s :email %s %s"
+		    (plist-get (cdr (assoc 'contact sem-editmarks)) :open-marker)
+		    (plist-get choice :title)
+		    (plist-get choice :email)
+		    (plist-get (cdr (assoc 'contact sem-editmarks)) :close-marker)))))
+
+
+(defun sem-contact-email ()
+  "Open an email buffer to the contact."
+  (interactive)
+  (let* ((plist (sem-editmark-plist))
+	 (email (plist-get (cdr plist) :email)))
+    (compose-mail)
+    (message-goto-to)
+    (insert email)
+    (message-goto-subject)))
+
+
+(defun sem-contact-email-from ()
+  "Open mu4e showing emails from the candidate."
+  (interactive)
+  (let* ((plist (sem-editmark-plist))
+	 (email (plist-get (cdr plist) :email)))
+    (org-link-open-from-string
+     (format "[[mu4e:query:from:%s]]"
+	     email))))
+
+
+(defun sem-contact-email-to ()
+  "Open mu4e showing emails to the candidate."
+  (interactive)
+  (let* ((plist (sem-editmark-plist))
+	 (email (plist-get (cdr plist) :email)))
+    (org-link-open-from-string
+     (format "[[mu4e:query:tofrom:%s]]"
+	     email))))
+
+
+(defun sem-contact-related ()
+  "Completion to choose documents with this contact email in them.
+This uses org-db-contacts, not editmark contacts right now."
+  (interactive)
+  (let* ((plist (sem-editmark-plist))
+	 (email (plist-get (cdr plist) :email))
+
+	 (link-candidates (cl-loop
+			   for (rl fn bg) in
+			   (emacsql org-db [:select [raw-link filename begin ]
+						    :from links
+						    :left :join files :on (= links:filename-id files:rowid)
+						    :where (and
+							    (= links:type "contact")
+							    (= links:path $s1))
+						    :order :by filename]
+				    email)
+			   collect
+			   ;; (candidate :filename :begin)
+			   (list (format "%s | %s" rl fn) :filename fn :begin bg)))
+
+	 (results (emacsql org-db
+			   [:select [headlines:title
+				     properties:property
+				     headline-properties:value
+				     files:filename files:last-updated headlines:begin]
+				    :from headlines
+				    :inner :join headline-properties
+				    :on (=  headlines:rowid headline-properties:headline-id)
+				    :inner :join properties
+				    :on (= properties:rowid headline-properties:property-id)
+				    :inner :join files :on (= files:rowid headlines:filename-id)
+				    :where (and (= properties:property "ASSIGNEDTO")
+						(like headline-properties:value $s1))]
+			   email))
+
+	 (assigned-candidates (cl-loop for (title property value fname last-updated begin) in results
+				       collect
+				       (list (format "%s | %s=%s | %s" title property value fname)
+					     :filename fname :begin begin)))
+	 (results (emacsql org-db
+			   [:select [headlines:title
+				     properties:property
+				     headline-properties:value
+				     files:filename files:last-updated headlines:begin]
+				    :from headlines
+				    :inner :join headline-properties
+				    :on (=  headlines:rowid headline-properties:headline-id)
+				    :inner :join properties
+				    :on (= properties:rowid headline-properties:property-id)
+				    :inner :join files :on (= files:rowid headlines:filename-id)
+				    :where (and (= properties:property "EMAIL")
+						(like headline-properties:value $s1))]
+			   email))
+	 (email-candidates (cl-loop for (title property value fname last-updated begin) in results
+				    collect
+				    (list (format "%s | %s=%s | %s" title property value fname)
+					  :filename fname :begin begin))))
+    (ivy-read "Choose: " (append assigned-candidates email-candidates link-candidates)
+	      :action (lambda (x)
+			(let ((candidate (cdr x)))
+			  (find-file (plist-get candidate :filename))
+			  (goto-char (plist-get candidate :begin)))))))
+
+
+(defhydra sem-contact (:color blue :hint nil)
+  "Editmark contact"
+  ("o" sem-contact-open "open")
+  ("e" sem-contact-email "Email contact")
+  ("r" sem-contact-related "Related documents")
+  ("t" sem-contact-email-to "Open emails to contact")
+  ("f" sem-contact-email-from "Open emails from contact"))
+
 (define-minor-mode sem-mode
   "A minor mode for editmarks."
   :lighter " sem"
@@ -561,7 +737,7 @@ we go with the font color."
      nil
      (sem-font-lock-keywords))
     (add-hook 'org-export-before-processing-hook 'sem-editmarks-to-org nil t))
-  (font-lock-fontify-buffer))
+  (font-lock-ensure))
 
 (easy-menu-change '("Scimax") "editmarks" sem-menu-items "Update scimax")
 
@@ -601,9 +777,19 @@ we go with the font color."
 Return nil if not on an editmark."
   (when (get-text-property (point) 'sem-editmark)
     (cond
-     ;; At the very beginning
+     ;; At the very beginning of the buffer
      ((bobp)
       (cons (point) (next-single-property-change (point) 'sem-editmark)))
+     ;; at beginning of an editmark
+     ((null (get-text-property (- (point) 1) 'sem-editmark))
+      (cons (point) (or (next-single-property-change (point) 'sem-editmark) (point))))
+
+     ;; at end
+     ((and (not (eobp))
+	   (null (get-text-property (+ (point) 1) 'sem-editmark)))
+      (cons (or (previous-single-property-change (point) 'sem-editmark) (point))
+	    (point)))
+     ;; in the middle
      (t
       (cons (or (previous-single-property-change (point) 'sem-editmark) (point))
 	    (or (next-single-property-change (point) 'sem-editmark) (point)))))))
@@ -625,8 +811,8 @@ content: ${content}"
 			(cons "type" (get-text-property (point) 'sem-type))
 			(cons "start" (car bounds))
 			(cons "end" (cdr bounds))
-			(cons "editmark" (buffer-substring (car bounds) (cdr bounds)))
-			(cons "content" (buffer-substring (car cbounds) (cdr cbounds)))
+			(cons "editmark" (buffer-substring-no-properties (car bounds) (cdr bounds)))
+			(cons "content" (buffer-substring-no-properties (car cbounds) (cdr cbounds)))
 			(cons "content-start" (car cbounds))
 			(cons "content-end" (cdr cbounds)))))))
 
@@ -645,11 +831,11 @@ TYPE should be a symbol corresponding to the car of an entry in `sem-editmarks'.
   (when (get-text-property (point) 'sem-type)
     (error "You are in an editmark. Nesting editmarks is not allowed."))
 
-  (let ((entry (assoc (intern-soft type) sem-editmarks)))
+  (let ((entry (assoc (intern-soft type) sem-editmarks))
+	(inhibit-modification-hooks t))
     ;; we do not track changes when inserting so we don't trigger nested
     ;; editmarks when editing editmarks.
-    (sem-without-following-changes
-      (cond
+    (cond
        ;; this is a special case
        ((eq type 'audio)
 	(sem-audio-insert))
@@ -669,16 +855,6 @@ TYPE should be a symbol corresponding to the car of an entry in `sem-editmarks'.
 			     nil
 			     (region-end)))))
 	    (error "You are in an editmark. Nesting editmarks is not allowed."))
-	  ;; Make sure we are at word boundaries
-	  (save-excursion
-	    (goto-char start)
-	    (unless (looking-at " \\|\\<")
-	      (backward-word)
-	      (setq start (point)))
-	    (goto-char end)
-	    (unless (looking-at " \\|\>")
-	      (forward-word)
-	      (setq end (point))))
 
 	  (setf (buffer-substring start end)
 		(concat (plist-get (cdr entry) :open-marker)
@@ -720,7 +896,7 @@ TYPE should be a symbol corresponding to the car of an entry in `sem-editmarks'.
 			  (concat " " (sem-author) " "))
 			(plist-get (cdr entry) :close-marker)))
 	;; goto middle
-	(backward-char (length (plist-get (cdr entry) :close-marker)))))))
+	(backward-char (length (plist-get (cdr entry) :close-marker))))))
   ;; Should we add a local variable so the file opens in sem-mode?
   (hack-local-variables)
   ;; This is more complicated than I thought it should be. When I try to just
@@ -873,7 +1049,7 @@ TYPE should be a symbol corresponding to the car of an entry in `sem-editmarks'.
   "Use avy to jump to a visible editmark."
   (interactive)
   (avy-with sem-editmark-jumper
-    (avy--process
+    (avy-process
      ;; These are the points to process.
      (let ((editmarks '())
 	   (start (window-start))
@@ -911,12 +1087,14 @@ editmark is the full text including the markers."
     (let ((editmarks '())
 	  bounds
 	  cem)
+      ;; when an editmark is at the beginning of the buffer
       (when (get-text-property (point) 'sem-type)
 	(push (list (get-text-property (point) 'sem-type)
 		    (current-buffer)
 		    (setq bounds (sem-editmark-bounds))
 		    (buffer-substring-no-properties (car bounds) (cdr bounds)))
 	      editmarks))
+
       (while (setq cem (sem-next-editmark))
 	(setq bounds (sem-editmark-bounds))
 	(push (list (get-text-property (point) 'sem-type)
@@ -953,13 +1131,13 @@ editmark is the full text including the markers."
 				      (list
 				       nil ;id
 				       (vector
-					(cons (symbol-name (first em))
+					(cons (symbol-name (cl-first em))
 					      (list
-					       'face (plist-get (cdr (assoc (first em) sem-editmarks)) :face)
-					       'buffer (second em)
-					       'bounds (third em)))
-					(cons (fourth em)
-					      (list 'face (plist-get (cdr (assoc (first em) sem-editmarks)) :face)))))))))
+					       'face (plist-get (cdr (assoc (cl-first em) sem-editmarks)) :face)
+					       'buffer (cl-second em)
+					       'bounds (cl-third em)))
+					(cons (cl-fourth em)
+					      (list 'face (plist-get (cdr (assoc (cl-first em) sem-editmarks)) :face)))))))))
     (setq tabulated-list-entries entries
 	  tabulated-list-format (vector '("Type" 20 t) '("Content" 40 t)))
     (tabulated-list-init-header)
@@ -1055,7 +1233,7 @@ editmark is the full text including the markers."
   (interactive)
   (let ((bounds (sem-content-bounds)))
     (goto-char (car bounds))
-    (flyspell-correct-word-generic)
+    (flyspell-correct-at-point)
     ;; This seems to be important to get the text properties fixed up before
     ;; clearing the editmark
     (save-excursion
@@ -1069,10 +1247,11 @@ editmark is the full text including the markers."
   ("r" (sem-insert 'reply) "reply")
   ("i" (sem-insert 'insert) "insert")
   ("d" (sem-insert 'delete) "delete")
-  ("f" (sem-insert 'file) "file")
+  ("f" (sem-insert-file-editmark) "file")
   ("t" (sem-insert 'typo) "typo")
   ("k" (sem-insert 'task) "task")
   ("c" (insert "✓") "checkmark")
+  ("2" (sem-insert 'contact) "contact")
   ("hb" (sem-insert 'blue-highlight) "green")
   ("hg" (sem-insert 'green-highlight) "green")
   ("hy" (sem-insert 'yellow-highlight) "yellow")
@@ -1117,14 +1296,6 @@ On an editmark open the action menu, otherwise the insert menu."
       (sem-action/body)
     (sem-insert/body)))
 
-(defun sem-export-copy-advice (orig-func &rest args)
-  "Temporarily redefine buffer-substring-no-properties for exporting."
-  (cl-letf (((symbol-function 'buffer-substring-no-properties) #'buffer-substring))
-    (apply orig-func args)))
-
-(advice-add 'org-export--generate-copy-script :around 'sem-export-copy-advice)
-
-
 (defun sem-editmarks-to-org (&optional backend)
   "Convert sem editmarks in an org-file to org syntax for BACKEND.
 Inserts some headers at the top for todonotes and ulem, and the
@@ -1136,6 +1307,7 @@ Note this function changes the buffer, so you may want to use it
 in a copy of the buffer."
   (interactive)
   (goto-char (point-min))
+  (sem-mode)
   (when
       (and
        (save-excursion (sem-next-editmark))
@@ -1144,13 +1316,13 @@ in a copy of the buffer."
   #+latex_header: \\usepackage[normalem]{ulem}
   #+latex_header: \\usepackage{todonotes}
   #+latex_header: \\usepackage[usenames, dvipsnames]{color}
-  \\listoftodos\n")
+  \\listoftodos\n"))
 
-    (while (sem-next-editmark)
-      (let ((export-func (plist-get (cdr (assoc (get-text-property (point) 'sem-type) sem-editmarks)) :export)))
-	(if export-func
-	    (funcall export-func backend)
-	  (sem-export-default backend))))))
+  (while (sem-next-editmark)
+    (let ((export-func (plist-get (cdr (assoc (get-text-property (point) 'sem-type) sem-editmarks)) :export)))
+      (if export-func
+	  (funcall export-func backend)
+	(sem-export-default backend)))))
 
 (defcustom sem-wdiff-cmd
   "wdiff -w \"{>-\" -x \"-<}\" -y \"{>+\" -z \"+<}\" "
@@ -1328,7 +1500,7 @@ of the affected text."
     (let ((inhibit-modification-hooks t))
       (cond
        ;; deletion by C-d, kill, etc. (ref:delete-1)
-       ((null (second sem-current-deletion))
+       ((null (cl-second sem-current-deletion))
 	(message "C-d, kill, delete")
 	(cond
 	 ;; just mark for deletion
@@ -1344,11 +1516,11 @@ of the affected text."
 
 	 ;; We are on an open marker. ignore. (ref:delete-1-open)
 	 ((eq (get-text-property (point) 'sem-marker) 'open)
-	  (insert (first sem-current-deletion)))
+	  (insert (cl-first sem-current-deletion)))
 
 	 ;; On a close marker, ignore (ref:delete-1-close)
 	 ((eq (get-text-property (point) 'sem-marker) 'close)
-	  (insert (first sem-current-deletion)))
+	  (insert (cl-first sem-current-deletion)))
 
 	 (t
 	  (message "Unhandled C-d/kill delete. did this make sense?"))))
@@ -1385,27 +1557,27 @@ of the affected text."
 	  (insert (plist-get (cdr (assoc 'delete sem-editmarks)) :close-marker))
 	  (backward-char (length (plist-get (cdr (assoc 'delete sem-editmarks))
 					    :close-marker)))
-	  (insert (first sem-current-deletion))
+	  (insert (cl-first sem-current-deletion))
 	  ;; now go back to front of the mark.
-	  (backward-char (length (first sem-current-deletion)))
+	  (backward-char (length (cl-first sem-current-deletion)))
 	  (backward-char (length (plist-get (cdr (assoc 'delete sem-editmarks))
 					    :open-marker))))
 
 	 ;; (ref:delete-2-front)
 	 ;; at the front of delete but not at the end of any other editmark
 	 ((and (looking-at (plist-get (cdr (assoc 'delete sem-editmarks)) :open-marker))
-	       (not (string= "}" (first sem-current-deletion))))
+	       (not (string= "}" (cl-first sem-current-deletion))))
 	  (forward-char (length (plist-get
 				 (cdr (assoc 'delete sem-editmarks)) :open-marker)))
-	  (insert (first sem-current-deletion))
-	  (backward-char (length (first sem-current-deletion)))
+	  (insert (cl-first sem-current-deletion))
+	  (backward-char (length (cl-first sem-current-deletion)))
 	  (backward-char (length (plist-get
 				  (cdr (assoc 'delete sem-editmarks)) :close-marker))))
 
 	 ;; between two delete edit marks, merge them and jump to the front
 	 ;; (ref:delete-2-merge)
 	 ((and (looking-at (plist-get (cdr (assoc 'delete sem-editmarks)) :open-marker))
-	       (string= "}" (first sem-current-deletion)))
+	       (string= "}" (cl-first sem-current-deletion)))
 	  (insert "}")
 	  (if (not (looking-back (plist-get (cdr (assoc 'delete sem-editmarks)) :close-marker)
 				 (length (plist-get
@@ -1428,7 +1600,7 @@ of the affected text."
 	 ;; At end of a mark, and beginning of delete. we should jump
 	 ;; to end of previous content? (ref:delete-2-end+mark)
 	 ((and (looking-at (plist-get (cdr (assoc 'delete sem-editmarks)) :open-marker))
-	       (string= "}" (first sem-current-deletion)))
+	       (string= "}" (cl-first sem-current-deletion)))
 	  (message "case 2 - front of delete and at end of a mark.")
 	  (insert "}")
 	  (if (not (looking-back (regexp-opt (mapcar (lambda (em)
@@ -1439,12 +1611,12 @@ of the affected text."
 						      (lambda (em)
 							(plist-get (cdr em) :close-marker))
 						      sem-editmarks)))))
-	      (delete-backward-char 1)
+	      (delete-char -1)
 	    ;; put char back
 	    (forward-char (length
 			   (plist-get (cdr (assoc 'delete sem-editmarks)) :open-marker)))
-	    (insert (first sem-current-deletion))
-	    (backward-char (length (first sem-current-deletion)))
+	    (insert (cl-first sem-current-deletion))
+	    (backward-char (length (cl-first sem-current-deletion)))
 	    (re-search-backward (regexp-opt (mapcar (lambda (em)
 						      (plist-get (cdr em) :open-marker))
 						    sem-editmarks)))))
@@ -1463,7 +1635,7 @@ of the affected text."
 					    (plist-get (cdr em) :open-marker))
 					  sem-editmarks)))
 	  (insert (plist-get (cdr (assoc 'delete sem-editmarks)) :open-marker))
-	  (insert (first sem-current-deletion))
+	  (insert (cl-first sem-current-deletion))
 	  (insert (plist-get (cdr (assoc 'delete sem-editmarks)) :close-marker))
 	  (re-search-backward (regexp-opt (mapcar (lambda (em)
 						    (plist-get (cdr em) :open-marker))
