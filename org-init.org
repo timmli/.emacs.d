@@ -2130,12 +2130,20 @@ Deactivated because =org-extract-archive-file= is not found.
 
 *** Attachments
 
+https://orgmode.org/org.html#Attachments
+
+Org headings and files can be associated with directories which contain their "attachments".
+
 =org-attach= might not be autoloaded by org-mode.
 #+BEGIN_SRC emacs-lisp
 (require 'org-attach)  
 #+END_SRC
 
-Note that =org-attach= has been refactored and extended in =org-mode= v9.3 (see https://orgmode.org/Changes.html), adding the following variables:
+There are two ways to decide the attachment directory: 
+- the ID property, from which the relative path is derived
+- the DIR property which explicitely contains the path
+
+I prefer using general inheritance – child nodes inherit the attachment directory of their parent node – and relative paths in the DIR property. 
 #+BEGIN_SRC emacs-lisp
 (setq
  org-attach-use-inheritance t	    ; enable inheritance
@@ -2143,26 +2151,9 @@ Note that =org-attach= has been refactored and extended in =org-mode= v9.3 (see 
  org-attach-preferred-new-method 'dir ; prefered method for attachments (id, dir, ask, nil)
  )
 #+END_SRC  
-
-Function to rename =ATTACH_DIR= (deprecated) to =DIR=, and to remove =ATTACH_DIR_INHERIT= (deprecated):
-#+BEGIN_SRC emacs-lisp
-(defun org-update-attach-properties ()
-    "Change properties for Org-Attach."
-    (interactive)
-    (org-with-point-at 1
-      (while (outline-next-heading)
-        (let ((DIR (org--property-local-values "ATTACH_DIR" nil)))
-          (when DIR
-            (org-set-property "DIR" (car DIR))
-            (org-delete-property "ATTACH_DIR"))))
-      (org-delete-property-globally "ATTACH_DIR_INHERIT")))
-#+END_SRC
-
-Add some link types (deprecated):
-#+BEGIN_SRC emacs-lisp
-;; (add-to-list 'org-link-abbrev-alist '("attachment" . org-attach-expand-link)) ; included in `org-attach` since v9.3
-;; (add-to-list 'org-link-abbrev-alist '("att" . org-attach-expand-link)) ; only for downward compatibility and not supported any longer since v9.4
-#+END_SRC
+Note that ID and DIR are inherited asymmetrically, since DIR always takes precedence over ID. 
+- If a node has both ID and DIR properties, only the DIR property counts.
+- If a node has an ID property, but its parent has a DIR property, then the DIR property of the parent counts. 
 
 Handling attachments of =xournalpp= files:
 #+BEGIN_SRC emacs-lisp
@@ -2186,8 +2177,14 @@ Note that one can specify the name of attachment directories per file with
 #+BEGIN_SRC emacs-lisp :tangle no
 # -*- org-attach-id-dir: "my-fancy-dir-name" -*-
 #+END_SRC
+or with a property drawer at the very beginning of the file:
+#+BEGIN_SRC org :tangle no
+:PROPERTIES:
+:DIR: my-fancy-dir-name
+:END:
+#+END_SRC
 
-Function to jump from attachment directory to heading (https://fuco1.github.io/2023-02-08-Visit-the-org-headline-from-the-attach-dired-buffer.html):
+Function to jump from attachment directory in dired to heading (https://fuco1.github.io/2023-02-08-Visit-the-org-headline-from-the-attach-dired-buffer.html):
 #+BEGIN_SRC emacs-lisp
 (defun my-org-attach-visit-headline-from-dired ()
   "Go to the headline corresponding to this org-attach directory."
@@ -2200,6 +2197,26 @@ Function to jump from attachment directory to heading (https://fuco1.github.io/2
       (goto-char m)
       (move-marker m nil)
       (org-fold-show-context))))
+#+END_SRC
+
+Add some link types (deprecated since v9.3):
+#+BEGIN_SRC emacs-lisp
+;; (add-to-list 'org-link-abbrev-alist '("attachment" . org-attach-expand-link)) ; included in `org-attach` since v9.3
+;; (add-to-list 'org-link-abbrev-alist '("att" . org-attach-expand-link)) ; only for downward compatibility and not supported any longer since v9.4
+#+END_SRC
+
+Function to rename =ATTACH_DIR= (deprecated since v9.3) to =DIR=, and to remove =ATTACH_DIR_INHERIT= (deprecated since v9.3):
+#+BEGIN_SRC emacs-lisp
+(defun org-update-attach-properties ()
+    "Change properties for Org-Attach."
+    (interactive)
+    (org-with-point-at 1
+      (while (outline-next-heading)
+        (let ((DIR (org--property-local-values "ATTACH_DIR" nil)))
+          (when DIR
+            (org-set-property "DIR" (car DIR))
+            (org-delete-property "ATTACH_DIR"))))
+      (org-delete-property-globally "ATTACH_DIR_INHERIT")))
 #+END_SRC
 
 *** Bibliography
