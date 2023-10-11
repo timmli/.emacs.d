@@ -2243,7 +2243,7 @@ Renders =org-mode= citations and bibliographies during export in Citation Style 
 
 #+BEGIN_SRC emacs-lisp
 (setq org-capture-templates
-			'(
+			`(
 				;; uses appointment tag
 				("a" "Appointment" entry (file+headline 
 																	(lambda () (expand-file-name "captures.org" org-directory))
@@ -4552,6 +4552,13 @@ Adds German holidays to the calendar.
 iCalendar files can be imported
 - via [[calfw]].
 - via the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Diary.html][Emacs diary]]: =icalendar-import-file= imports ics-files from caldav servers into the diary file. This will eventually be shown in org-agenda based on the variable =org-agenda-include-diary=.
+
+**** TODO Import iCalendar file to Org
+:LOGBOOK:
+- State "TODO"       from              [2023-10-11 Wed 15:54]
+:END:
+
+If you receive ics files with appointments, you can convert them to Org headings in the following way:
 
 *** iCalendar export
 
@@ -7565,6 +7572,49 @@ Since v1.10, messages can be detached in =mu4e-view-mode=. The following functio
 		(view-buffer "*mu4e-headers*") 			; Interestingly does not work with with-current-buffer 
 		(keyboard-escape-quit)))
 (define-key mu4e-view-mode-map "z" 'tl/mu4e-detach-and-view-message-in-new-frame)
+#+END_SRC
+
+****** iCalender support
+
+With the help of Gnus, iCalendar invitations can be viewed and replied to.
+Documentation: https://www.djcbsoftware.nl/code/mu/mu4e/iCalendar.html
+
+#+BEGIN_SRC emacs-lisp
+(require 'mu4e-icalendar)
+(mu4e-icalendar-setup)
+#+END_SRC 
+
+Furthermore, with Gnus, one can convert iCalendar invitations to Org headings using the [[Capture templates][Org capture mechanism]].
+
+#+BEGIN_SRC emacs-lisp
+(setq gnus-icalendar-org-capture-file (expand-file-name "captures.org" org-directory))
+(setq gnus-icalendar-org-capture-headline "Calendar")
+#+END_SRC
+
+Since the default template for Gnus captures does not work, I'm using the following one:
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-capture-templates
+						 `("#" "used by gnus-icalendar-org" entry
+						   (file+headline ,gnus-icalendar-org-capture-file
+															,gnus-icalendar-org-capture-headline)
+						   "%i" :jump-to-captured t :prepend t)
+						 )
+#+END_SRC
+
+Here is the one that Gnus would use otherwise:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+("#" "used by gnus-icalendar-org" entry
+   (file+olp ,gnus-icalendar-org-capture-file
+             ,gnus-icalendar-org-capture-headline)
+   "%i" :immediate-finish t)
+#+END_SRC
+
+Finally, activate the iCalendar-to-Org export:
+
+#+BEGIN_SRC emacs-lisp
+(gnus-icalendar-org-setup)
 #+END_SRC
 
 ***** Compose messages
