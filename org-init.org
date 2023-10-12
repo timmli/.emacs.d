@@ -10554,6 +10554,27 @@ Issues:
 	:pin MELPA)
 #+END_SRC
 
+** Speech to text
+
+*** whisper.el
+
+https://github.com/natrys/whisper.el
+
+Speech-to-Text interface for Emacs using [[https://github.com/openai/whisper][OpenAI’s whisper speech recognition model]]. 
+This will download and compile [[https://github.com/ggerganov/whisper.cpp][whisper.ccp]] the first time =whisper-run= is executed.
+Note that =whisper.el= inserts text in bigger chunks, not in a word-by-word fashion: calling =whisper-run= the first time starts the recording; calling =whisper-run= a second time then initiates the transcription of the recording. 
+
+#+BEGIN_SRC emacs-lisp
+(use-package whisper
+  :load-path "lisp/whisper.el"
+  :bind ("C-c i w" . whisper-run)
+  :config
+  (setq whisper-install-directory "/tmp/"
+        whisper-model "base"
+        whisper-language "auto"
+        whisper-translate nil))
+#+END_SRC
+
 ** Thesauri
 *** synosaurus
 
