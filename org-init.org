@@ -10569,7 +10569,7 @@ Note that =whisper.el= inserts text in bigger chunks, not in a word-by-word fash
   :load-path "lisp/whisper.el"
   :bind ("C-c i w" . whisper-run)
   :config
-  (setq whisper-install-directory "/tmp/"
+  (setq whisper-install-directory share-dir
         whisper-model "base"
         whisper-language "auto"
         whisper-translate nil))

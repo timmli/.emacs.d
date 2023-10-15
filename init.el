@@ -154,6 +154,10 @@ This variable should be changed in private-emacs-settings-before.el.")
 	"Path to directory with langtool resources.
 This variable should be changed in private-emacs-settings-before.el.")
 
+(defvar share-dir
+	(expand-file-name "share/" user-emacs-directory)
+	"Path to directory with shared resources.
+This variable should be changed in private-emacs-settings-before.el.")
 
 ;;==========================================================
 ;;      PRIVATE SETTINGS: USER INFO (outside .emacs.d)
