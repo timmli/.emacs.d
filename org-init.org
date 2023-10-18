@@ -2381,6 +2381,34 @@ Use a less intrusive export interface:
 
 Note that the last export command on the current buffer can be reused with =C-u C-c C-e=. 
 
+**** Clipboard
+
+Usually, when copying parts of an Org file to the system clipboard (i.e. with =kill-ring-save=) and inserting it in another application, the formatting (bold face, links, lists, code blocks, ...) is not preserved, but the bare Org markup is shown. To preserve the formatting, the Org markup has to be exported to HTML first, and then copied to the clipboard. 
+
+For this, I'm adapting the solution proposed by [[https://kitchingroup.cheme.cmu.edu/blog/2016/06/16/Copy-formatted-org-mode-text-from-Emacs-to-other-applications/][John Kitchin]] for macOS. See also his short presentation on Youtube: https://www.youtube.com/watch?v=irkmQnggVpE
+
+#+BEGIN_SRC emacs-lisp
+(defun org-copy-formatted-text-to-clipboard ()
+  "Export region to HTML, and copy it to the clipboard."
+  (interactive)
+  (save-window-excursion
+    (let* ((buf (org-export-to-buffer 'html "*Formatted Copy*" nil nil t t))
+           (html (with-current-buffer buf (buffer-string))))
+      (with-current-buffer buf
+        (shell-command-on-region
+         (point-min)
+         (point-max)
+				 ;; Command on macOS
+         ;; "textutil -stdin -format html -convert rtf -stdout | pbcopy"
+				 ;; Command on Linux
+				 "xclip -verbose -selection clipboard -t text/html"
+				 ))
+      (kill-buffer buf))))
+(global-set-key (kbd "s-w") 'org-copy-formatted-text-to-clipboard)
+#+END_SRC 
+
+Note that =xclip= will wait (and Emacs will be stuck) until the copied content is pasted!
+
 **** ox-hugo
 
 https://ox-hugo.scripter.co/
