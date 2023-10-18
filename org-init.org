@@ -61,6 +61,7 @@
       - [[#line-actions][Line actions]]
       - [[#capitalization][Capitalization]]
       - [[#special-characters][Special characters]]
+      - [[#speech-to-text][Speech to text]]
       - [[#thesauri][Thesauri]]
       - [[#translation][Translation]]
       - [[#printing][Printing]]
@@ -2387,7 +2388,7 @@ Usually, when copying parts of an Org file to the system clipboard (i.e. with =k
 
 For this, I'm adapting the solution proposed by [[https://kitchingroup.cheme.cmu.edu/blog/2016/06/16/Copy-formatted-org-mode-text-from-Emacs-to-other-applications/][John Kitchin]] for macOS. See also his short presentation on Youtube: https://www.youtube.com/watch?v=irkmQnggVpE
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (defun org-copy-formatted-text-to-clipboard ()
   "Export region to HTML, and copy it to the clipboard."
   (interactive)
@@ -2407,7 +2408,19 @@ For this, I'm adapting the solution proposed by [[https://kitchingroup.cheme.cmu
 (global-set-key (kbd "s-w") 'org-copy-formatted-text-to-clipboard)
 #+END_SRC 
 
-Note that =xclip= will wait (and Emacs will be stuck) until the copied content is pasted!
+Note that =xclip= will wait (and Emacs will be stuck) until the copied content is pasted! I'm therefore using [[ox-clip]] instead, which is a little heavier.
+
+***** ox-clip
+
+https://github.com/jkitchin/ox-clip
+
+Copy selected regions in Org buffers as formatted text to the clipboard. With =ox-clip-image-to-clipboard=, this also includes attached image files or LaTeX formulas which are first converted to images.  
+
+#+BEGIN_SRC emacs-lisp
+(use-package ox-clip
+	:ensure t)
+(global-set-key (kbd "s-w") 'ox-clip-formatted-copy)
+#+END_SRC
 
 **** ox-hugo
 
@@ -2433,6 +2446,20 @@ Export to Hugo-compatible markdown.
 Only use actual width of image when not specified with =#+ATTR* :width= (requires imagemagick)
 #+BEGIN_SRC emacs-lisp
 (setq org-image-actual-width nil)
+#+END_SRC
+
+*** Import
+
+**** Clipboard
+
+When inserting formatted content from the clipboard, this is first converted to appropriate Org markup:
+
+#+BEGIN_SRC emacs-lisp
+(defun org-insert-formatted-text-from-clipboard ()
+	"Insert formatted clipboard content with Org markup." 
+	(interactive)
+	(shell-command "xclip -o -t text/html | pandoc -f html -t org -" '(4)))
+(global-set-key (kbd "s-y") 'org-insert-formatted-text-from-clipboard)
 #+END_SRC
 
 *** LaTeX support
