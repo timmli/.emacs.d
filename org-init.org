@@ -9159,7 +9159,7 @@ Additional syntax checking programs for the [[https://www.flycheck.org/en/latest
 	:ensure t
 	:config
 	(global-flycheck-mode t)
-	(add-hook 'text-mode-hook #'(lambda ()(flycheck-mode 0)))
+	(add-hook 'text-mode-hook #'(lambda ()(flycheck-mode 0)))  ; See flycheck-vale
 	)
 #+end_src
 
@@ -9176,12 +9176,16 @@ Flycheck support of [[PlantUML]] code.
   :config (flycheck-plantuml-setup))
 #+END_SRC
 
-*** flycheck-vale
+*** COMMENT flycheck-vale
 
 https://github.com/abingham/flycheck-vale
 
 Flycheck integration for [[https://github.com/errata-ai/vale][vale]], a natural language linter.
 =flycheck-vale= currently supports =text-mode=, =markdown-mode=, =rst-mode=, and =org-mode=.
+
+Issues
+- [ ] Is not maintained any more.
+- [ ] Throws the following error message when checking a buffer: Error while checking syntax automatically: (wrong-type-argument stringp nil)
 
 #+BEGIN_SRC emacs-lisp
 (use-package flycheck-vale
@@ -13880,24 +13884,24 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 ** hydra-flycheck
 
 #+BEGIN_SRC emacs-lisp
-		;; inspired by https://github.com/abo-abo/hydra/wiki/Flycheck
-		(defhydra hydra-flycheck
-			(:pre (progn (setq hydra-lv t) (flycheck-mode +1) (flycheck-list-errors))
-						:post (progn (setq hydra-lv nil) (quit-windows-on "*Flycheck errors*"))
-						:hint nil)
-"
+;; inspired by https://github.com/abo-abo/hydra/wiki/Flycheck
+(defhydra hydra-flycheck
+  (:pre (flycheck-list-errors)
+				:post (quit-windows-on "*Flycheck errors*")
+				:hint nil)
+	"
   Errors
 ╭────────╯
 "
-			("f"  flycheck-error-list-set-filter                            "Filter")
-			("j"  flycheck-next-error                                       nil)
-			("<down>"  flycheck-next-error                                       "Next")
-			("k"  flycheck-previous-error                                   nil)
-			("<up>"  flycheck-previous-error                                   "Previous")
-			("[" flycheck-first-error                                      "First")
-			("]"  (progn (goto-char (point-max)) (flycheck-previous-error)) "Last")
-			("Q"  (flycheck-mode -1) "Quit flycheck-mode") 
-			("q"  nil))
+	("f" flycheck-error-list-set-filter "Filter")
+	("j" flycheck-next-error nil)
+	("<down>" flycheck-next-error "Next")
+	("k" flycheck-previous-error nil)
+	("<up>" flycheck-previous-error "Previous")
+	("[" flycheck-first-error "First")
+	("]" (progn (goto-char (point-max)) (flycheck-previous-error)) "Last")
+	("Q" (flycheck-mode -1) "Quit flycheck-mode") 
+	("q"  nil))
 #+END_SRC
 
 ** hydra-flyspell
