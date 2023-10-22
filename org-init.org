@@ -11567,26 +11567,82 @@ Some tweaks of the built-in Eshell.
 (global-set-key (kbd "<f7> e") 'tl/eshell)
  #+END_SRC
 
-** TODO External terminal
-:LOGBOOK:
-- State "TODO"       from              [2020-06-06 Sa 11:11]
-:END:
-
-- [ ] currently only works for xfce
+** External terminal
 
 Function to open external terminal at point.
-
 See discussion [[https://emacs.stackexchange.com/a/7652/12336][here]].
 
 #+BEGIN_SRC emacs-lisp
 (defun open-external-terminal-here ()
   (interactive "@")
-  (shell-command (concat "xfce4-terminal --working-directory="
-												 (file-name-directory
-													(if (string-equal (buffer-mode) "dired-mode")
-															(dired-current-directory)
-														(or load-file-name buffer-file-name))) 
-												 " > /dev/null 2>&1 & disown") nil nil))
+	(let ((terminal-path (file-name-directory
+												(if (string-equal (buffer-mode) "dired-mode")
+														(dired-current-directory)
+													(or load-file-name
+															buffer-file-name
+															""))))
+				(terminal-command-prefix (first (open-external-terminal-here--terminal-command)))
+				(terminal-command-postfix (second (open-external-terminal-here--terminal-command))))
+		(shell-command (concat terminal-command-prefix
+													 terminal-path
+													 terminal-command-postfix) nil nil)))
+#+END_SRC
+
+
+#+BEGIN_SRC emacs-lisp
+(defun open-external-terminal-here--desktop-environment ()
+	"Return the desktop environment as string.
+Taken from: https://emacs.stackexchange.com/a/52585/12336"
+  (interactive)
+  (let (
+				;; Create new variable with DE name
+				(de_env (getenv "XDG_CURRENT_DESKTOP"))
+				;; Make sure search is case insensitiveopen-external-terminal-here
+				(case-fold-search t))
+    (cond ((eq system-type 'darwin)
+					 "darwin")
+					((memq system-type '(windows-nt ms-dos cygwin))
+					 "windows")
+					((string-match ".*kde.*" de_env)
+					 "kde")
+					((string-match ".*gnome.*" de_env)
+					 "gnome")
+					((string-match ".*unity.*" de_env)
+					 "unity")
+					((string-match ".*xfce.*" de_env)
+					 "xfce")
+					((string-match ".*lxde.*" de_env)
+					 "lxde")
+					((string-match ".*mate.*" de_env)
+					 "mate")
+					((string-match ".*cinnamon.*" de_env)
+					 "cinnamon")
+					(t "unknown"))))
+#+END_SRC
+
+#+BEGIN_SRC emacs-lisp
+(defun open-external-terminal-here--terminal-command ()
+	"Return the prefix and postfix of the terminal command depending on the desktop environment as pair of strings."
+  (alist-get (open-external-terminal-here--desktop-environment)
+         '(("darwin" . ("open -a Terminal.app" ""))
+           ("windows" . ("cmd.exe /C start cmd.exe" ""))
+           ("kde" . ("konsole --workdir " " > /dev/null 2>&1 & disown"))
+           ("gnome" . ("gnome-terminal --working-directory=" " > /dev/null 2>&1 & disown"))
+           ("xfce" . ("xfce4-terminal --working-directory=" " > /dev/null 2>&1 & disown")))
+					 '("x-terminal-emulator --working-directory=" " > /dev/null 2>&1 & disown") nil 'equal))
+#+END_SRC
+
+*** COMMENT terminal-here
+
+https://github.com/davidshepherd7/terminal-here
+
+Open an external terminal at the path of the current buffer.
+This package is an alternative to =open-external-terminal-here.=
+
+#+BEGIN_SRC emacs-lisp
+(use-package terminal-here
+	:ensure t
+	:pin MELPA)
 #+END_SRC
 
 ** vterm
