@@ -1946,10 +1946,11 @@ Change font faces:
 (set-face-attribute 'org-agenda-clocking nil :inherit 'unspecified)
 
 ;; Make scheduled items more visible
-(set-face-attribute 'org-scheduled-today nil :foreground
+(with-eval-after-load 'org
+	(set-face-attribute 'org-scheduled-today nil :foreground
 											(face-attribute 'org-scheduled :foreground))
-(set-face-attribute 'org-scheduled-previously nil :foreground
-											(face-attribute 'org-scheduled :foreground))
+	(set-face-attribute 'org-scheduled-previously nil :foreground
+											(face-attribute 'org-scheduled :foreground)))
 
 ;;;; Does not work, because `org-agenda-date-today' does not seem to be available when org-agenda-mode-hook is executed:
 ;; (defun tl/org-agenda-style ()
