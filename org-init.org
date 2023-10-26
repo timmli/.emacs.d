@@ -1941,25 +1941,27 @@ Enable log mode in order to display done and clocked items:
 Change font faces:
 - [ ] =org-agenda-date= and =org-agenda-date-weekend= should depend on  =org-agenda-date-today=. Hard coding of colors should be avoided.
 #+BEGIN_SRC emacs-lisp
-(set-face-attribute 'org-agenda-date nil :foreground "#66d9ef")
-(set-face-attribute 'org-agenda-date-weekend nil :foreground "#66d9ef")
-(set-face-attribute 'org-agenda-clocking nil :inherit 'unspecified)
+(defun tl/org-agenda-style ()
+	(set-face-attribute 'org-agenda-clocking nil :inherit 'unspecified)
 
-;; Make scheduled items more visible
-(with-eval-after-load 'org
+	;; Make scheduled items more visible
+	;; Note that using `eval-after-load' with org instead does not work. 
 	(set-face-attribute 'org-scheduled-today nil :foreground
 											(face-attribute 'org-scheduled :foreground))
 	(set-face-attribute 'org-scheduled-previously nil :foreground
-											(face-attribute 'org-scheduled :foreground)))
+											(face-attribute 'org-scheduled :foreground))
 
-;;;; Does not work, because `org-agenda-date-today' does not seem to be available when org-agenda-mode-hook is executed:
-;; (defun tl/org-agenda-style ()
-;; 	(set-face-attribute 'org-agenda-date nil :foreground
-;; 											(face-attribute 'org-agenda-date-today :foreground))
-;; 	(set-face-attribute 'org-agenda-date-weekend nil :foreground
-;; 											(face-attribute 'org-agenda-date-today :foreground))
-;; 	(set-face-attribute 'org-agenda-clocking nil :inherit unspecified))
-;; (add-hook 'org-agenda-mode-hook 'tl/org-agenda-style)
+  ;;;; Does not work, because `org-agenda-date-today' does not seem to be available when org-agenda-mode-hook is executed:
+	;; 	(set-face-attribute 'org-agenda-date nil :foreground
+	;; 											(face-attribute 'org-agenda-date-today :foreground))
+	;; 	(set-face-attribute 'org-agenda-date-weekend nil :foreground
+	;; 											(face-attribute 'org-agenda-date-today :foreground))
+	;; 	(set-face-attribute 'org-agenda-clocking nil :inherit unspecified)
+(set-face-attribute 'org-agenda-date nil :foreground "#66d9ef")
+(set-face-attribute 'org-agenda-date-weekend nil :foreground "#66d9ef")
+
+	)
+(add-hook 'org-agenda-mode-hook 'tl/org-agenda-style)
 #+END_SRC
 
 **** Show clocked time per day
