@@ -2411,7 +2411,7 @@ For this, I'm adapting the solution proposed by [[https://kitchingroup.cheme.cmu
 				 "xclip -verbose -selection clipboard -t text/html"
 				 ))
       (kill-buffer buf))))
-(global-set-key (kbd "s-w") 'org-copy-formatted-text-to-clipboard)
+(define-key org-mode-map (kbd "s-w") 'org-copy-formatted-text-to-clipboard)
 #+END_SRC 
 
 Note that =xclip= will wait (and Emacs will be stuck) until the copied content is pasted! I'm therefore using [[ox-clip]] instead, which is a little heavier.
@@ -2425,7 +2425,7 @@ Copy selected regions in Org buffers as formatted text to the clipboard. With =o
 #+BEGIN_SRC emacs-lisp
 (use-package ox-clip
 	:ensure t)
-(global-set-key (kbd "s-w") 'ox-clip-formatted-copy)
+(define-key org-mode-map (kbd "s-w") 'ox-clip-formatted-copy)
 #+END_SRC
 
 **** ox-hugo
@@ -2465,7 +2465,7 @@ When inserting formatted content from the clipboard, this is first converted to 
 	"Insert formatted clipboard content with Org markup." 
 	(interactive)
 	(shell-command "xclip -o -t text/html | pandoc -f html -t org -" '(4)))
-(global-set-key (kbd "s-y") 'org-insert-formatted-text-from-clipboard)
+(define-key org-mode-map (kbd "s-y") 'org-insert-formatted-text-from-clipboard)
 #+END_SRC
 
 *** LaTeX support
@@ -7828,6 +7828,33 @@ Paste images from clipboard:
 			)))
 #+END_SRC
 
+When inserting formatted content from the clipboard, this is first converted to appropriate Markdown markup:
+
+#+BEGIN_SRC emacs-lisp
+(defun message-insert-formatted-text-from-clipboard ()
+	"Insert formatted clipboard content with Org markup." 
+	(interactive)
+	(shell-command "xclip -o -t text/html | pandoc -f html -t gfm-raw_html -" '(4)))
+(define-key mu4e-compose-mode-map (kbd "s-y") 'message-insert-formatted-text-from-clipboard)
+#+END_SRC
+
+Copy as formatted text to the clipboard:
+
+ #+BEGIN_SRC emacs-lisp :tangle no
+(defun markdown-copy-formatted-text-to-clipboard ()
+  "Export region to HTML, and copy it to the clipboard."
+  (interactive)
+	(if (use-region-p)
+			(shell-command-on-region
+			 (region-beginning)
+			 (region-end)
+			 "pandoc -t html -f gfm-raw_html - | xclip -verbose -selection clipboard -t text/html"
+			 )))
+(define-key mu4e-compose-mode-map (kbd "s-w") 'markdown-copy-formatted-text-to-clipboard)
+#+END_SRC 
+
+Note that =xclip= will wait (and Emacs will be stuck) until the copied content is pasted! 
+
 In mu4e, line breaks are handled in a way that is very unusual when coming from, e.g., Thunderbird. Namely, line breaks are *ignored* if they are preceded by trailing whitespace, which may lead to an unexpected paragraph structure in the sent message. (This is probably an effect of using format=flowed above.) In order to preserve the line breaks that one intentionally makes when writing the message, the following code therefore adds =delete-trailing-whitespace= to =message-send-hook=: 
 
 #+BEGIN_SRC emacs-lisp
@@ -11593,7 +11620,6 @@ See discussion [[https://emacs.stackexchange.com/a/7652/12336][here]].
 													 terminal-path
 													 terminal-command-postfix) nil nil)))
 #+END_SRC
-
 
 #+BEGIN_SRC emacs-lisp
 (defun open-external-terminal-here--desktop-environment ()
