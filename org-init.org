@@ -2474,6 +2474,32 @@ Only use actual width of image when not specified with =#+ATTR* :width= (require
 (setq org-image-actual-width nil)
 #+END_SRC
 
+Set background color of images to white.
+Taken from https://emacs.stackexchange.com/a/37927/12336
+#+BEGIN_SRC emacs-lisp
+(defcustom org-inline-image-background nil
+	"The color used as the default background for inline images.
+When nil, use the default face background."
+	:group 'org
+	:type '(choice color (const nil)))
+
+(defun create-image-with-background-color (args)
+  "Specify background color of Org-mode inline image through modify `ARGS'."
+  (let* ((file (car args))
+         (type (cadr args))
+         (data-p (caddr args))
+         (props (cdddr args)))
+    ;; Get this return result style from `create-image'.
+    (append (list file type data-p)
+            (list :background (or org-inline-image-background (face-background 'default)))
+            props)))
+
+(advice-add 'create-image :filter-args
+            #'create-image-with-background-color)
+
+(setq org-inline-image-background "white")
+#+END_SRC
+
 *** Import
 
 **** Clipboard
