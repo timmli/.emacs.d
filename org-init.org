@@ -2497,7 +2497,8 @@ When nil, use the default face background."
 (advice-add 'create-image :filter-args
             #'create-image-with-background-color)
 
-(setq org-inline-image-background "white")
+(require 'mode-local)
+(setq-mode-local org-mode org-inline-image-background "white")
 #+END_SRC
 
 *** Import
