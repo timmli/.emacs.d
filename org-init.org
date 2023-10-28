@@ -3312,7 +3312,10 @@ Here's my own version, which uses =org-table-wrap-region=. This was superseded b
   )
 #+END_SRC
 
-*** COMMENT org-appear
+*** TODO org-appear
+:LOGBOOK:
+- State "TODO"       from              [2023-10-28 Sat 11:33]
+:END:
 
 https://github.com/awth13/org-appear
 
@@ -3320,6 +3323,7 @@ Automatically toggle visibility of emphasis markers and links under point.
 
 Issues
 - [ ] Links not shown with Org v9.6.1: https://github.com/awth13/org-appear/issues/46
+      - Seems to be connected to =org-fold-core-style= being set to ='overlays=: https://github.com/awth13/org-appear/issues/53
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-appear
