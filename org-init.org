@@ -97,8 +97,9 @@
       - [[#eshell][eshell]]
       - [[#external-terminal][External terminal]]
       - [[#vterm][vterm]]
-- [[#encryption][Encryption]]
-      - [[#gnupg][GnuPG]]
+- [[#data-security][Data security]]
+      - [[#gnupg--easypg][GnuPG / EasyPG]]
+      - [[#authinfo][authinfo]]
 - [[#system-management][System management]]
       - [[#proced][proced]]
       - [[#helm-system-packages][helm-system-packages]]
@@ -7845,12 +7846,6 @@ Taken from https://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired.
 (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
 #+END_SRC
 
-Signing and encryption is done using [[https://www.gnu.org/software/emacs/manual/html_mono/emacs-mime.html][emacs-mime]], and can be selected in the attachment menu: https://www.djcbsoftware.nl/code/mu/mu4e/Signing-and-encrypting.html
-
-#+BEGIN_SRC emacs-lisp
-(setq  mm-sign-option 'guided)
-#+END_SRC
-
 Paste images from clipboard:
 
 #+BEGIN_SRC emacs-lisp
@@ -7972,6 +7967,37 @@ Check whether the message has a subject:
 (add-hook 'message-send-hook
           'tl/mu4e-check-empty-subject)
 #+END_SRC
+
+***** Signing and encryption
+
+Signing and encryption (vice versa verification and decryption) is done using [[https://www.gnu.org/software/emacs/manual/html_mono/emacs-mime.html][emacs-mime]], and can therefore be selected in the attachment menu
+
+Documentation:   
+- https://www.djcbsoftware.nl/code/mu/mu4e/Signing-and-encrypting.html
+- https://www.gnu.org/software/emacs/manual/html_node/message/Using-S_002fMIME.html
+
+Global settings:
+#+BEGIN_SRC emacs-lisp
+(setq mml-smime-use 'epg  							; Use EasyPG (epg), i.e. GnuPG, when handling S/MIME.
+			mm-sign-option 'guided						; With 'guided, the key can be chosen in a menu.
+			mm-verify-option 'always					; Alwyays verify digital signatures. 
+			gnus-buttonized-mime-types '("multipart/signed") ; Required by 'mm-verify-option' being set to 'always.
+			)
+#+END_SRC
+
+Account-local settings:
+#+BEGIN_SRC emacs-lisp :tangle no
+(setq  mml-secure-smime-sign-with-sender t ; If t, use message sender to find an S/MIME key to sign with.
+			 mml-default-sign-method "smime"		 ; "smime" or "pgpmime"
+			 epg-user-id "123456789"						 ; GnuPG ID of your default identity when using PGP.
+			 smime-keys nil											 ; Map mail addresses to a PEM file containing Certificate (and private key).
+			 smime-CA-directory nil							 ; Directory containing certificates (in PEM format) for CAs you trust.
+			 smime-CA-file nil									 ; The same as `smime-CA-directory', but in one PEM file.  
+			 )
+#+END_SRC 
+
+Caveats:
+- Don't use inline PGP, but PGP/MIME: https://josefsson.org/inline-openpgp-considered-harmful.html
 
 ***** Send messages
 
@@ -11791,19 +11817,42 @@ fi' >> ~/.bashrc
 	(setq w32-quote-process-args t))
 #+END_SRC
 
-* Encryption
+* Data security
 
-** GnuPG
+** GnuPG / EasyPG
 
 https://www.masteringemacs.org/article/keeping-secrets-in-emacs-gnupg-auth-sources
 
-Emacs uses =epa-file= by default. Everything should be set up and running already. 
+[[https://www.gnu.org/software/emacs/manual/html_mono/epa.html][EasyPG Assistant (epa)]] is the Emacs assistant for interacting with GnuPG (i.e. OpenPGP, not S/MIME) that provides the following features: 
+- Key management.
+- Cryptographic operations on regions.
+- Cryptographic operations on files.
+- Dired integration.
+- Mail-mode integration. (Not recommended!)
+- Automatic encryption/decryption of *.gpg files.
 
 GnuPG keyrings can be used for encrypting a file by adding 
 #+BEGIN_EXAMPLE
 -*- epa-file-encrypt-to: ("your@email.address") -*-
 #+END_EXAMPLE 
 to the top.
+
+Caveat: EasyPG (epg) itself *does*  also handle S/MIME!
+
+Variables:
+#+BEGIN_SRC emacs-lisp :tangle no
+(setq epg-user-id "123456789"						 ; GnuPG ID of your default identity.
+			)
+#+END_SRC
+
+** authinfo
+
+Authinfo is basically a list of (hopefully encrypted) files that store user names and passwords.
+
+Documentation
+- https://www.gnu.org/software/emacs/manual/html_node/smtpmail/Authentication.html
+- https://www.emacswiki.org/emacs/GnusAuthinfo
+- https://www.gnu.org/software/emacs/manual/html_mono/auth.html
 
 Look for authinfo file in =authinfo-directory=:
 #+BEGIN_SRC emacs-lisp
