@@ -7531,7 +7531,6 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
 (set-face-attribute 'mu4e-forwarded-face nil :inherit 'mu4e-header-value-face)
 (set-face-attribute 'mu4e-related-face nil :inherit 'font-lock-comment-face)
 
-
 ;; Columns shown 
 (setq mu4e-headers-fields '(
                             (:human-date    . 12)
@@ -7540,6 +7539,29 @@ Here is an example (taken from https://www.djcbsoftware.nl/code/mu/mu4e/Contexts
                             (:from          . 22)
 														(:to            . 22)
                             (:subject       . nil)))
+#+END_SRC
+
+Visible flags are listed in =mu4e-headers-visible-flags=. Only a small subset of flags is needed since the other ones are redundant: 
+#+BEGIN_SRC emacs-lisp
+(setq mu4e-headers-visible-flags '(flagged attach encrypted list calendar))
+#+END_SRC
+
+Flag symbols can be easily changed. Let's try something fancier, as proposed in =mu4e-headers.el=:
+#+BEGIN_SRC emacs-lisp
+(setq mu4e-headers-draft-mark     '("D" . "💈")
+			mu4e-headers-flagged-mark   '("F" . "📍")
+			mu4e-headers-new-mark       '("N" . "🔥")
+			mu4e-headers-passed-mark    '("P" . "❯")
+			mu4e-headers-replied-mark   '("R" . "❮")
+			mu4e-headers-seen-mark      '("S" . "☑")
+			mu4e-headers-trashed-mark   '("T" . "💀")
+			mu4e-headers-attach-mark    '("a" . "📎")
+			mu4e-headers-encrypted-mark '("x" . "🔒")
+			mu4e-headers-signed-mark    '("s" . "🔑")
+			mu4e-headers-unread-mark    '("u" . "⎕")
+			mu4e-headers-list-mark      '("l" . "🔈")
+			mu4e-headers-personal-mark  '("p" . "👨")
+			mu4e-headers-calendar-mark  '("c" . "📅"))
 #+END_SRC
 
 ***** View messages
@@ -7999,6 +8021,9 @@ Account-local settings:
 Caveats:
 - Don't use inline PGP, but PGP/MIME: https://josefsson.org/inline-openpgp-considered-harmful.html
 
+Support of DKIM
+- Show status as header field using =opendkim= (pretty slow): https://github.com/djcb/mu/issues/2348
+
 ***** Send messages
 
 #+BEGIN_SRC emacs-lisp
@@ -8137,7 +8162,7 @@ Example image:
 https://raw.githubusercontent.com/iqbalansari/mu4e-alert/master/screenshots/mu4e-alert-in-action.png
 
 Issues:
-- [ ] With mu4e v 1.8.11: Symbol’s value as variable is void: mu4e~context-current
+- [ ] With mu4e v1.8.11: Symbol’s value as variable is void: mu4e~context-current
 
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e-alert
