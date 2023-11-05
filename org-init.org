@@ -6401,14 +6401,15 @@ Insert TOC in a markdown file.
 
 *** PlantUML
 
-Depends on plantuml.jar and Gaphviz (http://www.graphviz.org).
+Depends on [[https://plantuml.com][PlantUML]] and [[http://www.graphviz.org][Gaphviz]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package plantuml-mode
   :ensure t
   :mode ("\\.plu\\'" "\\.puml\\'") 
   :init
-	(setq org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
+	(setq org-plantuml-exec-mode 'plantuml
+				org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar") 
 	(when (eq system-type 'windows-nt)
 		(setq org-plantuml-jar-path
 					(expand-file-name "C:/ProgramData/chocolatey/lib/plantuml/tools/plantuml.jar"))
