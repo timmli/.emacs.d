@@ -56,6 +56,7 @@
       - [[#lorem-ipsum--blindtext][Lorem ipsum / Blindtext]]
       - [[#undo--remove][Undo & remove]]
       - [[#save-kill--yank][Save, kill & yank]]
+      - [[#search--replace][Search & replace]]
       - [[#narrowing][Narrowing]]
       - [[#commenting][Commenting]]
       - [[#line-actions][Line actions]]
@@ -1964,6 +1965,14 @@ Change font faces:
 	)
 (add-hook 'org-agenda-mode-hook 'tl/org-agenda-style)
 #+END_SRC
+
+**** Gantt
+
+***** elgantt
+
+https://github.com/legalnonsense/elgantt
+
+Creates a Gantt calendar from your org(-agenda) files.
 
 **** Show clocked time per day
 
@@ -10345,6 +10354,34 @@ Delete consecutive white space characters in one go.
 https://github.com/leoliu/easy-kill
 https://emacsredux.com/blog/2018/11/09/an-easy-kill/
 
+** Search & replace
+
+*** visual-regexp
+
+https://github.com/benma/visual-regexp.el
+
+Like =replace-regexp=, but with live visual feedback directly in the buffer.
+
+#+BEGIN_SRC emacs-lisp
+(use-package visual-regexp
+	:ensure t
+	:config
+	(define-key global-map (kbd "C-c r") 'vr/replace)
+	(define-key global-map (kbd "C-c q") 'vr/query-replace))
+#+END_SRC
+
+*** visual-regexp-steroids
+
+https://github.com/benma/visual-regexp-steroids.el/
+
+This is an extension to [[visual-regexp]] for using more standard (i.e. Python) regular expressions.
+There is also an interface to [[multiple-cursors]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package visual-regexp-steroids
+	:ensure t)
+#+END_SRC
+
 ** Narrowing
 
 Taken from http://endlessparentheses.com/emacs-narrow-or-widen-dwim.html:
@@ -14975,11 +15012,11 @@ Key bindings roughly following the conventions of the Windows habitat.
 
 						;; search and replace
 						(define-key map (kbd "C-f") #'(lambda () 
-																					 (interactive)
-																					 (if (string= (buffer-mode) "pdf-view-mode")
-																							 ;; helm-swoop does not work here
-																							 (call-interactively 'pdf-occur) ; `call-interactively' is needed by occur
-																						 (helm-swoop))))
+																						(interactive)
+																						(if (string= (buffer-mode) "pdf-view-mode")
+																								;; helm-swoop does not work here
+																								(call-interactively 'pdf-occur) ; `call-interactively' is needed by occur
+																							(helm-swoop))))
 						;; (define-key map (kbd "C-S-f a") 'helm-multi-swoop-all)
 						;; (define-key map (kbd "C-S-f m") 'helm-multi-swoop-current-mode)
 						;; (define-key map (kbd "C-f") 'swiper-helm)
@@ -14989,8 +15026,8 @@ Key bindings roughly following the conventions of the Windows habitat.
 						;; (define-key map (kbd "C-S-f C-s") 'isearch-forward)
 						;; (define-key map (kbd "C-S-f r") 'isearch-backward)
 						;; (define-key map (kbd "C-S-f C-r") 'isearch-backward)
-						(define-key map (kbd "C-r") 'query-replace)
-						(define-key map (kbd "C-S-r") 'query-replace-regexp)
+						(define-key map (kbd "C-r") 'vr/replace)
+						(define-key map (kbd "C-S-r") 'vr/query-replace)
 						(define-key map (kbd "C-o") 'helm-find-files)
 
 						;; mark all
