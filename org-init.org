@@ -8068,27 +8068,57 @@ Support of DKIM
 
 There is a built-in search, but I prefer [[helm-mu]], which allows for incremental search of mails and contacts.
 
-More Bookmarks:
+****** Bookmarks
+
+Queries can be stored as bookmarks: https://www.djcbsoftware.nl/code/mu/mu4e/Bookmarks.html
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'mu4e-bookmarks
-  '( :name "Flagged"
-     :key  ?f
-     :query "flag:flagged"))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'mu4e-bookmarks
-  '( :name "With calendar invitation"
-     :key  ?c
-     :query "flag:calendar"))
-#+END_SRC
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'mu4e-bookmarks
-  '( :name "With attachment"
-     :key  ?a
-     :query "flag:attach"))
+(setq mu4e-bookmarks
+			`((:name "With attachment"
+							 :key ?a
+							 :query ,(concat helm-mu-default-search-string " flag:attach"))
+				(:name "With calendar invitation"
+							 :key ?c
+							 :query ,(concat helm-mu-default-search-string " flag:calendar"))
+				(:name "With images"
+							 :query ,(concat helm-mu-default-search-string " mime:image/*")
+							 :key ?i)
+				(:name "Flagged"
+							 :key ?f
+							 :query ,(concat helm-mu-default-search-string " flag:flagged"))
+				(:name "Unread messages"
+							 :query ,(concat helm-mu-default-search-string " flag:unread AND NOT flag:trashed")
+							 :key ?u)
+				(:name "Today's messages"
+							 :query ,(concat helm-mu-default-search-string " date:today..now")
+							 :key ?t)
+				(:name "Last 7 days"
+							 :query ,(concat helm-mu-default-search-string " date:7d..now")
+							 :hide-unread t
+							 :key ?w)
+				(:name "[Global] With attachment"
+							 :key ?A
+							 :query "flag:attach")
+				(:name "[Global] With calendar invitation"
+							 :key ?C
+							 :query "flag:calendar")
+				(:name "[Global] Messages with images"
+							 :query "mime:image/*"
+							 :key ?I)
+				(:name "[Global] Flagged"
+							 :key ?F
+							 :query "flag:flagged")
+				(:name "[Global] Unread messages"
+							 :query "flag:unread AND NOT flag:trashed"
+							 :key ?U)
+				(:name "[Global] Today's messages"
+							 :query "date:today..now"
+							 :key ?T)
+				(:name "[Global] Last 7 days"
+							 :query "date:7d..now"
+							 :hide-unread t
+							 :key ?W)
+				)
 #+END_SRC
 
 ***** Export messages
