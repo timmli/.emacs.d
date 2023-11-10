@@ -8023,9 +8023,45 @@ Remove buttons like =[[S/MIME ...= from text bodies of cited messages:
 (add-function :around mu4e-compose-cite-function #'tv/mu4e-remove-buttons-in-reply)
 #+END_SRC
 
+****** COMMENT Org-msg
+
+https://github.com/jeremy-compostella/org-msg
+
+Mixing =org-mode= with =message-mode= and sending messages in HTML format. Yet, I actually do not like to send HTML mails, so I'm not using it.
+
+Dependencies
+- [[htmlize]]
+
+#+BEGIN_SRC emacs-lisp
+(setq mail-user-agent 'mu4e-user-agent) ; The `mail-user-agent' has to be specified beforehand.
+(use-package org-msg
+  :ensure t
+	:config
+	(setq org-msg-options "html-postamble:nil H:5 num:nil ^:{} toc:nil author:nil email:nil \\n:t"
+				org-msg-startup "hidestars indent inlineimages"
+				org-msg-greeting-fmt "\nHi%s,\n\n"
+				org-msg-recipient-names '(("jeremy.compostella@gmail.com" . "Jérémy"))
+				org-msg-greeting-name-limit 3
+				org-msg-default-alternatives '((new		. (text html))
+																			 (reply-to-html	. (text html))
+																			 (reply-to-text	. (text)))
+				org-msg-convert-citation t
+				org-msg-signature "
+
+ Regards,
+
+ ,#+begin_signature
+ --
+ ,*Jeremy*
+ /One Emacs to rule them all/
+ ,#+end_signature")
+	(org-msg-mode)
+	)
+#+END_SRC
+
 ***** Signing and encryption
 
-Signing and encryption (vice versa verification and decryption) is done using [[https://www.gnu.org/software/emacs/manual/html_mono/emacs-mime.html][emacs-mime]], and can therefore be selected in the attachment menu
+Signing and encryption (vice versa verification and decryption) is done using [[https://www.gnu.org/software/emacs/manual/html_mono/emacs-mime.html][emacs-mime]], and can therefore be selected in the attachment menu.
 
 Documentation:   
 - https://www.djcbsoftware.nl/code/mu/mu4e/Signing-and-encrypting.html
