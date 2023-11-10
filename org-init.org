@@ -8072,53 +8072,58 @@ There is a built-in search, but I prefer [[helm-mu]], which allows for increment
 
 Queries can be stored as bookmarks: https://www.djcbsoftware.nl/code/mu/mu4e/Bookmarks.html
 
+My bookmarks are narrowed to =helm-mu-default-search-string=, which makes it necessary to set the bookmarks every time  =mu4e-main-mode-hook= is called (and =helm-mu-default-search-string= is possibly changed).
+
 #+BEGIN_SRC emacs-lisp
-(setq mu4e-bookmarks
-			`((:name "With attachment"
-							 :key ?a
-							 :query ,(concat helm-mu-default-search-string " flag:attach"))
-				(:name "With calendar invitation"
-							 :key ?c
-							 :query ,(concat helm-mu-default-search-string " flag:calendar"))
-				(:name "With images"
-							 :query ,(concat helm-mu-default-search-string " mime:image/*")
-							 :key ?i)
-				(:name "Flagged"
-							 :key ?f
-							 :query ,(concat helm-mu-default-search-string " flag:flagged"))
-				(:name "Unread messages"
-							 :query ,(concat helm-mu-default-search-string " flag:unread AND NOT flag:trashed")
-							 :key ?u)
-				(:name "Today's messages"
-							 :query ,(concat helm-mu-default-search-string " date:today..now")
-							 :key ?t)
-				(:name "Last 7 days"
-							 :query ,(concat helm-mu-default-search-string " date:7d..now")
-							 :hide-unread t
-							 :key ?w)
-				(:name "[Global] With attachment"
-							 :key ?A
-							 :query "flag:attach")
-				(:name "[Global] With calendar invitation"
-							 :key ?C
-							 :query "flag:calendar")
-				(:name "[Global] Messages with images"
-							 :query "mime:image/*"
-							 :key ?I)
-				(:name "[Global] Flagged"
-							 :key ?F
-							 :query "flag:flagged")
-				(:name "[Global] Unread messages"
-							 :query "flag:unread AND NOT flag:trashed"
-							 :key ?U)
-				(:name "[Global] Today's messages"
-							 :query "date:today..now"
-							 :key ?T)
-				(:name "[Global] Last 7 days"
-							 :query "date:7d..now"
-							 :hide-unread t
-							 :key ?W)
-				)
+(add-hook 'mu4e-main-mode-hook
+					(lambda ()
+						(setq mu4e-bookmarks
+									`((:name "With attachment"
+													 :key ?a
+													 :query ,(concat helm-mu-default-search-string " flag:attach"))
+										(:name "With calendar invitation"
+													 :key ?c
+													 :query ,(concat helm-mu-default-search-string " flag:calendar"))
+										(:name "With images"
+													 :query ,(concat helm-mu-default-search-string " mime:image/*")
+													 :key ?i)
+										(:name "Flagged"
+													 :key ?f
+													 :query ,(concat helm-mu-default-search-string " flag:flagged"))
+										(:name "Unread messages"
+													 :query ,(concat helm-mu-default-search-string " flag:unread AND NOT flag:trashed")
+													 :key ?u)
+										(:name "Today's messages"
+													 :query ,(concat helm-mu-default-search-string " date:today..now")
+													 :key ?t)
+										(:name "Last 7 days"
+													 :query ,(concat helm-mu-default-search-string " date:7d..now")
+													 :hide-unread t
+													 :key ?w)
+										(:name "[Global] With attachment"
+													 :key ?A
+													 :query "flag:attach")
+										(:name "[Global] With calendar invitation"
+													 :key ?C
+													 :query "flag:calendar")
+										(:name "[Global] Messages with images"
+													 :query "mime:image/*"
+													 :key ?I)
+										(:name "[Global] Flagged"
+													 :key ?F
+													 :query "flag:flagged")
+										(:name "[Global] Unread messages"
+													 :query "flag:unread AND NOT flag:trashed"
+													 :key ?U)
+										(:name "[Global] Today's messages"
+													 :query "date:today..now"
+													 :key ?T)
+										(:name "[Global] Last 7 days"
+													 :query "date:7d..now"
+													 :hide-unread t
+													 :key ?W)
+										)
+									)))
 #+END_SRC
 
 ***** Export messages
