@@ -4559,48 +4559,52 @@ https://github.com/DamienCassou/khardel
 Uses [[https://github.com/lucc/khard][khard]] and [[https://github.com/pimutils/vdirsyncer][vdirsyncer]] to edit and sync local copies of CarDAV address books. 
 Also supports org-mode links to khard entries.
 
-**** bbdb
+**** BBDB
 
 http://savannah.nongnu.org/projects/bbdb/
 
 Built-in address book in Emacs. 
 
-***** bbdb-vcard
+Unfortunately, the current version of BBDB is lacking a decent manual. For an outdated manual, see: https://bbdb.sourceforge.net/bbdb.html 
 
 #+BEGIN_SRC emacs-lisp
 (use-package bbdb
 	:ensure t
 	:config
 	(progn
-		(bbdb-initialize)
+		(bbdb-initialize '(gnus message mu4e))
 		;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-gnus)
 		;; (add-hook 'gnus-startup-hook 'bbdb-insinuate-message)
 		;; (add-hook 'message-setup-hook 'bbdb-define-all-aliases)
 
-		(setq bbdb-file my-bbdb-file
-					bbdb-auto-revert t
-					bbdb-check-auto-save-file t
-					bbdb-expand-mail-aliases t
-					bbdb-phone-style nil
-					;; bbdb-pop-up-window-size 10
+		(setq bbdb-file my-bbdb-file 				; Addresses are stored in one file
+					bbdb-auto-revert t						; Revert DB when changing the bbdb-
+					bbdb-check-auto-save-file t		; Auto-save to bbdb-file
+					
+					bbdb-phone-style nil					; nanp = North American Numbering Plan
+					bbdb-complete-mail-allow-cycling t ; Cycle mail addresses when calling ‘bbdb-complete-mail’.
+					
+					;; Pop-up window
+					bbdb-pop-up-window-size 0.5		; Default split is 0.5
 					bbdb-pop-up-target-lines 1 ; The window should be as small as possible
-					bbdb-use-pop-up nil        ; Show pup-up?
+					bbdb-use-pop-up nil        ; Down't show pup-up
 
-																				;bbdb/news-auto-create-p t
-					bbdb-complete-name-allow-cycling t
-					bbdb-complete-mail-allow-cycling t
-					bbdb-complete-name-full-completion t
-					bbdb-completion-type 'primary-or-name
-																				;bbdb-use-pop-up nil
+					;; bbdb-complete-name-allow-cycling t ; Not documented
+					;; bbdb-complete-name-full-completion t ; Not documented
+					;; bbdb-completion-type 'primary-or-name ; Not documented
+					;; bbdb-offer-save 1  ; Not documented
+					;; bbdb-electric-p t	 ; Not documented
+					;; bbdb-expand-mail-aliases t		; Not documented
 
-					bbdb-offer-save 1  ; Always save
-					bbdb-electric-p t)
+					)
 		))
 #+END_SRC
 
+***** bbdb-vcard
+
 https://github.com/tohojo/bbdb-vcard
 
-Import and export vCards to/from bbdb.
+Import and export vCards to/from BBDB.
 
 #+BEGIN_SRC emacs-lisp
 (use-package bbdb-vcard
@@ -4612,13 +4616,19 @@ Import and export vCards to/from bbdb.
 
 https://github.com/emacs-helm/helm-bbdb
 
-A Helm interface to bbdb.
+A Helm Interface to BBDB.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-bbdb
   :ensure t)
   (global-set-key (kbd "<f7> a") 'helm-bbdb)
 #+END_SRC
+
+**** ebdb
+
+https://github.com/girzel/ebdb
+
+An object-orientied port of [[bbdb]]. 
 
 *** Built-in Calendar: general settings
 
