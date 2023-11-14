@@ -13455,17 +13455,17 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-roam (:color teal :hint nil)
 	"
-    ^^                                ^^                            ^^                          ╭──────────┐
-     ^Navigation between notes^        ^Actions inside note^         ^General actions^          │ org-roam │
-	╭─^^────────────────────────────────^^────────────────────────────^^──────────────────────────┴──────────╯
-     _b_ Backlinks                      _a+_ Add alias                 _g_ Show graph
-     _c_ Capture                        _a-_ Remove alias              _s_ Start UI server    
-     _d_ Dailies                         _i_ Insert link               _u_ Update db    
-     		 _<_ Previous day   				    _li_ Insert citation link           
-         _>_ Next day                	  _t+_ Add tag			             ^^                          _q_:uit   
-     _f_ Find note			 						    _t-_ Remove tag                      
-  	 _F_ Full-text search                _P_ Promote heading to file
-      ^^                                 _D_ Demote file to heading
+    ^^                              ^^                              ^^                          ╭──────────┐
+     ^Navigation between notes^       ^Actions inside note^          ^General actions^          │ org-roam │
+	╭─^^───────────────────────────────^^─────────────────────────────^^──────────────────────────┴──────────╯
+     _b_ Backlinks                    _a+_ Add alias                 _g_ Show graph
+     _c_ Capture                      _a-_ Remove alias              _s_ Start UI server    
+     _d_ Dailies                       _i_ Insert link               _u_ Update db    
+     		 _<_ Previous day   		      _li_ Insert citation link           
+         _>_ Next day              	  _t+_ Add tag			             ^^                          _q_:uit   
+     _f_ Find note			 				      _t-_ Remove tag                      
+  	 _F_ Full-text search              _P_ Promote heading to file
+      ^^                               _D_ Demote file to heading
 "
   ("q" nil)
 	("a+" org-roam-alias-add)
