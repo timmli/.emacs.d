@@ -12747,24 +12747,26 @@ Hydra for global org-mode keys:
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-bibtex (:color teal :hint nil)
 	"
-    ^^                        ^^                          ^^                          ╭────────┐
-    ^Field^                   ^Entry^                     ^File^                      │ bibtex │
-	╭─^^────────────────────────^^──────────────────────────^^──────────────────────────┴────────╯
-    _f_ New                   _+_ New...                  _s_ Sort entries
-    _k_ Kill                  _c_ Clean                   _h_ Open helm-bibtex
-    _o_ Remove OPT/ALT       _uc_ Clean & generate key    _O_ org-ref hydra...
-    _t_ Add timestamp         _w_ Kill                    _F_ File actions...
-    _y_ Yank                  _x_ Goto crossref           ^ ^
-    _?_ Help                  _i_ Import from DOI         ^ ^                          _q_ Quit
+    ^^                      ^^                           ^^                          ╭────────┐
+    ^Field^                 ^Entry^                      ^File^                      │ bibtex │
+	╭─^^──────────────────────^^───────────────────────────^^──────────────────────────┴────────╯
+    _f_ New                 _+_ New...                   _s_ Sort entries
+    _k_ Kill                _c_ Clean                    _h_ Open helm-bibtex
+    _o_ Remove OPT/ALT      _C_ Clean & generate key     _O_ org-ref hydra...
+    _t_ Add timestamp       _w_ Kill                     _F_ File actions...
+    _y_ Yank                _x_ Goto crossref            ^ ^
+    _?_ Help                _i_ Import from DOI          ^ ^
+    ^ ^                     _u_ Update                   ^ ^                          _q_ Quit
 "
 	("o" bibtex-remove-OPT-or-ALT)
 	("c" bibtex-clean-entry)
-	("uc" (bibtex-clean-entry '(4)))
+	("C" (bibtex-clean-entry '(4)))
 	("f"  bibtex-make-field)
 	("C-k"  bibtex-kill-field)
 	("k"  bibtex-kill-field)
 	("C-w"  bibtex-kill-entry)
 	("w"  bibtex-kill-entry)
+	("u"  bibtex-entry-update)
 	("y"  bibtex-yank)
 	("s"  bibtex-sort-buffer)
 	("t"  tl/bibtex-add-timestamp)
