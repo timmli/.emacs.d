@@ -495,7 +495,8 @@ Tutorial: https://ianyepan.github.io/posts/emacs-emojis/
   ;; :hook (after-init . global-emojify-mode)
   :config
 	(setq emojify-display-style 'unicode
-				emojify-emoji-styles '(unicode))
+				emojify-emoji-styles '(unicode)
+				emojify-company-tooltips-p t)
 	(global-set-key (kbd "C-c i e") 'emojify-insert-emoji)
 	)
 #+END_SRC
@@ -9233,6 +9234,20 @@ When =company= is actively used by browsing completion candidates, =<return>= sh
 (define-key company-active-map (kbd "RET") #'my-company-active-return)
 #+END_SRC
 
+**** company-emoji
+
+https://github.com/dunn/company-emoji
+
+[[company]] backend for emojis. 
+Recommended to be used with [[emacs-emojify]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package company-emoji
+	:ensure t
+	:config
+	(add-to-list 'company-backends 'company-emoji)) 
+#+END_SRC
+ 
 **** company-flx
 
 https://github.com/PythonNut/company-flx
