@@ -12634,7 +12634,8 @@ Hydra for opening a new buffer.
        [_o_] open externally    [_R_] R repl                [_gs_] magit status         [_q_]uit
        [_G_] guix
 	" 
-	("a" helm-bbdb :exit t)
+	("a" hydra-khardel/body :exit t)
+	;; ("a" helm-bbdb :exit t)
 	("c" (lambda ()
 				 (interactive)
 				 (if (get-buffer "*cfw-calendar*")
@@ -13934,6 +13935,18 @@ then a space, then the current time formatted with
 	("b" dumb-jump-back "definition (back)"))
 #+END_SRC
 
+** hydra-khardel
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-khardel (:hint nil :columns 3)
+	"Khardel – Frontend for Khard"
+	("i" khardel-insert-email "insert email address" :exit t)
+	("e" khardel-edit-contact "edit contact" :exit t)
+	("n" khardel-new-contact "new contact" :exit t)
+	("q" nil :color blue)
+	)
+#+END_SRC
+
 ** hydra-latex
 
 #+BEGIN_SRC emacs-lisp
@@ -14029,7 +14042,7 @@ A hydra for font selection with AUCTeX:
 	("q" nil :color blue)
 	)
 #+END_SRC
- 
+
 ** hydra-macro
 
 Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
