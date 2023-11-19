@@ -4577,7 +4577,10 @@ Also supports org-mode links to khard entries.
 
 #+BEGIN_SRC emacs-lisp
 (use-package khardel
-	:ensure t)
+	:ensure t
+	:config
+	(require 'khardel-org) 								; org links to khard contact edit buffers
+)
 #+END_SRC
 
 **** BBDB
