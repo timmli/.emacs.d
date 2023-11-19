@@ -3975,6 +3975,8 @@ See https://github.com/jkitchin/jmax/blob/master/org/org-show.org for more infor
 
 https://github.com/nobiot/org-transclusion
 
+Manual: https://nobiot.github.io/org-transclusion/
+
 Include content from one file into another by reference.
 
 #+BEGIN_SRC emacs-lisp
