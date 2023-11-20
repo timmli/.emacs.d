@@ -4583,6 +4583,24 @@ Also supports org-mode links to khard entries.
 )
 #+END_SRC
 
+Function to sync contacts using [[https://github.com/pimutils/vdirsyncer][vdirsyncer]]:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/vdirsyncer-sync-contacts ()
+	"Start vdirsyncer in a subprocess in order to sync contacts."
+	(interactive)
+	(let* ((command "vdirsyncer-sync-contacts.sh")
+				 (name "*vdirsyncer-sync*")
+				 (buffer (progn (when (get-buffer name)
+													(kill-buffer name))
+												(get-buffer-create name))))
+		(start-process-shell-command name buffer command)
+		(message "tl/vdirsyncer-sync-contacts: Syncing in progress, see buffer %s" name)
+		(display-buffer buffer)
+		()
+		))
+#+END_SRC
+
 **** BBDB
 
 http://savannah.nongnu.org/projects/bbdb/
@@ -13940,12 +13958,15 @@ then a space, then the current time formatted with
 
 ** hydra-khardel
 
+Hydra for [[khardel]].
+
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-khardel (:hint nil :columns 3)
 	"Khardel – Frontend for Khard"
 	("i" khardel-insert-email "insert email address" :exit t)
 	("e" khardel-edit-contact "edit contact" :exit t)
 	("n" khardel-new-contact "new contact" :exit t)
+	("s"  "new contact" :exit t)
 	("q" nil :color blue)
 	)
 #+END_SRC
