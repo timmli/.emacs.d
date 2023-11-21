@@ -4597,7 +4597,6 @@ Function to sync contacts using [[https://github.com/pimutils/vdirsyncer][vdirsy
 		(start-process-shell-command name buffer command)
 		(message "tl/vdirsyncer-sync-contacts: Syncing in progress, see buffer %s" name)
 		(display-buffer buffer)
-		()
 		))
 #+END_SRC
 
@@ -13966,7 +13965,7 @@ Hydra for [[khardel]].
 	("i" khardel-insert-email "insert email address" :exit t)
 	("e" khardel-edit-contact "edit contact" :exit t)
 	("n" khardel-new-contact "new contact" :exit t)
-	("s"  "new contact" :exit t)
+	("s" tl/vdirsyncer-sync-contacts "sync contacts" :exit t)
 	("q" nil :color blue)
 	)
 #+END_SRC
