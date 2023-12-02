@@ -59,6 +59,7 @@
       - [[#search--replace][Search & replace]]
       - [[#narrowing][Narrowing]]
       - [[#commenting][Commenting]]
+      - [[#quoting][Quoting]]
       - [[#line-actions][Line actions]]
       - [[#capitalization][Capitalization]]
       - [[#special-characters][Special characters]]
@@ -131,6 +132,7 @@
       - [[#hydra-insert-date][hydra-insert-date]]
       - [[#hydra-insert-file-name][hydra-insert-file-name]]
       - [[#hydra-jump][hydra-jump]]
+      - [[#hydra-khardel][hydra-khardel]]
       - [[#hydra-latex][hydra-latex]]
       - [[#hydra-macro][hydra-macro]]
       - [[#hydra-markdown][hydra-markdown]]
@@ -5235,6 +5237,24 @@ https://github.com/editorconfig/editorconfig-emacs
   :ensure t
   :config
   (editorconfig-mode 1))
+#+END_SRC
+
+*** Elisp
+
+**** Code styling & package writing
+
+Guides
+- https://github.com/bbatsov/emacs-lisp-style-guide
+- https://spin.atomicobject.com/2016/05/27/write-emacs-package/
+
+**** Last modified
+
+If the file keyword =;; Last modified:= is present within the first 20 lines, the following timestamp gets updated when saving the file:
+#+BEGIN_SRC emacs-lisp
+(add-hook 'emacs-lisp-mode-hook (lambda ()
+													 (set (make-local-variable 'time-stamp-pattern)
+																"20/^;; Last modified:[ \t]+%:y-%02m-%02d %3a %02H:%02M:%02S$")))  
+(add-hook 'before-save-hook 'time-stamp)
 #+END_SRC
 
 *** Gnuplot
