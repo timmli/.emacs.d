@@ -744,6 +744,7 @@ Creates an buffer called *Ilist* that is populated with the current buffer's ime
 ** helm
 
 https://github.com/emacs-helm/helm
+https://tuhdo.github.io/helm-intro.html
 
 Emacs framework for incremental completions and narrowing selections.
 
@@ -4685,6 +4686,20 @@ Issues
 	(require 'ebdb-gnus)
 	(require 'ebdb-message))
 #+END_SRC 
+
+**** helm-khard
+
+!!! WORK IN PROGRESS !!!
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-khard
+  :load-path "lisp/helm-khard.el")
+
+(use-package uuidgen
+	:ensure t
+	:pin MELPA
+)
+#+END_SRC
 
 *** Built-in Calendar: general settings
 
@@ -12654,7 +12669,8 @@ Hydra for opening a new buffer.
        [_o_] open externally    [_R_] R repl                [_gs_] magit status         [_q_]uit
        [_G_] guix
 	" 
-	("a" hydra-khardel/body :exit t)
+	("a" helm-khard :exit t)
+	;; ("a" hydra-khardel/body :exit t)
 	;; ("a" helm-bbdb :exit t)
 	("c" (lambda ()
 				 (interactive)
