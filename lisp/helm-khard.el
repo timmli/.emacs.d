@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-02 Sat 12:26:07
+;; Last modified: 2023-12-02 Sat 12:38:49
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -311,6 +311,8 @@ If nil, the buffer represents a new contact.")
 				 (buffer (generate-new-buffer (format "*helm-khard<%s>*" uid))))
 		(with-current-buffer buffer
 			(call-process "khard" nil t nil "show" uid)
+      (setq buffer-read-only t)
+      (local-set-key (kbd "q") 'kill-this-buffer)
 			(display-buffer buffer)
 			(goto-char (point-min)))))
 
