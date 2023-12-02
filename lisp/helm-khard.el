@@ -4,8 +4,10 @@
 
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
-;; Version: 2023-12-02
+;; Version: 0
+;; Last modified: 2023-12-02 Sat 11:57:28
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
+;; Keywords: helm
 
 ;; Permission is hereby granted, free of charge, to any person
 ;; obtaining a copy of this software and associated documentation
@@ -96,8 +98,7 @@
 																					(intern (concat ":" field)) ; Do not use make-symbol!!!
 																					(helm-khard--clean-up-complex-field (or field-value "")) ; Function must have its own save-match-data!
 																					))))
-									 helm-khard--contact)
-				 )))))
+									 helm-khard--contact))))))
 
 (defvar helm-khard--candidates nil
 	"List of string-plist pairs which represent the candidates used in `helm-khard'.")
@@ -154,22 +155,22 @@ column width is the remaining space."
 		(cl-loop
 		 for key in (plist-get-keys helm-khard-candidate-format)
 		 for column-length = (or (plist-get helm-khard-candidate-format key)
-														 (- (helm-khard--window-width) column-length-sum))
+														 ;; When value is nil, use the remaining space
+														 (if (> (helm-khard--window-width) column-length-sum)
+																 (- (helm-khard--window-width) column-length-sum)
+															 2))			; At least the space of two characters is needed
 		 for field-value  = (if (eq key :name)
 														(concat (plist-get contact :name)
-																		(when (not (string= (plist-get contact :organisations) ""))
-																			(concat "  (" (plist-get contact :organisations) ")")))
-													(plist-get contact key))
+																		(unless (string= (plist-get contact :organisations) "")
+																		  (concat "  (" (plist-get contact :organisations) ")")))
+		                      (plist-get contact key))
 		 for field-length = (length field-value)
-		 concat (string-pad
-						 (concat
-							(trim-string-to-length
-							 field-value
-							 (- column-length 2))
-							(when (> field-length (- column-length 2))
-								"…"))
-						 column-length
-						 ))))
+		 concat (string-pad (concat (trim-string-to-length
+																 field-value
+																 (- column-length 2))
+															  (when (> field-length (- column-length 2))
+																  "…"))
+											  column-length))))
 
 (defun helm-khard--make-candidates ()
 	"Populate `helm-khard--candidate'."
@@ -179,40 +180,36 @@ column width is the remaining space."
 						 for contact in (helm-khard--import-contacts)
 						 collect `(,(helm-khard-candidate-formatter contact)
 											 .
-											 ,(list contact))
-						 ))))
+											 ,(list contact))))))
 
 (defun helm-khard-insert-email-action (candidates)
-	"Insert emails of selected contact."
+	"Insert emails of contact selected with Helm."
 	(insert (string-join 
 					 (cl-loop
 						for candidate in (helm-marked-candidates)
 						collect (plist-get (car candidate) :emails))
-					 ", "
-					 )))
+					 ", ")))
 
 (defun helm-khard-insert-name+email-action (candidates)
-	"Insert name+email of selected contact."
+	"Insert name+email of contact selected with Helm."
 	(insert (string-join 
 					 (cl-loop
 						for candidate in (helm-marked-candidates)
 						collect (concat
 										 "\"" (plist-get (car candidate) :name) "\" "
 										 "<" (plist-get (car candidate) :emails) ">"))
-					 ", "
-					 )))
+					 ", ")))
 
 (defun helm-khard-insert-phone-action (candidates)
-	"Insert phone numbers of selected contact."
+	"Insert phone numbers of contact selected with Helm."
 	(insert (string-join 
 					 (cl-loop
 						for candidate in (helm-marked-candidates)
 						collect (plist-get (car candidate) :phone_numbers))
-					 ", "
-					 )))
+					 ", ")))
 
 (defun helm-khard-edit-contact-action (candidates)
-	"Open the YAML representation of the selected contact."
+	"Open the YAML representation of contact selected with Helm."
 	(interactive)
 	(let* ((candidate (car candidates))
 				 (uuid (plist-get candidate :uid))
@@ -250,11 +247,11 @@ If nil, the buffer represents a new contact.")
 	"Keymap for `helm-khard-edit-mode'.")
 
 (defcustom helm-khard-edit-finished-hook nil
-	"Hook run when editing a contact is completed."
+	"Hook run when the editing a contact is completed."
 	:type 'hook)
 
 (define-derived-mode helm-khard-edit-mode yaml-mode "Helm-khard"
-	"Edit a contact using the YAML representation.")
+	"Edit a contact using its YAML representation.")
 
 (defcustom helm-khard-vcard-version "3.0"
 	"Version of the VCard format used."
@@ -479,16 +476,19 @@ actions used in `helm-khard'.")
 	"Search and manage contacts through Helm and Khard."
 	(interactive)
 	(helm :sources (helm-build-sync-source "Khard contacts:"
-									 :candidates 'helm-khard--make-candidates
+									 :candidates #'helm-khard--make-candidates
 									 :display-to-real nil	; Transform the selected candidate when passing it to action.
 									 :action helm-khard--actions
 									 ;; :filtered-candidate-transformer 'my-transformer-function
 									 :fuzzy-match nil
 									 )
 				:buffer "*helm-khard*"
-				:update (lambda () (setq helm-khard--candidates nil))
-				))
+				:update (lambda () (setq helm-khard--candidates nil))))
 
 (provide 'helm-khard)
+
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:
 
 ;;; helm-khard.el ends here
