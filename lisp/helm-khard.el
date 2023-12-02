@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-02 Sat 11:57:28
+;; Last modified: 2023-12-02 Sat 12:21:54
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -173,7 +173,7 @@ column width is the remaining space."
 											  column-length))))
 
 (defun helm-khard--make-candidates ()
-	"Populate `helm-khard--candidate'."
+	"Populate `helm-khard--candidates'."
 	(or helm-khard--candidates
 			(setq helm-khard--candidates 
 						(cl-loop
@@ -182,37 +182,37 @@ column width is the remaining space."
 											 .
 											 ,(list contact))))))
 
-(defun helm-khard-insert-email-action (candidates)
+(defun helm-khard-insert-email-action (candidate)
 	"Insert emails of contact selected with Helm."
 	(insert (string-join 
 					 (cl-loop
-						for candidate in (helm-marked-candidates)
-						collect (plist-get (car candidate) :emails))
+						for contact in (helm-marked-candidates)
+						collect (plist-get (car contact) :emails))
 					 ", ")))
 
-(defun helm-khard-insert-name+email-action (candidates)
+(defun helm-khard-insert-name+email-action (candidate)
 	"Insert name+email of contact selected with Helm."
 	(insert (string-join 
 					 (cl-loop
-						for candidate in (helm-marked-candidates)
+						for contact in (helm-marked-candidates)
 						collect (concat
-										 "\"" (plist-get (car candidate) :name) "\" "
-										 "<" (plist-get (car candidate) :emails) ">"))
+										 "\"" (plist-get (car contact) :name) "\" "
+										 "<" (plist-get (car contact) :emails) ">"))
 					 ", ")))
 
-(defun helm-khard-insert-phone-action (candidates)
+(defun helm-khard-insert-phone-action (candidate)
 	"Insert phone numbers of contact selected with Helm."
 	(insert (string-join 
 					 (cl-loop
-						for candidate in (helm-marked-candidates)
-						collect (plist-get (car candidate) :phone_numbers))
+						for contact in (helm-marked-candidates)
+						collect (plist-get (car contact) :phone_numbers))
 					 ", ")))
 
-(defun helm-khard-edit-contact-action (candidates)
+(defun helm-khard-edit-contact-action (candidate)
 	"Open the YAML representation of contact selected with Helm."
 	(interactive)
-	(let* ((candidate (car candidates))
-				 (uuid (plist-get candidate :uid))
+	(let* ((contact (car candidate))
+				 (uuid (plist-get contact :uid))
 				 (buffer (generate-new-buffer (format "*helm-khard<%s>*" uuid))))
 		(with-current-buffer buffer
 			(call-process "khard" nil t nil "show" "--format" "yaml" "--uid" uuid)
@@ -223,7 +223,7 @@ column width is the remaining space."
 		(message "Press %s to save the contact and close the buffer."
 						 (substitute-command-keys "\\[helm-khard-edit-finish]"))))
 
-(defun helm-khard-new-contact-action (&candidates)
+(defun helm-khard-new-contact-action (&candidate)
 	"Open YAML template to create a new contact."
 	(interactive)
 	(let ((buffer (generate-new-buffer "*helm-khard<new>*")))
@@ -298,33 +298,33 @@ If nil, the buffer represents a new contact.")
 (add-hook 'helm-khard-edit-finished-hook
 					#'(lambda () (setq helm-khard--candidates nil))) ; Update candidates
 
-(defun helm-khard-open-vcf-action (candidates)
+(defun helm-khard-open-vcf-action (candidate)
 	"Open VCarf file of the selected contact."
-	(let* ((candidate (car candidates))
-				 (uid (plist-get candidate :uid))
+	(let* ((contact (car candidate))
+				 (uid (plist-get contact :uid))
 				 (path (with-temp-buffer
 								 (call-process "khard" nil t nil "filename" uid)
 								 (goto-char (point-min))
 								 (thing-at-point 'filename t))))
 		(find-file-read-only path)))
 
-(defun helm-khard-show-contact-action (candidates)
+(defun helm-khard-show-contact-action (candidate)
 	"Show details of the selected contact."
-	(let* ((candidate (car candidates))
-				 (uid (plist-get candidate :uid))
+	(let* ((contact (car candidate))
+				 (uid (plist-get contact :uid))
 				 (buffer (generate-new-buffer (format "*helm-khard<%s>*" uid))))
 		(with-current-buffer buffer
 			(call-process "khard" nil t nil "show" uid)
 			(display-buffer buffer)
 			(goto-char (point-min)))))
 
-(defun helm-khard-remove-contact-action (candidates)
+(defun helm-khard-remove-contact-action (candidate)
 	"Remove selected contacts from Khard's database."
 	(cl-loop
 	 for raw-candidate in (helm-marked-candidates)
-	 do (let* ((candidate (car raw-candidate))
-						 (uid (plist-get candidate :uid))
-						 (name (plist-get candidate :name)))
+	 do (let* ((contact (car raw-candidate))
+						 (uid (plist-get contact :uid))
+						 (name (plist-get contact :name)))
 				(if (y-or-n-p (format "Do you want to remove contact %s with uid %s?" name uid))
 						(with-temp-buffer
 							(call-process "khard" nil t nil "remove" "--force" uid)
@@ -332,15 +332,15 @@ If nil, the buffer represents a new contact.")
 							(message "helm-khard: %s" (string-trim-right (thing-at-point 'line t)))
 							(setq helm-khard--candidates nil))))))
 
-(defun helm-khard-copy-vcf-action (candidates)
+(defun helm-khard-copy-vcf-action (candidate)
 	"Copy a VCard file from Khard's database to a directory specified by
 prompt."
 	(let ((to-path (read-directory-name "Select where to copy the VCF: ")))
 		(cl-loop
 		 for raw-candidate in (helm-marked-candidates)
-		 do (let* ((candidate (car raw-candidate))
-							 (uid (plist-get candidate :uid))
-							 (name (plist-get candidate :name))
+		 do (let* ((contact (car raw-candidate))
+							 (uid (plist-get contact :uid))
+							 (name (plist-get contact :name))
 							 (from-filename (with-temp-buffer
 																(call-process "khard" nil t nil "filename" uid)
 																(goto-char (point-min))
@@ -356,13 +356,13 @@ prompt."
 	'tl/vdirsyncer-sync-contacts
 	"Function symbol used in `helm-khard--sync-database'.")
 
-(defun helm-khard-sync-database-action (&candidates)
+(defun helm-khard-sync-database-action (&candidate)
 	"Sync database of Khard using the function in
 `helm-khard--sync-database-function'."
 	(funcall helm-khard--sync-database-function)
 	(setq helm-khard--candidates nil))
 
-(defun helm-khard-import-vcf-action (&candidates)
+(defun helm-khard-import-vcf-action (&candidate)
 	"Import VCF with one or more contacts. This function is used by
 `helm-khard' when performing an action on a candidate."
 	(interactive)
