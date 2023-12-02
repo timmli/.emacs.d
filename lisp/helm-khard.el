@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-02 Sat 12:21:54
+;; Last modified: 2023-12-02 Sat 12:26:07
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -61,8 +61,7 @@
 															(cl-loop
 															 while (not (eobp))
 															 collect (string-trim-right (thing-at-point 'line t))
-															 do (forward-line)
-															 ))))
+															 do (forward-line)))))
 					(cl-loop
 					 for addressbook in addressbooks
 					 collect `(,addressbook
@@ -82,8 +81,7 @@
 													"^"
 													(mapconcat
 													 #'(lambda (field) (concat "\\(.*\\)")) ; "\\(.*?\\)" would not recognize the whole last field
-													 helm-khard-command-fields "\t")
-													)))
+													 helm-khard-command-fields "\t"))))
 				(cl-loop
 				 while (re-search-forward line-regexp nil t)
 				 do (setq helm-khard--contact nil)
@@ -280,10 +278,8 @@ If nil, the buffer represents a new contact.")
 																 for position in (number-sequence 0 (length helm-khard--addressbooks))
 																 concat (format "\t(%s) %s\n" position (car addressbook))
 																 )
-																"Please choose an address book (0 is default): "
-																))))
-												 (car (nth (string-to-number choice) helm-khard--addressbooks)))))
-									 ))))
+																"Please choose an address book (0 is default): "))))
+												 (car (nth (string-to-number choice) helm-khard--addressbooks)))))))))
 		(write-region (point-min) (point-max) filename)
 		(when (equal 0 (apply
 										#'call-process-region
@@ -377,8 +373,7 @@ prompt."
 																 for position in (number-sequence 0 (length helm-khard--addressbooks))
 																 concat (format "\t(%s) %s\n" position (car addressbook))
 																 )
-																"Please choose a target address book (0 is default): "
-																))))
+																"Please choose a target address book (0 is default): "))))
 												 (car (cdr (nth (string-to-number choice) helm-khard--addressbooks))))
 										 nil)))
 		(let ((contacts (helm-khard--import-vcf filename dest-path))) ; VCF can contain several contacts!
@@ -392,8 +387,7 @@ prompt."
 													"Do want to edit these imported contacts? "))
 				(cl-loop
 				 for contact in contacts
-				 do (helm-khard-edit-contact contact)))) 
-		))
+				 do (helm-khard-edit-contact contact))))))
 
 (defun helm-khard--import-vcf (vcf dest-path)
 	"Import the contacts in VCF, a file in the VCard format. VCF is
@@ -427,8 +421,7 @@ found contacts."
 															 (re-search-forward "BEGIN:VCARD" nil t)
 															 (insert "\nUID:" uuid))
 														 (write-region (point-min) (point-max) (expand-file-name filename dest-path))
-														 uuid
-														 ))))))))))
+														 uuid))))))))))
 
 (defun helm-khard--vcard-sanity-check (vcard)
 	"Check the string VCARD for compliance with the VCard format. It
