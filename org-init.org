@@ -10708,6 +10708,11 @@ file:lisp/scimax-editmarks.org
 
 http://kitchingroup.cheme.cmu.edu/blog/2015/04/24/Commenting-in-org-files/
 
+** Quoting
+
+- https://github.com/lewang/rebox2
+- https://github.com/davep/boxquote.el
+
 ** Line actions
 *** Delete line
 
