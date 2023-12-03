@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-02 Sat 12:38:49
+;; Last modified: 2023-12-03 Sun 20:43:48
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -231,6 +231,7 @@ column width is the remaining space."
 			(setq-local helm-khard-edited-contact-uuid nil))
 		(switch-to-buffer buffer)
 		(goto-char (point-min))
+    ;; FIXME: Add candidate in the template as name.
 		(message "Press %s to save the contact and close the buffer."
 						 (substitute-command-keys "\\[helm-khard-edit-finish]"))))
 
@@ -366,18 +367,18 @@ prompt."
 	(interactive)
 	(let ((filename (read-file-name "Path to VCard file (VCF) to be imported: "))
 				(dest-path (if helm-khard--addressbooks
-											 (let ((choice
-															(read-string
-															 (concat
-																"Available address books:\n"
-																(cl-loop
-																 for addressbook in helm-khard--addressbooks ; addressbook --> (NAME PATH)
-																 for position in (number-sequence 0 (length helm-khard--addressbooks))
-																 concat (format "\t(%s) %s\n" position (car addressbook))
-																 )
-																"Please choose a target address book (0 is default): "))))
-												 (car (cdr (nth (string-to-number choice) helm-khard--addressbooks))))
-										 nil)))
+						           (let ((choice
+										          (read-string
+										           (concat
+											          "Available address books:\n"
+											          (cl-loop
+											           for addressbook in helm-khard--addressbooks ; addressbook --> (NAME PATH)
+											           for position in (number-sequence 0 (length helm-khard--addressbooks))
+											           concat (format "\t(%s) %s\n" position (car addressbook))
+											           )
+											          "Please choose a target address book (0 is default): "))))
+							           (car (cdr (nth (string-to-number choice) helm-khard--addressbooks))))
+					           nil)))
 		(let ((contacts (helm-khard--import-vcf filename dest-path))) ; VCF can contain several contacts!
 			(setq helm-khard--candidates nil)		; Update candidates when calling the `helm-khard' the next time.
 			(helm-khard--make-candidates)
@@ -500,9 +501,10 @@ create a new contact."
 										 )
 	"List of pairs (STRING FUNCTIONSYMBOL), which represent the
 actions used in `helm-khard'.")
+
 ;;;###autoload
 (defun helm-khard ()
-	"Search and manage contacts through Helm and Khard."
+	"Search and manage Khard contacts through Helm."
 	(interactive)
 	(helm :sources (helm-build-sync-source "Khard contacts:"
 									 :candidates #'helm-khard--make-candidates
