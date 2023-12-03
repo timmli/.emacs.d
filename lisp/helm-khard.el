@@ -448,6 +448,30 @@ passes the check, the result is non-nil, otherwise nil."
 								nil)))
 				nil))))
 
+(defun helm-khard--inject-contacts-into-mu4e (&rest _contacts)
+  "Inject Khard's contacts into `mu4e--contacts-set'. Note that,
+in order to take effect, this function must be added to an
+appropriate hook, or to the function `mu4e--update-contacts',
+which updates `mu4e--contacts-set'."
+	(unless  helm-khard--candidates
+	  (helm-khard--import-contacts))
+	(cl-loop
+	 for contact in helm-khard--candidates
+	 for name = (plist-get (car (cdr contact)) :name)
+	 for organisation = (plist-get (car (cdr contact)) :organisations)
+	 for emails = (plist-get (car (cdr contact)) :emails)
+	 if (not (string= "" emails))
+	 do (cl-loop
+			 for email in (split-string emails ", ")
+			 for name+orga = (concat name (unless (string= organisation "")
+																			(concat "  (" organisation ")"))) 
+			 for name+orga+email = (concat "\"" name+orga "\" " "<" email ">")
+			 ;; do (message name+orga+email)
+			 do (if (hash-table-p mu4e--contacts-set)
+							(puthash name+orga+email t mu4e--contacts-set)
+						(message "helm-khard--inject-contacts-into-mu4e: Warning: mu4e--contacts-set is not (yet) a hash!")))))
+
+(advice-add 'mu4e--update-contacts :after #'helm-khard--inject-contacts-into-mu4e)
 (defvar helm-khard--actions
 	(helm-make-actions "Insert email address" 'helm-khard-insert-email-action
 										 "Insert name + email address" 'helm-khard-insert-name+email-action
