@@ -472,6 +472,16 @@ which updates `mu4e--contacts-set'."
 						(message "helm-khard--inject-contacts-into-mu4e: Warning: mu4e--contacts-set is not (yet) a hash!")))))
 
 (advice-add 'mu4e--update-contacts :after #'helm-khard--inject-contacts-into-mu4e)
+
+(defun helm-khard-new-contact-transformer-action (actions candidate)
+  "Action transformer for the `helm-khard' source. If the
+candidat is '*Add new contact*', there is only one action to
+create a new contact."
+  (if (string= candidate "*Add new contact*")
+      (helm-make-actions
+       "New contact" 'helm-khard-new-contact-action)
+    actions))
+
 (defvar helm-khard--actions
 	(helm-make-actions "Insert email address" 'helm-khard-insert-email-action
 										 "Insert name + email address" 'helm-khard-insert-name+email-action
@@ -500,9 +510,20 @@ actions used in `helm-khard'.")
 									 :action helm-khard--actions
 									 ;; :filtered-candidate-transformer 'my-transformer-function
 									 :fuzzy-match nil
-									 )
-				:buffer "*helm-khard*"
-				:update (lambda () (setq helm-khard--candidates nil))))
+                   :filtered-candidate-transformer (lambda (candidates _source)
+                                                     (if (not candidates)
+                                                         (list "*Add new contact*")
+                                                       candidates))
+                   :action-transformer (lambda (actions candidate)
+                                         (helm-khard-new-contact-transformer-action actions candidate))
+				           )
+	      :buffer "*helm-khard*"
+	      :update (lambda () (setq helm-khard--candidates nil))
+        :input (or (and (use-region-p)
+                        (buffer-substring-no-properties (region-beginning) (region-end)))
+                   (thing-at-point 'email t)
+                   ;; (thing-at-point 'word)
+                   "")))
 
 (provide 'helm-khard)
 
