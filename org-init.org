@@ -4694,13 +4694,14 @@ Issues
 !!! WORK IN PROGRESS !!!
 
 #+BEGIN_SRC emacs-lisp
-(use-package helm-khard
-  :load-path "lisp/helm-khard.el")
-
 (use-package uuidgen
 	:ensure t
-	:pin MELPA
-)
+	:pin MELPA)
+
+(use-package helm-khard
+	:after mu4e
+  :load-path "lisp/helm-khard.el"
+	:config (advice-add 'mu4e--update-contacts :after #'helm-khard--inject-contacts-into-mu4e))
 #+END_SRC
 
 *** Built-in Calendar: general settings
@@ -7289,7 +7290,10 @@ Vimdiff for Emacs.
 #+BEGIN_SRC emacs-lisp
 (use-package vdiff
 	:ensure t
-	:pin MELPA)
+	:pin MELPA
+	:config
+	(setq vdiff-auto-refine t) ; If non-nil, automatically refine all hunks.
+	)
 #+END_SRC
 
 **** imenu
