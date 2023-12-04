@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-03 Sun 20:43:48
+;; Last modified: 2023-12-04 Mon 12:01:16
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -467,18 +467,20 @@ which updates `mu4e--contacts-set'."
 			 for name+orga = (concat name (unless (string= organisation "")
 																			(concat "  (" organisation ")"))) 
 			 for name+orga+email = (concat "\"" name+orga "\" " "<" email ">")
-			 ;; do (message name+orga+email)
 			 do (if (hash-table-p mu4e--contacts-set)
 							(puthash name+orga+email t mu4e--contacts-set)
 						(message "helm-khard--inject-contacts-into-mu4e: Warning: mu4e--contacts-set is not (yet) a hash!")))))
 
-(advice-add 'mu4e--update-contacts :after #'helm-khard--inject-contacts-into-mu4e)
+;; (defcustom helm-khard-inject-mu4e
+;;   nil
+;;   "When set to non-nil, inject Khard contacts into mu4e's contact set."
+;;   :type 'boolean)
 
 (defun helm-khard-new-contact-transformer-action (actions candidate)
   "Action transformer for the `helm-khard' source. If the
 candidat is '*Add new contact*', there is only one action to
 create a new contact."
-  (if (string= candidate "*Add new contact*")
+  (if (and (stringp candidate) (string= (string candidate) "*Add new contact*"))
       (helm-make-actions
        "New contact" 'helm-khard-new-contact-action)
     actions))
@@ -523,8 +525,9 @@ actions used in `helm-khard'.")
 	      :update (lambda () (setq helm-khard--candidates nil))
         :input (or (and (use-region-p)
                         (buffer-substring-no-properties (region-beginning) (region-end)))
-                   (thing-at-point 'email t)
-                   ;; (thing-at-point 'word)
+                   (and (thing-at-point 'email t)
+                        (string-remove-prefix "<" (string-remove-suffix ">" (thing-at-point 'email t))))
+                   (thing-at-point 'word t)
                    "")))
 
 (provide 'helm-khard)
