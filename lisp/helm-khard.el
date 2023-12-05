@@ -259,7 +259,8 @@ If nil, the buffer represents a new contact.")
 (defun helm-khard-edit-finish ()
 	"Save contact in current buffer with helm-khard."
 	(interactive)
-	(let* ((filename (make-temp-file "helm-khard-temp-"))
+	(let* ((input helm-input)
+         (filename (make-temp-file "helm-khard-temp-"))
 				 (args (if helm-khard-edited-contact-uuid
 									 `("modify"
 										 "--uid" ,helm-khard-edited-contact-uuid
@@ -290,10 +291,14 @@ If nil, the buffer represents a new contact.")
 										nil t nil
 										args))
 			(kill-buffer)
+      (setq helm-khard--candidates nil) ; Update candidates
+      (helm-khard helm-input)
 			(run-hooks 'helm-khard-edit-finished-hook))))
 
-(add-hook 'helm-khard-edit-finished-hook
-					#'(lambda () (setq helm-khard--candidates nil))) ; Update candidates
+;; (add-hook 'helm-khard-edit-finished-hook
+;; 					#'(lambda ()
+;;               (setq helm-khard--candidates nil) ; Update candidates
+;;               (helm-khard helm-input))) 
 
 (defun helm-khard-open-vcf-action (candidate)
 	"Open VCarf file of the selected contact."
@@ -307,29 +312,33 @@ If nil, the buffer represents a new contact.")
 
 (defun helm-khard-show-contact-action (candidate)
 	"Show details of the selected contact."
-	(let* ((contact (car candidate))
+	(let* ((input helm-input)
+         (contact (car candidate))
 				 (uid (plist-get contact :uid))
 				 (buffer (generate-new-buffer (format "*helm-khard<%s>*" uid))))
 		(with-current-buffer buffer
 			(call-process "khard" nil t nil "show" uid)
       (setq buffer-read-only t)
       (local-set-key (kbd "q") 'kill-this-buffer)
-			(display-buffer buffer)
-			(goto-char (point-min)))))
+		  (switch-to-buffer buffer)
+		  (goto-char (point-min)))
+    (helm-khard input)))
 
 (defun helm-khard-remove-contact-action (candidate)
 	"Remove selected contacts from Khard's database."
-	(cl-loop
-	 for raw-candidate in (helm-marked-candidates)
-	 do (let* ((contact (car raw-candidate))
-						 (uid (plist-get contact :uid))
-						 (name (plist-get contact :name)))
-				(if (y-or-n-p (format "Do you want to remove contact %s with uid %s?" name uid))
-						(with-temp-buffer
-							(call-process "khard" nil t nil "remove" "--force" uid)
-							(goto-char (point-min))
-							(message "helm-khard: %s" (string-trim-right (thing-at-point 'line t)))
-							(setq helm-khard--candidates nil))))))
+  (let ((input helm-input))
+	  (cl-loop
+	   for raw-candidate in (helm-marked-candidates)
+	   do (let* ((contact (car raw-candidate))
+						   (uid (plist-get contact :uid))
+						   (name (plist-get contact :name)))
+				  (if (y-or-n-p (format "Do you want to remove contact %s with uid %s?" name uid))
+						  (with-temp-buffer
+							  (call-process "khard" nil t nil "remove" "--force" uid)
+							  (goto-char (point-min))
+							  (message "helm-khard: %s" (string-trim-right (thing-at-point 'line t)))
+							  (setq helm-khard--candidates nil)))))
+    (helm-khard input)))
 
 (defun helm-khard-copy-vcf-action (candidate)
 	"Copy a VCard file from Khard's database to a directory specified by
@@ -358,14 +367,17 @@ prompt."
 (defun helm-khard-sync-database-action (_candidate)
 	"Sync database of Khard using the function in
 `helm-khard--sync-database-function'."
-	(funcall helm-khard--sync-database-function)
-	(setq helm-khard--candidates nil))
+  (let ((input helm-input))
+	  (funcall helm-khard--sync-database-function)
+	  (setq helm-khard--candidates nil)
+    (helm-khard input)))
 
 (defun helm-khard-import-vcf-action (_candidate)
 	"Import VCF with one or more contacts. This function is used by
 `helm-khard' when performing an action on a candidate."
 	(interactive)
-	(let ((filename (read-file-name "Path to VCard file (VCF) to be imported: "))
+	(let ((input helm-input)
+        (filename (read-file-name "Path to VCard file (VCF) to be imported: " (expand-file-name "~/")))
 				(dest-path (if helm-khard--addressbooks
 						           (let ((choice
 										          (read-string
@@ -382,15 +394,17 @@ prompt."
 		(let ((contacts (helm-khard--import-vcf filename dest-path))) ; VCF can contain several contacts!
 			(setq helm-khard--candidates nil)		; Update candidates when calling the `helm-khard' the next time.
 			(helm-khard--make-candidates)
-			(when (yes-or-no-p (concat
-													"Found " (number-to-string (length contacts)) " contact(s):\n"
-													(cl-loop
-													 for contact in contacts
-													 concat (concat "- " contact "\n"))  
-													"Do want to edit these imported contacts? "))
-				(cl-loop
-				 for contact in contacts
-				 do (helm-khard-edit-contact contact))))))
+			(if (yes-or-no-p (concat
+											  "Found " (number-to-string (length contacts)) " contact(s):\n"
+											  (cl-loop
+											   for contact in contacts
+											   concat (concat "- " contact "\n"))  
+											  "Do want to edit these imported contacts? "))
+				  (cl-loop
+				   for contact in contacts
+				   ;; do (helm-khard-edit-contact-action contact) ; FIXME
+           )
+        (helm-khard input)))))
 
 (defun helm-khard--import-vcf (vcf dest-path)
 	"Import the contacts in VCF, a file in the VCard format. VCF is
@@ -482,7 +496,10 @@ candidat is '*Add new contact*', there is only one action to
 create a new contact."
   (if (and (stringp candidate) (string= (string candidate) "*Add new contact*"))
       (helm-make-actions
-       "New contact" 'helm-khard-new-contact-action)
+       "New contact" 'helm-khard-new-contact-action
+       ;; "Import contacts from VCF" 'helm-khard-import-vcf-action
+       ;; "Sync with database" 'helm-khard-sync-database-action
+       )
     actions))
 
 (defvar helm-khard--actions
@@ -497,7 +514,7 @@ create a new contact."
 										 "Show contact" 'helm-khard-show-contact-action
 										 "Open VCF of contact" 'helm-khard-open-vcf-action
 										 "Copy VCF of contact" 'helm-khard-copy-vcf-action
-										 "Import contacts in VCF" 'helm-khard-import-vcf-action
+										 "Import contacts from VCF" 'helm-khard-import-vcf-action
 										 ;; "Attach conctact to email" 'helm-khard--attach-contact 
 										 "Sync with database" 'helm-khard-sync-database-action
 										 )
@@ -505,7 +522,7 @@ create a new contact."
 actions used in `helm-khard'.")
 
 ;;;###autoload
-(defun helm-khard ()
+(defun helm-khard (&optional input)
 	"Search and manage Khard contacts through Helm."
 	(interactive)
 	(helm :sources (helm-build-sync-source "Khard contacts:"
@@ -523,11 +540,12 @@ actions used in `helm-khard'.")
 				           )
 	      :buffer "*helm-khard*"
 	      :update (lambda () (setq helm-khard--candidates nil))
-        :input (or (and (use-region-p)
+        :input (or input
+                   (and (use-region-p)
                         (buffer-substring-no-properties (region-beginning) (region-end)))
                    (and (thing-at-point 'email t)
                         (string-remove-prefix "<" (string-remove-suffix ">" (thing-at-point 'email t))))
-                   (thing-at-point 'word t)
+                   ;; (thing-at-point 'word t)
                    "")))
 
 (provide 'helm-khard)
