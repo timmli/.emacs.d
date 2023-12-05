@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-04 Mon 12:01:16
+;; Last modified: 2023-12-05 Tue 11:58:40
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -221,7 +221,7 @@ column width is the remaining space."
 		(message "Press %s to save the contact and close the buffer."
 						 (substitute-command-keys "\\[helm-khard-edit-finish]"))))
 
-(defun helm-khard-new-contact-action (&candidate)
+(defun helm-khard-new-contact-action (_candidate)
 	"Open YAML template to create a new contact."
 	(interactive)
 	(let ((buffer (generate-new-buffer "*helm-khard<new>*")))
@@ -355,13 +355,13 @@ prompt."
 	'tl/vdirsyncer-sync-contacts
 	"Function symbol used in `helm-khard--sync-database'.")
 
-(defun helm-khard-sync-database-action (&candidate)
+(defun helm-khard-sync-database-action (_candidate)
 	"Sync database of Khard using the function in
 `helm-khard--sync-database-function'."
 	(funcall helm-khard--sync-database-function)
 	(setq helm-khard--candidates nil))
 
-(defun helm-khard-import-vcf-action (&candidate)
+(defun helm-khard-import-vcf-action (_candidate)
 	"Import VCF with one or more contacts. This function is used by
 `helm-khard' when performing an action on a candidate."
 	(interactive)
