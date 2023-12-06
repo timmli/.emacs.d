@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-06 Wed 09:36:08
+;; Last modified: 2023-12-06 Wed 22:35:05
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -133,42 +133,33 @@
 	"Return the width of the window to pass to `helm-khard--candidates-formatter'."
 	(1- (window-body-width)))
 
-(defcustom helm-khard-candidate-format 
-	'(:name 30 :emails 40 :phone_numbers 20 :categories nil)
-	"Specifies the sequence and column width of formatted
-candidates. When the last field in the plist has value nil, its
-column width is the remaining space."
-	:type 'plist)
-
 (defun trim-string-to-length (str max-length)
   "Trim a string to a specified maximum length."
   (substring str 0 (min (length str) max-length)))
 
+(defun hk--trim-field-string (field-value column-length)
+  "Trim a FIELD-VALUE to a specified COLUMN-LENGTH."
+  (concat (trim-string-to-length
+					 field-value
+					 (- column-length 2))
+					(when (> (length field-value) (- column-length 2))
+						"…")))
+
 (defun helm-khard-candidate-formatter (contact)
-	"Format candidates of `helm-khard'."
-	(let ((column-length-sum (cl-loop
-														for key in (plist-get-keys helm-khard-candidate-format)
-														for column-length = (plist-get helm-khard-candidate-format key)
-														sum (or column-length 0))))
-		(cl-loop
-		 for key in (plist-get-keys helm-khard-candidate-format)
-		 for column-length = (or (plist-get helm-khard-candidate-format key)
-														 ;; When value is nil, use the remaining space
-														 (if (> (helm-khard--window-width) column-length-sum)
-																 (- (helm-khard--window-width) column-length-sum)
-															 2))			; At least the space of two characters is needed
-		 for field-value  = (if (eq key :name)
-														(concat (plist-get contact :name)
-																		(unless (string= (plist-get contact :organisations) "")
-																		  (concat "  (" (plist-get contact :organisations) ")")))
-		                      (plist-get contact key))
-		 for field-length = (length field-value)
-		 concat (string-pad (concat (trim-string-to-length
-																 field-value
-																 (- column-length 2))
-															  (when (> field-length (- column-length 2))
-																  "…"))
-											  column-length))))
+	"Format contact of `helm-khard'."
+  (let* ((name (plist-get contact :name))
+         (organisations (plist-get contact :organisations))
+         (name+organisations (concat name
+                                     (unless (string= organisations "")
+                                       (concat " (" organisations ")"))))
+         (emails (plist-get contact :emails))
+         (phone_numbers (plist-get contact :phone_numbers))
+         (categories (plist-get contact :categories)))
+    (format "%1$-30s %2$-40s %3$-20s %4$s"
+            (hk--trim-field-string name+organisations 30)
+            (hk--trim-field-string emails 40)
+            (hk--trim-field-string phone_numbers 20)
+            categories)))
 
 (defvar helm-khard--last-window-width 0
   "Window width when `helm-khard--make-candidates' was called the last time.")
@@ -554,6 +545,7 @@ actions used in `helm-khard'.")
 				           )
 	      :buffer "*helm-khard*"
 	      :update (lambda () (setq helm-khard--candidates nil))
+        :truncate-lines helm-buffers-truncate-lines
         :input (or input
                    (and (use-region-p)
                         (buffer-substring-no-properties (region-beginning) (region-end)))
