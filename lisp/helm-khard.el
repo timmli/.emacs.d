@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-05 Tue 11:58:40
+;; Last modified: 2023-12-06 Wed 09:36:08
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -170,15 +170,27 @@ column width is the remaining space."
 																  "…"))
 											  column-length))))
 
+(defvar helm-khard--last-window-width 0
+  "Window width when `helm-khard--make-candidates' was called the last time.")
+
+(defcustom helm-khard-update-window-width nil
+  "If non-nil, the candidate list format is updated every time the
+window width changes.")
+
 (defun helm-khard--make-candidates ()
-	"Populate `helm-khard--candidates'."
-	(or helm-khard--candidates
-			(setq helm-khard--candidates 
-						(cl-loop
-						 for contact in (helm-khard--import-contacts)
-						 collect `(,(helm-khard-candidate-formatter contact)
-											 .
-											 ,(list contact))))))
+	"Populate `helm-khard--candidates' and return it."
+	(or (and
+       (if helm-khard-update-window-width
+           (eq (helm-khard--window-width) helm-khard--last-window-width)
+         t)
+       helm-khard--candidates)
+      (and (setq helm-khard--last-window-width (helm-khard--window-width))
+	         (setq helm-khard--candidates 
+				         (cl-loop
+				          for contact in (helm-khard--import-contacts)
+				          collect `(,(helm-khard-candidate-formatter contact)
+									          .
+									          ,(list contact)))))))
 
 (defun helm-khard-insert-email-action (candidate)
 	"Insert emails of contact selected with Helm."
