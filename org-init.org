@@ -4601,7 +4601,7 @@ Function to sync contacts using [[https://github.com/pimutils/vdirsyncer][vdirsy
 			(call-process "vdirsyncer-sync-contacts.sh" nil t nil)
 			(setq buffer-read-only t)
       (local-set-key (kbd "q") 'kill-this-buffer)
-			(display-buffer buffer)
+			(switch-to-buffer buffer)
 			(goto-char (point-min)))
 		;; (start-process-shell-command name buffer command)
 		(message "tl/vdirsyncer-sync-contacts: Syncing in progress, see buffer %s" name)
