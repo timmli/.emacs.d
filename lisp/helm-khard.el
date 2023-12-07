@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-06 Wed 22:35:05
+;; Last modified: 2023-12-07 Thu 22:25:19
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -365,17 +365,28 @@ prompt."
 					(copy-file from-filename to-filename t)
 					(message "helm-khard: Copied %s to %s." from-filename to-filename)))))
 
-(defvar helm-khard--sync-database-function
-	'tl/vdirsyncer-sync-contacts
-	"Function symbol used in `helm-khard--sync-database'.")
+(defvar helm-khard-vdirsyncer-command
+	"vdirsyncer sync"
+	"Vdirsyncer command with arguments used in `helm-khard--sync-database'.")
 
 (defun helm-khard-sync-database-action (_candidate)
 	"Sync database of Khard using the function in
-`helm-khard--sync-database-function'."
-  (let ((input helm-input))
-	  (funcall helm-khard--sync-database-function)
-	  (setq helm-khard--candidates nil)
-    (helm-khard input)))
+`helm-khard-vdirsyncer-command'."
+  (let*((input helm-input)
+        (command (car (split-string helm-khard-vdirsyncer-command)))
+        (args (cdr (split-string helm-khard-vdirsyncer-command)))
+				(buffer-name "*vdirsyncer-sync*")
+				(buffer (progn (when (get-buffer buffer-name) (kill-buffer buffer-name))
+											 (get-buffer-create buffer-name))))
+		(with-current-buffer buffer
+			(apply 'call-process command nil t nil args)
+		  (setq buffer-read-only t)
+      (local-set-key (kbd "q") 'kill-this-buffer)
+		  (switch-to-buffer buffer)
+		  (goto-char (point-min)))
+	  (message "tl/vdirsyncer-sync-contacts: Syncing in progress, see buffer %s" buffer-name))
+	(setq helm-khard--candidates nil)
+  (helm-khard input))
 
 (defun helm-khard-import-vcf-action (_candidate)
 	"Import VCF with one or more contacts. This function is used by
