@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-06 Wed 22:35:05
+;; Last modified: 2023-12-08 Fri 22:43:10
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -43,10 +43,15 @@
   "Path to Khard's executable."
   :type 'file)
 
+(defcustom helm-khard-config-file
+	""
+  "Path to Khard's configuration file."
+  :type 'file)
+
 (defcustom helm-khard-command-fields
 	'("index" "name" "organisations" "categories" "uid" "emails" "phone_numbers")
   "List of used Khard data fields as strings."
-  :type 'list)
+  :type 'sexp)
 
 (defvar helm-khard--addressbooks nil
 	"List of Khard's addressbooks. This variable is updated in
@@ -56,7 +61,9 @@
   "Return a map whose keys are indexes and values are contacts."
 	(setq helm-khard--addressbooks
 				(let ((addressbooks (with-temp-buffer
-															(call-process helm-khard-executable nil t nil "addressbooks")
+															(call-process helm-khard-executable nil t nil
+                                            "-c"  helm-khard-config-file
+                                            "addressbooks")
 															(goto-char (point-min))
 															(cl-loop
 															 while (not (eobp))
@@ -66,14 +73,18 @@
 					 for addressbook in addressbooks
 					 collect `(,addressbook
 										 ,(with-temp-buffer
-												(call-process helm-khard-executable nil t nil "filename" "-a" addressbook)
+												(call-process helm-khard-executable nil t nil
+                                      "-c"  helm-khard-config-file
+                                      "filename"
+                                      "-a" addressbook)
 												(goto-char (point-min))
 												(file-name-directory (thing-at-point 'filename t)))))))
 	(save-match-data
 		(with-temp-buffer
-			(call-process
-			 helm-khard-executable nil t nil 
-			 "list" "-p" "-F" (mapconcat 'concat helm-khard-command-fields ","))
+			(call-process helm-khard-executable nil t nil 
+                    "-c"  helm-khard-config-file
+                    "list" "-p"
+                    "-F" (mapconcat 'concat helm-khard-command-fields ","))
 			(goto-char (point-min))
 			(let (
 						;; Each line consists of tab-separated fields
@@ -216,7 +227,11 @@ window width changes.")
 				 (uuid (plist-get contact :uid))
 				 (buffer (generate-new-buffer (format "*helm-khard<%s>*" uuid))))
 		(with-current-buffer buffer
-			(call-process "khard" nil t nil "show" "--format" "yaml" "--uid" uuid)
+			(call-process helm-khard-executable nil t nil
+                    "-c"  helm-khard-config-file
+                    "show"
+                    "--format" "yaml"
+                    "--uid" uuid)
 			(goto-char (point-min))
 			(helm-khard-edit-mode)
 			(setq-local helm-khard-edited-contact-uuid uuid))
@@ -229,7 +244,9 @@ window width changes.")
 	(interactive)
 	(let ((buffer (generate-new-buffer "*helm-khard<new>*")))
 		(with-current-buffer buffer
-			(call-process "khard" nil t nil "template")
+			(call-process helm-khard-executable nil t nil
+                    "-c"  helm-khard-config-file
+                    "template")
 			(helm-khard-edit-mode)
 			(setq-local helm-khard-edited-contact-uuid nil))
 		(switch-to-buffer buffer)
@@ -265,10 +282,12 @@ If nil, the buffer represents a new contact.")
 	(let* ((input helm-input)
          (filename (make-temp-file "helm-khard-temp-"))
 				 (args (if helm-khard-edited-contact-uuid
-									 `("modify"
+									 `("-c"  helm-khard-config-file
+                     "modify"
 										 "--uid" ,helm-khard-edited-contact-uuid
 										 "--input-file" ,filename)
-								 `("new"
+								 `("-c"  helm-khard-config-file
+                   "new"
 									 "--input-file" ,filename
 									 "--vcard-version" ,helm-khard-vcard-version
 									 "--addressbook"
@@ -290,7 +309,7 @@ If nil, the buffer represents a new contact.")
 										#'call-process-region
 										"y\n" ;; ⇐ khard asks for confirmation
 										nil
-										"khard"
+										helm-khard-executable
 										nil t nil
 										args))
 			(kill-buffer)
@@ -308,7 +327,9 @@ If nil, the buffer represents a new contact.")
 	(let* ((contact (car candidate))
 				 (uid (plist-get contact :uid))
 				 (path (with-temp-buffer
-								 (call-process "khard" nil t nil "filename" uid)
+								 (call-process helm-khard-executable nil t nil
+                               "-c"  helm-khard-config-file
+                               "filename" uid)
 								 (goto-char (point-min))
 								 (thing-at-point 'filename t))))
 		(find-file-read-only path)))
@@ -322,7 +343,9 @@ If nil, the buffer represents a new contact.")
 				 (buffer (progn (when (get-buffer buffer-name) (kill-buffer buffer-name))
                         (generate-new-buffer buffer-name))))
 	  (with-current-buffer buffer
-		  (call-process "khard" nil t nil "show" uid)
+		  (call-process helm-khard-executable nil t nil
+                    "-c"  helm-khard-config-file
+                    "show" uid)
       (setq buffer-read-only t)
       (local-set-key (kbd "q") 'kill-this-buffer)
 		  (switch-to-buffer buffer)
@@ -339,7 +362,10 @@ If nil, the buffer represents a new contact.")
 						   (name (plist-get contact :name)))
 				  (if (y-or-n-p (format "Do you want to remove contact %s with uid %s?" name uid))
 						  (with-temp-buffer
-							  (call-process "khard" nil t nil "remove" "--force" uid)
+							  (call-process helm-khard-executable nil t nil
+                              "-c"  helm-khard-config-file
+                              "remove"
+                              "--force" uid)
 							  (goto-char (point-min))
 							  (message "helm-khard: %s" (string-trim-right (thing-at-point 'line t)))
 							  (setq helm-khard--candidates nil)))))
@@ -355,7 +381,9 @@ prompt."
 							 (uid (plist-get contact :uid))
 							 (name (plist-get contact :name))
 							 (from-filename (with-temp-buffer
-																(call-process "khard" nil t nil "filename" uid)
+																(call-process helm-khard-executable nil t nil
+                                              "-c"  helm-khard-config-file
+                                              "filename" uid)
 																(goto-char (point-min))
 																(thing-at-point 'filename t)))
 							 (to-filename (concat
