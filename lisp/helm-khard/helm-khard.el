@@ -412,9 +412,9 @@ prompt."
       (local-set-key (kbd "q") 'kill-this-buffer)
 		  (switch-to-buffer buffer)
 		  (goto-char (point-min)))
-	  (message "tl/vdirsyncer-sync-contacts: Syncing in progress, see buffer %s" buffer-name))
-	(setq helm-khard--candidates nil)
-  (helm-khard input))
+	  (message "tl/vdirsyncer-sync-contacts: Syncing in progress, see buffer %s" buffer-name)
+	  (setq helm-khard--candidates nil)
+    (helm-khard input)))
 
 (defun helm-khard-import-vcf-action (_candidate)
 	"Import VCF with one or more contacts. This function is used by
