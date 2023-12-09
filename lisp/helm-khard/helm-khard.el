@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-09 Sat 21:14:17
+;; Last modified: 2023-12-10 Sun 00:05:38
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -282,11 +282,11 @@ If nil, the buffer represents a new contact.")
 	(let* ((input helm-input)
          (filename (make-temp-file "helm-khard-temp-"))
 				 (args (if helm-khard-edited-contact-uuid
-									 `("-c"  helm-khard-config-file
+									 `("-c"  ,helm-khard-config-file
                      "modify"
 										 "--uid" ,helm-khard-edited-contact-uuid
 										 "--input-file" ,filename)
-								 `("-c"  helm-khard-config-file
+								 `("-c"  ,helm-khard-config-file
                    "new"
 									 "--input-file" ,filename
 									 "--vcard-version" ,helm-khard-vcard-version
@@ -538,7 +538,7 @@ which updates `mu4e--contacts-set'."
   "Action transformer for the `helm-khard' source. If the
 candidat is '*Add new contact*', there is only one action to
 create a new contact."
-  (if (and (stringp candidate) (string= (string candidate) "*Add new contact*"))
+  (if (and (stringp candidate) (string= candidate "*Add new contact*"))
       (helm-make-actions
        "New contact" #'helm-khard-new-contact-action
        ;; "Import contacts from VCF" #'helm-khard-import-vcf-action
