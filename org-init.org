@@ -4705,8 +4705,9 @@ Issues
 
 (use-package helm-khard
 	:after mu4e
-  :load-path "lisp/helm-khard.el"
+  :load-path "lisp/helm-khard/"
 	:config
+	(setq helm-khard-config-file (expand-file-name  "~/.emacs.d/lisp/helm-khard/tests/khard.conf"))
 	(setq helm-khard-vdirsyncer-command "vdirsyncer-sync-contacts.sh")
 	(advice-add 'mu4e--update-contacts :after #'helm-khard--inject-contacts-into-mu4e))
 #+END_SRC
