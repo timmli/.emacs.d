@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-09 Sat 20:40:43
+;; Last modified: 2023-12-09 Sat 20:56:38
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -64,7 +64,7 @@
 															(call-process helm-khard-executable nil t nil
                                             "-c"  helm-khard-config-file
                                             "goto")
-															(addressbooks-char (point-min))
+															(goto-char (point-min))
 															(cl-loop
 															 while (not (eobp))
 															 collect (string-trim-right (thing-at-point 'line t))
@@ -540,27 +540,27 @@ candidat is '*Add new contact*', there is only one action to
 create a new contact."
   (if (and (stringp candidate) (string= (string candidate) "*Add new contact*"))
       (helm-make-actions
-       "New contact" 'helm-khard-new-contact-action
-       ;; "Import contacts from VCF" 'helm-khard-import-vcf-action
-       ;; "Sync with database" 'helm-khard-sync-database-action
+       "New contact" #'helm-khard-new-contact-action
+       ;; "Import contacts from VCF" #'helm-khard-import-vcf-action
+       ;; "Sync with database" #'helm-khard-sync-database-action
        )
     actions))
 
 (defvar helm-khard--actions
-	(helm-make-actions "Insert email address" 'helm-khard-insert-email-action
-										 "Insert name + email address" 'helm-khard-insert-name+email-action
-										 "Insert phone number" 'helm-khard--insert-phone-action
-										 ;; "Compose email" 'helm-khard--compose-email
-										 "Edit contact" 'helm-khard-edit-contact-action
-										 "New contact" 'helm-khard-new-contact-action
-										 "Remove contact" 'helm-khard-remove-contact-action
-										 ;; "Merge contact" 'helm-khard--merge-contacts
-										 "Show contact" 'helm-khard-show-contact-action
-										 "Open VCF of contact" 'helm-khard-open-vcf-action
-										 "Copy VCF of contact" 'helm-khard-copy-vcf-action
-										 "Import contacts from VCF" 'helm-khard-import-vcf-action
-										 ;; "Attach conctact to email" 'helm-khard--attach-contact 
-										 "Sync with database" 'helm-khard-sync-database-action
+	(helm-make-actions "Insert email address" #'helm-khard-insert-email-action
+										 "Insert name + email address" #'helm-khard-insert-name+email-action
+										 "Insert phone number" #'helm-khard--insert-phone-action
+										 ;; "Compose email" #'helm-khard--compose-email
+										 "Edit contact" #'helm-khard-edit-contact-action
+										 "New contact" #'helm-khard-new-contact-action
+										 "Remove contact" #'helm-khard-remove-contact-action
+										 ;; "Merge contact" #'helm-khard--merge-contacts
+										 "Show contact" #'helm-khard-show-contact-action
+										 "Open VCF of contact" #'helm-khard-open-vcf-action
+										 "Copy VCF of contact" #'helm-khard-copy-vcf-action
+										 "Import contacts from VCF" #'helm-khard-import-vcf-action
+										 ;; "Attach conctact to email" #'helm-khard--attach-contact 
+										 "Sync with database" #'helm-khard-sync-database-action
 										 )
 	"List of pairs (STRING FUNCTIONSYMBOL), which represent the
 actions used in `helm-khard'.")
