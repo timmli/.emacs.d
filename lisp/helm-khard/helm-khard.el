@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-10 Sun 00:05:38
+;; Last modified: 2023-12-10 Sun 09:25:09
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -63,7 +63,7 @@
 				(let ((addressbooks (with-temp-buffer
 															(call-process helm-khard-executable nil t nil
                                             "-c"  helm-khard-config-file
-                                            "goto")
+                                            "addressbooks")
 															(goto-char (point-min))
 															(cl-loop
 															 while (not (eobp))
@@ -441,12 +441,12 @@ prompt."
 			(if (yes-or-no-p (concat
 											  "Found " (number-to-string (length contacts)) " contact(s):\n"
 											  (cl-loop
-											   for contact in contacts
-											   concat (concat "- " contact "\n"))  
+											   for contact in contacts ; contact = uuid
+											   concat (concat "- " contact "\n")) ; FIXME: Also show contact name here!
 											  "Do want to edit these imported contacts? "))
 				  (cl-loop
 				   for contact in contacts
-				   ;; do (helm-khard-edit-contact-action contact) ; FIXME
+				   ;; do (helm-khard-edit-contact-action contact) ; FIXME: How to access the contact tuple of the new contact?  
            )
         (helm-khard input)))))
 
@@ -541,8 +541,8 @@ create a new contact."
   (if (and (stringp candidate) (string= candidate "*Add new contact*"))
       (helm-make-actions
        "New contact" #'helm-khard-new-contact-action
-       ;; "Import contacts from VCF" #'helm-khard-import-vcf-action
-       ;; "Sync with database" #'helm-khard-sync-database-action
+       "Import contacts from VCF" #'helm-khard-import-vcf-action
+       "Sync with database" #'helm-khard-sync-database-action
        )
     actions))
 
@@ -573,7 +573,6 @@ actions used in `helm-khard'.")
 									 :candidates #'helm-khard--make-candidates
 									 :display-to-real nil	; Transform the selected candidate when passing it to action.
 									 :action helm-khard--actions
-									 ;; :filtered-candidate-transformer 'my-transformer-function
 									 :fuzzy-match nil
                    :filtered-candidate-transformer (lambda (candidates _source)
                                                      (if (not candidates)
