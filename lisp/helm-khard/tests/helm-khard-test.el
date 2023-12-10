@@ -5,4 +5,6 @@
 			 (helm-khard--candidates nil))
 	(setenv "HELM_KHARD_TEST_DIR" helm-khard-test-dir)
 	(require 'helm-khard)
-	(helm-khard))
+	(helm-khard)
+	;; (helm-khard--search-candidates `(:name "Frank Dawson"))
+	)

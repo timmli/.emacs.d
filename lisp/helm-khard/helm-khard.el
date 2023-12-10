@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-10 Sun 09:25:09
+;; Last modified: 2023-12-10 Sun 13:38:51
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -108,6 +108,28 @@
 																					(helm-khard--clean-up-complex-field (or field-value "")) ; Function must have its own save-match-data!
 																					))))
 									 helm-khard--contact))))))
+
+(defun helm-khard--search-candidates (query)
+  "Search `helm-khard--candidates' with QUERY, where QUERY is a
+plist."
+  (let ((contacts (mapcar '(lambda (cand)
+                             (car (cdr cand)))
+                          helm-khard--candidates)))
+    (cl-loop
+     for contact in contacts
+     if (helm-khard--plist-superset-p contact query)
+     collect contact)))
+
+(defun helm-khard--plist-superset-p (super-plist sub-plist)
+  "Non-nil if SUB-PLIST is contained in SUPER-PLIST."
+  (cl-every (lambda (key)
+              (let ((sub-value (plist-get sub-plist key))
+                    (super-value (plist-get super-plist key)))
+                (and sub-value
+                     (equal sub-value super-value))))
+            (plist-get-keys sub-plist)))
+
+;; Test: (helm-khard--search-candidates '(:name "Timm Lichte"))
 
 (defvar helm-khard--candidates nil
 	"List of string-plist pairs which represent the candidates used in `helm-khard'.")
@@ -435,15 +457,21 @@ prompt."
 											          "Please choose a target address book (0 is default): "))))
 							           (car (cdr (nth (string-to-number choice) helm-khard--addressbooks))))
 					           nil)))
-		(let ((contacts (helm-khard--import-vcf filename dest-path))) ; VCF can contain several contacts!
+		(let ((new-uids (helm-khard--import-vcf filename dest-path))) ; VCF can contain several contacts!
 			(setq helm-khard--candidates nil)		; Update candidates when calling the `helm-khard' the next time.
 			(helm-khard--make-candidates)
 			(if (yes-or-no-p (concat
-											  "Found " (number-to-string (length contacts)) " contact(s):\n"
+											  "Found " (number-to-string (length new-uids)) " contact(s):\n"
 											  (cl-loop
-											   for contact in contacts ; contact = uuid
-											   concat (concat "- " contact "\n")) ; FIXME: Also show contact name here!
-											  "Do want to edit these imported contacts? "))
+											   for new-uid in new-uids
+											   concat (concat "- "
+                                        (plist-get
+                                         (car (helm-khard--search-candidates `(:uid ,new-uid)))
+                                         :name)
+                                        " with uid "
+                                        new-uid
+                                        "\n")) 
+											  "Do you want to edit these imported contacts? "))
 				  (cl-loop
 				   for contact in contacts
 				   ;; do (helm-khard-edit-contact-action contact) ; FIXME: How to access the contact tuple of the new contact?  
