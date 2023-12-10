@@ -7,4 +7,5 @@
 	(require 'helm-khard)
 	(helm-khard)
 	;; (helm-khard--search-candidates `(:name "Frank Dawson"))
+	;; (helm-khard-edit-contact-action `(,(car helm-khard--candidates)))
 	)

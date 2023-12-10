@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-10 Sun 13:38:51
+;; Last modified: 2023-12-10 Sun 21:03:19
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -460,22 +460,24 @@ prompt."
 		(let ((new-uids (helm-khard--import-vcf filename dest-path))) ; VCF can contain several contacts!
 			(setq helm-khard--candidates nil)		; Update candidates when calling the `helm-khard' the next time.
 			(helm-khard--make-candidates)
-			(if (yes-or-no-p (concat
-											  "Found " (number-to-string (length new-uids)) " contact(s):\n"
-											  (cl-loop
-											   for new-uid in new-uids
-											   concat (concat "- "
-                                        (plist-get
-                                         (car (helm-khard--search-candidates `(:uid ,new-uid)))
-                                         :name)
-                                        " with uid "
-                                        new-uid
-                                        "\n")) 
-											  "Do you want to edit these imported contacts? "))
-				  (cl-loop
-				   for contact in contacts
-				   ;; do (helm-khard-edit-contact-action contact) ; FIXME: How to access the contact tuple of the new contact?  
-           )
+      (let ((new-contacts (cl-loop for new-uid in new-uids
+                                   collect (car (helm-khard--search-candidates `(:uid ,new-uid))))))
+			  (if (yes-or-no-p (concat "Found "
+                                 (number-to-string (length new-uids))
+                                 " contact(s):\n"
+											           (cl-loop
+											            for new-contact in new-contacts
+											            concat (concat "- "
+                                                 (plist-get new-contact :name)
+                                                 " with uid "
+                                                 (plist-get new-contact :uid)
+                                                 "\n")) 
+											           "Do you want to edit these imported contacts? "))
+				    (cl-loop
+				     for new-contact in new-contacts
+             for new-candidate = `("" ,new-contact)
+				     ;; do (helm-khard-edit-contact-action `(,new-candidate)) ; FIXME: How to access the contact tuple of the new contact? "save-current-buffer: Wrong type argument: stringp, nil" 
+             ))
         (helm-khard input)))))
 
 (defun helm-khard--import-vcf (vcf dest-path)
