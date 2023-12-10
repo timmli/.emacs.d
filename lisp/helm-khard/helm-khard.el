@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-10 Sun 21:03:19
+;; Last modified: 2023-12-10 Sun 23:37:21
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -475,10 +475,10 @@ prompt."
 											           "Do you want to edit these imported contacts? "))
 				    (cl-loop
 				     for new-contact in new-contacts
-             for new-candidate = `("" ,new-contact)
-				     ;; do (helm-khard-edit-contact-action `(,new-candidate)) ; FIXME: How to access the contact tuple of the new contact? "save-current-buffer: Wrong type argument: stringp, nil" 
-             ))
-        (helm-khard input)))))
+             for new-candidate = `(,new-contact) ; Candidate format of actions 
+				     do (helm-khard-edit-contact-action new-candidate) 
+             ))))
+    (helm-khard input)))
 
 (defun helm-khard--import-vcf (vcf dest-path)
 	"Import the contacts in VCF, a file in the VCard format. VCF is
