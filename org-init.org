@@ -7689,6 +7689,12 @@ Flag symbols can be easily changed. Let's try something fancier, as proposed in 
 			mu4e-headers-calendar-mark  '("c" . "📅"))
 #+END_SRC
 
+Add an action for saving emails as eml-file:
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'mu4e-headers-actions
+						 '("save email as file" . djcb-mu4e-copy-message-at-point) t)
+#+END_SRC
+
 ***** View messages
 
 #+BEGIN_SRC emacs-lisp
@@ -7821,7 +7827,6 @@ and then increment it."
 I'm binding this to a key in [[hydra-mu4e-view]].
 
 Since v1.10, messages can be detached in =mu4e-view-mode=. The following functions detaches a displayed message and opens it in new frame:
-
 #+BEGIN_SRC emacs-lisp
 (defun tl/mu4e-detach-and-view-message-in-new-frame ()
 	(interactive)
@@ -7831,6 +7836,12 @@ Since v1.10, messages can be detached in =mu4e-view-mode=. The following functio
 		(view-buffer "*mu4e-headers*") 			; Interestingly does not work with with-current-buffer 
 		(keyboard-escape-quit)))
 (define-key mu4e-view-mode-map "z" 'tl/mu4e-detach-and-view-message-in-new-frame)
+#+END_SRC
+
+Add an action for saving emails as eml-file:
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'mu4e-view-actions
+						 '("save email as file" . djcb-mu4e-copy-message-at-point) t)
 #+END_SRC
 
 ****** iCalender support
