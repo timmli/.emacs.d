@@ -7689,10 +7689,12 @@ Flag symbols can be easily changed. Let's try something fancier, as proposed in 
 			mu4e-headers-calendar-mark  '("c" . "📅"))
 #+END_SRC
 
-Add an action for saving emails as eml-file:
+Actions:
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'mu4e-headers-actions
-						 '("save email as file" . djcb-mu4e-copy-message-at-point) t)
+(setq mu4e-headers-actions
+			'(("capture message" . mu4e-action-capture-message)
+				("narrow to thread" . mu4e-action-show-thread)
+				("save email as file" . tl/mu4e-action-copy-message-file)))
 #+END_SRC
 
 ***** View messages
@@ -7838,10 +7840,14 @@ Since v1.10, messages can be detached in =mu4e-view-mode=. The following functio
 (define-key mu4e-view-mode-map "z" 'tl/mu4e-detach-and-view-message-in-new-frame)
 #+END_SRC
 
-Add an action for saving emails as eml-file:
+Actions:
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'mu4e-view-actions
-						 '("save email as file" . djcb-mu4e-copy-message-at-point) t)
+(setq mu4e-view-actions
+			'(("capture message" . mu4e-action-capture-message)
+				("view in browser" . mu4e-action-view-in-browser)
+				("xview in xwidget" . mu4e-action-view-in-xwidget)
+				("narrow to thread" . mu4e-action-show-thread)
+				("save email as file" . tl/mu4e-action-copy-message-file)))
 #+END_SRC
 
 ****** iCalender support
@@ -8304,6 +8310,22 @@ The following function (written by Dirk-Jan Binnema, copied from https://notes.b
      (mu4e-message-field msg :path)
      (format "%s/%s" (or dir (read-directory-name "Copy message to: ")) target) 1)))
 #+END_SRC
+
+Let's write a proper mu4e action based on this:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/mu4e-action-copy-message-file (msg)
+  "Copy message to <date>_<subject>.eml in some user-specified
+directory."
+  (interactive)
+	(let ((target (format "%s_%s.eml"
+												(format-time-string "%F" (mu4e-message-field msg :date))
+												(or (mu4e-message-field msg :subject) "No subject"))))
+		(copy-file
+		 (mu4e-message-field msg :path)
+		 (format "%s/%s" (read-directory-name "Copy message to: " (expand-file-name "~/")) target) 1)))
+#+END_SRC
+
 
 ***** COMMENT mu4e-thread-folding
 
