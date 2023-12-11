@@ -5255,6 +5255,9 @@ Guides
 - https://github.com/bbatsov/emacs-lisp-style-guide
 - https://spin.atomicobject.com/2016/05/27/write-emacs-package/
 
+Makefiles
+- https://nullprogram.com/blog/2020/01/22/
+
 **** Last modified
 
 If the file keyword =;; Last modified:= is present within the first 20 lines, the following timestamp gets updated when saving the file:
