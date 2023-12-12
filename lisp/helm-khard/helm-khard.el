@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-10 Sun 23:37:21
+;; Last modified: 2023-12-12 Tue 10:48:51
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -579,7 +579,7 @@ create a new contact."
 (defvar helm-khard--actions
 	(helm-make-actions "Insert email address" #'helm-khard-insert-email-action
 										 "Insert name + email address" #'helm-khard-insert-name+email-action
-										 "Insert phone number" #'helm-khard--insert-phone-action
+										 "Insert phone number" #'helm-khard-insert-phone-action
 										 ;; "Compose email" #'helm-khard--compose-email
 										 "Edit contact" #'helm-khard-edit-contact-action
 										 "New contact" #'helm-khard-new-contact-action
@@ -603,14 +603,12 @@ actions used in `helm-khard'.")
 									 :candidates #'helm-khard--make-candidates
 									 :display-to-real nil	; Transform the selected candidate when passing it to action.
 									 :action helm-khard--actions
-									 :fuzzy-match nil
                    :filtered-candidate-transformer (lambda (candidates _source)
                                                      (if (not candidates)
                                                          (list "*Add new contact*")
                                                        candidates))
                    :action-transformer (lambda (actions candidate)
-                                         (helm-khard-new-contact-transformer-action actions candidate))
-				           )
+                                         (helm-khard-new-contact-transformer-action actions candidate)))
 	      :buffer "*helm-khard*"
 	      :update (lambda () (setq helm-khard--candidates nil))
         :truncate-lines helm-buffers-truncate-lines
@@ -618,7 +616,9 @@ actions used in `helm-khard'.")
                    (and (use-region-p)
                         (buffer-substring-no-properties (region-beginning) (region-end)))
                    (and (thing-at-point 'email t)
-                        (string-remove-prefix "<" (string-remove-suffix ">" (thing-at-point 'email t))))
+                        (string-remove-prefix
+                         "<"(string-remove-suffix
+                             ">" (downcase (thing-at-point 'email t)))))
                    ;; (thing-at-point 'word t)
                    "")))
 
