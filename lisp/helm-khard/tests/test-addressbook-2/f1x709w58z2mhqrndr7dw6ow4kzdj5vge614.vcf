@@ -1,0 +1,11 @@
+BEGIN:VCARD
+VERSION:3.0
+UID:f1x709w58z2mhqrndr7dw6ow4kzdj5vge614
+BDAY:1970-01-01
+EMAIL;TYPE=work:john.doe@work.com
+EMAIL;TYPE=home:johnny@doe.me
+FN:John Doe
+N:Doe;John;;;
+ORG:Doe GmbH
+REV:20231212T212905Z
+END:VCARD

@@ -8,4 +8,5 @@
 	(helm-khard)
 	;; (helm-khard--search-candidates `(:name "Frank Dawson"))
 	;; (helm-khard-edit-contact-action `(,(car helm-khard--candidates)))
+	;; (helm-khard-insert-field-action (cdr (car helm-khard--candidates)))
 	)

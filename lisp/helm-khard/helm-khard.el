@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-12 Tue 10:48:51
+;; Last modified: 2023-12-12 Tue 22:10:51
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -216,13 +216,21 @@ window width changes.")
 									          .
 									          ,(list contact)))))))
 
-(defun helm-khard-insert-email-action (candidate)
-	"Insert emails of contact selected with Helm."
-	(insert (string-join 
-					 (cl-loop
-						for contact in (helm-marked-candidates)
-						collect (plist-get (car contact) :emails))
-					 ", ")))
+(defun helm-khard-insert-field-action (candidate)
+  "Insert a field of CANDIDATE."
+  (let ((insert-candidates
+         (cl-loop
+          for key in (plist-get-keys (car candidate))
+          for value = (plist-get (car candidate) key)
+          unless (or (and (stringp value)
+                          (string= value ""))
+                     (equal key :index)
+                     (equal key :uid)) 
+          collect value)))
+    (helm :sources (helm-build-sync-source "Fields of Khard contact:"
+                     :candidates insert-candidates
+                     :action '(("Insert" . (lambda (value) (insert value)))))
+          :buffer "*helm-khard-insert*")))
 
 (defun helm-khard-insert-name+email-action (candidate)
 	"Insert name+email of contact selected with Helm."
@@ -232,14 +240,6 @@ window width changes.")
 						collect (concat
 										 "\"" (plist-get (car contact) :name) "\" "
 										 "<" (plist-get (car contact) :emails) ">"))
-					 ", ")))
-
-(defun helm-khard-insert-phone-action (candidate)
-	"Insert phone numbers of contact selected with Helm."
-	(insert (string-join 
-					 (cl-loop
-						for contact in (helm-marked-candidates)
-						collect (plist-get (car contact) :phone_numbers))
 					 ", ")))
 
 (defun helm-khard-edit-contact-action (candidate)
@@ -577,21 +577,21 @@ create a new contact."
     actions))
 
 (defvar helm-khard--actions
-	(helm-make-actions "Insert email address" #'helm-khard-insert-email-action
-										 "Insert name + email address" #'helm-khard-insert-name+email-action
-										 "Insert phone number" #'helm-khard-insert-phone-action
-										 ;; "Compose email" #'helm-khard--compose-email
-										 "Edit contact" #'helm-khard-edit-contact-action
-										 "New contact" #'helm-khard-new-contact-action
-										 "Remove contact" #'helm-khard-remove-contact-action
-										 ;; "Merge contact" #'helm-khard--merge-contacts
-										 "Show contact" #'helm-khard-show-contact-action
-										 "Open VCF of contact" #'helm-khard-open-vcf-action
-										 "Copy VCF of contact" #'helm-khard-copy-vcf-action
-										 "Import contacts from VCF" #'helm-khard-import-vcf-action
-										 ;; "Attach conctact to email" #'helm-khard--attach-contact 
-										 "Sync with database" #'helm-khard-sync-database-action
-										 )
+	(helm-make-actions
+   "Insert field" #'helm-khard-insert-field-action
+	 "Insert name + email address" #'helm-khard-insert-name+email-action
+	 ;; "Compose email" #'helm-khard--compose-email
+	 "Edit contact" #'helm-khard-edit-contact-action
+	 "New contact" #'helm-khard-new-contact-action
+	 "Remove contact" #'helm-khard-remove-contact-action
+	 ;; "Merge contact" #'helm-khard--merge-contacts
+	 "Show contact" #'helm-khard-show-contact-action
+	 "Open VCF of contact" #'helm-khard-open-vcf-action
+	 "Copy VCF of contact" #'helm-khard-copy-vcf-action
+	 "Import contacts from VCF" #'helm-khard-import-vcf-action
+	 ;; "Attach conctact to email" #'helm-khard--attach-contact 
+	 "Sync with database" #'helm-khard-sync-database-action
+	 )
 	"List of pairs (STRING FUNCTIONSYMBOL), which represent the
 actions used in `helm-khard'.")
 
