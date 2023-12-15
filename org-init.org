@@ -8094,6 +8094,13 @@ Check whether the message has a subject:
           'tl/mu4e-check-empty-subject)
 #+END_SRC
 
+****** TODO Calendar invitations
+:LOGBOOK:
+- State "TODO"       from              [2023-12-15 Fri 09:31]
+:END:
+
+- https://github.com/djcb/mu/issues/2308
+
 ****** Citations
 
 Citation lines precede cited contents of replied or forwarded messages. Out of the box, Mu4e only includes the sender, which can be adjusted with =message-citation-line-format=:
