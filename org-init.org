@@ -14294,7 +14294,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
          _+_/_-_ Flag/Unflag      _Sh_ ?Sh? Split horiz.       _Pt_ Toggle threading   	 	    
      _u_ Unmark                	^^			                    _Pr_ Toggle show related		
      _U_ Unmark all            	^^                           _O_ Change Sorting															
-     _T_ Mark whole thread
+     _T_ Mark whole thread       _._ View raw message
      _A_ Action   
      _x_ Execute marks
 "         
@@ -14326,6 +14326,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("!" mu4e-headers-mark-for-read)
 	("?" mu4e-headers-mark-for-unread)
 	(";" mu4e-context-switch)
+	("." mu4e-view-raw-message)
 	("[" mu4e-headers-prev-unread :color pink)
 	("]" mu4e-headers-next-unread :color pink)
 	("M-<left>" mu4e-search-prev :color pink)
