@@ -1170,6 +1170,9 @@ Historical remark on taking notes:
 
 *** My GTD setup in org-mode
 
+Other good examples:
+- https://github.com/rougier/emacs-gtd 
+
 **** Directories & files
 
 - =~/org/attachements/=
@@ -8093,6 +8096,14 @@ Check whether the message has a subject:
 (add-hook 'message-send-hook
           'tl/mu4e-check-empty-subject)
 #+END_SRC
+
+****** Templating
+
+For re-using predefined text snippets, [[yasnippet]] can be used. See [[file:snippets/mu4e-compose-mode/message greeting]] for an example.
+
+A simpler method might be [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Abbrevs.html][abbrevs]], which is built-in in Emacs. 
+
+For specifying templates of whole emails, there is no straightforward solution as far as I know.   
 
 ****** Citations
 
