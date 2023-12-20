@@ -8103,7 +8103,14 @@ For re-using predefined text snippets, [[yasnippet]] can be used. See [[file:sni
 
 A simpler method might be [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Abbrevs.html][abbrevs]], which is built-in in Emacs. 
 
-For specifying templates of whole emails, there is no straightforward solution as far as I know.   
+For specifying templates of whole emails, there is no straightforward solution as far as I know.
+
+****** TODO Calendar invitations
+:LOGBOOK:
+- State "TODO"       from              [2023-12-15 Fri 09:31]
+:END:
+
+- https://github.com/djcb/mu/issues/2308
 
 ****** Citations
 
