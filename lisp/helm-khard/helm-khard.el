@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-12 Tue 22:10:51
+;; Last modified: 2023-12-23 Sat 09:24:03
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -264,7 +264,8 @@ window width changes.")
 (defun helm-khard-new-contact-action (_candidate)
 	"Open YAML template to create a new contact."
 	(interactive)
-	(let ((buffer (generate-new-buffer "*helm-khard<new>*")))
+	(let ((buffer (generate-new-buffer "*helm-khard<new>*"))
+        (input helm-input))
 		(with-current-buffer buffer
 			(call-process helm-khard-executable nil t nil
                     "-c"  helm-khard-config-file
@@ -273,7 +274,9 @@ window width changes.")
 			(setq-local helm-khard-edited-contact-uuid nil))
 		(switch-to-buffer buffer)
 		(goto-char (point-min))
-    ;; FIXME: Add candidate in the template as name.
+    ;; Add helm-input as formatted name and to the kill ring.
+    (when (re-search-forward "^Formatted name :" nil t)
+      (insert (concat " " (kill-new (or  input "")))))
 		(message "Press %s to save the contact and close the buffer."
 						 (substitute-command-keys "\\[helm-khard-edit-finish]"))))
 
