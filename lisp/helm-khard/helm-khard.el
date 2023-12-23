@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-23 Sat 09:24:03
+;; Last modified: 2023-12-23 Sat 10:15:43
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -284,9 +284,23 @@ window width changes.")
 	"Store the UUID of the contact associated with current buffer.
 If nil, the buffer represents a new contact.")
 
+(defun helm-khard-yaml-next-field ()
+  "Move point to the next field in YAML file."
+  (interactive)
+  (re-search-forward "^[[:space:]]*[^#]+?: " nil t))
+
+(defun helm-khard-yaml-previous-field ()
+  "Move point to the previous field in YAML file."
+  (interactive)
+  (beginning-of-line)
+  (re-search-backward "^[[:space:]]*[^#]+?: " nil t)
+  (re-search-forward ".+?: " nil t))
+
 (defvar helm-khard-edit-mode-map
 	(let ((map (make-sparse-keymap)))
 		(define-key map (kbd "C-c C-c") #'helm-khard-edit-finish)
+    (define-key map (kbd "<down>") #'helm-khard-yaml-next-field)
+    (define-key map (kbd "<up>") #'helm-khard-yaml-previous-field)
 		map)
 	"Keymap for `helm-khard-edit-mode'.")
 
