@@ -1666,8 +1666,6 @@ For better visibility (and more probably due to my ignorance), I once defined my
 	 ))
 #+END_SRC
 
-Syntax highlighting with =src_*=: see https://stackoverflow.com/a/62319997/6452961 
-
 **** Checkboxes
 
 Fontify checkbox items. 
