@@ -1624,10 +1624,13 @@ Do not edit in invisible areas of the buffer:
 (setq-default org-catch-invisible-edits 'show-and-error)
 #+END_SRC
 
-**** TODO Inline code 
-:LOGBOOK:
-- State "TODO"       from              [2018-10-24 Wed 23:02]
-:END:
+**** Inline code
+
+Org offers a way to include code inline with =src_<language>[<header arguments>]{<body>}=, for example src_latex[:tangle no]{\section{Title}}. 
+See https://orgmode.org/manual/Structure-of-Code-Blocks.html.
+
+# REVIEW: Do I really need this? Where does it come from?
+For better visibility (and more probably due to my ignorance), I once defined my own poor-man's version of it, namely @@latex:\section{Title}@@. 
 
 #+BEGIN_SRC emacs-lisp
 (font-lock-add-keywords 
