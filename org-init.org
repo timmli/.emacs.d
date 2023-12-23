@@ -10728,6 +10728,19 @@ Taken from https://emacs.stackexchange.com/a/21356/12336:
     (next-line)))
 #+end_src
 
+*** Comment boxes
+
+#+BEGIN_SRC emacs-lisp
+(defun insert-comment-box ()
+  "Insert a comment box around the region."
+  (interactive)
+  (comment-box (region-beginning) (region-end)))
+#+END_SRC
+
+**** rebox2
+
+- https://github.com/lewang/rebox2
+
 *** poporg
 
 https://github.com/QBobWatson/poporg
@@ -10796,8 +10809,29 @@ http://kitchingroup.cheme.cmu.edu/blog/2015/04/24/Commenting-in-org-files/
 
 ** Quoting
 
-- https://github.com/lewang/rebox2
-- https://github.com/davep/boxquote.el
+*** TODO boxquote
+:LOGBOOK:
+- State "TODO"       from              [2023-12-23 Sat 12:19]
+:END:
+
+https://github.com/davep/boxquote.el
+
+Mark quotes with brackets on the left side.
+
+#+BEGIN_EXAMPLE 
+,----
+|  Example quote
+`----
+#+END_EXAMPLE
+
+Issues
+- [ ] Create hydra for boxquotes
+
+#+BEGIN_SRC emacs-lisp
+(use-package boxquote
+	:ensure t
+	:pin MELPA)
+#+END_SRC
 
 ** Line actions
 *** Delete line
