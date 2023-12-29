@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-23 Sat 10:15:43
+;; Last modified: 2023-12-29 Fri 16:42:53
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -391,6 +391,39 @@ If nil, the buffer represents a new contact.")
 		  (goto-char (point-min)))
     (helm-khard input)))
 
+(defun helm-khard-move-contact-action (candidate)
+	"Move selected contacts to a different address book."
+  (let ((input helm-input)
+        (target-address-book (when helm-khard--addressbooks
+					                     (let ((choice
+								                      (read-string
+									                     (concat
+									                      "Move selected contacts to address book:\n"
+									                      (cl-loop
+										                     for addressbook in helm-khard--addressbooks ; addressbook --> (NAME PATH)
+										                     for position in (number-sequence 0 (length helm-khard--addressbooks))
+										                     concat (format "\t(%s) %s\n" position (car addressbook))
+										                     )
+									                      "Please choose an address book (0 is default): "))))
+						                     (car (nth (string-to-number choice) helm-khard--addressbooks))))))
+	  (cl-loop
+	   for raw-candidate in (helm-marked-candidates)
+	   do (let* ((contact (car raw-candidate))
+						   (uid (plist-get contact :uid))
+						   (name (plist-get contact :name)))
+				  (if (y-or-n-p (format "Do you want to move the selected contact %s with uid %s to address book %s?"
+                                name uid target-address-book))
+						  (with-temp-buffer
+							  (call-process helm-khard-executable nil t nil
+                              "-c" helm-khard-config-file
+                              "move"
+                              "-A" target-address-book
+                              "-u" uid)
+							  (goto-char (point-min))
+							  (message "helm-khard: %s" (string-trim-right (thing-at-point 'line t)))
+							  (setq helm-khard--candidates nil)))))
+    (helm-khard input)))
+
 (defun helm-khard-remove-contact-action (candidate)
 	"Remove selected contacts from Khard's database."
   (let ((input helm-input))
@@ -601,6 +634,7 @@ create a new contact."
 	 "Edit contact" #'helm-khard-edit-contact-action
 	 "New contact" #'helm-khard-new-contact-action
 	 "Remove contact" #'helm-khard-remove-contact-action
+   "Move contact" #'helm-khard-move-contact-action
 	 ;; "Merge contact" #'helm-khard--merge-contacts
 	 "Show contact" #'helm-khard-show-contact-action
 	 "Open VCF of contact" #'helm-khard-open-vcf-action
