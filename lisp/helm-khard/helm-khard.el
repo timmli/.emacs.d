@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-29 Fri 16:42:53
+;; Last modified: 2023-12-29 Fri 23:50:50
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -391,6 +391,39 @@ If nil, the buffer represents a new contact.")
 		  (goto-char (point-min)))
     (helm-khard input)))
 
+(defvar helm-khard--merge-ongoing nil)
+
+(defun helm-khard-merge-contact-action (candidate)
+	"Merge two contacts from Khard's database. Note that `merge_editor' in
+khard.conf will be used for this, and therefore Khard should be called
+asynchronously this time.
+"
+	(let* ((input helm-input)
+         (source-contact (car candidate))
+				 (source-uid (plist-get source-contact :uid))
+         (source-name (plist-get source-contact :name))
+         (target-contact (let ((helm-khard--merge-ongoing t))
+                           (car (helm-khard input))))
+         (target-uid (plist-get target-contact :uid))
+         (target-name (plist-get target-contact :name)))
+    (if (y-or-n-p (format "Merge action on\n - SOURCE: %s with uid %s\n - TARGET: %s with uid %s\n Do you want to merge the two contacts now? "
+                          source-name source-uid target-name target-uid))
+        ;; Asynchronous call of Khard
+        (async-shell-command (concat helm-khard-executable
+                                     " -c "  helm-khard-config-file
+                                     " merge " source-uid
+                                     " -t " target-uid))
+	    ;; (with-temp-buffer
+		  ;;   (call-process helm-khard-executable nil t nil
+      ;;                 "-c"  helm-khard-config-file
+      ;;                 "merge" source-uid
+      ;;                 "-t" target-uid)
+      ;;   (goto-char (point-min))
+		  ;;   (message "helm-khard: %s" (string-trim-right (thing-at-point 'line t))))
+		  (setq helm-khard--candidates nil))
+    ;; (helm-khard input) ; Do not start helm-khard immediately!
+    ))
+
 (defun helm-khard-move-contact-action (candidate)
 	"Move selected contacts to a different address book."
   (let ((input helm-input)
@@ -614,29 +647,33 @@ which updates `mu4e--contacts-set'."
 ;;   "When set to non-nil, inject Khard contacts into mu4e's contact set."
 ;;   :type 'boolean)
 
-(defun helm-khard-new-contact-transformer-action (actions candidate)
-  "Action transformer for the `helm-khard' source. If the
-candidat is '*Add new contact*', there is only one action to
-create a new contact."
-  (if (and (stringp candidate) (string= candidate "*Add new contact*"))
-      (helm-make-actions
-       "New contact" #'helm-khard-new-contact-action
-       "Import contacts from VCF" #'helm-khard-import-vcf-action
-       "Sync with database" #'helm-khard-sync-database-action
-       )
-    actions))
+(defun helm-khard-transformed-actions (actions candidate)
+  "Action transformer for the `helm-khard' source."
+  (cond
+   ;; If the candidat is '*Add new contact*', there is only a reduced
+   ;; set of actions.
+   ((and (stringp candidate) (string= candidate "*Add new contact*"))
+    (helm-make-actions
+     "New contact" #'helm-khard-new-contact-action
+     "Import contacts from VCF" #'helm-khard-import-vcf-action
+     "Sync with database" #'helm-khard-sync-database-action))
+   ;; If merge is ongoing, just return the candidate.
+   (helm-khard--merge-ongoing
+    (helm-make-actions
+     "Merge two contacts (Step 2: select target)" #'(lambda (candidate) candidate)))
+   ;; Default actions
+   (t actions)))
 
 (defvar helm-khard--actions
 	(helm-make-actions
    "Insert field" #'helm-khard-insert-field-action
 	 "Insert name + email address" #'helm-khard-insert-name+email-action
-	 ;; "Compose email" #'helm-khard--compose-email
 	 "Edit contact" #'helm-khard-edit-contact-action
 	 "New contact" #'helm-khard-new-contact-action
 	 "Remove contact" #'helm-khard-remove-contact-action
    "Move contact" #'helm-khard-move-contact-action
-	 ;; "Merge contact" #'helm-khard--merge-contacts
 	 "Show contact" #'helm-khard-show-contact-action
+	 "Merge two contacts (Step 1: select source)" #'helm-khard-merge-contact-action
 	 "Open VCF of contact" #'helm-khard-open-vcf-action
 	 "Copy VCF of contact" #'helm-khard-copy-vcf-action
 	 "Import contacts from VCF" #'helm-khard-import-vcf-action
@@ -659,7 +696,7 @@ actions used in `helm-khard'.")
                                                          (list "*Add new contact*")
                                                        candidates))
                    :action-transformer (lambda (actions candidate)
-                                         (helm-khard-new-contact-transformer-action actions candidate)))
+                                         (helm-khard-transformed-actions actions candidate)))
 	      :buffer "*helm-khard*"
 	      :update (lambda () (setq helm-khard--candidates nil))
         :truncate-lines helm-buffers-truncate-lines
