@@ -565,7 +565,7 @@ A minor mode for Emacs that implements a distraction-free writing mode similar t
 
 ** Overlays
 
-*** COMMENT ov
+*** ov
 
 https://github.com/emacsorphanage/ov
 
@@ -1085,9 +1085,6 @@ Helm interface to [[https://www.lesbonscomptes.com/recoll/][recoll]].
 #+END_SRC
 
 *** COMMENT helm-flx
-:LOGBOOK:
-- State "TODO"       from              [2022-04-14 Thu 11:02]
-:END:
 
 https://github.com/PythonNut/helm-flx
 
@@ -1359,9 +1356,11 @@ Allow for alphabetical list item labels:
 Text can be colored using the link syntax, e.g. [[color:red][this is red]].
 Taken from https://github.com/jkitchin/jmax/blob/master/org-colored-text.el
 See also http://kitchingroup.cheme.cmu.edu/blog/2016/01/16/Colored-text-in-org-mode-with-export-to-HTML/
+Depends on [[ov]].
 
 #+BEGIN_SRC emacs-lisp
-(require 'org-colored-text)
+(use-package org-colored-text
+	:after ov)
 #+END_SRC
 
 Add support for export to LaTeX:
@@ -3667,7 +3666,7 @@ Add all kinds of reference types (citations, text references, indexes, ...) to O
 (use-package org-ref
 	:ensure t
 	:pin MELPA ; v2.0.0 is not compatible with helm v3.9.1
-	:after org
+	:after (org helm)
 	:init
 	(require 'org-ref) 										; don't know why I need this
 	(setq org-ref-default-bibliography (list user-bibliography-file)
@@ -7377,7 +7376,7 @@ https://github.com/jixiuf/helm-dired-history
 	)
 #+END_SRC
 
-**** size info 
+**** Size info
 
 Calculates the size of marked directories using =du=.
 Copied from https://oremacs.com/2015/01/12/dired-file-size/ and slightly adapted.
@@ -10796,7 +10795,11 @@ file:lisp/scimax-editmarks.org
 	)
 #+END_SRC
 
-*** ov-highlight
+*** COMMENT ov-highlight
+
+https://github.com/jkitchin/ov-highlight
+
+Highlight text and put notes on them using overlays that are locally stored.
 
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'load-path (expand-file-name "lisp/ov-highlight" user-emacs-directory))
