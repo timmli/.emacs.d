@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-30 Sat 11:31:23
+;; Last modified: 2023-12-30 Sat 11:38:30
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -744,10 +744,10 @@ which updates `mu4e--contacts-set'."
    "Move contact" #'helm-khard-move-contact-action
    "Copy contact" #'helm-khard-copy-contact-action
 	 "Merge two contacts (Step 1: select source)" #'helm-khard-merge-contact-action
+	 "Attach contacts to message" #'helm-khard-attach-contact-to-message-action
 	 "Open VCF of contact" #'helm-khard-open-vcf-action
 	 "Copy VCF of contact" #'helm-khard-copy-vcf-action
 	 "Import contacts from VCF" #'helm-khard-import-vcf-action
-	 "Attach conctacts to message" #'helm-khard-attach-contact-to-message-action
 	 "Sync with database" #'helm-khard-async-sync-database-action
 	 )
 	"List of pairs (STRING FUNCTIONSYMBOL), which represent the
