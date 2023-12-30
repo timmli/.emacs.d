@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-30 Sat 10:59:32
+;; Last modified: 2023-12-30 Sat 11:31:23
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -692,6 +692,30 @@ which updates `mu4e--contacts-set'."
 ;;   "When set to non-nil, inject Khard contacts into mu4e's contact set."
 ;;   :type 'boolean)
 
+(defun helm-khard-attach-contact-to-message-action (candidate)
+	"Attach a VCard file from Khard's database to a message."
+  (if (message-mail-p)
+	    (let (to-path temporary-file-directory)
+	      (cl-loop
+	       for raw-candidate in (helm-marked-candidates)
+	       do (let* ((contact (car raw-candidate))
+						       (uid (plist-get contact :uid))
+						       (name (plist-get contact :name))
+						       (from-filename (with-temp-buffer
+															      (call-process helm-khard-executable nil t nil
+                                                  "-c"  helm-khard-config-file
+                                                  "filename" uid)
+															      (goto-char (point-min))
+															      (thing-at-point 'filename t)))
+						       (to-filename (concat
+													       to-path
+													       (replace-regexp-in-string " " "" name)
+													       ".vcf")))
+				      (copy-file from-filename to-filename t)
+              (mml-attach-file to-filename "text/vcard")
+				      (message "helm-khard: attached %s to message." to-filename))))
+    (message "helm-khard: could not attach contacts due to missing message buffer.")))
+
 (defun helm-khard-transformed-actions (actions candidate)
   "Action transformer for the `helm-khard' source."
   (cond
@@ -723,7 +747,7 @@ which updates `mu4e--contacts-set'."
 	 "Open VCF of contact" #'helm-khard-open-vcf-action
 	 "Copy VCF of contact" #'helm-khard-copy-vcf-action
 	 "Import contacts from VCF" #'helm-khard-import-vcf-action
-	 ;; "Attach conctact to email" #'helm-khard--attach-contact 
+	 "Attach conctacts to message" #'helm-khard-attach-contact-to-message-action
 	 "Sync with database" #'helm-khard-async-sync-database-action
 	 )
 	"List of pairs (STRING FUNCTIONSYMBOL), which represent the
