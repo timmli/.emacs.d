@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-30 Sat 10:50:57
+;; Last modified: 2023-12-30 Sat 10:59:32
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -536,6 +536,17 @@ prompt."
 	"vdirsyncer sync"
 	"Vdirsyncer command with arguments used in `helm-khard--sync-database'.")
 
+(defun helm-khard-async-sync-database-action (_candidate)
+	"Sync database of Khard asynchronously using the function in
+`helm-khard-vdirsyncer-command'.
+"
+  (let*((input helm-input)
+        (command helm-khard-vdirsyncer-command))
+    (async-shell-command command)
+	  (setq helm-khard--candidates nil)
+    ;; (helm-khard input) ; Do not start helm-khard immediately!
+    ))
+
 (defun helm-khard-sync-database-action (_candidate)
 	"Sync database of Khard using the function in
 `helm-khard-vdirsyncer-command'."
@@ -713,7 +724,7 @@ which updates `mu4e--contacts-set'."
 	 "Copy VCF of contact" #'helm-khard-copy-vcf-action
 	 "Import contacts from VCF" #'helm-khard-import-vcf-action
 	 ;; "Attach conctact to email" #'helm-khard--attach-contact 
-	 "Sync with database" #'helm-khard-sync-database-action
+	 "Sync with database" #'helm-khard-async-sync-database-action
 	 )
 	"List of pairs (STRING FUNCTIONSYMBOL), which represent the
 actions used in `helm-khard'.")
