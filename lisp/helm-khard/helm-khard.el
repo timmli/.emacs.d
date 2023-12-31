@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-31 Sun 10:28:29
+;; Last modified: 2023-12-31 Sun 10:35:17
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -396,29 +396,11 @@ If nil, the buffer represents a new contact.")
       (helm-khard helm-input)
       (run-hooks 'helm-khard-edit-finished-hook))))
 
+;; CLEANUP
 ;; (add-hook 'helm-khard-edit-finished-hook
 ;;          #'(lambda ()
 ;;               (setq helm-khard--candidates nil) ; Update candidates
-;;               (helm-khard helm-input))) 
-
-
-;;====================
-;;
-;; VCF actions
-;;
-;;--------------------
-
-(defun helm-khard-open-vcf-action (candidate)
-  "Open VCarf file of the selected contact."
-  (let* ((contact (car candidate))
-         (uid (plist-get contact :uid))
-         (path (with-temp-buffer
-                 (call-process helm-khard-executable nil t nil
-                               "-c"  helm-khard-config-file
-                               "filename" uid)
-                 (goto-char (point-min))
-                 (thing-at-point 'filename t))))
-    (find-file-read-only path)))
+;;               (helm-khard helm-input)))
 
 
 ;;====================
@@ -587,9 +569,53 @@ asynchronously this time.
 
 ;;====================
 ;;
+;; Attach action
+;;
+;;--------------------
+
+(defun helm-khard-attach-contact-to-message-action (candidate)
+  "Attach a VCard file from Khard's database to a message."
+  (if (message-mail-p)
+      (let (to-path temporary-file-directory)
+        (cl-loop
+         for raw-candidate in (helm-marked-candidates)
+         do (let* ((contact (car raw-candidate))
+                   (uid (plist-get contact :uid))
+                   (name (plist-get contact :name))
+                   (from-filename (with-temp-buffer
+                                    (call-process helm-khard-executable nil t nil
+                                                  "-c"  helm-khard-config-file
+                                                  "filename" uid)
+                                    (goto-char (point-min))
+                                    (thing-at-point 'filename t)))
+                   (to-filename (concat
+                                 to-path
+                                 (replace-regexp-in-string " " "" name)
+                                 ".vcf")))
+              (copy-file from-filename to-filename t)
+              (mml-attach-file to-filename "text/vcard")
+              (message "helm-khard: attached %s to message." to-filename))))
+    (message "helm-khard: could not attach contacts due to missing message buffer.")))
+
+
+;;====================
+;;
 ;; VCF actions
 ;;
 ;;--------------------
+
+(defun helm-khard-open-vcf-action (candidate)
+  "Open VCarf file of the selected contact."
+  (let* ((contact (car candidate))
+         (uid (plist-get contact :uid))
+         (path (with-temp-buffer
+                 (call-process helm-khard-executable nil t nil
+                               "-c"  helm-khard-config-file
+                               "filename" uid)
+                 (goto-char (point-min))
+                 (thing-at-point 'filename t))))
+    (find-file-read-only path)))
+
 
 (defun helm-khard-copy-vcf-action (candidate)
   "Copy a VCard file from Khard's database to a directory specified by
@@ -612,54 +638,6 @@ prompt."
                              ".vcf")))
           (copy-file from-filename to-filename t)
           (message "helm-khard: Copied %s to %s." from-filename to-filename)))))
-
-
-;;====================
-;;
-;; Sync action
-;;
-;;--------------------
-
-(defvar helm-khard-vdirsyncer-command
-  "vdirsyncer sync"
-  "Vdirsyncer command with arguments used in `helm-khard--sync-database'.")
-
-(defun helm-khard-async-sync-database-action (_candidate)
-  "Sync database of Khard asynchronously using the function in
-`helm-khard-vdirsyncer-command'.
-"
-  (let*((input helm-input)
-        (command helm-khard-vdirsyncer-command))
-    (async-shell-command command)
-    (setq helm-khard--candidates nil)
-    ;; (helm-khard input) ; Do not start helm-khard immediately!
-    ))
-
-(defun helm-khard-sync-database-action (_candidate)
-  "Sync database of Khard using the function in
-`helm-khard-vdirsyncer-command'."
-  (let*((input helm-input)
-        (command (car (split-string helm-khard-vdirsyncer-command)))
-        (args (cdr (split-string helm-khard-vdirsyncer-command)))
-        (buffer-name "*vdirsyncer-sync*")
-        (buffer (progn (when (get-buffer buffer-name) (kill-buffer buffer-name))
-                       (get-buffer-create buffer-name))))
-    (with-current-buffer buffer
-      (apply 'call-process command nil t nil args)
-      (setq buffer-read-only t)
-      (local-set-key (kbd "q") 'kill-this-buffer)
-      (switch-to-buffer buffer)
-      (goto-char (point-min)))
-    (message "tl/vdirsyncer-sync-contacts: Syncing in progress, see buffer %s" buffer-name)
-    (setq helm-khard--candidates nil)
-    (helm-khard input)))
-
-
-;;====================
-;;
-;; VCF actions
-;;
-;;--------------------
 
 (defun helm-khard-import-vcf-action (_candidate)
   "Import VCF with one or more contacts. This function is used by
@@ -763,6 +741,47 @@ passes the check, the result is non-nil, otherwise nil."
 
 ;;====================
 ;;
+;; Sync action
+;;
+;;--------------------
+
+(defvar helm-khard-vdirsyncer-command
+  "vdirsyncer sync"
+  "Vdirsyncer command with arguments used in `helm-khard--sync-database'.")
+
+(defun helm-khard-async-sync-database-action (_candidate)
+  "Sync database of Khard asynchronously using the function in
+`helm-khard-vdirsyncer-command'.
+"
+  (let*((input helm-input)
+        (command helm-khard-vdirsyncer-command))
+    (async-shell-command command)
+    (setq helm-khard--candidates nil)
+    ;; (helm-khard input) ; Do not start helm-khard immediately!
+    ))
+
+(defun helm-khard-sync-database-action (_candidate)
+  "Sync database of Khard using the function in
+`helm-khard-vdirsyncer-command'."
+  (let*((input helm-input)
+        (command (car (split-string helm-khard-vdirsyncer-command)))
+        (args (cdr (split-string helm-khard-vdirsyncer-command)))
+        (buffer-name "*vdirsyncer-sync*")
+        (buffer (progn (when (get-buffer buffer-name) (kill-buffer buffer-name))
+                       (get-buffer-create buffer-name))))
+    (with-current-buffer buffer
+      (apply 'call-process command nil t nil args)
+      (setq buffer-read-only t)
+      (local-set-key (kbd "q") 'kill-this-buffer)
+      (switch-to-buffer buffer)
+      (goto-char (point-min)))
+    (message "tl/vdirsyncer-sync-contacts: Syncing in progress, see buffer %s" buffer-name)
+    (setq helm-khard--candidates nil)
+    (helm-khard input)))
+
+
+;;====================
+;;
 ;; Mu4e interface
 ;;
 ;;--------------------
@@ -789,41 +808,7 @@ which updates `mu4e--contacts-set'."
               (puthash name+orga+email t mu4e--contacts-set)
             (message "helm-khard--inject-contacts-into-mu4e: Warning: mu4e--contacts-set is not (yet) a hash!")))))
 
-;; (defcustom helm-khard-inject-mu4e
-;;   nil
-;;   "When set to non-nil, inject Khard contacts into mu4e's contact set."
-;;   :type 'boolean)
-
-
-;;====================
-;;
-;; Attach action
-;;
-;;--------------------
-
-(defun helm-khard-attach-contact-to-message-action (candidate)
-  "Attach a VCard file from Khard's database to a message."
-  (if (message-mail-p)
-      (let (to-path temporary-file-directory)
-        (cl-loop
-         for raw-candidate in (helm-marked-candidates)
-         do (let* ((contact (car raw-candidate))
-                   (uid (plist-get contact :uid))
-                   (name (plist-get contact :name))
-                   (from-filename (with-temp-buffer
-                                    (call-process helm-khard-executable nil t nil
-                                                  "-c"  helm-khard-config-file
-                                                  "filename" uid)
-                                    (goto-char (point-min))
-                                    (thing-at-point 'filename t)))
-                   (to-filename (concat
-                                 to-path
-                                 (replace-regexp-in-string " " "" name)
-                                 ".vcf")))
-              (copy-file from-filename to-filename t)
-              (mml-attach-file to-filename "text/vcard")
-              (message "helm-khard: attached %s to message." to-filename))))
-    (message "helm-khard: could not attach contacts due to missing message buffer.")))
+;; (advice-add 'mu4e--update-contacts :after #'helm-khard--inject-contacts-into-mu4e)
 
 
 ;;====================
