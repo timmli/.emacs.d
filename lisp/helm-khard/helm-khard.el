@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-31 Sun 10:00:48
+;; Last modified: 2023-12-31 Sun 10:28:29
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -38,6 +38,13 @@
 (require 'uuidgen)
 (require 'yaml-mode)
 
+
+;;====================
+;;
+;; Customization
+;;
+;;--------------------
+
 (defgroup helm-khard nil
   "Helm interface for Khard."
   :group 'helm)
@@ -62,9 +69,16 @@
 
 (defvar helm-khard--addressbooks nil
   "List of Khard's addressbooks. This variable is updated in
-`helm-khard--import-contacts'.")
+`helm-khard--load-contacts'.")
 
-(defun helm-khard--import-contacts ()
+
+;;====================
+;;
+;; Load contacts and make candidate list
+;;
+;;--------------------
+
+(defun helm-khard--load-contacts ()
   "Return a map whose keys are indexes and values are contacts."
   (setq helm-khard--addressbooks
         (let ((addressbooks (with-temp-buffer
@@ -218,10 +232,17 @@ window width changes.")
       (and (setq helm-khard--last-window-width (helm-khard--window-width))
            (setq helm-khard--candidates 
                  (cl-loop
-                  for contact in (helm-khard--import-contacts)
+                  for contact in (helm-khard--load-contacts)
                   collect `(,(helm-khard-candidate-formatter contact)
                             .
                             ,(list contact)))))))
+
+
+;;====================
+;;
+;; Insert actions
+;;
+;;--------------------
 
 (defun helm-khard-insert-field-action (candidate)
   "Insert a field of CANDIDATE."
@@ -248,6 +269,18 @@ window width changes.")
                      "\"" (plist-get (car contact) :name) "\" "
                      "<" (plist-get (car contact) :emails) ">"))
            ", ")))
+
+
+;;====================
+;;
+;; Edit and new actions
+;;
+;;--------------------
+;;
+;; The code of Khardel
+;; (https://github.com/DamienCassou/khardel/tree/master) was an
+;; important inspiration when writing the code for editing and
+;; creating contacts.
 
 (defun helm-khard-edit-contact-action (candidate)
   "Open the YAML representation of contact selected with Helm."
@@ -368,6 +401,13 @@ If nil, the buffer represents a new contact.")
 ;;               (setq helm-khard--candidates nil) ; Update candidates
 ;;               (helm-khard helm-input))) 
 
+
+;;====================
+;;
+;; VCF actions
+;;
+;;--------------------
+
 (defun helm-khard-open-vcf-action (candidate)
   "Open VCarf file of the selected contact."
   (let* ((contact (car candidate))
@@ -379,6 +419,13 @@ If nil, the buffer represents a new contact.")
                  (goto-char (point-min))
                  (thing-at-point 'filename t))))
     (find-file-read-only path)))
+
+
+;;====================
+;;
+;; Show contact action
+;;
+;;--------------------
 
 (defun helm-khard-show-contact-action (candidate)
   "Show details of the selected contact."
@@ -397,6 +444,13 @@ If nil, the buffer represents a new contact.")
       (switch-to-buffer buffer)
       (goto-char (point-min)))
     (helm-khard input)))
+
+
+;;====================
+;;
+;; Merge action
+;;
+;;--------------------
 
 (defvar helm-khard--merge-ongoing nil)
 
@@ -430,6 +484,13 @@ asynchronously this time.
       (setq helm-khard--candidates nil))
     ;; (helm-khard input) ; Do not start helm-khard immediately!
     ))
+
+
+;;====================
+;;
+;; Copy & move actions
+;;
+;;--------------------
 
 (defun helm-khard-copy-contact-action (candidate)
   "Copy selected contacts to another address book."
@@ -497,6 +558,13 @@ asynchronously this time.
                 (setq helm-khard--candidates nil)))))
     (helm-khard input)))
 
+
+;;====================
+;;
+;; Remove action
+;;
+;;--------------------
+
 (defun helm-khard-remove-contact-action (candidate)
   "Remove selected contacts from Khard's database."
   (let ((input helm-input))
@@ -515,6 +583,13 @@ asynchronously this time.
                 (message "helm-khard: %s" (string-trim-right (thing-at-point 'line t)))
                 (setq helm-khard--candidates nil)))))
     (helm-khard input)))
+
+
+;;====================
+;;
+;; VCF actions
+;;
+;;--------------------
 
 (defun helm-khard-copy-vcf-action (candidate)
   "Copy a VCard file from Khard's database to a directory specified by
@@ -537,6 +612,13 @@ prompt."
                              ".vcf")))
           (copy-file from-filename to-filename t)
           (message "helm-khard: Copied %s to %s." from-filename to-filename)))))
+
+
+;;====================
+;;
+;; Sync action
+;;
+;;--------------------
 
 (defvar helm-khard-vdirsyncer-command
   "vdirsyncer sync"
@@ -571,6 +653,13 @@ prompt."
     (message "tl/vdirsyncer-sync-contacts: Syncing in progress, see buffer %s" buffer-name)
     (setq helm-khard--candidates nil)
     (helm-khard input)))
+
+
+;;====================
+;;
+;; VCF actions
+;;
+;;--------------------
 
 (defun helm-khard-import-vcf-action (_candidate)
   "Import VCF with one or more contacts. This function is used by
@@ -671,13 +760,20 @@ passes the check, the result is non-nil, otherwise nil."
                 nil)))
         nil))))
 
+
+;;====================
+;;
+;; Mu4e interface
+;;
+;;--------------------
+
 (defun helm-khard--inject-contacts-into-mu4e (&rest _contacts)
   "Inject Khard's contacts into `mu4e--contacts-set'. Note that,
 in order to take effect, this function must be added to an
 appropriate hook, or to the function `mu4e--update-contacts',
 which updates `mu4e--contacts-set'."
   (unless  helm-khard--candidates
-    (helm-khard--import-contacts))
+    (helm-khard--load-contacts))
   (cl-loop
    for contact in helm-khard--candidates
    for name = (plist-get (car (cdr contact)) :name)
@@ -697,6 +793,13 @@ which updates `mu4e--contacts-set'."
 ;;   nil
 ;;   "When set to non-nil, inject Khard contacts into mu4e's contact set."
 ;;   :type 'boolean)
+
+
+;;====================
+;;
+;; Attach action
+;;
+;;--------------------
 
 (defun helm-khard-attach-contact-to-message-action (candidate)
   "Attach a VCard file from Khard's database to a message."
@@ -721,6 +824,13 @@ which updates `mu4e--contacts-set'."
               (mml-attach-file to-filename "text/vcard")
               (message "helm-khard: attached %s to message." to-filename))))
     (message "helm-khard: could not attach contacts due to missing message buffer.")))
+
+
+;;====================
+;;
+;; Helm configuration
+;;
+;;--------------------
 
 (defun helm-khard-transformed-actions (actions candidate)
   "Action transformer for the `helm-khard' source."
