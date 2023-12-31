@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-30 Sat 15:14:16
+;; Last modified: 2023-12-31 Sun 09:56:21
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -38,20 +38,27 @@
 (require 'uuidgen)
 (require 'yaml-mode)
 
+(defgroup helm-khard nil
+  "Helm interface for Khard."
+  :group 'helm)
+
 (defcustom helm-khard-executable
   (executable-find "khard")
   "Path to Khard's executable."
-  :type 'file)
+  :type 'file
+  :group 'helm-khard)
 
 (defcustom helm-khard-config-file
   ""
   "Path to Khard's configuration file."
-  :type 'file)
+  :type 'file
+  :group 'helm-khard)
 
 (defcustom helm-khard-command-fields
   '("index" "name" "organisations" "categories" "uid" "emails" "phone_numbers")
   "List of used Khard data fields as strings."
-  :type 'sexp)
+  :type 'sexp
+  :group 'helm-khard)
 
 (defvar helm-khard--addressbooks nil
   "List of Khard's addressbooks. This variable is updated in
@@ -456,7 +463,6 @@ asynchronously this time.
                 (message "helm-khard: %s" (string-trim-right (thing-at-point 'line t)))
                 (setq helm-khard--candidates nil)))))
     (helm-khard input)))
-
 
 (defun helm-khard-move-contact-action (candidate)
   "Move selected contacts to a different address book."
