@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-31 Sun 09:56:21
+;; Last modified: 2023-12-31 Sun 10:00:48
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -746,13 +746,13 @@ which updates `mu4e--contacts-set'."
    "Show contact" #'helm-khard-show-contact-action
    "Edit contact" #'helm-khard-edit-contact-action
    "New contact" #'helm-khard-new-contact-action
-   "Remove contact" #'helm-khard-remove-contact-action
-   "Move contact" #'helm-khard-move-contact-action
-   "Copy contact" #'helm-khard-copy-contact-action
+   "Remove contacts" #'helm-khard-remove-contact-action
+   "Move contacts" #'helm-khard-move-contact-action
+   "Copy contacts" #'helm-khard-copy-contact-action
    "Merge two contacts (Step 1: select source)" #'helm-khard-merge-contact-action
    "Attach contacts to message" #'helm-khard-attach-contact-to-message-action
    "Open VCF of contact" #'helm-khard-open-vcf-action
-   "Copy VCF of contact" #'helm-khard-copy-vcf-action
+   "Copy VCF of contacts" #'helm-khard-copy-vcf-action
    "Import contacts from VCF" #'helm-khard-import-vcf-action
    "Sync with database" #'helm-khard-async-sync-database-action
    )
