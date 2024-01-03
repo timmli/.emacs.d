@@ -55,6 +55,22 @@
   :type 'file
   :group 'helm-khard)
 
+(defun helm-khard--get-version ()
+  "Get version of `helm-khard-executable'."
+  (when helm-khard-executable
+    (with-temp-buffer
+      (call-process helm-khard-executable nil t nil
+                    "--version")
+      (goto-char (point-min))
+      (save-match-data
+        (if (re-search-forward "version.+?\\([0-9.]+\\)" nil t)
+            (match-string-no-properties 1)
+          nil)))))
+
+(defvar helm-khard--khard-version
+  (helm-khard--get-version)
+  "Version of `helm-khard-executable'.")
+
 (defcustom helm-khard-config-file
   ""
   "Path to Khard's configuration file."
