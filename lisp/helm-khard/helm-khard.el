@@ -61,7 +61,6 @@
   :type 'file
   :group 'helm-khard)
 
-(defcustom helm-khard-command-fields
 (defcustom helm-khard-contact-fields
   '("index" "name" "organisations" "categories" "uid" "emails" "phone_numbers")
   "List of used Khard data fields as strings."
