@@ -62,6 +62,7 @@
   :group 'helm-khard)
 
 (defcustom helm-khard-command-fields
+(defcustom helm-khard-contact-fields
   '("index" "name" "organisations" "categories" "uid" "emails" "phone_numbers")
   "List of used Khard data fields as strings."
   :type 'sexp
@@ -105,7 +106,7 @@
       (call-process helm-khard-executable nil t nil 
                     "-c"  helm-khard-config-file
                     "list" "-p"
-                    "-F" (mapconcat 'concat helm-khard-command-fields ","))
+                    "-F" (mapconcat 'concat helm-khard-contact-fields ","))
       (goto-char (point-min))
       (let (
             ;; Each line consists of tab-separated fields
@@ -113,15 +114,15 @@
                           "^"
                           (mapconcat
                            #'(lambda (field) (concat "\\(.*\\)")) ; "\\(.*?\\)" would not recognize the whole last field
-                           helm-khard-command-fields "\t"))))
+                           helm-khard-contact-fields "\t"))))
         (cl-loop
          while (re-search-forward line-regexp nil t)
          do (setq helm-khard--contact nil)
          collect (progn
                    (setq helm-khard--contact nil)
                    (cl-loop
-                    for field in helm-khard-command-fields
-                    for field-number in (number-sequence 1 (length helm-khard-command-fields))
+                    for field in helm-khard-contact-fields
+                    for field-number in (number-sequence 1 (length helm-khard-contact-fields))
                     do (let ((field-value (match-string field-number)))
                          (setq helm-khard--contact
                                (plist-put helm-khard--contact
