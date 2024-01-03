@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2023-12-31 Sun 10:35:17
+;; Last modified: 2024-01-03 Wed 22:43:19
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -76,6 +76,32 @@
   "Path to Khard's configuration file."
   :type 'file
   :group 'helm-khard)
+
+(defun helm-khard--get-available-contact-fields ()
+  "Guess the contact fields that can be accessed with
+  `helm-khard-executable'.
+  "
+  (when helm-khard-executable
+    (with-temp-buffer
+      (call-process helm-khard-executable nil t nil
+                    "list"
+                    "-F"
+                    "help")
+      (goto-char (point-min))
+      (save-match-data
+        (if (re-search-forward "Accepted fields are \\(.*\\)\\." nil t)
+            (mapcar 'string-trim
+                    (split-string
+                     (replace-regexp-in-string "\""
+                                               ""
+                                               (match-string-no-properties 1))
+                     ","))
+          nil)))))
+
+(defvar helm-khard--available-contact-fields
+  (helm-khard--get-available-contact-fields)
+  "List of contact fields that can be accessed with
+  `helm-khard-executable'")
 
 (defcustom helm-khard-contact-fields
   '("index" "name" "organisations" "categories" "uid" "emails" "phone_numbers")
