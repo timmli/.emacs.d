@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-01-03 Wed 22:43:19
+;; Last modified: 2024-01-04 Thu 22:31:32
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -55,6 +55,38 @@
   :type 'file
   :group 'helm-khard)
 
+(defcustom helm-khard-config-file
+  ""
+  "Path to Khard's configuration file."
+  :type 'file
+  :group 'helm-khard)
+
+(defcustom helm-khard-contact-fields
+  '("index" "name" "organisations" "categories" "uid" "emails" "phone_numbers")
+  "List of used Khard data fields as strings."
+  :type 'sexp
+  :group 'helm-khard)
+
+
+;;====================
+;;
+;; Initialize internal variables
+;;
+;;--------------------
+
+(defvar helm-khard--addressbooks nil
+  "List of Khard's addressbooks, which are pairs of a name and a
+  path. This variable is set with `helm-khard--initialize'.")
+
+(defvar helm-khard--available-contact-fields nil
+  "List of contact fields that can be accessed with
+  `helm-khard-executable'. This variable is set with
+  `helm-khard--initialize'.")
+
+(defvar helm-khard--khard-version
+  "0.17.0"
+  "Version of `helm-khard-executable'.")
+
 (defun helm-khard--get-version ()
   "Get version of `helm-khard-executable'."
   (when helm-khard-executable
@@ -67,19 +99,9 @@
             (match-string-no-properties 1)
           nil)))))
 
-(defvar helm-khard--khard-version
-  (helm-khard--get-version)
-  "Version of `helm-khard-executable'.")
-
-(defcustom helm-khard-config-file
-  ""
-  "Path to Khard's configuration file."
-  :type 'file
-  :group 'helm-khard)
-
 (defun helm-khard--get-available-contact-fields ()
-  "Guess the contact fields that can be accessed with
-  `helm-khard-executable'.
+  "Get the contact fields that can be accessed with
+  `helm-khard-executable'. Return them as list of strings.
   "
   (when helm-khard-executable
     (with-temp-buffer
@@ -98,20 +120,35 @@
                      ","))
           nil)))))
 
-(defvar helm-khard--available-contact-fields
-  (helm-khard--get-available-contact-fields)
-  "List of contact fields that can be accessed with
-  `helm-khard-executable'")
+(defun helm-khard--get-addressbooks ()
+  "Get the addressbooks specified in `helm-khard-config-file'. Return
+  them as pairs of a name and a path."
+  (let ((addressbooks (with-temp-buffer
+                        (call-process helm-khard-executable nil t nil
+                                      "-c"  helm-khard-config-file
+                                      "addressbooks")
+                        (goto-char (point-min))
+                        (cl-loop
+                         while (not (eobp))
+                         collect (string-trim-right (thing-at-point 'line t))
+                         do (forward-line)))))
+    (cl-loop
+     for addressbook in addressbooks
+     collect `(,addressbook
+               ,(with-temp-buffer
+                  (call-process helm-khard-executable nil t nil
+                                "-c"  helm-khard-config-file
+                                "filename"
+                                "-a" addressbook)
+                  (goto-char (point-min))
+                  (file-name-directory (thing-at-point 'filename t)))))))
 
-(defcustom helm-khard-contact-fields
-  '("index" "name" "organisations" "categories" "uid" "emails" "phone_numbers")
-  "List of used Khard data fields as strings."
-  :type 'sexp
-  :group 'helm-khard)
-
-(defvar helm-khard--addressbooks nil
-  "List of Khard's addressbooks. This variable is updated in
-`helm-khard--load-contacts'.")
+(defun helm-khard--initialize ()
+  "Initialize some internal variables."
+  (setq helm-khard--khard-version (or (helm-khard--get-version)
+                                      helm-khard--khard-version)
+        helm-khard--available-contact-fields (helm-khard--get-available-contact-fields)
+        helm-khard--addressbooks (helm-khard--get-addressbooks)))
 
 
 ;;====================
@@ -122,26 +159,7 @@
 
 (defun helm-khard--load-contacts ()
   "Return a map whose keys are indexes and values are contacts."
-  (setq helm-khard--addressbooks
-        (let ((addressbooks (with-temp-buffer
-                              (call-process helm-khard-executable nil t nil
-                                            "-c"  helm-khard-config-file
-                                            "addressbooks")
-                              (goto-char (point-min))
-                              (cl-loop
-                               while (not (eobp))
-                               collect (string-trim-right (thing-at-point 'line t))
-                               do (forward-line)))))
-          (cl-loop
-           for addressbook in addressbooks
-           collect `(,addressbook
-                     ,(with-temp-buffer
-                        (call-process helm-khard-executable nil t nil
-                                      "-c"  helm-khard-config-file
-                                      "filename"
-                                      "-a" addressbook)
-                        (goto-char (point-min))
-                        (file-name-directory (thing-at-point 'filename t)))))))
+  (helm-khard--initialize)
   (save-match-data
     (with-temp-buffer
       (call-process helm-khard-executable nil t nil 
