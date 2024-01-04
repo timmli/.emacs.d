@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-01-04 Thu 22:31:32
+;; Last modified: 2024-01-04 Thu 22:33:45
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -95,9 +95,8 @@
                     "--version")
       (goto-char (point-min))
       (save-match-data
-        (if (re-search-forward "version.+?\\([0-9.]+\\)" nil t)
-            (match-string-no-properties 1)
-          nil)))))
+        (when (re-search-forward "version.+?\\([0-9.]+\\)" nil t)
+          (match-string-no-properties 1))))))
 
 (defun helm-khard--get-available-contact-fields ()
   "Get the contact fields that can be accessed with
@@ -111,14 +110,13 @@
                     "help")
       (goto-char (point-min))
       (save-match-data
-        (if (re-search-forward "Accepted fields are \\(.*\\)\\." nil t)
-            (mapcar 'string-trim
-                    (split-string
-                     (replace-regexp-in-string "\""
-                                               ""
-                                               (match-string-no-properties 1))
-                     ","))
-          nil)))))
+        (when (re-search-forward "Accepted fields are \\(.*\\)\\." nil t)
+          (mapcar 'string-trim
+                  (split-string
+                   (replace-regexp-in-string "\""
+                                             ""
+                                             (match-string-no-properties 1))
+                   ",")))))))
 
 (defun helm-khard--get-addressbooks ()
   "Get the addressbooks specified in `helm-khard-config-file'. Return
