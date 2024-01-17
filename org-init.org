@@ -4711,7 +4711,11 @@ Issues
   :load-path "lisp/helm-khard/"
 	:config
 	(setq helm-khard-vdirsyncer-command "vdirsyncer-sync-contacts.sh")
-	(advice-add 'mu4e--update-contacts :after #'helm-khard--inject-contacts-into-mu4e))
+	(advice-add 'mu4e--update-contacts :after #'helm-khard--inject-contacts-into-mu4e)
+	(add-hook 'helm-khard-edit-finished-hook
+						#'(lambda ()
+								(shell-command helm-khard-vdirsyncer-command)
+								(message "helm-khard: contacts synchronized after editing. See buffer *Shell Command Output*."))))
 #+END_SRC
 
 *** Built-in Calendar: general settings
