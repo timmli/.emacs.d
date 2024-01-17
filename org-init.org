@@ -7500,11 +7500,6 @@ Good examples of elaborate mu4e configurations:
 ;; https://github.com/djcb/mu/blob/release/1.10/NEWS.org#110-releases-on-march-26-2023
 (setq mu4e-mu-home "/home/USER/.cache/mu")
 
-;; Load org-mode integration
-;; Store link to message if in header view, not to header query.
-(require 'mu4e-org)											
-(setq org-mu4e-link-query-in-headers-mode nil)
-
 ;; Refresh rate of emails
 (setq mu4e-update-interval (* 5 60))
 
@@ -8344,6 +8339,34 @@ directory."
 		 (format "%s/%s" (read-directory-name "Copy message to: " (expand-file-name "~/")) target) 1)))
 #+END_SRC
 
+***** Linking messages
+
+Documentation: https://www.djcbsoftware.nl/code/mu/mu4e/Org_002dmode-links.html
+
+Load org-mode integration (FIXME: necessary?):
+#+BEGIN_SRC emacs-lisp
+(require 'mu4e-org)											
+#+END_SRC
+
+Store link to message if in header view, not to header query:
+#+BEGIN_SRC emacs-lisp
+(setq org-mu4e-link-query-in-headers-mode nil)
+#+END_SRC
+
+Adapt description of links:
+#+BEGIN_SRC emacs-lisp
+(defun tl/mu4e-org-link-descr (msg)
+  (let ((subject (or (plist-get msg :subject)
+                     "No subject"))
+        (date (or (format-time-string mu4e-headers-date-format
+																			(mu4e-msg-field msg :date))
+                  "No date"))
+				(sender (or (plist-get (car (plist-get msg :from)) :name)
+										"No Sender")))
+    (concat date " | " sender " | " subject)))
+
+(setq mu4e-org-link-desc-func 'tl/mu4e-org-link-descr)
+#+END_SRC
 
 ***** COMMENT mu4e-thread-folding
 
