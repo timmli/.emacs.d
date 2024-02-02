@@ -10147,6 +10147,12 @@ Expand region increases the selected region by semantic units. I've bound it to 
 	)
 #+end_src
 
+*** SOMEDAY expreg
+
+https://github.com/casouri/expreg
+
+Similar to [[expand-region]], but uses tree-sitter.
+
 *** TODO Mouse selection
 :LOGBOOK:
 - State "TODO"       from              [2021-02-11 Thu 09:22]
