@@ -3051,8 +3051,9 @@ https://github.com/timmli/org-fm-dev
 Fast minutes with =org-fm=.
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path (expand-file-name "org-fm-dev" lisp-dir))
+;; (add-to-list 'load-path (expand-file-name "org-fm-dev" lisp-dir))
 (use-package org-fm
+	:load-path "lisp/org-fm-dev"
 	:config
 	(org-fm-minor-mode))
 #+END_SRC
