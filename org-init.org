@@ -8260,6 +8260,7 @@ Queries can be stored as bookmarks: https://www.djcbsoftware.nl/code/mu/mu4e/Boo
 My bookmarks are narrowed to =helm-mu-default-search-string=, which makes it necessary to set the bookmarks every time  =mu4e-main-mode-hook= is called (and =helm-mu-default-search-string= is possibly changed).
 
 #+BEGIN_SRC emacs-lisp
+(setq mu4e-bookmarks nil)								; Remove any default bookmarks
 (add-hook 'mu4e-main-mode-hook
 					(lambda ()
 						(setq mu4e-bookmarks
