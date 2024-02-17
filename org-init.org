@@ -5583,7 +5583,7 @@ https://www.gnu.org/software/auctex/reftex.html
 																("addsec" . -2)))
 	
 	;; connect reftex to imenu
-	(add-hook 'reftex-load-hook 'imenu-add-menubar-index)
+	;; (add-hook 'reftex-load-hook 'imenu-add-menubar-index) ; Error: imenu unavailable: "The mode ‘Fundamental’ does not support Imenu"
 	(add-hook 'reftex-mode-hook 'imenu-add-menubar-index)
 
 	;; isearch across files
