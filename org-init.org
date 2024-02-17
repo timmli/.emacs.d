@@ -1821,6 +1821,14 @@ IDs
 
 *** Agenda
 
+https://orgmode.org/manual/Agenda-Views.html
+
+Show all headers with clocks, timestamps and todos in one overview buffer.  
+
+#+BEGIN_SRC emacs-lisp
+(require 'org-agenda)
+#+END_SRC
+
 **** Appearance
 
 Don't split window when opening agenda:
