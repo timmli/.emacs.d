@@ -9689,7 +9689,7 @@ Note on =aspell=:
 - Newer versions of aspell do not have the CL option =home-dir= any more. Instead, a configuration file =.aspell.conf= in the home directory should be used.
 
 The following sets the =home-dir= option via =.aspell.conf=:
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (if (and (file-exists-p "~/.aspell.conf")
 				 personal-dictionary-dir)
 		(with-temp-buffer
