@@ -8596,6 +8596,15 @@ Issues:
 ))
 #+END_SRC
 
+
+*** Mastodon
+
+**** mastodon.el
+
+https://codeberg.org/martianh/mastodon.el
+
+A fitting hydra: https://holgerschurig.github.io/en/emacs-mastodon-hydra/
+
 *** RSS/Atom feed reader 
 
 **** elfeed
