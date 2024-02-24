@@ -757,10 +757,8 @@ Emacs framework for incremental completions and narrowing selections.
   (progn
     ;; (require 'helm-config) ; Obsolete since v3.9.1: https://github.com/emacs-helm/helm/commit/e81fbbc687705595ab65ae5cd3bdf93c17a90743
     (setq helm-candidate-number-limit 100)
-    ;; From https://gist.github.com/antifuchs/9238468
-    (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
-          helm-input-idle-delay 0.01		; this actually updates things
-                                        ; reeeelatively quickly.
+    (setq helm-idle-delay 0.0 ; update sources immediately
+          helm-input-idle-delay 0.01		; update input quickly
           helm-yas-display-key-on-candidate t
           helm-M-x-requires-pattern nil
           helm-ff-skip-boring-files t
@@ -774,6 +772,7 @@ Emacs framework for incremental completions and narrowing selections.
 					helm-apropos-fuzzy-match t
 					helm-autoresize-mode 1 				; re-size the completion window based on number of candidates
 					helm-adaptive-mode t					; show commonly used commands first
+					helm-move-to-line-cycle-in-source nil ; if non-nil, cycle only within a source
 					)
 		(setq bibtex-completion-bibliography user-bibliography-file
 					bibtex-completion-library-path user-bibliography-pdf-dir ; directory of PDFs
@@ -835,7 +834,7 @@ Emacs framework for incremental completions and narrowing selections.
 				 ("C-ß" . helm-imenu)
 				 ("C-S-?" . helm-imenu-anywhere)
 				 )
-)
+	)
 (ido-mode -1)														; turn off ido mode, just in case
 #+END_SRC
 
