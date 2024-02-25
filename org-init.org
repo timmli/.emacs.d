@@ -8602,7 +8602,99 @@ Issues:
 
 https://codeberg.org/martianh/mastodon.el
 
-A fitting hydra: https://holgerschurig.github.io/en/emacs-mastodon-hydra/
+A Mastodon client for Emacs.
+
+#+BEGIN_SRC emacs-lisp
+(use-package mastodon
+  :ensure t    
+	:config
+  (mastodon-discover)
+	;; Account settings should be put elsewhere
+	(setq mastodon-instance-url "https://social.instance.org"
+				mastodon-active-user "example_user")
+	(setq mastodon-tl--show-avatars t
+				mastodon-tl--horiz-bar "======================================"
+				mastodon-media--avatar-height 40
+				mastodon-media--preview-max-height 500
+				mastodon-tl--highlight-current-toot nil
+				)
+	)
+#+END_SRC
+
+A nice alternative design by Nicolas Rougier: https://github.com/rougier/mastodon-alt
+
+#+BEGIN_SRC emacs-lisp
+(use-package mastodon-alt
+  :load-path "./lisp/mastodon-alt.el"
+  :after mastodon
+  :config
+	(mastodon-alt-tl-activate)
+	)
+#+END_SRC
+
+A fitting hydra from https://holgerschurig.github.io/en/emacs-mastodon-hydra/
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-mastodon (:color blue :hint nil)
+  "
+Timelines^^   Toots^^^^           Own Toots^^   Profiles^^      Users/Follows^^  Misc^^
+^^-----------------^^^^--------------------^^----------^^-------------------^^------^^-----
+_H_ome        _n_ext _p_rev       _r_eply       _A_uthors       follo_W_         _X_ lists
+_L_ocal       _T_hread of toot^^  wri_t_e       user _P_rofile  _N_otifications  f_I_lter
+_F_ederated   (un) _b_oost^^      _e_dit        ^^              _R_equests       _C_opy URL
+fa_V_orites   (un) _f_avorite^^   _d_elete      _O_wn           su_G_estions     _S_earch
+_#_ tagged    (un) p_i_n^^        ^^            _U_pdate own    _M_ute user      _h_elp
+_@_ mentions  (un) boo_k_mark^^   show _E_dits  ^^              _B_lock user
+boo_K_marks   _v_ote^^
+trendin_g_
+_u_pdate
+"
+  ("H" mastodon-tl--get-home-timeline)
+  ("L" mastodon-tl--get-local-timeline)
+  ("F" mastodon-tl--get-federated-timeline)
+  ("V" mastodon-profile--view-favourites)
+  ("#" mastodon-tl--get-tag-timeline)
+  ("@" mastodon-notifications--get-mentions)
+  ("K" mastodon-profile--view-bookmarks)
+  ("g" mastodon-search--trending-tags)
+  ("u" mastodon-tl--update :exit nil)
+
+  ("n" mastodon-tl--goto-next-toot)
+  ("p" mastodon-tl--goto-prev-toot)
+  ("T" mastodon-tl--thread)
+  ("b" mastodon-toot--toggle-boost :exit nil)
+  ("f" mastodon-toot--toggle-favourite :exit nil)
+  ("i" mastodon-toot--pin-toot-toggle :exit nil)
+  ("k" mastodon-toot--bookmark-toot-toggle :exit nil)
+  ("c" mastodon-tl--toggle-spoiler-text-in-toot)
+  ("v" mastodon-tl--poll-vote)
+
+  ("A" mastodon-profile--get-toot-author)
+  ("P" mastodon-profile--show-user)
+  ("O" mastodon-profile--my-profile)
+  ("U" mastodon-profile--update-user-profile-note)
+
+  ("W" mastodon-tl--follow-user)
+  ("N" mastodon-notifications-get)
+  ("R" mastodon-profile--view-follow-requests)
+  ("G" mastodon-tl--get-follow-suggestions)
+  ("M" mastodon-tl--mute-user)
+  ("B" mastodon-tl--block-user)
+
+  ("r" mastodon-toot--reply)
+  ("t" mastodon-toot)
+  ("e" mastodon-toot--edit-toot-at-point)
+  ("d" mastodon-toot--delete-toot)
+  ("E" mastodon-toot--view-toot-edits)
+
+  ("I" mastodon-tl--view-filters)
+  ("X" mastodon-tl--view-lists)
+  ("C" mastodon-toot--copy-toot-url)
+  ("S" mastodon-search--search-query)
+  ("h" describe-mode)
+
+  ("q" doom/escape))
+#+END_SRC
 
 *** RSS/Atom feed reader 
 
@@ -12812,6 +12904,8 @@ Hydra for functions specific to the buffer major mode.
 		(hydra-mu4e-view/body))
 	 ((string-equal (buffer-mode) "mu4e-compose-mode")
 		(hydra-mu4e-compose/body))
+	 ((string-equal (buffer-mode) "mastodon-mode")
+		(hydra-mastodon/body))
 	 ((or t) (message (concat "no hydra defined for major mode"))))
 	)
 #+END_SRC
@@ -12844,9 +12938,9 @@ Hydra for opening a new buffer.
      Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^  │Open│  Mark^^  Org^^
    ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^──╯    └──────^^────────╯
  
-       [_a_] address book       [_d_] dired/file browser     [_t_] pomodoro timer      [m] mail
-       [_b_] new buffer         [_e_] emacs shell            [_l_] dictionary          [v] vterm
-       [_i_] buffer overview    [_s_] system shell           [_B_] bookmarks            
+       [_a_] address book       [_d_] dired/file browser     [_t_] pomodoro timer      [_m_] mail
+       [_b_] new buffer         [_e_] emacs shell            [_l_] dictionary          [_M_] mastodon
+       [_i_] buffer overview    [_s_] system shell           [_B_] bookmarks           [_v_] vterm 
        [_c_] calendar           [_S_] external shell        [_gl_] magit buffer log 
        [_p_] projectile         [_f_] search files          [_hb_] bibliography     
        [_P_] pandoc             [_r_] elfeed                 [_j_] Jupyter notebook
@@ -12871,6 +12965,7 @@ Hydra for opening a new buffer.
 	("j" tl/open-jupyter-notebook :exit t)
 	("l" dictcc :exit t)
 	("m" mu4e :exit t)
+	("M" mastodon :exit t)
 	("G" guix :exit t)
 	("gs" magit-status :exit t)
 	("gl" magit-log-buffer-file :exit t)
