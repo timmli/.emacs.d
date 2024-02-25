@@ -8613,7 +8613,7 @@ A Mastodon client for Emacs.
 	(setq mastodon-instance-url "https://social.instance.org"
 				mastodon-active-user "example_user")
 	(setq mastodon-tl--show-avatars t
-				mastodon-tl--horiz-bar "======================================"
+				mastodon-tl--horiz-bar (make-string 70 ?═)
 				mastodon-media--avatar-height 40
 				mastodon-media--preview-max-height 500
 				mastodon-tl--highlight-current-toot nil
