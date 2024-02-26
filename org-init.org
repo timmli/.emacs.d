@@ -13650,6 +13650,19 @@ Download with [[org-download]].
 	 (lambda nil (interactive) 
 		 (helm-org-rifle-files org-agenda-files)) 
 	 "agenda files")
+	("e"
+	 ;; (let ((org-super-agenda-date-format "(W%V) %d %B %Y, %A"))
+	 (org-ql-search
+		 (org-agenda-files)
+		 '(tags "event" "appointment")
+		 :sort '(date)
+		 ;; :super-groups '((:auto-ts reverse))
+		 )
+	 ;; )
+	 "events")
+	("f" (lambda nil (interactive)
+				 (helm-org-ql org-files))
+	 "free search")	
 	("g" (org-ql-search
 				 (org-agenda-files)
 				 '(and
@@ -13668,8 +13681,6 @@ Download with [[org-download]].
 					 ;; Descendents have no recent clocks
 					 (not (descendants (clocked :from -60)))))
 	 "garbage collection")
-	("f" (lambda nil (interactive)
-				 (helm-org-ql org-files)) "free search")
 	("q" nil :color blue)
 	)
 #+END_SRC
