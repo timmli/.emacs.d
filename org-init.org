@@ -12393,7 +12393,7 @@ GnuPG keyrings can be used for encrypting a file by adding
 #+END_EXAMPLE 
 to the top.
 
-Caveat: EasyPG (epg) itself *does*  also handle S/MIME!
+Caveat: EasyPG (epg) itself *does* also handle S/MIME!
 
 Variables:
 #+BEGIN_SRC emacs-lisp :tangle no
@@ -12595,6 +12595,18 @@ A better help buffer.
    ("C-c C-d" . helpful-at-point)
    ("C-h F" . helpful-function)
    ("C-h C" . helpful-command)))
+#+END_SRC
+
+** discover
+
+https://github.com/mickeynp/discover.el
+
+Discover more of emacs with the help of context menus.
+Similar to [[Hydras]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package discover
+	:ensure t)
 #+END_SRC
 
 * Hydras
