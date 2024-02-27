@@ -1867,14 +1867,23 @@ Customize agenda view:
 		))
 
 (setq org-agenda-custom-commands
-			`(("w" "Work-related agenda and tasks"
+			`(("e" "Events with timestamp"
+				 ((tags "event+TIMESTAMP>=\"<now>\""
+                ((org-agenda-overriding-header "Future events")
+								 (org-agenda-sorting-strategy '((tags ts-down)))
+                 (org-agenda-prefix-format '((tags . " %i %-12:c %?-12t")))
+                 ))
+					(tags "event+TIMESTAMP<=\"<now>\""
+                ((org-agenda-overriding-header "Past events")
+								 (org-agenda-sorting-strategy '((tags ts-down)))
+                 (org-agenda-prefix-format '((tags . " %i %-12:c %?-12t")))
+                 ))))
+				("w" "Work-related agenda and tasks"
 				 ,tl/org-agenda-structure
 				 ((org-agenda-tag-filter-preset '("+@work"))))
-
 				("h" "Home-related agenda and tasks"
 				 ,tl/org-agenda-structure
 				 ((org-agenda-tag-filter-preset '("+@home"))))
-
 				("c" "Complete list of agenda and tasks"
 				 ,tl/org-agenda-structure
 				 ;; ((org-agenda-tag-filter-preset '("+@home")))
@@ -1893,9 +1902,14 @@ Customize agenda view:
 	(interactive)
 	(org-agenda nil "c"))
 
+(defun org-agenda-list-events ()
+	(interactive)
+	(org-agenda nil "e"))
+
 (define-key org-agenda-mode-map (kbd "W") 'org-agenda-list-work)
 (define-key org-agenda-mode-map (kbd "H") 'org-agenda-list-home)
 (define-key org-agenda-mode-map (kbd "C") 'org-agenda-list-complete)
+(define-key org-agenda-mode-map (kbd "E") 'org-agenda-list-events)
 #+END_SRC
 
 Sort agenda TODOs with =org-agenda-sorting-strategy=.
@@ -13585,18 +13599,18 @@ Download with [[org-download]].
     _._ today            _-_ priority down   _O_ clock out					  _<_ by category    _J_ clocked-in  
     _f_ forward d/w/y    _t_ set todo        _J_ jump to clocked-in	  \^ siblings        ^^^             
     _j_ goto date        _:_ set tags        _R_ clocking report  	  _|_ remove all     ^^              
-    _d_ day view         _>_ set date        ^^                       _l_ show done (log mode)  
+    _d_ day view         _>_ set date        ^^                       _l_ show done (log mode)^^        _S_ync with CalDAV 
     _w_ week view      _C-d_ set deadline    ^^
-   _vm_ month view     _C-s_ set schedule    ^^                       _m_ mark
-   _vy_ year view      _C-k_ kill            ^^                       _u_ unmark          ^^           _r_efresh
-    ^^       _M-S-<up>_ earlier hour       _M-S-<up>_ earlier time    _B_ action on marked^^           _q_uit hydra
-    ^^     _M-S-<down>_ later hour       _M-S-<down>_ later time      ^^                  ^^          e_x_it agenda
-    ^^    _M-S-<right>_ earlier day          ^^                       _S_ync with CalDAV  
-    ^^     _M-S-<down>_ later day
-    _h_ show holidays
-    _]_ show inactive timestamps
-    _k_ capture with timestamp						  
-"
+   _vm_ month view     _C-s_ set schedule    ^^                       _C_ complete agenda
+   _vy_ year view      _C-k_ kill            ^^                       _H_ home agenda ^^                _r_efresh
+    ^^       _M-S-<up>_ earlier hour       _M-S-<up>_ earlier time    _W_ work agenda ^^                _q_uit hydra
+    ^^     _M-S-<down>_ later hour       _M-S-<down>_ later time      _E_ events      ^^               e_x_it agenda
+    ^^    _M-S-<right>_ earlier day          ^^                       
+    ^^     _M-S-<down>_ later day            ^^                       _m_ mark						
+    _h_ show holidays		^^									 ^^		 							      _u_ unmark          
+    _]_ show inactive timestamps ^^					 ^^	 								      _B_ action on marked
+    _k_ capture with timestamp	 ^^				   ^^			 									^^                  
+"																																			
 	("+" org-agenda-priority-up)
 	("-" org-agenda-priority-down)
 	("d" org-agenda-day-view)
@@ -13604,7 +13618,10 @@ Download with [[org-download]].
 	("vm" org-agenda-month-view)
 	("vy" org-agenda-year-view)
 	("h" org-agenda-holidays)
-	("H" org-agenda-holidays)
+	("H" org-agenda-list-home)
+	("W" org-agenda-list-work)
+	("C" org-agenda-list-complete)
+	("E" org-agenda-list-events)
 	("I" org-agenda-clock-in)
 	("O" org-agenda-clockreport-mode)
 	("R" org-agenda-clock-in)
