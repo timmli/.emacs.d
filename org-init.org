@@ -8630,8 +8630,11 @@ A Mastodon client for Emacs.
 				mastodon-tl--horiz-bar (make-string 70 ?═)
 				mastodon-media--avatar-height 40
 				mastodon-media--preview-max-height 500
-				mastodon-tl--highlight-current-toot nil
-				)
+				mastodon-tl--highlight-current-toot nil)
+	(advice-add 'mastodon-tl--goto-prev-item
+							:after #'recenter)
+  (advice-add 'mastodon-tl--goto-next-item
+							:after #'recenter)
 	)
 #+END_SRC
 
