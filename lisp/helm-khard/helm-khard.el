@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-01-04 Thu 22:33:45
+;; Last modified: 2024-02-27 Tue 21:57:18
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -845,10 +845,12 @@ passes the check, the result is non-nil, otherwise nil."
 ;;--------------------
 
 (defun helm-khard--inject-contacts-into-mu4e (&rest _contacts)
-  "Inject Khard's contacts into `mu4e--contacts-set'. Note that,
-in order to take effect, this function must be added to an
-appropriate hook, or to the function `mu4e--update-contacts',
-which updates `mu4e--contacts-set'."
+  "Inject Khard's contacts into `mu4e--contacts-set'.
+
+Note that, in order to take effect, this function must be added to an
+appropriate hook, or to the function `mu4e--update-contacts', which
+updates `mu4e--contacts-set'. One way to achieve the latter one is to use `advice-add':
+(advice-add 'mu4e--update-contacts :after #'helm-khard--inject-contacts-into-mu4e)"
   (unless  helm-khard--candidates
     (helm-khard--load-contacts))
   (cl-loop
@@ -865,8 +867,6 @@ which updates `mu4e--contacts-set'."
        do (if (hash-table-p mu4e--contacts-set)
               (puthash name+orga+email t mu4e--contacts-set)
             (message "helm-khard--inject-contacts-into-mu4e: Warning: mu4e--contacts-set is not (yet) a hash!")))))
-
-;; (advice-add 'mu4e--update-contacts :after #'helm-khard--inject-contacts-into-mu4e)
 
 
 ;;====================
