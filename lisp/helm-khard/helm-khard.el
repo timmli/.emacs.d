@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-02-27 Tue 21:57:18
+;; Last modified: 2024-02-27 Tue 22:00:46
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -849,7 +849,7 @@ passes the check, the result is non-nil, otherwise nil."
 
 Note that, in order to take effect, this function must be added to an
 appropriate hook, or to the function `mu4e--update-contacts', which
-updates `mu4e--contacts-set'. One way to achieve the latter one is to use `advice-add':
+updates `mu4e--contacts-set'. One way to achieve the latter is to use `advice-add':
 (advice-add 'mu4e--update-contacts :after #'helm-khard--inject-contacts-into-mu4e)"
   (unless  helm-khard--candidates
     (helm-khard--load-contacts))
