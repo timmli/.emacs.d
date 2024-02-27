@@ -8646,6 +8646,10 @@ A nice alternative design by Nicolas Rougier: https://github.com/rougier/mastodo
   :after mastodon
   :config
 	(mastodon-alt-tl-activate)
+	(advice-add 'mastodon-tl--goto-prev-item
+							:after #'recenter)
+  (advice-add 'mastodon-tl--goto-next-item
+							:after #'recenter)
 	)
 #+END_SRC
 
