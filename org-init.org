@@ -115,6 +115,7 @@
       - [[#emacs-ssh-deploy][emacs-ssh-deploy]]
 - [[#help][Help]]
       - [[#helpful][helpful]]
+      - [[#discover][discover]]
 - [[#hydras][Hydras]]
       - [[#hydra-begin][hydra: begin]]
       - [[#hydras-for-function-keys][Hydras for function keys]]
@@ -8201,6 +8202,10 @@ Remove buttons like =[[S/MIME ...= from text bodies of cited messages:
     (apply original-fn args)))
 (add-function :around mu4e-compose-cite-function #'tv/mu4e-remove-buttons-in-reply)
 #+END_SRC
+
+****** Mailing lists
+
+ - https://emacs.stackexchange.com/questions/80445/how-to-define-and-use-contact-groups-mailing-lists-in-mu4e
 
 ****** COMMENT Org-msg
 
