@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-02-27 Tue 22:00:46
+;; Last modified: 2024-02-28 Wed 23:29:20
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -146,7 +146,9 @@
   (setq helm-khard--khard-version (or (helm-khard--get-version)
                                       helm-khard--khard-version)
         helm-khard--available-contact-fields (helm-khard--get-available-contact-fields)
-        helm-khard--addressbooks (helm-khard--get-addressbooks)))
+        helm-khard--addressbooks (helm-khard--get-addressbooks))
+  ;; TODO: Check khard version and do something if necessary
+  )
 
 
 ;;====================
@@ -302,9 +304,48 @@ window width changes.")
 ;;
 ;;--------------------
 
-(defun helm-khard-insert-field-action (candidate)
-  "Insert a field of CANDIDATE."
-  (let ((insert-candidates
+(defun helm-khard-insert-name+email-action (candidate)
+  "Insert name+email of contacts selected with Helm."
+  (insert (string-join 
+           (cl-loop
+            for contact in (helm-marked-candidates)
+            collect (concat
+                     "\"" (plist-get (car contact) :name) "\" "
+                     "<" (plist-get (car contact) :emails) ">"))
+           ", ")))
+
+(defun helm-khard-copy-contacts-to-clipboard-action (candidate)
+  "Copy contacts selected with Helm as strings to the
+  clipboard (kill ring). Contacts are separated with line breaks and the fields of
+  each contact are separated with tabs.
+  "
+  (kill-new (concat
+             ;; Keywords of the fields
+             (string-join (cl-loop
+                           for key in (plist-get-keys (car candidate))
+                           collect (symbol-name key))
+                          "\t")
+             "\n"
+             ;; Selected contacts
+             (string-join
+              ;; First              
+              (cl-loop
+               for contact in (helm-marked-candidates)
+               collect (string-join
+                        (cl-loop
+                         for key in (plist-get-keys (car contact))
+                         for value = (plist-get (car contact) key)
+                         ;; unless (or (and (stringp value)
+                         ;;                 (string= value ""))
+                         ;;            (equal key :index)
+                         ;;            (equal key :uid)) 
+                         collect value)
+                        "\t"))
+              "\n"))))
+
+(defun helm-khard-copy-fields-to-clipboard-action (candidate)
+  "Copy fields of CANDIDATE to the clipboard (kill ring)."
+  (let ((field-candidates
          (cl-loop
           for key in (plist-get-keys (car candidate))
           for value = (plist-get (car candidate) key)
@@ -314,19 +355,32 @@ window width changes.")
                      (equal key :uid)) 
           collect value)))
     (helm :sources (helm-build-sync-source "Fields of Khard contact:"
-                     :candidates insert-candidates
+                     :candidates field-candidates
+                     :action '(("Copy fields to clipboard" .
+                                (lambda (value)
+                                  (kill-new (string-join (helm-marked-candidates)
+                                                         " "))))))
+          :buffer "*helm-khard-insert*")))
+
+(defun helm-khard-insert-field-action (candidate)
+  "Insert a field of CANDIDATE."
+  (let ((field-candidates
+         (cl-loop
+          for key in (plist-get-keys (car candidate))
+          for value = (plist-get (car candidate) key)
+          unless (or (and (stringp value)
+                          (string= value ""))
+                     (equal key :index)
+                     (equal key :uid)) 
+          collect value)))
+    (helm :sources (helm-build-sync-source "Fields of Khard contact:"
+                     :candidates field-candidates
                      :action '(("Insert" . (lambda (value) (insert value)))))
           :buffer "*helm-khard-insert*")))
 
-(defun helm-khard-insert-name+email-action (candidate)
-  "Insert name+email of contact selected with Helm."
-  (insert (string-join 
-           (cl-loop
-            for contact in (helm-marked-candidates)
-            collect (concat
-                     "\"" (plist-get (car contact) :name) "\" "
-                     "<" (plist-get (car contact) :emails) ">"))
-           ", ")))
+
+
+
 
 
 ;;====================
@@ -894,8 +948,10 @@ updates `mu4e--contacts-set'. One way to achieve the latter is to use `advice-ad
 
 (defvar helm-khard--actions
   (helm-make-actions
-   "Insert field" #'helm-khard-insert-field-action
    "Insert name + email address" #'helm-khard-insert-name+email-action
+   ;; "Insert field" #'helm-khard-insert-field-action
+   "Copy fields to clipboard" #'helm-khard-copy-fields-to-clipboard-action
+   "Copy contacts to clipboard" #'helm-khard-copy-contacts-to-clipboard-action
    "Show contact" #'helm-khard-show-contact-action
    "Edit contact" #'helm-khard-edit-contact-action
    "New contact" #'helm-khard-new-contact-action
