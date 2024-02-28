@@ -3761,9 +3761,9 @@ Issues
               (("C-c n I" . org-roam-insert-immediate)))
 	:config
 	(require 'org-roam-protocol)
-
 	(setq org-roam-tag-sources '(prop vanilla)
 				org-roam-index-file (expand-file-name "index.org" org-roam-directory))
+
 	;; The following adds a hierarchy view to org-roam-node-display-template
 	;; Taken from: https://github.com/org-roam/org-roam/wiki/User-contributed-Tricks#showing-node-hierarchy
 	(cl-defmethod org-roam-node-hierarchy ((node org-roam-node))
@@ -3772,7 +3772,8 @@ Issues
 			 (when (> level 0) (concat (org-roam-node-file-title node) " > "))
 			 (when (> level 1) (concat (string-join (org-roam-node-olp node) " > ") " > "))
 			 (org-roam-node-title node))))
-	;; Setting the disply of org-roam-node-find
+
+	;; Setting the display of org-roam-node-find
 	(setq org-roam-node-template-prefixes '(("tags" . "#")("todo" . ""))
 				org-roam-node-display-template
 				(concat
@@ -3780,7 +3781,14 @@ Issues
 				 ;; "${title:*} "
 				 "${hierarchy:*} "			 ; provided by org-roam-node-hierarchy
 				 (propertize "${tags:50}" 'face 'org-tag)) ; add tags to org-roam-node-find
-				))
+				)
+
+	;; ;; Make completion case-insensitive (https://emacs.stackexchange.com/a/77296/12336)
+	;;(defun case-insensitive-org-roam-node-read (orig-fn &rest args)
+	;; (let ((completion-ignore-case t))
+	;; (apply orig-fn args)))
+	;; (advice-add 'org-roam-node-read :around #'case-insensitive-org-roam-node-read)
+	)
 #+END_SRC
 
 Different org-roam databases ("Zettelkästen") can be maintained using [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Directory-Variables.html][directory-local settings]].
