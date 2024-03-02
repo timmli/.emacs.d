@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-02-28 Wed 23:29:20
+;; Last modified: 2024-03-02 Sat 10:12:27
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -950,16 +950,16 @@ updates `mu4e--contacts-set'. One way to achieve the latter is to use `advice-ad
   (helm-make-actions
    "Insert name + email address" #'helm-khard-insert-name+email-action
    ;; "Insert field" #'helm-khard-insert-field-action
-   "Copy fields to clipboard" #'helm-khard-copy-fields-to-clipboard-action
+   "Copy contact fields to clipboard" #'helm-khard-copy-fields-to-clipboard-action
    "Copy contacts to clipboard" #'helm-khard-copy-contacts-to-clipboard-action
    "Show contact" #'helm-khard-show-contact-action
    "Edit contact" #'helm-khard-edit-contact-action
    "New contact" #'helm-khard-new-contact-action
-   "Remove contacts" #'helm-khard-remove-contact-action
-   "Move contacts" #'helm-khard-move-contact-action
-   "Copy contacts" #'helm-khard-copy-contact-action
+   "Remove contacts from addressbook" #'helm-khard-remove-contact-action
+   "Move contacts to addressbook" #'helm-khard-move-contact-action
+   "Copy contacts to addressbook" #'helm-khard-copy-contact-action
    "Merge two contacts (Step 1: select source)" #'helm-khard-merge-contact-action
-   "Attach contacts to message" #'helm-khard-attach-contact-to-message-action
+   "Attach contacts as VCF to message" #'helm-khard-attach-contact-to-message-action
    "Open VCF of contact" #'helm-khard-open-vcf-action
    "Copy VCF of contacts" #'helm-khard-copy-vcf-action
    "Import contacts from VCF" #'helm-khard-import-vcf-action
