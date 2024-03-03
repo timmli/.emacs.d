@@ -1,11 +1,11 @@
 ;;; helm-khard.el --- Helm interface for Khard   -*- lexical-binding: t -*-
 
-;; Copyright (C) 2023 Timm Lichte
+;; Copyright (C) 2024 Timm Lichte
 
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-03-03 Sun 12:02:17
+;; Last modified: 2024-03-03 Sun 22:55:32
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -65,6 +65,12 @@
   '("index" "name" "organisations" "categories" "uid" "emails" "phone_numbers")
   "List of used Khard data fields as strings."
   :type 'sexp
+  :group 'helm-khard)
+
+(defcustom helm-khard-insert-with-organisation nil
+  "If non-nil, add organisation when inserting contact. This variable
+  is used by `helm-khard--generate-insert-format'."
+  :type 'boolean
   :group 'helm-khard)
 
 
@@ -149,6 +155,20 @@
         helm-khard--addressbooks (helm-khard--get-addressbooks))
   ;; TODO: Check khard version and do something if necessary
   )
+
+(defun helm-khard--generate-insert-format (&optional organisation)
+  "Generate format of name+email strings."
+  (concat
+   ;; Name
+   "\"%1$s"
+   ;; Organisation
+   (when (and organisation ; is non-nil
+              (not (string= organisation ""))
+              helm-khard-insert-with-organisation)
+     " (%3$s)")
+   "\""
+   ;; Email address
+   " <%2$s>"))
 
 
 ;;====================
@@ -310,33 +330,36 @@ window width changes.")
   one contact is selected), or allow for choosing one of the email
   addresses with Helm.
   "
-  (let ((name+email-format "\"%s\" <%s>"))
-    (if (> (length (helm-marked-candidates)) 1)
-        ;; Several contacts selected
-        (insert (string-join 
-                 (cl-loop
-                  for contact in (helm-marked-candidates)
-                  for name = (plist-get (car contact) :name)
-                  ;; Only use the first email address
-                  for email = (car (split-string (plist-get (car contact) :emails)
-                                                 ", "))
-                  collect (format name+email-format name email))
-                 ", "))
-      ;; Only one candidate selected
-      (let* ((contact (car (helm-marked-candidates))) ; = CANDIDATE
-             (name (plist-get (car contact) :name))
-             (email-list (split-string (plist-get (car contact) :emails)
-                                       ", ")))
-        (if (> (length email-list) 1)
-            ;; More than one email address
-            (helm :sources (helm-build-sync-source "Emails of Khard contact:"
-                             :candidates (cl-loop
-                                          for email in email-list
-                                          collect (format name+email-format name email))
-                             :action '(("Insert" . (lambda (value) (insert value)))))
-                  :buffer "*helm-khard-insert*")
-          ;; Just one email address
-          (insert (format name+email-format name (car email-list))))))))
+  (if (> (length (helm-marked-candidates)) 1)
+      ;; Several contacts selected
+      (insert (string-join 
+               (cl-loop
+                for contact in (helm-marked-candidates)
+                for name = (plist-get (car contact) :name)
+                for organisations = (plist-get (car contact) :organisations)
+                ;; Only use the first email address
+                for email = (car (split-string (plist-get (car contact) :emails)
+                                               ", "))
+                collect (format (helm-khard--generate-insert-format organisations)
+                                name email organisations))
+               ", "))
+    ;; Only one candidate selected
+    (let* ((contact (car (helm-marked-candidates))) ; = CANDIDATE
+           (name (plist-get (car contact) :name))
+           (organisations (plist-get (car contact) :organisations))
+           (email-list (split-string (plist-get (car contact) :emails)
+                                     ", ")))
+      (if (> (length email-list) 1)
+          ;; More than one email address
+          (helm :sources (helm-build-sync-source "Emails of Khard contact:"
+                           :candidates (cl-loop
+                                        for email in email-list
+                                        collect (format (helm-khard--generate-insert-format organisations)
+                                                        name email organisations))
+                           :action '(("Insert" . (lambda (value) (insert value)))))
+                :buffer "*helm-khard-insert*")
+        ;; Just one email address
+        (insert (format (helm-khard--generate-insert-format organisations) name (car email-list) organisations))))))
 
 (defun helm-khard-copy-contacts-to-clipboard-action (candidate)
   "Copy contacts selected with Helm as strings to the
@@ -588,6 +611,7 @@ asynchronously this time.
                                      " -c "  helm-khard-config-file
                                      " merge " source-uid
                                      " -t " target-uid))
+      ;; Synchronous call of Khard
       ;; (with-temp-buffer
       ;;   (call-process helm-khard-executable nil t nil
       ;;                 "-c"  helm-khard-config-file
@@ -930,14 +954,13 @@ updates `mu4e--contacts-set'. One way to achieve the latter is to use `advice-ad
   (cl-loop
    for contact in helm-khard--candidates
    for name = (plist-get (car (cdr contact)) :name)
-   for organisation = (plist-get (car (cdr contact)) :organisations)
+   for organisations = (plist-get (car (cdr contact)) :organisations)
    for emails = (plist-get (car (cdr contact)) :emails)
    if (not (string= "" emails))
    do (cl-loop
        for email in (split-string emails ", ")
-       for name+orga = (concat name (unless (string= organisation "")
-                                      (concat "  (" organisation ")"))) 
-       for name+orga+email = (concat "\"" name+orga "\" " "<" email ">")
+       for name+orga+email = (format (helm-khard--generate-insert-format organisations)
+                                     name email organisations)
        do (if (hash-table-p mu4e--contacts-set)
               (puthash name+orga+email t mu4e--contacts-set)
             (message "helm-khard--inject-contacts-into-mu4e: Warning: mu4e--contacts-set is not (yet) a hash!")))))
