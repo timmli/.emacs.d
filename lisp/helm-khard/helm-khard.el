@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-03-02 Sat 10:12:27
+;; Last modified: 2024-03-03 Sun 12:02:17
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -305,14 +305,38 @@ window width changes.")
 ;;--------------------
 
 (defun helm-khard-insert-name+email-action (candidate)
-  "Insert name+email of contacts selected with Helm."
-  (insert (string-join 
-           (cl-loop
-            for contact in (helm-marked-candidates)
-            collect (concat
-                     "\"" (plist-get (car contact) :name) "\" "
-                     "<" (plist-get (car contact) :emails) ">"))
-           ", ")))
+  "Insert name+email of contacts selected with Helm. If a contact has
+  several email addresses, either choose the first one (if more than
+  one contact is selected), or allow for choosing one of the email
+  addresses with Helm.
+  "
+  (let ((name+email-format "\"%s\" <%s>"))
+    (if (> (length (helm-marked-candidates)) 1)
+        ;; Several contacts selected
+        (insert (string-join 
+                 (cl-loop
+                  for contact in (helm-marked-candidates)
+                  for name = (plist-get (car contact) :name)
+                  ;; Only use the first email address
+                  for email = (car (split-string (plist-get (car contact) :emails)
+                                                 ", "))
+                  collect (format name+email-format name email))
+                 ", "))
+      ;; Only one candidate selected
+      (let* ((contact (car (helm-marked-candidates))) ; = CANDIDATE
+             (name (plist-get (car contact) :name))
+             (email-list (split-string (plist-get (car contact) :emails)
+                                       ", ")))
+        (if (> (length email-list) 1)
+            ;; More than one email address
+            (helm :sources (helm-build-sync-source "Emails of Khard contact:"
+                             :candidates (cl-loop
+                                          for email in email-list
+                                          collect (format name+email-format name email))
+                             :action '(("Insert" . (lambda (value) (insert value)))))
+                  :buffer "*helm-khard-insert*")
+          ;; Just one email address
+          (insert (format name+email-format name (car email-list))))))))
 
 (defun helm-khard-copy-contacts-to-clipboard-action (candidate)
   "Copy contacts selected with Helm as strings to the
@@ -377,10 +401,6 @@ window width changes.")
                      :candidates field-candidates
                      :action '(("Insert" . (lambda (value) (insert value)))))
           :buffer "*helm-khard-insert*")))
-
-
-
-
 
 
 ;;====================
