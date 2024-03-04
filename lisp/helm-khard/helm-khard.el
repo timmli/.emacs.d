@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-03-04 Mon 22:08:08
+;; Last modified: 2024-03-04 Mon 22:51:51
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -89,9 +89,9 @@
   `helm-khard-executable'. This variable is set with
   `helm-khard--initialize'.")
 
-(defvar helm-khard--khard-version
+(defvar helm-khard--minimum-khard-version
   "0.17.0"
-  "Version of `helm-khard-executable'.")
+  "Minimally required version of `helm-khard-executable'.")
 
 (defun helm-khard--get-version ()
   "Get version of `helm-khard-executable'."
@@ -153,7 +153,13 @@
                                       helm-khard--khard-version)
         helm-khard--available-contact-fields (helm-khard--get-available-contact-fields)
         helm-khard--addressbooks (helm-khard--get-addressbooks))
-  ;; TODO: Check khard version and do something if necessary
+  ;; Check khard version and do something if necessary
+  (let ((installed-version (helm-khard--get-version))
+        (required-version helm-khard--minimum-khard-version))
+    (when (version< installed-version required-version)
+      (message "helm-khard: Warning: at least v%s of Khard is required, but v%s was found."
+               required-version installed-version)))
+  nil
   )
 
 (defun helm-khard--generate-insert-format (name email organisation)
