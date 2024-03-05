@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-03-05 Tue 22:30:40
+;; Last modified: 2024-03-05 Tue 23:18:12
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -55,8 +55,7 @@
   :type 'file
   :group 'helm-khard)
 
-(defcustom helm-khard-config-file
-  ""
+(defcustom helm-khard-config-file  ""
   "Path to Khard's configuration file."
   :type 'file
   :group 'helm-khard)
@@ -79,6 +78,12 @@
 ;; Initialize internal variables
 ;;
 ;;--------------------
+
+(defcustom helm-khard-sync-during-initialization nil
+  "If non-nil, synchronize Khard's underlying database when calling
+  `helm-khard--initialize'."
+  :type 'boolean
+  :group 'helm-khard)
 
 (defvar helm-khard--addressbooks nil
   "List of Khard's addressbooks, which are pairs of a name and a
@@ -159,8 +164,9 @@
     (when (version< installed-version required-version)
       (message "helm-khard: Warning: at least v%s of Khard is required, but v%s was found."
                required-version installed-version)))
-  nil
-  )
+  ;; Sync database
+  (when helm-khard-sync-during-initialization
+    (helm-khard--sync-database)))
 
 (defun helm-khard--generate-insert-string (name email organisation)
   "Generate name+email strings for insertion."
@@ -506,7 +512,18 @@ If nil, the buffer represents a new contact.")
 
 (defcustom helm-khard-edit-finished-hook nil
   "Hook run when the editing a contact is completed."
-  :type 'hook)
+  :type 'hook
+  :group 'helm-khard)
+
+(defcustom helm-khard-sync-after-editing nil
+  "If non-nil, synchronize Khard database after editing."
+  :type 'boolean
+  :group 'helm-khard)
+
+(add-hook 'helm-khard-edit-finished-hook
+					#'(lambda ()
+              (when helm-khard-sync-after-editing
+                (helm-khard--sync-database))))
 
 (define-derived-mode helm-khard-edit-mode yaml-mode "Helm-khard"
   "Edit a contact using its YAML representation.")
@@ -938,6 +955,12 @@ passes the check, the result is non-nil, otherwise nil."
     (message "tl/vdirsyncer-sync-contacts: Syncing in progress, see buffer %s" buffer-name)
     (setq helm-khard--candidates nil)
     (helm-khard input)))
+
+(defun helm-khard--sync-database ()
+  "Sync database of Khard using the function in
+`helm-khard-vdirsyncer-command'."
+  (shell-command helm-khard-vdirsyncer-command)
+	(message "helm-khard: contacts synchronized. See buffer *Shell Command Output*."))
 
 
 ;;====================
