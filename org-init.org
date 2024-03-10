@@ -119,6 +119,7 @@
 - [[#hydras][Hydras]]
       - [[#hydra-begin][hydra: begin]]
       - [[#hydras-for-function-keys][Hydras for function keys]]
+      - [[#hydra-artist][hydra-artist]]
       - [[#hydra-bibtex][hydra-bibtex]]
       - [[#hydra-bookmarks][hydra-bookmarks]]
       - [[#hydra-cm-mode][hydra-cm-mode]]
@@ -5156,6 +5157,33 @@ Important limitations:
 
 ** Coding & Writing
 
+*** Artist mode
+
+http://www.lysator.liu.se/~tab/artist/
+http://dinasis.com/oliver/Learning_GNU_Emacs/gnu3-CHP-7-SECT-6.html
+
+Artist mode is a built-in minor mode for [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Picture-Mode.html][picture mode]] in Emacs with which simple geometric forms (lines, rectangles, circles, ellipses, ...) can be drawn using just text characters. This can be handy when wanting to create, e.g.,  simple diagrams to be included in your code.
+
+Here is an example: 
+
+#+BEGIN_SRC artist
+                                                
+                                 -------        
+                              --/       \--     
+   +---------+               /             \    
+   |         |              /               \   
+   |  Hello  | <--------->  |    World!     |   
+   |         |              \               /   
+   +---------+               \             /    
+                              --\       /--     
+                                 -------        
+                                                
+#+END_SRC
+
+I have made a [[hydra-artist][Hydra for artist-mode]].
+
+Note that the function set of artist-mode is very basic. For example, one cannot resize a rectangular directly.
+
 *** Clojure
 
 **** clojure-mode
@@ -8619,7 +8647,6 @@ Issues:
 
 ))
 #+END_SRC
-
 
 *** Mastodon
 
@@ -12950,6 +12977,8 @@ Hydra for functions specific to the buffer major mode.
 		(hydra-mu4e-compose/body))
 	 ((string-equal (buffer-mode) "mastodon-mode")
 		(hydra-mastodon/body))
+	 ((string-equal (buffer-mode) "picture-mode")
+		(hydra-artist/body))
 	 ((or t) (message (concat "no hydra defined for major mode"))))
 	)
 #+END_SRC
@@ -13151,6 +13180,51 @@ Hydra for global org-mode keys:
 	)
 (global-set-key (kbd "<f9>") 'hydra-f9/body)
 #+END_SRC
+
+
+** hydra-artist
+
+Hydra for [[Artist][artist-mode]].
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-artist (:color teal :hint nil)
+	"
+    ^^              ^^   ^^                            ^^                             ╭────────┐
+    ^Draw^          ^^  ^Modify^                      ^Operations^                    │ artist │
+	╭─^^──────────────^^───^^────────────────────────────^^─────────────────────────────┴────────╯
+    _l_ line       _<_--_>_ add|remove arrow head    _E_ erase                  Prefix: C-c C-a  
+    ^^              ^^  _v_ delete whole line      _RET_ start|end drawing 
+    _p_ poly line            ^ ^                     
+    _r_ rectangle ┐ ^^  ^ ^                        _M-w_ copy with rectangular
+    _s_ square    │ ^^  _f_ fill                   _C-k_ cut with rectangular
+    _c_ circle    │ ^^_C-f_ choose fill            _C-y_ paste
+    _e_ ellipsis  ╯          ^ ^                    ^ ^                          
+    _S_ spray can            ^ ^                    ^ ^
+    _x_ pen line    ^^       ^ ^                   _C-o_ choose operation              _q_ Quit
+"
+	("l" artist-select-op-line)
+	("<" artist-toggle-first-arrow)
+	(">" artist-toggle-second-arrow)
+	("p" artist-select-op-poly-line)
+	("r" artist-select-op-rectangle)
+	("M-w" artist-select-op-copy-rectangle)
+	("C-k" artist-select-op-cut-rectangle)
+	("C-y" artist-select-op-paste)
+	("E" artist-select-op-erase-rectangle)
+	("s" artist-select-op-square)
+	("c" artist-select-op-circle)
+	("e" artist-select-op-ellipse)
+	("f" artist-select-op-flood-fill)
+	("C-f" artist-select-fill-char)
+	("S" artist-select-op-spray-can)
+	("v" artist-select-op-vaporize-line)
+	("x" artist-select-op-pen-line)
+	("RET" artist-key-set-point)
+	("C-o" artist-select-operation)
+	("q" nil)
+	)
+#+END_SRC
+
 
 ** hydra-bibtex
 
