@@ -7471,6 +7471,17 @@ Minor mode within [[*dired][dired]] that makes available a hierarchical, column-
 	("C-x C-d" . deer))
 #+END_SRC
 
+*** disk-usage
+
+https://gitlab.com/ambrevar/emacs-disk-usage
+
+A file system analyzer similar to [[https://dev.yorhel.nl/ncdu][ncdu]]. However, I prefer using the latter.  
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(use-package disk-usage
+	:load-path "lisp/disk-usage/")
+#+END_SRC
+
 ** Getting things done
 
 *** Pomodoro technique
