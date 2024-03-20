@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-03-05 Tue 23:18:12
+;; Last modified: 2024-03-13 Wed 22:28:38
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -977,7 +977,7 @@ appropriate hook, or to the function `mu4e--update-contacts', which
 updates `mu4e--contacts-set'. One way to achieve the latter is to use `advice-add':
 (advice-add 'mu4e--update-contacts :after #'helm-khard--inject-contacts-into-mu4e)"
   (unless  helm-khard--candidates
-    (helm-khard--load-contacts))
+    (helm-khard--make-candidates))
   (cl-loop
    for contact in helm-khard--candidates
    for name = (plist-get (car (cdr contact)) :name)
