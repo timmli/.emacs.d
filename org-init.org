@@ -8316,12 +8316,14 @@ For adding further fields of a message to the citation line, I replace a special
 				 (cc (mu4e-message-field msg :cc))
 				 (subject (mu4e-message-field msg :subject))
 				 (date (mu4e-message-field msg :date)))
-		(concat "From: " (mapconcat 'tl/mail-address-plist-to-string from ", ") "\n"
-						"Date: " (format-time-string "%A, %Y-%m-%d, at %H:%M" date) "\n"
-						"To: " (mapconcat 'tl/mail-address-plist-to-string to ", ") "\n"
-						(when cc (concat "Cc: " (mapconcat 'tl/mail-address-plist-to-string cc ", ") "\n"))
-						"Subject: " subject
-						))
+		(concat
+		 "\n"
+		 "From: " (mapconcat 'tl/mail-address-plist-to-string from ", ") "\n"
+		 "Date: " (format-time-string "%A, %Y-%m-%d, at %H:%M" date) "\n"
+		 "To: " (mapconcat 'tl/mail-address-plist-to-string to ", ") "\n"
+		 (when cc (concat "Cc: " (mapconcat 'tl/mail-address-plist-to-string cc ", ") "\n"))
+		 "Subject: " subject
+		 ))
 	)
 #+END_SRC
 
