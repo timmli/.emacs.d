@@ -1,4 +1,4 @@
-;;; mu4e-notification.el --- -*- coding: utf-8; lexical-binding: t -*-
+;;; mu4e-notification.el --- Showing mail notifications -*- lexical-binding: t-*-
 ;;
 ;; Copyright (C) 1996-2023 Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 
@@ -67,6 +67,9 @@ support."
                             (if (= delta-unread 1) "" "s")
                             (plist-get fav :name))))
     (cond
+     ((fboundp 'do-applescript)
+      (do-applescript
+       (format "display notification %S with title %S" body title)))
      ((fboundp 'notifications-notify)
       ;; notifications available
       (setq mu4e--notification-id
@@ -79,7 +82,8 @@ support."
              ;; :app-icon (ignore-errors
              ;;             (image-search-load-path
              ;;              "gnus/gnus.png"))
-             :actions '("Show" "Favorite bookmark")
+             :actions '("Show" "Favorite bookmark"
+                        "default" "Favorite bookmark")
              :on-action (lambda (_ _) (mu4e-jump-to-favorite)))))
      ;; ... TBI: other notifications ...
      (t ;; last resort

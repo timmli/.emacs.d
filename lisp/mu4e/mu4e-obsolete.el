@@ -1,6 +1,6 @@
-;;; mu4e-obsolete-vars.el -- part of mu4e, the mu mail user agent -*- lexical-binding: t -*-
+;;; mu4e-obsolete.el --- Obsolete things -*- lexical-binding: t -*-
 
-;; Copyright (C) 2022 Dirk-Jan C. Binnema
+;; Copyright (C) 2022-2023 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -28,13 +28,15 @@
 ;;; Code:
 
 
-;; mu4e-draft
+;; mu4e-draft/compose
 
 (make-obsolete-variable 'mu4e-reply-to-address
                         'mu4e-compose-reply-to-address
                         "v0.9.9")
 
 (make-obsolete-variable 'mu4e-auto-retrieve-keys  "no longer used." "1.3.1")
+
+(make-obsolete-variable 'mu4e-compose-func "no longer used" "1.11.26")
 
 (make-obsolete-variable 'mu4e-compose-crypto-reply-encrypted-policy "The use of the
  'mu4e-compose-crypto-reply-encrypted-policy' variable is deprecated.
@@ -54,6 +56,15 @@
 (make-obsolete-variable 'mu4e-compose-auto-include-date
                         "This is done unconditionally now" "1.3.5")
 
+(make-obsolete-variable 'mu4e-compose-signature-auto-include
+                        "Usage message-signature directly" "1.11.22")
+
+(define-obsolete-variable-alias
+  'mu4e-compose-signature 'message-signature "1.11.22")
+(define-obsolete-variable-alias
+  'mu4e-compose-cite-function 'message-cite-function "1.11.22")
+(define-obsolete-variable-alias
+  'mu4e-compose-in-new-frame 'mu4e-compose-switch "1.11.22")
 
 ;; mu4e-message
 
@@ -111,9 +122,9 @@
 
 
 ;; mu4e-org
-(make-obsolete 'org-mu4e-open 'mu4e-org-open "1.3.6")
-(make-obsolete 'org-mu4e-store-and-capture
-               'mu4e-org-store-and-capture "1.3.6")
+(define-obsolete-function-alias 'org-mu4e-open 'mu4e-org-open "1.3.6")
+(define-obsolete-function-alias 'org-mu4e-store-and-capture
+  'mu4e-org-store-and-capture "1.3.6")
 
 
 ;; mu4e-search
@@ -223,6 +234,47 @@
 ;; mu4e-helpers
 (define-obsolete-function-alias 'mu4e-quote-for-modeline
   'mu4e--modeline-quote-and-truncate "1.9.16")
+
+;; mu4e-folder
+(make-obsolete-variable 'mu4e-cache-maildir-list "No longer used" "1.11.15")
+
+;; mu4e-contacts
+
+(define-obsolete-function-alias 'mu4e-user-mail-address-p
+  'mu4e-personal-address-p "1.5.5")
+
+;; don't use the older vars anymore
+(make-obsolete-variable 'mu4e-user-mail-address-regexp
+                        'mu4e-user-mail-address-list "0.9.9.x")
+(make-obsolete-variable 'mu4e-my-email-addresses
+                        'mu4e-user-mail-address-list "0.9.9.x")
+(make-obsolete-variable 'mu4e-user-mail-address-list
+                        "determined by server; see `mu4e-personal-addresses'."
+                        "1.3.8")
+(make-obsolete-variable 'mu4e-contact-rewrite-function
+                        "mu4e-contact-process-function (see docstring)"
+                        "1.3.2")
+(make-obsolete-variable 'mu4e-compose-complete-ignore-address-regexp
+                        "mu4e-contact-process-function (see docstring)"
+                        "1.3.2")
+
+(make-obsolete-variable 'mu4e-compose-reply-recipients
+                        "use mu4e-compose-reply / mu4e-compose-wide-reply"
+                        "1.11.23")
+(make-obsolete-variable 'mu4e-compose-reply-ignore-address
+                        "see: message-prune-recipient-rules" "1.11.23")
+
+;; this is only a _rough_
+(make-obsolete-variable 'mu4e-compose-dont-reply-to-self
+                        "message-dont-reply-to-names"
+                        "1.11.24")
+
+;; calendar
+(define-obsolete-function-alias 'mu4e-icalendar-setup #'ignore '"1.11.22")
+
+;; mu4e.
+(make-obsolete 'mu4e-clear-caches "No longer used" "1.11.15")
+
 
 (provide 'mu4e-obsolete)
 ;;; mu4e-obsolete.el ends here

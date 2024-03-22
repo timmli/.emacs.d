@@ -1,6 +1,6 @@
-;;; mu4e-helpers.el -- part of mu4e -*- lexical-binding: t -*-
+;;; mu4e-helpers.el --- Helper functions -*- lexical-binding: t -*-
 
-;; Copyright (C) 2022-2023  Dirk-Jan C. Binnema
+;; Copyright (C) 2022-2024  Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -52,12 +52,12 @@ Suggested possible values are:
 The function is used in two contexts -
 1) directly - for instance in when listing _other_ maildirs
    in `mu4e-ask-maildir'
-2) if  `mu4e-read-option-use-builtin' is nil, it is used
+2) if `mu4e-read-option-use-builtin' is nil, it is used
    as part of `mu4e-read-option' in many places.
 
 Set it to `completing-read' when you want to use completion
 frameworks such as Helm, Ivy or Vertico. In that case, you
-might want to add soemthing like the following in your configuration.
+might want to add something like the following in your configuration.
 
    (setq mu4e-read-option-use-builtin nil
          mu4e-completing-read-function \\='completing-read)
@@ -73,8 +73,8 @@ might want to add soemthing like the following in your configuration.
 If nil, use the value of `mu4e-completing-read-function', integrated
 into mu4e.
 
-Many of the third-party completion frameworks such as Helm, Ivy
-and Vertico influence `completion-read', so to have mu4e follow
+Many of the third-party completion frameworks - such as Helm, Ivy
+and Vertico - influence `completion-read', so to have mu4e follow
 your overall settings, try the equivalent of
 
    (setq mu4e-read-option-use-builtin nil
@@ -84,7 +84,6 @@ Tastes differ, but without any such frameworks, the unaugmented
 Emacs `completing-read' is rather Spartan."
   :type 'boolean
   :group 'mu4e)
-
 
 (defcustom mu4e-use-fancy-chars nil
   "When set, allow fancy (Unicode) characters for marks/threads.
@@ -121,7 +120,8 @@ marked as read-only, or non-nil otherwise."
             (mu4e-get-headers-buffer))
            ((mu4e-current-buffer-type-p 'headers)
             (mu4e-get-view-buffer))
-           (t (mu4e-error "This window is neither the headers nor the view window."))))
+           (t (mu4e-error
+               "This window is neither the headers nor the view window."))))
          (other-win (and other-buf (get-buffer-window other-buf))))
     (if (window-live-p other-win)
         (select-window other-win)
@@ -177,8 +177,8 @@ Does a local-exit and does not return."
 (defun mu4e--matching-choice (choices kar)
   "Does KAR match any of the  CHOICES?
 
-KAR is a character and CHOICES is an alist as describe in
-`mu4e--read-choice-builting'.
+KAR is a character and CHOICES is an alist as described in
+`mu4e--read-choice-builtin'.
 
 First try an exact match, but if there isn't, try
 case-insensitive.
@@ -206,7 +206,7 @@ Return the cdr (value) of the matching cell, if any."
   "Read and return one of CHOICES, prompting for PROMPT.
 
 PROMPT describes a multiple-choice question to the user. CHOICES
-is an alist of the fiorm
+is an alist of the form
   ( ( <display-string>  ( <shortcut> . <value> ))
      ... )
 Any input that is not one of CHOICES is ignored. This is mu4e's
@@ -227,7 +227,8 @@ Return the matching choice value (cdr of the cell)."
                             (let ((prefix (minibuffer-contents-no-properties)))
                               (unless (string-empty-p prefix)
                                 (setq quick-result
-                                      (mu4e--matching-choice choices (string-to-char prefix)))
+                                      (mu4e--matching-choice
+                                       choices (string-to-char prefix)))
                                 (when quick-result
                                   (exit-minibuffer)))))
                           -1 'local))
@@ -262,6 +263,10 @@ Return the matching choice value (cdr of the cell)."
     (while (not chosen)
       (message nil) ;; this seems needed...
       (when-let ((kar (read-char-exclusive prompt)))
+        (when (eq kar ?\e) (keyboard-quit)) ;; `read-char-exclusive' is a C
+                                            ;; function and doesn't check for
+                                            ;; `keyboard-quit', there we need to
+                                            ;; check if ESC is pressed
         (setq chosen (mu4e--matching-choice choices kar))))
     chosen))
 
@@ -470,7 +475,6 @@ If there is not e-mail address at point, do nothing."
     (format "%d" size))
    (t "?")))
 
-
 (defun mu4e-split-ranges-to-numbers (str n)
   "Convert STR containing attachment numbers into a list of numbers.
 
@@ -514,10 +518,6 @@ in an external program."
                  (lambda () (ignore-errors (delete-file tmpfile))))
     tmpfile))
 
-(defsubst mu4e-is-mode-or-derived-p (mode)
-  "Is the current mode equal to MODE or derived from it?"
-  (or (eq major-mode mode) (derived-mode-p mode)))
-
 (defun mu4e-display-manual ()
   "Display the mu4e manual page for the current mode.
 Or go to the top level if there is none."
@@ -538,7 +538,8 @@ Or go to the top level if there is none."
          (date	  (if date (format-time-string "%F: " date) ""))
          (title	  (format "%s%s" date subject))
          (msgid	  (or (plist-get msg :message-id)
-                      (mu4e-error "Cannot bookmark message without message-id"))))
+                      (mu4e-error
+                       "Cannot bookmark message without message-id"))))
     `(,title
       ,@(bookmark-make-record-default 'no-file 'no-context)
       (message-id . ,msgid)
@@ -578,12 +579,19 @@ Mu4e version of emacs 28's string-replace."
   (replace-regexp-in-string (regexp-quote from-string)
                             to-string in-string nil 'literal))
 
+(defun mu4e-plistp (object)
+  "Non-nil if and only if OBJECT is a valid plist.
+
+This is mu4e's version of Emacs 29's `plistp'."
+  (let ((len (proper-list-p object)))
+    (and len (zerop (% len 2)))))
+
 (defun mu4e-key-description (cmd)
   "Get the textual form of current binding to interactive function CMD.
 If it is unbound, return nil. If there are multiple bindings,
 return the shortest.
 
-Rougly does what `substitute-command-keys' does, but picks
+Roughly does what `substitute-command-keys' does, but picks
 shorter keys in some cases where there are multiple bindings."
   ;; not a perfect heuristic: e.g. '<up>' is longer that 'C-p'
   (car-safe

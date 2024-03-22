@@ -5,6 +5,8 @@
 
 ;;; Code:
 
+(add-to-list 'load-path (or (and load-file-name (directory-file-name (file-name-directory load-file-name))) (car load-path)))
+
 
 
 ;;; Generated autoloads from mu4e.el
@@ -15,7 +17,7 @@ Then, show the main window, unless BACKGROUND (prefix-argument)
 is non-nil.
 
 (fn &optional BACKGROUND)" t)
-(register-definition-prefixes "mu4e" '("mu4e-"))
+(register-definition-prefixes "mu4e" '("mu4e--"))
 
 
 ;;; Generated autoloads from mu4e-actions.el
@@ -30,40 +32,42 @@ is non-nil.
 
 ;;; Generated autoloads from mu4e-compose.el
 
-(autoload 'mu4e~compose-mail "mu4e-compose" "\
-This is mu4e's implementation of `compose-mail'.
-Quoting its docstring:
+(autoload 'mu4e-compose-new "mu4e-compose" "\
+Mu4e's implementation of `compose-mail'.
+TO, SUBJECT, OTHER-HEADERS, CONTINUE, SWITCH-FUNCTION,
+YANK-ACTION SEND-ACTIONS RETURN-ACTION are as described in
+`compose-mail', and to the extend that they do not conflict with
+mu4e inner workings.
 
-Start composing a mail message to send. This uses the user's
-chosen mail composition package as selected with the variable
-`mail-user-agent'. The optional arguments TO and SUBJECT specify
-recipients and the initial Subject field, respectively.
+(fn &optional TO SUBJECT OTHER-HEADERS CONTINUE SWITCH-FUNCTION YANK-ACTION SEND-ACTIONS RETURN-ACTION &rest _)" t)
+(defalias 'mu4e-compose-mail #'mu4e-compose-new)
+(autoload 'mu4e-compose-reply "mu4e-compose" "\
+Reply to the message at point.
+If WIDE is non-nil, make it a \"wide\" reply (a.k.a.
+\"reply-to-all\").
 
-OTHER-HEADERS is an alist specifying additional
-header fields.  Elements look like (HEADER . VALUE) where both
-HEADER and VALUE are strings.
+(fn &optional WIDE)" t)
+(autoload 'mu4e-compose-wide-reply "mu4e-compose" "\
+Wide-reply to the message at point.
+A.k.a., \"reply-to-all\"." t)
+(autoload 'mu4e-compose-supersede "mu4e-compose" "\
+Supersede message at point.
 
-CONTINUE, if non-nil, says to continue editing a message already
-being composed.  Interactively, CONTINUE is the prefix argument.
+That is, send the message again, with all the same recipients;
+this can be useful to follow-up on a sent message. The message
+must be from current user, as determined through
+`mu4e-personal-or-alternative-address-p'." t)
+(autoload 'mu4e-compose-forward "mu4e-compose" "\
+Forward the message at point." t)
+(autoload 'mu4e-compose-edit "mu4e-compose" "\
+Edit an existing draft message." t)
+(autoload 'mu4e-compose-resend "mu4e-compose" "\
+Re-send the message at point to ADDRESS.
+The message is resent as-is, without any editing.
 
-YANK-ACTION, if non-nil, is an action to perform, if and when
-necessary, to insert the raw text of the message being replied
-to. It has the form (FUNCTION . ARGS). The user agent will apply
-FUNCTION to ARGS, to insert the raw text of the original message.
-(The user agent will also run `mail-citation-hook', *after* the
-original text has been inserted in this way.)
-
-SEND-ACTIONS is a list of actions to call when the message is sent.
-Each action has the form (FUNCTION . ARGS).
-
-RETURN-ACTION, if non-nil, is an action for returning to the
-caller.  It has the form (FUNCTION . ARGS).  The function is
-called after the mail has been sent or put aside, and the mail
-buffer buried.
-
-(fn &optional TO SUBJECT OTHER-HEADERS CONTINUE SWITCH-ACTION YANK-ACTION SEND-ACTIONS RETURN-ACTION)")
-(define-mail-user-agent 'mu4e-user-agent 'mu4e~compose-mail 'message-send-and-exit 'message-kill-buffer 'message-send-hook)
-(register-definition-prefixes "mu4e-compose" '("mu4e"))
+(fn ADDRESS)" t)
+(define-mail-user-agent 'mu4e-user-agent #'mu4e-compose-mail #'message-send-and-exit #'message-kill-buffer 'message-send-hook)
+(register-definition-prefixes "mu4e-compose" '("mu4e-"))
 
 
 ;;; Generated autoloads from mu4e-config.el
@@ -86,14 +90,9 @@ buffer buried.
 (register-definition-prefixes "mu4e-contrib" '("eshell/mu4e-attach" "mu4e-"))
 
 
-;;; Generated autoloads from mu4e-draft.el
-
-(register-definition-prefixes "mu4e-draft" '("mu4e"))
-
-
 ;;; Generated autoloads from mu4e-folders.el
 
-(register-definition-prefixes "mu4e-folders" '("mu4e"))
+(register-definition-prefixes "mu4e-folders" '("mu4e-"))
 
 
 ;;; Generated autoloads from mu4e-headers.el
@@ -108,8 +107,6 @@ buffer buried.
 
 ;;; Generated autoloads from mu4e-icalendar.el
 
-(autoload 'mu4e-icalendar-setup "mu4e-icalendar" "\
-Perform the necessary initialization to use mu4e-icalendar.")
 (register-definition-prefixes "mu4e-icalendar" '("mu4e-"))
 
 
@@ -131,6 +128,11 @@ Perform the necessary initialization to use mu4e-icalendar.")
 ;;; Generated autoloads from mu4e-message.el
 
 (register-definition-prefixes "mu4e-message" '("mu4e-"))
+
+
+;;; Generated autoloads from mu4e-mime-parts.el
+
+(register-definition-prefixes "mu4e-mime-parts" '("mu4e"))
 
 
 ;;; Generated autoloads from mu4e-modeline.el
@@ -172,6 +174,11 @@ Create buttons for any mu4e BUFFER.
 (register-definition-prefixes "mu4e-speedbar" '("mu4e"))
 
 
+;;; Generated autoloads from mu4e-thread.el
+
+(register-definition-prefixes "mu4e-thread" '("mu4e-thread-"))
+
+
 ;;; Generated autoloads from mu4e-update.el
 
 (register-definition-prefixes "mu4e-update" '("mu4e-"))
@@ -184,7 +191,7 @@ Create buttons for any mu4e BUFFER.
 
 ;;; Generated autoloads from mu4e-view.el
 
-(register-definition-prefixes "mu4e-view" '("gnus-icalendar-event-from-handle" "mu4e"))
+(register-definition-prefixes "mu4e-view" '("gnus-icalendar-event-from-handle" "mu4e-"))
 
 
 ;;; Generated autoloads from mu4e-window.el

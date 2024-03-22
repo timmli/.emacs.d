@@ -1,4 +1,4 @@
-;;; mu4e-context.el -- part of mu4e, the mu mail user agent -*- lexical-binding: t -*-
+;;; mu4e-context.el --- Switching between settings -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2015-2023 Dirk-Jan C. Binnema
 
