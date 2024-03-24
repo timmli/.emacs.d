@@ -8112,6 +8112,41 @@ Finally, activate the iCalendar-to-Org export:
 (setq mu4e-compose-dont-reply-to-self t)
 #+END_SRC
 
+In mu4e, line breaks are handled in a way that is very unusual when coming from, e.g., Thunderbird. Namely, line breaks are *ignored* if they are preceded by trailing whitespace, which may lead to an unexpected paragraph structure in the sent message. (This is probably an effect of using format=flowed above.) In order to preserve the line breaks that one intentionally makes when writing the message, the following code therefore adds =delete-trailing-whitespace= to =message-send-hook=: 
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'message-send-hook
+          'delete-trailing-whitespace)
+#+END_SRC 
+
+Edit-as-new feature: this is currently an open issue in the mu repository: https://github.com/djcb/mu/issues/2274
+
+Switch between "Reply" and "Wide Reply". As of v1.12, the key [R] will start a compose buffer replying only to the sender of the message under point. To get the old behaviour back, the following code can be used: 
+
+#+BEGIN_SRC emacs-lisp :tangle no
+;; Adapted code from https://github.com/djcb/mu/issues/2665#issuecomment-2004909314
+(defun compose-reply-wide-or-not-please-ask ()
+  "Ask whether to reply-to-all or not."
+  (interactive)
+  ;; (mu4e-compose-reply (yes-or-no-p "Reply to all?"))
+  (mu4e-compose-reply (string-equal
+											 "a"
+											 (char-to-string
+												(read-char "Reply to [a]ll or only to [s]ender? ")))))
+
+(define-key mu4e-compose-minor-mode-map (kbd "R")
+  #'compose-reply-wide-or-not-please-ask)
+#+END_SRC
+
+However, I prefer binding [R] to "wide" replies, since this is what I want in almost all cases:
+
+#+BEGIN_SRC emacs-lisp
+(define-key mu4e-compose-minor-mode-map (kbd "R")
+  #'mu4e-compose-wide-reply)
+#+END_SRC
+
+****** Attachments & pasting from clipboard
+
 Attachments can be included directly from [[*dired][dired]] with the help of =gnus=. 
 
 Taken from https://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired.
@@ -8189,14 +8224,7 @@ Copy as formatted text to the clipboard:
 
 Note that =xclip= will wait (and Emacs will be stuck) until the copied content is pasted! 
 
-In mu4e, line breaks are handled in a way that is very unusual when coming from, e.g., Thunderbird. Namely, line breaks are *ignored* if they are preceded by trailing whitespace, which may lead to an unexpected paragraph structure in the sent message. (This is probably an effect of using format=flowed above.) In order to preserve the line breaks that one intentionally makes when writing the message, the following code therefore adds =delete-trailing-whitespace= to =message-send-hook=: 
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'message-send-hook
-          'delete-trailing-whitespace)
-#+END_SRC 
-
-Edit-as-new feature: this is currently an open issue in the mu repository: https://github.com/djcb/mu/issues/2274
+****** Sanity checks
 
 Check whether the message has an attachment if it mentions one:
 
@@ -8255,19 +8283,6 @@ Check whether the message has a subject:
 
 (add-hook 'message-send-hook
           'tl/mu4e-check-empty-subject)
-#+END_SRC
-
-Switch between "Reply" and "Wide Reply". As of v1.12, the key [R] will start a compose buffer replying only to the sender of the message under point. To get the old behaviour back, I use the following code: 
-
-#+BEGIN_SRC emacs-lisp
-;; Taken from https://github.com/djcb/mu/issues/2665#issuecomment-2004909314
-(defun compose-reply-wide-or-not-please-ask ()
-  "Ask whether to reply-to-all or not."
-  (interactive)
-  (mu4e-compose-reply (yes-or-no-p "Reply to all?")))
-
-(define-key mu4e-compose-minor-mode-map (kbd "R")
-  #'compose-reply-wide-or-not-please-ask)
 #+END_SRC
 
 ****** Templating
@@ -12761,7 +12776,9 @@ https://github.com/mickeynp/discover.el
 Discover more of emacs with the help of context menus.
 Similar to [[Hydras]].
 
-#+BEGIN_SRC emacs-lisp
+Currently I'm not using it because it binds =M-s=, which I use for switching between windows.
+
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package discover
 	:ensure t)
 #+END_SRC
