@@ -14821,7 +14821,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
          _!_/_?_ Read/Unread       _._ View raw              _Pr_ Toggle show related  
          _+_/_-_ Flag/Unflag       _ee_ Save attachment        _O_ Change Sorting
      _u_ Unmark                  _ea_ Save all attachments 
-     _U_ Unmark all
+     _U_ Unmark all              _o_ Save inline image
      _T_ Mark whole thread
      _A_ Action
      _x_ Execute marks
@@ -14836,6 +14836,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("C" mu4e-compose-new)
 	("ee" mu4e-view-save-attachments)
 	("ea" mu4e-view-save-all-attachments)
+	("o" image-save)
 	("R" mu4e-compose-reply)
 	("F" mu4e-compose-forward)
 	("O" mu4e-search-change-sorting)
