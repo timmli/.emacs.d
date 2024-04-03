@@ -8121,26 +8121,26 @@ In mu4e, line breaks are handled in a way that is very unusual when coming from,
 
 Edit-as-new feature: this is currently an open issue in the mu repository: https://github.com/djcb/mu/issues/2274
 
-Switch between "Reply" and "Wide Reply". As of v1.12, the key [R] will start a compose buffer replying only to the sender of the message under point. To get the old behaviour back, the following code can be used: 
+Switch between "Reply" and "Wide Reply". 
+As of v1.12, the key [R] will start a compose buffer replying only to the sender of the message under point. To get the old behaviour back, the following code can be used: 
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp
 ;; Adapted code from https://github.com/djcb/mu/issues/2665#issuecomment-2004909314
 (defun compose-reply-wide-or-not-please-ask ()
   "Ask whether to reply-to-all or not."
   (interactive)
   ;; (mu4e-compose-reply (yes-or-no-p "Reply to all?"))
-  (mu4e-compose-reply (string-equal
-											 "a"
-											 (char-to-string
-												(read-char "Reply to [a]ll or only to [s]ender? ")))))
+  (mu4e-compose-reply (string-equal "a"
+																		(char-to-string
+																		 (read-char "Reply to [a]ll or only to [s]ender? ")))))
 
 (define-key mu4e-compose-minor-mode-map (kbd "R")
   #'compose-reply-wide-or-not-please-ask)
 #+END_SRC
 
-However, I prefer binding [R] to "wide" replies, since this is what I want in almost all cases:
+Alternatively, one could bind [R] to "wide" replies:
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (define-key mu4e-compose-minor-mode-map (kbd "R")
   #'mu4e-compose-wide-reply)
 #+END_SRC
