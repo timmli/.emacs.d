@@ -3,6 +3,7 @@ VERSION:3.0
 UID:d4435f29-9382-46c4-9ab7-99c9ff8eec3c
 BDAY:2000-01-01
 EMAIL;TYPE=work:john.doe@work.com
+EMAIL;TYPE=work:john.doe@job.org
 EMAIL;TYPE=home:johnny@doe.me
 FN:John Doe
 N:Doe;John;;;
