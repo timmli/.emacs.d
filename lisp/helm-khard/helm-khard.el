@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-03-13 Wed 22:28:38
+;; Last modified: 2024-04-06 Sat 01:23:11
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -249,32 +249,42 @@ plist."
   "List of string-plist pairs which represent the candidates used in `helm-khard'.")
 
 (defun helm-khard--clean-up-complex-field (field)
-  "Clean up FIELD."
-  (save-match-data
-    ;; Remove enclosing brackets
-    (while (string-match "^{\\(.*\\)}$" field)
-      (setq field (replace-match "\\1" nil nil field)))
-    ;; Process feature value pairs
-    (while (string-match "'\\(.+?\\)': \\['\\(.+?\\)'\\]" field)
-      (setq field (replace-match "\\2" nil nil field)))
-    ;; Remove :::
-    (setq field (replace-regexp-in-string "[[:space:]]*:::[[:space:]]*" ", " field))
-    ;; Remove enclosing brackets
-    (while (string-match "^\\[\\(.+?\\)\\]$" field)
-      (setq field (replace-match "\\1" nil nil field)))
-    ;; Remove pairs of '
-    (while (string-match "^'\\(.+?\\)', " field)
-      (setq field (replace-match "\\1, " nil nil field)))
-    (while (string-match ", '\\(.+?\\)', " field)
-      (setq field (replace-match ", \\1, " nil nil field)))
-    (while (string-match ", '\\(.+?\\)'$" field)
-      (setq field (replace-match ", \\1" nil nil field)))
-    (while (string-match "^'\\(.*\\)'$" field)
-      (setq field (replace-match "\\1" nil nil field)))
-    ;; Remove remaining brackets
-    (setq field (replace-regexp-in-string "[][{}()]" "" field)) ; ']' and '['  must appear in that order first in a character alternative!
-    )
-  field)
+	"Clean up FIELD and return it as string.
+
+FIELD can be of different formats due to Khard:
+- Key-value structure = {'KEY': ['VALUE1', ...], ...} or
+                        {'KEY1': 'VALUE1', 'KEY2': 'VALUE2' ...} or
+                        {'KEY1': [{'KEY2': 'VALUE2', ....], ...} etc. 
+- List of strings = [['STRING1'], ['STRING2'], ...]
+- String
+"
+	(save-match-data
+		(cond
+		 (;; Process flat feature-value structures by concatenating all values
+			(string-match "^{.*}$" field)
+			(let ((key-value-regexp "'\\(.+?\\)': \\[\\(.+?\\)\\]")
+						(list-item-regexp "\\(^\\|, \\)'\\(.+?\\)\\('\\)\\(, \\|$\\)")
+						(start 0)
+						(output '()))
+				(while (string-match key-value-regexp field start)
+					(setq start (match-end 0))
+					(add-to-list 'output
+											 (string-join (cl-loop
+																		 for item in (split-string (match-string 2 field) ", ")
+																		 when (string-match "'\\(.*\\)'" item)
+																		 collect (match-string 1 item))
+																		", ")
+											 t))
+				(string-join output ", ")))
+		 (;; Process list of strings by concatenating them
+			(string-match "^\\[\\(.*\\)\\]$" field)
+			(string-join (cl-loop
+										for item in (split-string (match-string 1 field) ", ")
+										when (string-match "\\['\\(.*\\)'\\]" item)
+										collect (match-string 1 item))
+									 ", "))
+		 (;; Default
+			t field))))
 
 (defun helm-khard--window-width ()
   "Return the width of the window to pass to `helm-khard--candidates-formatter'."
