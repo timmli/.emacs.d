@@ -4375,6 +4375,8 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 
 				(:startgroup . nil)
 				("project" . ?p)
+				(:grouptags . nil)							; kinds of projects
+				("task" . nil)
 				(:endgroup . nil)
 				
 				(:startgroup . nil)
@@ -4384,7 +4386,7 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 				("conference" . nil)
 				("talk" . nil)									
 				("workshop" . nil)
-				("sharedtask" . nil)
+				("session" . nil)
 				(:endgroup . nil)
 
 				(:startgroup . nil)
