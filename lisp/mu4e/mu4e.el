@@ -1,4 +1,4 @@
-;;; mu4e.el --- part of mu4e, the mu mail user agent -*- lexical-binding: t -*-
+;;; mu4e.el --- Mu4e, the mu mail user agent -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2011-2023 Dirk-Jan C. Binnema
 
@@ -61,18 +61,28 @@
 Then, show the main window, unless BACKGROUND (prefix-argument)
 is non-nil."
   (interactive "P")
-  ;; start mu4e, then show the main view
-  (mu4e--init-handlers)
-  (mu4e--start
-   (unless background #'mu4e--main-view)))
+  (if (not (mu4e-running-p))
+      (progn
+        (mu4e--init-handlers)
+        (mu4e--start (unless background #'mu4e--main-view)))
+    ;; mu4e already running; show unless BACKGROUND
+    (unless background
+      (if (buffer-live-p (get-buffer mu4e-main-buffer-name))
+          (switch-to-buffer mu4e-main-buffer-name)
+        (mu4e--main-view)))))
 
-(defun mu4e-quit()
-  "Quit the mu4e session."
-  (interactive)
-  (if mu4e-confirm-quit
-      (when (y-or-n-p (mu4e-format "Are you sure you want to quit?"))
-        (mu4e--stop))
-    (mu4e--stop)))
+(defun mu4e-quit(&optional bury)
+  "Quit the mu4e session or bury the buffer.
+
+If prefix-argument BURY is non-nil, merely bury the buffer.
+Otherwise, completely quit mu4e, including automatic updating."
+  (interactive "P")
+  (if bury
+      (bury-buffer)
+    (if mu4e-confirm-quit
+        (when (y-or-n-p (mu4e-format "Are you sure you want to quit?"))
+          (mu4e--stop))
+      (mu4e--stop))))
 
 ;;; Internals
 
@@ -140,8 +150,10 @@ Otherwise, check requirements, then start mu4e. When successful, invoke
   (add-hook 'mu4e-query-items-updated-hook #'mu4e--main-redraw)
   (mu4e--query-items-refresh 'reset-baseline)
   (mu4e--server-ping)
+  ;; ask for the maildir-list
+  (mu4e--server-data 'maildirs)
   ;; maybe request the list of contacts, automatically refreshed after
-  ;; reindexing
+  ;; re-indexing
   (unless mu4e--contacts-set
     (mu4e--request-contacts-maybe)))
 
@@ -150,7 +162,12 @@ Otherwise, check requirements, then start mu4e. When successful, invoke
   (when mu4e--update-timer
     (cancel-timer mu4e--update-timer)
     (setq mu4e--update-timer nil))
-  (mu4e-clear-caches)
+
+  (setq ;; clear some caches
+   mu4e-maildir-list nil
+   mu4e--contacts-set nil
+   mu4e--contacts-tstamp "0")
+
   (remove-hook 'mu4e-query-items-updated-hook #'mu4e--main-redraw)
   (remove-hook 'mu4e-query-items-updated-hook #'mu4e--modeline-update)
   (remove-hook 'mu4e-query-items-updated-hook #'mu4e--notification)
@@ -219,7 +236,8 @@ Otherwise, check requirements, then start mu4e. When successful, invoke
             mu4e-message-changed-hook)
           (unless (and (not (string= mu4e--contacts-tstamp "0"))
                        (zerop (plist-get info :updated)))
-            (mu4e--request-contacts-maybe))
+            (mu4e--request-contacts-maybe)
+            (mu4e--server-data 'maildirs)) ;; update maildir list
           (mu4e--main-redraw))))
      ((plist-get info :message)
       (mu4e-index-message "%s" (plist-get info :message))))))
@@ -237,19 +255,11 @@ chance."
   (mu4e-setq-if-nil mu4e-erase-func            #'mu4e~headers-clear)
 
   (mu4e-setq-if-nil mu4e-sent-func             #'mu4e--default-handler)
-  (mu4e-setq-if-nil mu4e-compose-func          #'mu4e~compose-handler)
   (mu4e-setq-if-nil mu4e-contacts-func         #'mu4e--update-contacts)
   (mu4e-setq-if-nil mu4e-info-func             #'mu4e--info-handler)
   (mu4e-setq-if-nil mu4e-pong-func             #'mu4e--default-handler)
 
   (mu4e-setq-if-nil mu4e-queries-func      #'mu4e--query-items-queries-handler))
-
-(defun mu4e-clear-caches ()
-  "Clear any cached resources."
-  (setq
-   mu4e-maildir-list nil
-   mu4e--contacts-set nil
-   mu4e--contacts-tstamp "0"))
 
 ;;;
 (provide 'mu4e)

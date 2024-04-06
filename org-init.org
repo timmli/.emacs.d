@@ -7646,7 +7646,7 @@ https://www.djcbsoftware.nl/code/mu/mu4e/index.html
 https://github.com/djcb/mu
 
 Note that it is recommended to use the version of mu4e that is shipped together with the installed mu.
-Currently supported version: 1.10.x
+Currently supported version: 1.12.x
 
 Mu4e and Mu do not synchronize local and remote mailboxes. Below I'm assuming that  [[https://isync.sourceforge.io/][mbsync]] is used for this purpose. (A popular alternative might be [[http://www.offlineimap.org/][offlineimap]].) The following tutorial gives an idea how to set up mbsync: 
 - http://pragmaticemacs.com/emacs/migrating-from-offlineimap-to-mbsync-for-mu4e/
@@ -7860,6 +7860,12 @@ Actions:
 			'(("capture message" . mu4e-action-capture-message)
 				("narrow to thread" . mu4e-action-show-thread)
 				("save email as file" . tl/mu4e-action-copy-message-file)))
+#+END_SRC
+
+Keys:
+#+BEGIN_SRC emacs-lisp
+;; v1.12 standardly uses C-<tab> for folding threads.
+(define-key mu4e-thread-mode-map (kbd "C-<tab>") nil) 
 #+END_SRC
 
 ***** View messages
@@ -8169,6 +8175,41 @@ Finally, activate the iCalendar-to-Org export:
 (setq mu4e-compose-dont-reply-to-self t)
 #+END_SRC
 
+In mu4e, line breaks are handled in a way that is very unusual when coming from, e.g., Thunderbird. Namely, line breaks are *ignored* if they are preceded by trailing whitespace, which may lead to an unexpected paragraph structure in the sent message. (This is probably an effect of using format=flowed above.) In order to preserve the line breaks that one intentionally makes when writing the message, the following code therefore adds =delete-trailing-whitespace= to =message-send-hook=: 
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'message-send-hook
+          'delete-trailing-whitespace)
+#+END_SRC 
+
+Edit-as-new feature: this is currently an open issue in the mu repository: https://github.com/djcb/mu/issues/2274
+
+Switch between "Reply" and "Wide Reply". 
+As of v1.12, the key [R] will start a compose buffer replying only to the sender of the message under point. To get the old behaviour back, the following code can be used: 
+
+#+BEGIN_SRC emacs-lisp
+;; Adapted code from https://github.com/djcb/mu/issues/2665#issuecomment-2004909314
+(defun compose-reply-wide-or-not-please-ask ()
+  "Ask whether to reply-to-all or not."
+  (interactive)
+  ;; (mu4e-compose-reply (yes-or-no-p "Reply to all?"))
+  (mu4e-compose-reply (string-equal "a"
+																		(char-to-string
+																		 (read-char "Reply to [a]ll or only to [s]ender? ")))))
+
+(define-key mu4e-compose-minor-mode-map (kbd "R")
+  #'compose-reply-wide-or-not-please-ask)
+#+END_SRC
+
+Alternatively, one could bind [R] to "wide" replies:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(define-key mu4e-compose-minor-mode-map (kbd "R")
+  #'mu4e-compose-wide-reply)
+#+END_SRC
+
+****** Attachments & pasting from clipboard
+
 Attachments can be included directly from [[*dired][dired]] with the help of =gnus=. 
 
 Taken from https://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired.
@@ -8246,14 +8287,7 @@ Copy as formatted text to the clipboard:
 
 Note that =xclip= will wait (and Emacs will be stuck) until the copied content is pasted! 
 
-In mu4e, line breaks are handled in a way that is very unusual when coming from, e.g., Thunderbird. Namely, line breaks are *ignored* if they are preceded by trailing whitespace, which may lead to an unexpected paragraph structure in the sent message. (This is probably an effect of using format=flowed above.) In order to preserve the line breaks that one intentionally makes when writing the message, the following code therefore adds =delete-trailing-whitespace= to =message-send-hook=: 
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'message-send-hook
-          'delete-trailing-whitespace)
-#+END_SRC 
-
-Edit-as-new feature: this is currently an open issue in the mu repository: https://github.com/djcb/mu/issues/2274
+****** Sanity checks
 
 Check whether the message has an attachment if it mentions one:
 
@@ -8360,12 +8394,14 @@ For adding further fields of a message to the citation line, I replace a special
 				 (cc (mu4e-message-field msg :cc))
 				 (subject (mu4e-message-field msg :subject))
 				 (date (mu4e-message-field msg :date)))
-		(concat "From: " (mapconcat 'tl/mail-address-plist-to-string from ", ") "\n"
-						"Date: " (format-time-string "%A, %Y-%m-%d, at %H:%M" date) "\n"
-						"To: " (mapconcat 'tl/mail-address-plist-to-string to ", ") "\n"
-						(when cc (concat "Cc: " (mapconcat 'tl/mail-address-plist-to-string cc ", ") "\n"))
-						"Subject: " subject
-						))
+		(concat
+		 "\n"
+		 "From: " (mapconcat 'tl/mail-address-plist-to-string from ", ") "\n"
+		 "Date: " (format-time-string "%A, %Y-%m-%d, at %H:%M" date) "\n"
+		 "To: " (mapconcat 'tl/mail-address-plist-to-string to ", ") "\n"
+		 (when cc (concat "Cc: " (mapconcat 'tl/mail-address-plist-to-string cc ", ") "\n"))
+		 "Subject: " subject
+		 ))
 	)
 #+END_SRC
 
@@ -12803,7 +12839,9 @@ https://github.com/mickeynp/discover.el
 Discover more of emacs with the help of context menus.
 Similar to [[Hydras]].
 
-#+BEGIN_SRC emacs-lisp
+Currently I'm not using it because it binds =M-s=, which I use for switching between windows.
+
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package discover
 	:ensure t)
 #+END_SRC
@@ -14846,7 +14884,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
          _!_/_?_ Read/Unread       _._ View raw              _Pr_ Toggle show related  
          _+_/_-_ Flag/Unflag       _ee_ Save attachment        _O_ Change Sorting
      _u_ Unmark                  _ea_ Save all attachments 
-     _U_ Unmark all
+     _U_ Unmark all              _o_ Save inline image
      _T_ Mark whole thread
      _A_ Action
      _x_ Execute marks
@@ -14861,6 +14899,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("C" mu4e-compose-new)
 	("ee" mu4e-view-save-attachments)
 	("ea" mu4e-view-save-all-attachments)
+	("o" image-save)
 	("R" mu4e-compose-reply)
 	("F" mu4e-compose-forward)
 	("O" mu4e-search-change-sorting)

@@ -1,6 +1,6 @@
-;;; mu4e-lists.el -- part of mu4e -*- lexical-binding: t -*-
+;;; mu4e-lists.el --- Get names for mailing lists -*- lexical-binding: t -*-
 
-;; Copyright (C) 2011-2021 Dirk-Jan C. Binnema
+;; Copyright (C) 2011-2023 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -26,106 +26,145 @@
 ;; The shortname (friendly) should a at most 8 characters, camel-case
 
 ;;; Code:
+(require 'mu4e-message)
+(require 'mu4e-helpers)
+
+
+ ;;; Helpers
+(defmacro mu4e-message-id-url(base-url)
+  "Construct lambda to get an archive URL for message.
+This is based on some BASE-URL to which the message-id is concatenated;
+e.g. public-inbox-based archives."
+  `(lambda (msg) (concat ,base-url "/" (plist-get msg :message-id))))
+
+(defmacro mu4e-x-seq-url (base-url)
+  "Construct x-seq archive URL for MSG or nil if not found."
+  `(lambda (msg)
+     (when-let ((xseq (mu4e-fetch-field msg "X-Seq")))
+       (concat ,base-url "/" xseq))))
 
 ;;; Configuration
 (defvar mu4e-mailing-lists
-  '( ("bbdb-info.lists.sourceforge.net"                       . "BBDB")
-     ("boost-announce.lists.boost.org"                        . "BoostA")
-     ("boost-interest.lists.boost.org"                        . "BoostI")
-     ("conkeror.mozdev.org"                                   . "Conkeror")
-     ("curl-library.cool.haxx.se"                             . "LibCurl")
-     ("crypto-gram-list.schneier.com "                        . "CryptoGr")
-     ("dbus.lists.freedesktop.org"                            . "DBus")
-     ("desktop-devel-list.gnome.org"                          . "GnomeDT")
-     ("discuss-webrtc.googlegroups.com"                       . "WebRTC")
-     ("emacs-devel.gnu.org"                                   . "EmacsDev")
-     ("emacs-orgmode.gnu.org"                                 . "Orgmode")
-     ("emms-help.gnu.org"                                     . "Emms")
-     ("enlightenment-devel.lists.sourceforge.net"             . "E-Dev")
-     ("erlang-questions.erlang.org"                           . "Erlang")
-     ("evolution-hackers.lists.ximian.com"                    . "EvoDev")
-     ("farsight-devel.lists.sourceforge.net"                  . "Farsight")
-     ("mailman.lists.freedesktop.org"                         . "FDeskTop")
-     ("gcc-help.gcc.gnu.org"                                  . "Gcc")
-     ("gmime-devel-list.gnome.org"                            . "GMimeDev")
-     ("gnome-shell-list.gnome.org"                            . "GnomeSh")
-     ("gnu-emacs-sources.gnu.org"                             . "EmacsSrc")
-     ("gnupg-users.gnupg.org"                                 . "GnupgU")
-     ("gpe.handhelds.org"                                     . "GPE")
-     ("gstreamer-devel.lists.freedesktop.org"                 . "GstDev")
-     ("gstreamer-devel.lists.sourceforge.net"                 . "GstDev")
-     ("gstreamer-openmax.lists.sourceforge.net"               . "GstOmx")
-     ("gtk-devel-list.gnome.org"                              . "GtkDev")
-     ("gtkmm-list.gnome.org"                                  . "GtkmmDev")
-     ("guile-devel.gnu.org"                                   . "GuileDev")
-     ("guile-user.gnu.org"                                    . "GuileUsr")
-     ("help-gnu-emacs.gnu.org"                                . "EmacsUsr")
-     ("lggdh-algemeen.vvtp.tudelft.nl"                        . "LGGDH")
-     ("linux-bluetooth.vger.kernel.org"                       . "Bluez")
-     ("maemo-developers.maemo.org"                            . "MaemoDev")
-     ("maemo-users.maemo.org"                                 . "MaemoUsr")
-     ("monit-general.nongnu.org"                              . "Monit")
-     ("mu-discuss.googlegroups.com"                           . "Mu")
-     ("nautilus-list.gnome.org"                               . "Nautilus")
-     ("notmuch.notmuchmail.org"                               . "Notmuch")
-     ("orbit-list.gnome.org"                                  . "ORBit")
-     ("pulseaudio-discuss.lists.freedesktop.org"              . "PulseA")
-     ("sqlite-announce.sqlite.org"                            . "SQliteAnn")
-     ("sqlite-dev.sqlite.org"                                 . "SQLiteDev")
-     ("sup-talk.rubyforge.org"                                . "Sup")
-     ("sylpheed-claws-users.lists.sourceforge.net"            . "Sylpheed")
-     ("tinymail-devel-list.gnome.org"                         . "Tinymail")
-     ("unicode.sarasvati.unicode.org"                         . "Unicode")
-     ("xapian-discuss.lists.xapian.org"                       . "Xapian")
-     ("xdg.lists.freedesktop.org"                             . "XDG")
-     ("wl-en.lists.airs.net"                                  . "Wdrlust")
-     ("wl-en.ml.gentei.org"                                   . "WdrLust")
-     ("xapian-devel.lists.xapian.org"                         . "Xapian")
-     ("zsh-users.zsh.org"                                     . "ZshUsr"))
-  "AList of cells (MAILING-LIST-ID . SHORTNAME).")
+  `( (:list-id "bbdb-info.lists.sourceforge.net"         :name "BBDB")
+     (:list-id "boost-announce.lists.boost.org"          :name "Boost")
+     (:list-id "boost-interest.lists.boost.org"          :name "Boost")
+     (:list-id "curl-library.cool.haxx.se"               :name "Curl")
+     (:list-id "dbus.lists.freedesktop.org"              :name "DBus")
+     (:list-id "desktop-devel-list.gnome.org"            :name "Gnome")
+     (:list-id "discuss-webrtc.googlegroups.com"         :name "WebRTC")
+     (:list-id "emacs-devel.gnu.org"                     :name "EmacsDev"
+      :archive ,(mu4e-message-id-url "https://yhetil.org/emacs-devel"))
+     (:list-id "emacs-orgmode.gnu.org"                   :name "Orgmode"
+      :archive ,(mu4e-message-id-url "https://list.orgmode.org"))
+     (:list-id "emms-help.gnu.org"                       :name "Emms")
+     (:list-id "gcc-help.gcc.gnu.org"                    :name "Gcc")
+     (:list-id "gmime-devel-list.gnome.org"              :name "GMime")
+     (:list-id "gnome-shell-list.gnome.org"              :name "Gnome")
+     (:list-id "gnu-emacs-sources.gnu.org"               :name "Emacs")
+     (:list-id "gnupg-users.gnupg.org"                   :name "Gnupg")
+     (:list-id "gstreamer-devel.lists.freedesktop.org"   :name "GstDev")
+     (:list-id "gtk-devel-list.gnome.org"                :name "GtkDev")
+     (:list-id "guile-devel.gnu.org"                     :name "Guile"
+      :archive ,(mu4e-message-id-url "https://yhetil.org/guile-devel"))
+     (:list-id "guile-user.gnu.org"                      :name "Guile"
+      :archive ,(mu4e-message-id-url "https://yhetil.org/guile-user"))
+     (:list-id "help-gnu-emacs.gnu.org"                  :name "EmacsUsr"
+      :archive ,(mu4e-message-id-url "https://yhetil.org/emacs-user"))
+     (:list-id "mu-discuss.googlegroups.com"             :name "Mu")
+     (:list-id "nautilus-list.gnome.org"                 :name "Nautilus")
+     (:list-id "notmuch.notmuchmail.org"                 :name "Notmuch"
+      :archive ,(mu4e-message-id-url "https://yhetil.org/notmuch"))
+     (:list-id "sqlite-announce.sqlite.org"              :name "SQlite")
+     (:list-id "sqlite-dev.sqlite.org"                   :name "SQLite")
+     (:list-id "xapian-discuss.lists.xapian.org"         :name "Xapian")
+     (:list-id "xdg.lists.freedesktop.org"               :name "XDG")
+     (:list-id "wl-en.lists.airs.net"                    :name "WdrLust")
+     (:list-id "wl-en.ml.gentei.org"                     :name "WdrLust")
+     (:list-id "xapian-devel.lists.xapian.org"           :name "Xapian")
+     (:list-id "zsh-users.zsh.org"                       :name "Zsh"
+      :archive ,(mu4e-x-seq-url "https://www.zsh.org/users")))
+  "List of plists with keys:
+- `:list-id'       - the mailing list id
+- `:name'          - the display name
+- `:archive'       - (optional) a function taking a MSG and
+                      returning an URL to to the online-location of
+                      the message.
+After changes, use `mu4e-mailing-list-info-refresh' to update the
+corresponding data-structures.")
+
+(defgroup mu4e-lists nil "Configuration for mailing lists."
+  :group 'mu4e)
 
 (defcustom mu4e-user-mailing-lists nil
-  "An alist with cells (MAILING-LIST-ID . SHORTNAME).
-These are used in addition to the built-in list `mu4e-mailing-lists'."
-  :group 'mu4e-headers
-  :type '(repeat (cons string string)))
+  "A list with plists like `mu4e-mailing-lists'.
+These are used in addition to the built-in list
+`mu4e-mailing-lists'.
 
-(defcustom mu4e-mailing-list-patterns nil
+The older format, a list of cons cells,
+  (LIST-ID . NAME)
+is still supported for backward compatibility.
+
+After changing, use `mu4e-mailing-list-info-refresh' to make mu4e
+use the new values."
+  :group 'mu4e-headers
+  :type '(repeat (plist)))
+
+(defcustom mu4e-mailing-list-patterns '("\\([^.]*\\)\\.")
   "A list of regexps to capture a shortname out of a list-id.
-For the first regex that matches, its first matchgroup will be
+For the first regex that matches, its first match-group will be
 used as the shortname."
   :group 'mu4e-headers
   :type '(repeat (regexp)))
-
 
 (defvar mu4e--lists-hash nil
-  "Hashtable of mailing-list-id => shortname.
+  "Hash-table of list-id => plist.
 Based on `mu4e-mailing-lists' and `mu4e-user-mailing-lists'.")
 
+(defun mu4e-mailing-list-info-refresh ()
+  "Refresh the mailing list info.
+Based on the current value of `mu4e-mailing-lists' and
+`mu4e-user-mailing-lists'."
+  (interactive)
+  (setq mu4e--lists-hash (make-hash-table :test 'equal))
+  (seq-do (lambda (item)
+            (if (mu4e-plistp item)
+                ;; the new format
+                (puthash (plist-get item :list-id) item mu4e--lists-hash)
+              ;; backward compatibility
+              (puthash (car item) (cdr item) mu4e--lists-hash)))
+          (append mu4e-mailing-lists
+                  mu4e-user-mailing-lists))
+  mu4e--lists-hash)
+
+(defun mu4e-mailing-list-info (list-id)
+  "Get mailing list info for LIST-ID.
+Return nil if not found."
+  (unless mu4e--lists-hash (mu4e-mailing-list-info-refresh))
+  (gethash list-id mu4e--lists-hash))
 
+
 (defun mu4e-get-mailing-list-shortname (list-id)
   "Get the shortname for a mailing-list with list-id LIST-ID.
-Based on `mu4e-mailing-lists', `mu4e-user-mailing-lists', and
-`mu4e-mailing-list-patterns'."
-  (unless mu4e--lists-hash
-    (setq mu4e--lists-hash (make-hash-table :test 'equal))
-    (dolist (cell mu4e-mailing-lists)
-      (puthash (car cell) (cdr cell) mu4e--lists-hash))
-    (dolist (cell mu4e-user-mailing-lists)
-      (puthash (car cell) (cdr cell) mu4e--lists-hash)))
-  (or
-   (gethash list-id mu4e--lists-hash)
-   (and (boundp 'mu4e-mailing-list-patterns)
-        (seq-drop-while
-         (lambda (pattern)
-           (not (string-match pattern list-id)))
-         mu4e-mailing-list-patterns)
-        (match-string 1 list-id))
-   ;; if it's not in the db, take the part until the first dot if there is one;
-   ;; otherwise just return the whole thing
-   (if (string-match "\\([^.]*\\)\\." list-id)
+Either we know about this mailing list, or otherwise
+we guess one."
+  (or  ;; 1. perhaps we have it in one of our lists?
+   (plist-get (mu4e-mailing-list-info list-id) :name)
+   ;;     2. see if it matches some pattern
+   (if (seq-find (lambda (p) (string-match p list-id))
+                 mu4e-mailing-list-patterns)
        (match-string 1 list-id)
+     ;;   3. otherwise, just return the whole thing
      list-id)))
-;;; _
+
+(defun mu4e-mailing-list-archive-url (&optional msg)
+  "Get the mailing-list archive URL for MSG.
+If MSG is nil, use the message at point."
+  (when-let* ((msg (or msg (mu4e-message-at-point)))
+              (list-id (plist-get msg :list))
+              (list-info (and list-id (mu4e-mailing-list-info list-id)))
+              (func (plist-get list-info :archive)))
+    (when func
+      (funcall func msg))))
+
 (provide 'mu4e-lists)
 ;;; mu4e-lists.el ends here

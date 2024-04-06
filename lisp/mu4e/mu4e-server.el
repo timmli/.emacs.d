@@ -1,6 +1,6 @@
-;;; mu4e-server.el -- part of mu4e -*- lexical-binding: t -*-
+;;; mu4e-server.el --- Control mu server from mu4e -*- lexical-binding: t -*-
 
-;; Copyright (C) 2011-2022 Dirk-Jan C. Binnema
+;; Copyright (C) 2011-2023 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -73,6 +73,30 @@ better with e.g. offlineimap."
   :group 'mu4e
   :safe 'booleanp)
 
+(defcustom mu4e-mu-allow-temp-file nil
+  "Allow using temp-files for optimizing mu <-> mu4e communication.
+
+Some commands - in particular \"find\" and \"contacts\" - return
+big s-expressions; and it turns out that reading those is faster
+by passing them through a temp file rather than through normal
+stdin/stdout channel - esp. on the (common case) where the
+file-system for temp-files is in-memory.
+
+To see if the helps, you can benchmark the rendering with
+     (setq mu4e-headers-report-render-time t)
+
+and compare the results with `mu4e-mu-allow-temp' set and unset.
+
+Note: for a change to this variable to take effect, you need to
+stop/start mu4e."
+  :type  'boolean
+  :group 'mu4e
+  :safe  'booleanp)
+
+
+;; Cached data
+(defvar mu4e-maildir-list)
+
 
 ;; Handlers are not strictly internal, but are not meant
 ;; for overriding outside mu4e. The are mainly for breaking
@@ -117,13 +141,6 @@ the number of matches. See `mu4e--server-filter' for the format.")
   "Function called we receive an :erase sexp.
 This before new headers are displayed, to clear the current
 headers buffer. See `mu4e--server-filter' for the format.")
-
-(defvar mu4e-compose-func nil
-  "Function called for each compose message received.
-I.e., the original message that is used as basis for composing a
-new message (i.e., either a reply or a forward); the function is
-passed msg and a symbol (either reply or forward). See
-`mu4e--server-filter' for the format of <msg-plist>.")
 
 (defvar mu4e-info-func nil
   "Function called for each (:info type ....) sexp received.
@@ -207,7 +224,7 @@ Checks whether the server process is live."
              '(run open listen connect stop)) t))
 
 (defsubst mu4e--server-eat-sexp-from-buf ()
-  "'Eat' the next s-expression from `mu4e--server-buf'.
+  "Eat the next s-expression from `mu4e--server-buf'.
 Note: this is a string, not an emacs-buffer. `mu4e--server-buf gets
 its contents from the mu-servers in the following form:
    <`mu4e--server-cookie-pre'><length-in-hex><`mu4e--server-cookie-post'>
@@ -233,6 +250,29 @@ removed."
           (when objcons
             (setq mu4e--server-buf (substring mu4e--server-buf sexp-len))
             (car objcons)))))))
+
+(defun mu4e--server-plist-get (plist key)
+  "Like `plist-get' but load data from file if it is a string.
+
+I.e. (mu4e--server-plist-get (:foo bar) :foo)
+  => bar
+but
+     (mu4e--server-plist-get (:foo \"/tmp/data.eld\") :foo)
+  => evaluates the contents of /tmp/data.eld
+   (and deletes the file afterward).
+
+This for the few sexps we get from the mu server that support this
+(headers, contacts, maildirs)."
+  ;; XXX: perhaps re-use the same buffer?
+  (let ((val (plist-get plist key)))
+    (if (stringp val)
+        (with-temp-buffer
+          (insert-file-contents val)
+          (goto-char (point-min))
+          (delete-file val)
+          (read (current-buffer)))
+      val)))
+
 
 (defun mu4e--server-filter (_proc str)
   "Filter string STR from PROC.
@@ -301,9 +341,10 @@ The server output is as follows:
       (while sexp
         (mu4e-log 'from-server "%s" sexp)
         (cond
-         ;; a header plist can be recognized by the existence of a :date field
+         ;; a list of messages (after a find command)
          ((plist-get sexp :headers)
-          (funcall mu4e-headers-append-func (plist-get sexp :headers)))
+          (funcall mu4e-headers-append-func
+                   (mu4e--server-plist-get sexp :headers)))
 
          ;; the found sexp, we receive after getting all the headers
          ((plist-get sexp :found)
@@ -337,7 +378,7 @@ The server output is as follows:
          ;; note: we use 'member', to match (:contacts nil)
          ((plist-member sexp :contacts)
           (funcall mu4e-contacts-func
-                   (plist-get sexp :contacts)
+                   (mu4e--server-plist-get sexp :contacts)
                    (plist-get sexp :tstamp)))
 
          ;; something got moved/flags changed
@@ -351,16 +392,13 @@ The server output is as follows:
          ((plist-get sexp :remove)
           (funcall mu4e-remove-func (plist-get sexp :remove)))
 
-         ;; start composing a new message
-         ((plist-get sexp :compose)
-          (funcall mu4e-compose-func
-                   (plist-get sexp :compose)
-                   (plist-get sexp :original)
-                   (plist-get sexp :include)))
-
          ;; get some info
          ((plist-get sexp :info)
           (funcall mu4e-info-func sexp))
+
+         ;; get some data
+         ((plist-get sexp :maildirs)
+          (setq mu4e-maildir-list (mu4e--server-plist-get sexp :maildirs)))
 
          ;; receive an error
          ((plist-get sexp :error)
@@ -392,6 +430,7 @@ As per issue #2198."
   (seq-filter #'identity ;; filter out nil
               `(,(when mu4e-mu-debug "--debug")
                 "server"
+                ,(when mu4e-mu-allow-temp-file "--allow-temp-file")
                 ,(when mu4e-mu-home (format "--muhome=%s" mu4e-mu-home)))))
 
 (defun mu4e--version-check ()
@@ -510,20 +549,6 @@ On success, we receive `'(:info add :path <path> :docid <docid>)'
 as well as `'(:update <msg-sexp>)`'; otherwise, we receive an error."
   (mu4e--server-call-mu `(add :path ,path)))
 
-(defun mu4e--server-compose (type decrypt &optional docid)
-  "Compose a message of TYPE, DECRYPT it and use DOCID.
-TYPE is a symbol, either `forward', `reply', `edit', `resend' or
-`new', based on an original message (ie, replying to, forwarding,
-editing, resending) with DOCID or nil for type `new'.
-
-The result is delivered to the function registered as
-`mu4e-compose-func'."
-  (mu4e--server-call-mu
-   `(compose
-     :type ,type
-     :decrypt ,(and decrypt t)
-     :docid   ,docid)))
-
 (defun mu4e--server-contacts (personal after maxnum tstamp)
   "Ask for contacts with PERSONAL AFTER MAXNUM TSTAMP.
 
@@ -539,6 +564,12 @@ get at most MAX contacts."
      :after    ,(or after nil)
      :tstamp   ,(or tstamp nil)
      :maxnum   ,(or maxnum nil))))
+
+(defun mu4e--server-data (kind)
+  "Request data of some KIND.
+KIND is a symbol. Currently supported kinds: maildirs."
+  (mu4e--server-call-mu
+   `(data :kind ,kind)))
 
 (defun mu4e--server-find (query threads sortfield sortdir maxnum skip-dups
                                 include-related)
@@ -584,7 +615,13 @@ the directory time stamp."
 
 (defun mu4e--server-mkdir (path &optional update)
   "Create a new maildir-directory at filesystem PATH.
-When UPDATE is non-nil, send a update when completed."
+When UPDATE is non-nil, send a update when completed.
+PATH must be below the root-maildir."
+  ;; handle maildir cache
+  (if (not (string-prefix-p (mu4e-root-maildir) path))
+      (mu4e-error "Cannot create maildir outside root-maildir")
+    (add-to-list 'mu4e-maildir-list ;; update cache
+                 (substring path (length (mu4e-root-maildir)))))
   (mu4e--server-call-mu `(mkdir
                           :path ,path
                           :update ,(or update nil))))

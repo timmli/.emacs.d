@@ -1,4 +1,4 @@
-;;; mu4e-search.el -- part of mu4e -*- lexical-binding: t -*-
+;;; mu4e-search.el --- Search-related functions -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2021,2022 Dirk-Jan C. Binnema
 
@@ -217,7 +217,7 @@ the search."
       (mu4e--query-items-refresh 'reset-baseline))
 
     (run-hook-with-args 'mu4e-search-bookmark-hook expr)
-    (mu4e-search expr (when edit "Edit bookmark: ") edit)))
+    (mu4e-search expr (when edit "Edit query: ") edit)))
 
 (defun mu4e-search-bookmark-edit ()
   "Edit an existing bookmark before executing it."
@@ -226,9 +226,9 @@ the search."
 
 
 (defun mu4e-search-maildir (maildir &optional edit)
-  "Search the messages in maildir.
-The user is prompted to ask what maildir. If prefix arg EDIT is
-given, offer to edit the search query before executing it."
+  "Search the messages in MAILDIR.
+The user is prompted to ask what maildir. If prefix-argument EDIT
+is given, offer to edit the search query before executing it."
   (interactive
    (let ((maildir (mu4e-ask-maildir "Jump to maildir: ")))
      (list maildir current-prefix-arg)))
@@ -547,14 +547,44 @@ the mode-line.")
       'help-echo (format "mu4e query:\n\t%s" mu4e--search-last-query))
      "]")))
 
-(define-minor-mode mu4e-search-minor-mode
-  "Mode for searching for messages."
-  :global nil
-  :init-value nil ;; disabled by default
-  :group 'mu4e
-  :lighter ""
-  :keymap
-  (let ((map (make-sparse-keymap)))
+(defun mu4e-search-query (&optional edit)
+  "Select a search query through `completing-read'.
+
+If prefix-argument EDIT is non-nil, allow for editing the chosen
+query before submitting it."
+  (interactive "P")
+  (let* ((candidates (seq-map (lambda (item)
+                                (cons (plist-get item :name) item))
+                              (mu4e-query-items)))
+         (longest-name
+          (seq-max (seq-map (lambda (c) (length (car c))) candidates)))
+         (longest-query
+          (seq-max (seq-map (lambda (c) (length (plist-get (cdr c) :query)))
+                            candidates)))
+
+         (annotation-func
+          (lambda (candidate)
+            (let* ((item (cdr-safe (assoc candidate candidates)))
+                   (name (propertize (or  (plist-get item :name) "")
+                                     'face 'mu4e-header-key-face))
+                   (query (propertize (or (plist-get item :query) "")
+                                      'face 'mu4e-header-value-face)))
+              (concat
+               "  "
+               (make-string (- longest-name (length name)) ?\s)
+               query
+               (make-string (- longest-query (length query)) ?\s)
+               "  "
+               (mu4e--query-item-display-counts item)))))
+         (completion-extra-properties
+          `(:annotation-function ,annotation-func))
+         (chosen (completing-read "Query: " candidates))
+         (query (or (plist-get (cdr-safe (assoc chosen candidates)) :query)
+                    (mu4e-warn "No query for %s" chosen))))
+    (mu4e-search-bookmark query edit)))
+
+(defvar mu4e-search-minor-mode-map
+    (let ((map (make-sparse-keymap)))
     (define-key map "s" #'mu4e-search)
     (define-key map "S" #'mu4e-search-edit)
     (define-key map "/" #'mu4e-search-narrow)
@@ -569,8 +599,19 @@ the mode-line.")
     (define-key map "b" #'mu4e-search-bookmark)
     (define-key map "B" #'mu4e-search-bookmark-edit)
 
+    (define-key map "c" #'mu4e-search-query)
+
     (define-key map "j" #'mu4e-search-maildir)
-    map))
+    map)
+    "Keymap for mu4e-search-minor-mode.")
+
+(define-minor-mode mu4e-search-minor-mode
+  "Mode for searching for messages."
+  :global nil
+  :init-value nil ;; disabled by default
+  :group 'mu4e
+  :lighter ""
+  :keymap mu4e-search-minor-mode-map)
 
 (defvar mu4e--search-menu-items
   '("--"
@@ -580,6 +621,8 @@ the mode-line.")
      :help "Show messages matching some bookmark query"]
     ["Search maildir" mu4e-search-maildir
      :help "Show messages in some maildir"]
+    ["Choose query" mu4e-search-query
+     :help "Show messages for some query"]
     ["Previous query" mu4e-search-prev
      :help "Run previous query"]
     ["Next query" mu4e-search-next

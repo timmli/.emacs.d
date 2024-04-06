@@ -1,4 +1,4 @@
-;;; mu4e-folders.el -- part of mu4e -*- lexical-binding: t -*-
+;;; mu4e-folders.el --- Dealing with maildirs & folders -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2021-2023 Dirk-Jan C. Binnema
 
@@ -154,24 +154,13 @@ the attachment dir. See Info node `(mu4e) Attachments' for
 details.
 
 When this called for composing a message, both filename and
-mime-type are nill."
+mime-type are nil."
   :type 'directory
   :group 'mu4e-folders
   :safe 'stringp)
 
 (defvar mu4e-maildir-list nil
   "Cached list of maildirs.")
-
-(defcustom mu4e-cache-maildir-list t
-  "Whether to cache the list of maildirs.
-Set it to t if you find that generating the list on the fly is
-too slow.
-
-If you do so, you can set `mu4e-maildir-list' to nil to force
-regenerating the cache the next time `mu4e-get-maildirs' gets
-called."
-  :type 'boolean
-  :group 'mu4e-folders)
 
 
 (defun mu4e-maildir-shortcuts ()
@@ -204,19 +193,19 @@ the result."
         (or val (mu4e-error "%S evaluates to nil" foldervar)))))
 
 (defun mu4e-get-drafts-folder (&optional msg)
-  "Get the drafts folder, optionallly based on MSG.
+  "Get the drafts folder, optionally based on MSG.
 See `mu4e-drafts-folder'." (mu4e--get-folder 'mu4e-drafts-folder msg))
 
 (defun mu4e-get-refile-folder (&optional msg)
-  "Get the folder for refiling, optionallly based on MSG.
+  "Get the folder for refiling, optionally based on MSG.
 See `mu4e-refile-folder'." (mu4e--get-folder 'mu4e-refile-folder msg))
 
 (defun mu4e-get-sent-folder (&optional msg)
-  "Get the sent folder, optionallly based on MSG.
+  "Get the sent folder, optionally based on MSG.
 See `mu4e-sent-folder'." (mu4e--get-folder 'mu4e-sent-folder msg))
 
 (defun mu4e-get-trash-folder (&optional msg)
-  "Get the trash folder, optionallly based on MSG.
+  "Get the trash folder, optionally based on MSG.
 See `mu4e-trash-folder'." (mu4e--get-folder 'mu4e-trash-folder msg))
 
 ;;; Maildirs
@@ -237,54 +226,13 @@ to create it; otherwise return nil."
   (let ((seems-to-exist (file-directory-p dir)))
     (when (or seems-to-exist
               (yes-or-no-p (mu4e-format "%s does not exist yet. Create now?" dir)))
-      ;; even when the maildir already seems to exist,
-      ;; call mkdir for a deeper check. However only get an update
-      ;; when the maildir is totally new.
+      ;; even when the maildir already seems to exist, call mkdir for a deeper
+      ;; check. However only get an update when the maildir is totally new.
       (mu4e--server-mkdir dir (not seems-to-exist))
-      (setq mu4e-maildir-list nil) ;; clear cache
       t)))
 
-(defun mu4e--get-maildirs-1 (path mdir)
-  "Get maildirs for MDIR under PATH.
-Do so recursively and produce a list of relative paths."
-  (let ((dirs)
-        (dentries
-         (ignore-errors
-           (directory-files-and-attributes
-            (mu4e-join-paths path mdir) nil
-            "^[^.]\\|\\.[^.][^.]" t))))
-    (dolist (dentry dentries)
-      (when (or (and (booleanp (cadr dentry)) (cadr dentry))
-                (file-directory-p (mu4e-join-paths path (car dentry))))
-        (if (file-accessible-directory-p
-             (mu4e-join-paths (mu4e-root-maildir) mdir (car dentry) "cur"))
-            (setq dirs
-                  (cons (mu4e-join-paths mdir (car dentry)) dirs)))
-        (unless (member (car dentry) '("cur" "new" "tmp"))
-          (setq dirs
-                (append dirs
-                        (mu4e--get-maildirs-1
-                         path (mu4e-join-paths mdir (car dentry))))))))
-    dirs))
-
 (defun mu4e-get-maildirs ()
-  "Get maildirs under `mu4e-maildir'.
-Do so recursively, and produce a list of relative paths (ie.,
-/archive, /sent etc.). Most of the work is done in
-`mu4e--get-maildirs-1'. Note, these results are /cached/ if
-`mu4e-cache-maildir-list' is customized to non-nil. In that case,
-the list of maildirs will not change until you restart mu4e."
-  (unless (and mu4e-maildir-list mu4e-cache-maildir-list)
-    (setq mu4e-maildir-list
-          (sort
-           (append
-            (when (file-accessible-directory-p
-                   (mu4e-join-paths
-                    (mu4e-root-maildir) "cur"))
-              '("/"))
-            (mu4e--get-maildirs-1 (mu4e-root-maildir) "/"))
-           (lambda (s1 s2)
-             (string< (downcase s1) (downcase s2))))))
+  "Get maildirs under `mu4e-maildir'."
   mu4e-maildir-list)
 
 (defun mu4e-ask-maildir (prompt)
@@ -307,12 +255,13 @@ from all maildirs under `mu4e-maildir'."
            (mu4e-read-option prompt
                              (append options
                                      '(("oOther..." . other)))))))
-    (if (eq response 'other)
-        (progn
-          (funcall mu4e-completing-read-function prompt
-                   (mu4e-get-maildirs) nil nil
-                   mu4e-maildir-initial-input))
-      response)))
+    (substring-no-properties
+     (if (eq response 'other)
+         (progn
+           (funcall mu4e-completing-read-function prompt
+                    (mu4e-get-maildirs) nil nil
+                    mu4e-maildir-initial-input))
+       response))))
 
 (defun mu4e-ask-maildir-check-exists (prompt)
   "Like `mu4e-ask-maildir', PROMPT for existence of the maildir.
@@ -329,9 +278,14 @@ Offer to create it if it does not exist yet."
 ;; filename and the mime-type as argument, either (or both) which can
 ;; be nil
 
-(defun mu4e~get-attachment-dir (&optional fname mimetype)
-  "Get the directory for saving attachments from `mu4e-attachment-dir'.
-This is optionally based on the file-name FNAME and its MIMETYPE."
+(defun mu4e-determine-attachment-dir (&optional fname mimetype)
+  "Get the target-directory for attachments.
+
+This is based on the variable `mu4e-attachment-dir', which is either:
+- if is a string, used it as-is
+-  a function taking two string parameters, both of which can be nil:
+    (1) a filename or a URL
+    (2) a mime-type (such as \"text/plain\"."
   (let ((dir
          (cond
           ((stringp mu4e-attachment-dir)
@@ -339,7 +293,7 @@ This is optionally based on the file-name FNAME and its MIMETYPE."
           ((functionp mu4e-attachment-dir)
            (funcall mu4e-attachment-dir fname mimetype))
           (t
-          (mu4e-error "Unsupported type for mu4e-attachment-dir" )))))
+           (mu4e-error "Unsupported type for mu4e-attachment-dir" )))))
     (if dir
         (expand-file-name dir)
       (mu4e-error "Mu4e-attachment-dir evaluates to nil"))))

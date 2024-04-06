@@ -1,6 +1,6 @@
-;;; mu4e-org -- Org-links to mu4e messages/queries -*- lexical-binding: t -*-
+;;; mu4e-org --- Org-links to mu4e messages/queries -*- lexical-binding: t -*-
 
-;; Copyright (C) 2012-2022 Dirk-Jan C. Binnema
+;; Copyright (C) 2012-2024 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -52,7 +52,7 @@ Example usage:
                     \"No date\")))
       (concat subject \" \" date)))
 
-  (setq org-mu4e-link-desc-func \\='my-link-descr)"
+  (setq mu4e-org-link-desc-func \\='my-link-descr)"
   :type '(function)
   :group 'mu4e-org)
 
@@ -112,8 +112,8 @@ It links to the last known query when in `mu4e-headers-mode' with
 a specific message, based on its message-id, so that links stay
 valid even after moving the message around."
   (cond
-   ((mu4e-is-mode-or-derived-p 'mu4e-view-mode) (mu4e--org-store-link-message))
-   ((mu4e-is-mode-or-derived-p 'mu4e-headers-mode)
+   ((derived-mode-p 'mu4e-view-mode) (mu4e--org-store-link-message))
+   ((derived-mode-p 'mu4e-headers-mode)
     (if mu4e-org-link-query-in-headers-mode
         (mu4e--org-store-link-query)
       (mu4e--org-store-link-message)))))
