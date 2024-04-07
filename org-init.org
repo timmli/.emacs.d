@@ -8875,8 +8875,8 @@ A Mastodon client for Emacs.
 (use-package mastodon
   :ensure t    
 	:config
-  (mastodon-discover)
-	;; Account settings should be put elsewhere
+  ;; (mastodon-discover)
+	;;; Account settings should be put elsewhere
 	(setq mastodon-instance-url "https://social.instance.org"
 				mastodon-active-user "example_user")
 	(setq mastodon-tl--show-avatars t
