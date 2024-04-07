@@ -8145,6 +8145,13 @@ Alternatively, one could bind [R] to "wide" replies:
   #'mu4e-compose-wide-reply)
 #+END_SRC
 
+Configure the body of forwarded messages:
+
+#+BEGIN_SRC emacs-lisp
+(setq message-forward-as-mime nil
+			message-forward-before-signature t)
+#+END_SRC
+
 ****** Attachments & pasting from clipboard
 
 Attachments can be included directly from [[*dired][dired]] with the help of =gnus=. 
@@ -8299,6 +8306,7 @@ For specifying templates of whole emails, there is no straightforward solution a
 :END:
 
 - https://github.com/djcb/mu/issues/2308
+- https://github.com/djcb/mu/blob/master/IDEAS.org
 
 ****** Citations
 
@@ -14863,7 +14871,12 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	)
 #+END_SRC
 
-*** hydra-mu4e-compose
+*** TODO hydra-mu4e-compose
+:LOGBOOK:
+- State "TODO"       from              [2024-04-02 Tue 16:04]
+:END:
+
+- [ ] Add keys for all address fields and more
 
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-mu4e-compose (:hint nil :color blue)
