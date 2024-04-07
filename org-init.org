@@ -8083,6 +8083,12 @@ Finally, activate the iCalendar-to-Org export:
 						(turn-off-auto-fill)
 						(set-fill-column 79)
 						(flyspell-mode)
+						
+						;; FIXME: Does not work! 
+						(when (re-search-forward "<#part sign=smime>" nil t)
+							(end-of-line)
+							(open-line 1)
+							(forward-line))
 						))
 
 ;; Do not autosafe drafts
