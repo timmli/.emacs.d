@@ -4375,6 +4375,8 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 
 				(:startgroup . nil)
 				("project" . ?p)
+				(:grouptags . nil)							; kinds of projects
+				("task" . nil)
 				(:endgroup . nil)
 				
 				(:startgroup . nil)
@@ -4384,7 +4386,7 @@ Tags can be set globally and permantly using the variable =org-tag-persistent-al
 				("conference" . nil)
 				("talk" . nil)									
 				("workshop" . nil)
-				("sharedtask" . nil)
+				("session" . nil)
 				(:endgroup . nil)
 
 				(:startgroup . nil)
@@ -4895,8 +4897,14 @@ General options:
 #+BEGIN_SRC emacs-lisp
 (setq org-icalendar-timezone "Europe/Berlin"
 			org-icalendar-include-todo nil			; Non-nil means create VTODO components from TODO items.
-			org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due) ; Export all deadline time stamps.
-			org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo) ; Export all scheduled time stamps.
+			org-icalendar-use-deadline '(event-if-todo ; Deadlines in TODO entries become calendar events.
+																	 event-if-not-todo ; Deadlines in non-TODO entries become calendar events.
+																	 todo-due					 ; Use deadlines in TODO entries as due-dates.
+																	 ) 
+			org-icalendar-use-scheduled '(;; todo-start ; Scheduling time stamps in TODO entries become start date.
+																		;; event-if-todo ; Scheduling time stamps in TODO entries become an event.
+																		;; event-if-not-todo ; Scheduling time stamps in non-TODO entries become an event.
+																		) 
 			org-icalendar-include-body nil)		; Amount of text below headline to be included in iCalendar export.
 #+END_SRC
 
@@ -4959,7 +4967,7 @@ The org-mode agenda can be exported with two commands:
 - =org-icalendar-export-agenda-files=: export to separate files.
 - =org-icalendar-combine-agenda-files=: combine all exported entries in one file, which is specified in =org-icalendar-combined-agenda-file= (=~/org.ics= by default).
  
-The idea would be to export the agenda to an icalendar file (when saving an agenda file) that is regularly imported to the calendar. 
+The idea is to export the agenda to an icalendar file (when saving an agenda file) that is regularly imported to the calendar. 
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/org-export-agenda-to-ics ()
@@ -7992,6 +8000,7 @@ and then increment it."
 I'm binding this to a key in [[hydra-mu4e-view]].
 
 Since v1.10, messages can be detached in =mu4e-view-mode=. The following functions detaches a displayed message and opens it in new frame:
+
 #+BEGIN_SRC emacs-lisp
 (defun tl/mu4e-detach-and-view-message-in-new-frame ()
 	(interactive)
@@ -8004,6 +8013,7 @@ Since v1.10, messages can be detached in =mu4e-view-mode=. The following functio
 #+END_SRC
 
 Actions:
+
 #+BEGIN_SRC emacs-lisp
 (setq mu4e-view-actions
 			'(("capture message" . mu4e-action-capture-message)
@@ -8011,6 +8021,59 @@ Actions:
 				("xview in xwidget" . mu4e-action-view-in-xwidget)
 				("narrow to thread" . mu4e-action-show-thread)
 				("save email as file" . tl/mu4e-action-copy-message-file)))
+#+END_SRC
+
+****** COMMENT Remove attachments
+
+The following code is taken from https://github.com/djcb/mu/issues/2247#issuecomment-1978059294.
+It depends on [[https://pldaniels.com/altermime/][alterMIME]].
+
+#+BEGIN_SRC emacs-lisp
+(defun bjm/mime-part-filename (num)
+  "Filename of MIME part numbered num in gnus-article-mode."
+  ;; Check whether the specified part exists.
+  (when (> num (length gnus-article-mime-handle-alist))
+    (error "No such part"))
+  ;; Move point to MIME part
+  (when (gnus-article-goto-part num)
+    ;; Get handle for MIME part at point
+    (let ((handle (get-text-property (point) 'gnus-data)))
+      (when handle
+        ;; Return file name of handle
+        (mm-handle-filename handle)))))
+
+(defun bjm/mu4e-delete-attachment (num)
+  "Remove email attachment from mu4e using altermime."
+  (let* ((path (mu4e-message-field (mu4e-message-at-point) :path))
+         (filename (bjm/mime-part-filename num))
+         (cmd (format "altermime --input='%s' --remove='%s' --xheader='X-Attachment-Removed: %s'" path filename filename)))
+    (when (and filename
+               (yes-or-no-p
+                (format "Remove '%s'?" filename)))
+      (shell-command cmd)
+      (mu4e-message cmd))))
+
+;; get custom header field
+(defun bjm/mu4e-fetch-field (msg hdr)
+  "Find the value for an arbitrary header field HDR from MSG."
+  (with-temp-buffer
+    (insert-file-contents (plist-get msg :path))
+    (message-fetch-field hdr)))
+
+;; display attachmment removed field
+(add-to-list 'mu4e-header-info-custom
+             '(:xremoved . (:name "X-Attachment-Removed"
+																	:shortname "XAR"
+																	:help "Name of attachment removed"
+																	:function (lambda (msg) (or (bjm/mu4e-fetch-field msg "X-Attachment-Removed") "")))))
+
+;; display this header field in message view
+(add-to-list 'mu4e-view-fields :xremoved t)
+
+(add-to-list 'mu4e-view-qmime-part-actions
+             '(:name "delete-attachment"
+										 :handler bjm/mu4e-delete-attachment
+										 :receives index))
 #+END_SRC
 
 ****** iCalender support
@@ -8136,9 +8199,13 @@ As of v1.12, the key [R] will start a compose buffer replying only to the sender
   "Ask whether to reply-to-all or not."
   (interactive)
   ;; (mu4e-compose-reply (yes-or-no-p "Reply to all?"))
-  (mu4e-compose-reply (string-equal "a"
-																		(char-to-string
-																		 (read-char "Reply to [a]ll or only to [s]ender? ")))))
+	(if (> (length (append (mu4e-field-at-point ':to)
+												 (mu4e-field-at-point ':cc)))
+				 1)
+			(mu4e-compose-reply (string-equal "a"
+																				(char-to-string
+																				 (read-char "Reply to [a]ll or only to [s]ender? "))))
+		(mu4e-compose-reply nil)))
 
 (define-key mu4e-compose-minor-mode-map (kbd "R")
   #'compose-reply-wide-or-not-please-ask)
