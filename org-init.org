@@ -8193,9 +8193,13 @@ As of v1.12, the key [R] will start a compose buffer replying only to the sender
   "Ask whether to reply-to-all or not."
   (interactive)
   ;; (mu4e-compose-reply (yes-or-no-p "Reply to all?"))
-  (mu4e-compose-reply (string-equal "a"
-																		(char-to-string
-																		 (read-char "Reply to [a]ll or only to [s]ender? ")))))
+	(if (> (length (append (mu4e-field-at-point ':to)
+												 (mu4e-field-at-point ':cc)))
+				 1)
+			(mu4e-compose-reply (string-equal "a"
+																				(char-to-string
+																				 (read-char "Reply to [a]ll or only to [s]ender? "))))
+		(mu4e-compose-reply nil)))
 
 (define-key mu4e-compose-minor-mode-map (kbd "R")
   #'compose-reply-wide-or-not-please-ask)
