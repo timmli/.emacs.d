@@ -1,3 +1,5 @@
+;;; helm-khard-test.el --- Tests for helm-khard.el   -*- lexical-binding: t -*-
+
 (let* ((helm-khard-test-dir (file-name-directory (buffer-file-name)))
 			 (helm-khard-config-file (expand-file-name (concat helm-khard-test-dir
 																												 "khard.conf")))
