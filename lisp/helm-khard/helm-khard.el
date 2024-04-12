@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-04-06 Sat 01:23:11
+;; Last modified: 2024-04-11 Thu 18:53:02
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -831,43 +831,48 @@ prompt."
   "Import VCF with one or more contacts. This function is used by
 `helm-khard' when performing an action on a candidate."
   (interactive)
-  (let ((input helm-input)
-        (filename (read-file-name "Path to VCard file (VCF) to be imported: " (expand-file-name "~/")))
-        (dest-path (if helm-khard--addressbooks
-                       (let ((choice
-                              (read-string
-                               (concat
-                                "Available address books:\n"
-                                (cl-loop
-                                 for addressbook in helm-khard--addressbooks ; addressbook --> (NAME PATH)
-                                 for position in (number-sequence 0 (length helm-khard--addressbooks))
-                                 concat (format "\t(%s) %s\n" position (car addressbook))
-                                 )
-                                "Please choose a target address book (0 is default): "))))
-                         (car (cdr (nth (string-to-number choice) helm-khard--addressbooks))))
-                     nil)))
-    (let ((new-uids (helm-khard--import-vcf filename dest-path))) ; VCF can contain several contacts!
-      (setq helm-khard--candidates nil)   ; Update candidates when calling the `helm-khard' the next time.
-      (helm-khard--make-candidates)
-      (let ((new-contacts (cl-loop for new-uid in new-uids
-                                   collect (car (helm-khard--search-candidates `(:uid ,new-uid))))))
-        (if (yes-or-no-p (concat "Found "
-                                 (number-to-string (length new-uids))
-                                 " contact(s):\n"
+  (let* ((filename (read-file-name "Path to VCard file (VCF) to be imported: " (expand-file-name "~/")))
+         (dest-path (if helm-khard--addressbooks
+                        (let ((choice
+                               (read-string
+                                (concat
+                                 "Available address books:\n"
                                  (cl-loop
-                                  for new-contact in new-contacts
-                                  concat (concat "- "
-                                                 (plist-get new-contact :name)
-                                                 " with uid "
-                                                 (plist-get new-contact :uid)
-                                                 "\n")) 
-                                 "Do you want to edit these imported contacts? "))
-            (cl-loop
-             for new-contact in new-contacts
-             for new-candidate = `(,new-contact) ; Candidate format of actions 
-             do (helm-khard-edit-contact-action new-candidate) 
-             ))))
-    (helm-khard input)))
+                                  for addressbook in helm-khard--addressbooks ; addressbook --> (NAME PATH)
+                                  for position in (number-sequence 0 (length helm-khard--addressbooks))
+                                  concat (format "\t(%s) %s\n" position (car addressbook))
+                                  )
+                                 "Please choose a target address book (0 is default): "))))
+                          (car (cdr (nth (string-to-number choice) helm-khard--addressbooks))))
+                      nil))
+         (new-uids (helm-khard--import-vcf filename dest-path))) ; VCF can contain several contacts!
+    (setq helm-khard--candidates nil)   ; Update candidates when calling `helm-khard--make-candidates' next time.
+    (helm-khard--make-candidates)
+    (let* ((new-contacts (cl-loop for new-uid in new-uids
+                                  collect (car (helm-khard--search-candidates `(:uid ,new-uid)))))
+           (input (string-join
+                   (cl-loop
+                    for new-contact in new-contacts
+                    collect (replace-regexp-in-string " " "." (plist-get new-contact :name))
+                    )
+                   "\|")))
+      ;; (if (yes-or-no-p (concat "Found "
+      ;;                          (number-to-string (length new-uids))
+      ;;                          " contact(s):\n"
+      ;;                          (cl-loop
+      ;;                           for new-contact in new-contacts
+      ;;                           concat (concat "- "
+      ;;                                          (plist-get new-contact :name)
+      ;;                                          " with uid "
+      ;;                                          (plist-get new-contact :uid)
+      ;;                                          "\n")) 
+      ;;                          "Do you want to edit these imported contacts? "))
+      ;;     (cl-loop
+      ;;      for new-contact in new-contacts
+      ;;      for new-candidate = `(,new-contact) ; Candidate format of actions 
+      ;;      do (helm-khard-edit-contact-action new-candidate) 
+      ;;      ))
+      (helm-khard input))))
 
 (defun helm-khard--import-vcf (vcf dest-path)
   "Import the contacts in VCF, a file in the VCard format. VCF is
