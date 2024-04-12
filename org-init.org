@@ -8083,7 +8083,8 @@ Documentation: https://www.djcbsoftware.nl/code/mu/mu4e/iCalendar.html
 
 #+BEGIN_SRC emacs-lisp
 (require 'mu4e-icalendar)
-(mu4e-icalendar-setup)
+;; (mu4e-icalendar-setup) ; obsolete since around v1.12
+(gnus-icalendar-setup) 
 #+END_SRC 
 
 Furthermore, with Gnus, one can convert iCalendar invitations to Org headings using the [[Capture templates][Org capture mechanism]].
