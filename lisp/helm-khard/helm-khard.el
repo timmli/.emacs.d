@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-04-11 Thu 18:53:02
+;; Last modified: 2024-04-12 Fri 09:14:07
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -249,7 +249,7 @@ plist."
   "List of string-plist pairs which represent the candidates used in `helm-khard'.")
 
 (defun helm-khard--clean-up-complex-field (field)
-	"Clean up FIELD and return it as string.
+  "Clean up FIELD and return it as string.
 
 FIELD can be of different formats due to Khard:
 - Key-value structure = {'KEY': ['VALUE1', ...], ...} or
@@ -258,33 +258,33 @@ FIELD can be of different formats due to Khard:
 - List of strings = [['STRING1'], ['STRING2'], ...]
 - String
 "
-	(save-match-data
-		(cond
-		 (;; Process flat feature-value structures by concatenating all values
-			(string-match "^{.*}$" field)
-			(let ((key-value-regexp "'\\(.+?\\)': \\[\\(.+?\\)\\]")
-						(list-item-regexp "\\(^\\|, \\)'\\(.+?\\)\\('\\)\\(, \\|$\\)")
-						(start 0)
-						(output '()))
-				(while (string-match key-value-regexp field start)
-					(setq start (match-end 0))
-					(add-to-list 'output
-											 (string-join (cl-loop
-																		 for item in (split-string (match-string 2 field) ", ")
-																		 when (string-match "'\\(.*\\)'" item)
-																		 collect (match-string 1 item))
-																		", ")
-											 t))
-				(string-join output ", ")))
-		 (;; Process list of strings by concatenating them
-			(string-match "^\\[\\(.*\\)\\]$" field)
-			(string-join (cl-loop
-										for item in (split-string (match-string 1 field) ", ")
-										when (string-match "\\['\\(.*\\)'\\]" item)
-										collect (match-string 1 item))
-									 ", "))
-		 (;; Default
-			t field))))
+  (save-match-data
+    (cond
+     (;; Process flat feature-value structures by concatenating all values
+      (string-match "^{.*}$" field)
+      (let ((key-value-regexp "'\\(.+?\\)': \\[\\(.+?\\)\\]")
+            (list-item-regexp "\\(^\\|, \\)'\\(.+?\\)\\('\\)\\(, \\|$\\)")
+            (start 0)
+            (output '()))
+        (while (string-match key-value-regexp field start)
+          (setq start (match-end 0))
+          (add-to-list 'output
+                       (string-join (cl-loop
+                                     for item in (split-string (match-string 2 field) ", ")
+                                     when (string-match "'\\(.*\\)'" item)
+                                     collect (match-string 1 item))
+                                    ", ")
+                       t))
+        (string-join output ", ")))
+     (;; Process list of strings by concatenating them
+      (string-match "^\\[\\(.*\\)\\]$" field)
+      (string-join (cl-loop
+                    for item in (split-string (match-string 1 field) ", ")
+                    when (string-match "\\['\\(.*\\)'\\]" item)
+                    collect (match-string 1 item))
+                   ", "))
+     (;; Default
+      t field))))
 
 (defun helm-khard--window-width ()
   "Return the width of the window to pass to `helm-khard--candidates-formatter'."
@@ -531,7 +531,7 @@ If nil, the buffer represents a new contact.")
   :group 'helm-khard)
 
 (add-hook 'helm-khard-edit-finished-hook
-					#'(lambda ()
+          #'(lambda ()
               (when helm-khard-sync-after-editing
                 (helm-khard--sync-database))))
 
@@ -975,7 +975,7 @@ passes the check, the result is non-nil, otherwise nil."
   "Sync database of Khard using the function in
 `helm-khard-vdirsyncer-command'."
   (shell-command helm-khard-vdirsyncer-command)
-	(message "helm-khard: contacts synchronized. See buffer *Shell Command Output*."))
+  (message "helm-khard: contacts synchronized. See buffer *Shell Command Output*."))
 
 
 ;;====================
