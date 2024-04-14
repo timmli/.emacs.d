@@ -9439,8 +9439,6 @@ https://github.com/minad/osm
 
 OpenStreetMap viewer for Emacs.
 
-- [ ] v0.13: too buggy so far, but interesting project 
-
 #+BEGIN_SRC emacs-lisp
 (use-package osm
 	:ensure t
@@ -9456,6 +9454,8 @@ OpenStreetMap viewer for Emacs.
   ;; Take a look at the customization group `osm' for more options.
   (osm-server 'default) ;; Configure the tile server
   (osm-copyright t)     ;; Display the copyright information
+
+	(add-hook 'osm-mode-hook #'(lambda () (visual-line-mode -1)))
 	)
 #+END_SRC
 
