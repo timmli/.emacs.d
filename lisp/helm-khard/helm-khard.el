@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-04-14 Sun 14:27:10
+;; Last modified: 2024-04-14 Sun 14:30:45
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -859,7 +859,7 @@ prompt."
                     )
                    "\|")))
       ;; Sync with remote database
-      (when (yes-or-no-p (concat "Found "
+      (when (yes-or-no-p (concat "Imported "
                                  (number-to-string (length new-uids))
                                  " contact(s):\n"
                                  (cl-loop
@@ -869,7 +869,7 @@ prompt."
                                                  " with uid "
                                                  (plist-get new-contact :uid)
                                                  "\n")) 
-                                 "Do you want to synchronize these new contacts with the remote database (recommended)? "))
+                                 "Do you want to synchronize these imported contacts with the remote database (recommended)? "))
         (helm-khard--sync-database))
       ;; (if (yes-or-no-p (concat "Found "
       ;;                          (number-to-string (length new-uids))
