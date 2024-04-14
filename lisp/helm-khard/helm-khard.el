@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-04-12 Fri 09:14:07
+;; Last modified: 2024-04-14 Sun 14:27:10
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -831,7 +831,8 @@ prompt."
   "Import VCF with one or more contacts. This function is used by
 `helm-khard' when performing an action on a candidate."
   (interactive)
-  (let* ((filename (read-file-name "Path to VCard file (VCF) to be imported: " (expand-file-name "~/")))
+  (let* ((filename (read-file-name "Path to VCard file (VCF) to be imported: "
+                                   (expand-file-name "~/Downloads/")))
          (dest-path (if helm-khard--addressbooks
                         (let ((choice
                                (read-string
@@ -846,7 +847,8 @@ prompt."
                           (car (cdr (nth (string-to-number choice) helm-khard--addressbooks))))
                       nil))
          (new-uids (helm-khard--import-vcf filename dest-path))) ; VCF can contain several contacts!
-    (setq helm-khard--candidates nil)   ; Update candidates when calling `helm-khard--make-candidates' next time.
+    ;; Update candidates
+    (setq helm-khard--candidates nil)   
     (helm-khard--make-candidates)
     (let* ((new-contacts (cl-loop for new-uid in new-uids
                                   collect (car (helm-khard--search-candidates `(:uid ,new-uid)))))
@@ -856,6 +858,19 @@ prompt."
                     collect (replace-regexp-in-string " " "." (plist-get new-contact :name))
                     )
                    "\|")))
+      ;; Sync with remote database
+      (when (yes-or-no-p (concat "Found "
+                                 (number-to-string (length new-uids))
+                                 " contact(s):\n"
+                                 (cl-loop
+                                  for new-contact in new-contacts
+                                  concat (concat "- "
+                                                 (plist-get new-contact :name)
+                                                 " with uid "
+                                                 (plist-get new-contact :uid)
+                                                 "\n")) 
+                                 "Do you want to synchronize these new contacts with the remote database (recommended)? "))
+        (helm-khard--sync-database))
       ;; (if (yes-or-no-p (concat "Found "
       ;;                          (number-to-string (length new-uids))
       ;;                          " contact(s):\n"
@@ -872,6 +887,7 @@ prompt."
       ;;      for new-candidate = `(,new-contact) ; Candidate format of actions 
       ;;      do (helm-khard-edit-contact-action new-candidate) 
       ;;      ))
+      ;; Return to Helm
       (helm-khard input))))
 
 (defun helm-khard--import-vcf (vcf dest-path)
