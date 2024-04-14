@@ -8087,7 +8087,12 @@ In mu4e, line breaks are handled in a way that is very unusual when coming from,
           'delete-trailing-whitespace)
 #+END_SRC 
 
-Edit-as-new feature: this is currently an open issue in the mu repository: https://github.com/djcb/mu/issues/2274
+Edit-as-new feature: since v1.12, this feature is supported to some extend with the function =mu4e-compose-supersede=. Let's bind it to [N]: 
+
+#+BEGIN_SRC emacs-lisp
+(define-key mu4e-compose-minor-mode-map (kbd "N")
+  #'mu4e-compose-supersede)
+#+END_SRC
 
 Switch between "Reply" and "Wide Reply". 
 As of v1.12, the key [R] will start a compose buffer replying only to the sender of the message under point. To get the old behaviour back, the following code can be used: 
