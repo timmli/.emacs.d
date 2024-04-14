@@ -9437,7 +9437,7 @@ Used in [[hydra-image]].
 
 https://github.com/minad/osm
 
-OpenStreeMap viewer for Emacs.
+OpenStreetMap viewer for Emacs.
 
 - [ ] v0.13: too buggy so far, but interesting project 
 
@@ -9451,11 +9451,6 @@ OpenStreeMap viewer for Emacs.
   ;;        ("C-c m v" . osm-server)
   ;;        ("C-c m t" . osm-goto)
   ;;        ("C-c m j" . osm-bookmark-jump))
-
-  :init
-  ;; Load Org link support
-  (with-eval-after-load 'org
-    (require 'osm-ol))
 
 	:custom
   ;; Take a look at the customization group `osm' for more options.
