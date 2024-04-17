@@ -8034,6 +8034,7 @@ Finally, activate the iCalendar-to-Org export:
 						;; Remove the date field.    
 						;; Otherwise, the date of the composing start is used!
  						;; https://github.com/djcb/mu/issues/2096
+						;; FIXME: This will also delete the date field of forwarded messages!
 						(message-remove-header "Date")
 
 						;; Replace citation line place keeper.
@@ -8323,12 +8324,18 @@ For adding further fields of a message to the citation line, I replace a special
 		(concat
 		 "\n"
 		 "From: " (mapconcat 'tl/mail-address-plist-to-string from ", ") "\n"
-		 "Date: " (format-time-string "%A, %Y-%m-%d, at %H:%M" date) "\n"
+		 "Subject: " subject "\n"
 		 "To: " (mapconcat 'tl/mail-address-plist-to-string to ", ") "\n"
 		 (when cc (concat "Cc: " (mapconcat 'tl/mail-address-plist-to-string cc ", ") "\n"))
-		 "Subject: " subject
+		 "Date: " (format-time-string "%A, %Y-%m-%d, at %H:%M" date)
 		 ))
 	)
+#+END_SRC
+
+Since v1.12, citation lines of forwarded messages should be changed using [[https://www.gnu.org/software/emacs/manual/html_node/message/Forwarding.html#Forwarding][Gnus' message-forward]]:
+
+#+BEGIN_SRC emacs-lisp
+(setq message-forward-included-headers '("^From:" "^Subject:" "^To:" "^Cc:" "^Date:"))
 #+END_SRC
 
 By default, mu4e removes the signature from cited messages by using =message-cite-original-without-signature= as value of =mu4e-compose-cite-function=. To include the signature, uncomment the following:
