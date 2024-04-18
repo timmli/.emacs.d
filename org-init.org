@@ -8031,11 +8031,10 @@ Finally, activate the iCalendar-to-Org export:
 														(insert user-mail-address))
 						(save-excursion (message-goto-cc))
 
-						;; Remove the date field.    
+						;; Remove the first date field (but not the one in forwarded messages).    
 						;; Otherwise, the date of the composing start is used!
  						;; https://github.com/djcb/mu/issues/2096
-						;; FIXME: This will also delete the date field of forwarded messages!
-						(message-remove-header "Date")
+						(message-remove-header "Date" nil t)
 
 						;; Replace citation line place keeper.
 						(save-excursion
