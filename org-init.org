@@ -3479,7 +3479,7 @@ Issues
 - [ ] Links not shown with Org v9.6.1: https://github.com/awth13/org-appear/issues/46
       - Seems to be connected to =org-fold-core-style= being set to ='overlays=: https://github.com/awth13/org-appear/issues/53
 
-#+BEGIN_SRC emacs-lisp :tangle yes
+#+BEGIN_SRC emacs-lisp
 (use-package org-appear
 	:ensure t
 	:pin MELPA
