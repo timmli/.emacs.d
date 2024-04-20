@@ -3479,7 +3479,7 @@ Issues
 - [ ] Links not shown with Org v9.6.1: https://github.com/awth13/org-appear/issues/46
       - Seems to be connected to =org-fold-core-style= being set to ='overlays=: https://github.com/awth13/org-appear/issues/53
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp :tangle yes
 (use-package org-appear
 	:ensure t
 	:pin MELPA
@@ -3902,7 +3902,7 @@ Note that the function =eval= has to be used in order to evaluate elisp code:
 
 The org-roam manual recommends to use [[Deft]] to perform full-text search: https://www.orgroam.com/manual.html#Full_002dtext-search-with-Deft
 
-Yet I clearly prefer [[helm-org-rifle]] using the following function:
+Although I clearly prefer [[helm-org-rifle]] using the following function, it becomes quite slow with many files:
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/search-in-org-roam-files ()
@@ -3910,7 +3910,7 @@ Yet I clearly prefer [[helm-org-rifle]] using the following function:
 	(helm-org-rifle-files (org-roam-list-files)))
 #+END_SRC
 
-This is added to [[hydra-org-roam]].
+Eventually, I use [[ripgrep]] for the sake of speed. This is added to [[hydra-org-roam]].
 
 **** TODO Archiving
 :LOGBOOK:
@@ -11874,6 +11874,15 @@ Use [[https://github.com/BurntSushi/ripgrep][ripgrep]] in Emacs.
 	)
 #+END_SRC
 
+Helper function to call rg in a specific directory:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/call-rg-in-directory (dir)
+	"Call rg (from rg.el) in DIR."
+	(let ((default-directory dir))
+		(call-interactively 'rg)))
+#+END_SRC
+
 *** pdfgrep
 
 =pdfgrep= enables one to grep through PDFs. 
@@ -13908,7 +13917,8 @@ Download with [[org-download]].
 	 ;; )
 	 "events")
 	("f" (lambda nil (interactive)
-				 (helm-org-ql org-files))
+				 (helm-org-ql org-files) ; FIXME: way too slow!
+				 )
 	 "free search")	
 	("g" (org-ql-search
 				 (org-agenda-files)
@@ -14100,7 +14110,8 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
 	("<" org-roam-dailies-goto-previous-note :color red)
 	(">" org-roam-dailies-goto-next-note :color red)
   ("f" org-roam-node-find)
-	("F" tl/search-in-org-roam-files)
+	;; ("F" tl/search-in-org-roam-files)			; Way too slow!
+	("F" (lambda () (interactive) (tl/call-rg-in-directory my-org-roam-directory)))
   ("g" org-roam-graph)
   ("i" org-roam-node-insert)
   ("li" orb-insert-link)
