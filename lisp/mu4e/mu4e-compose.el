@@ -364,37 +364,42 @@ sending."
   (propertize "--text follows this line--" 'read-only t 'intangible t)
   "Line used to separate headers from text in messages being composed.")
 
-(defun mu4e--compose-complete-contact (&optional start)
-  "Complete the text at START with a contact.
-Ie. either \"name <email>\" or \"email\")."
-  (interactive)
+(defun mu4e-complete-contact ()
+  "Attempt to complete the text at point with a contact.
+I.e., either \"name <email>\" or \"email\". Return nil if not found.
+
+This function can be used for `completion-at-point-functions', to
+complete addresses. This can be used from outside mu4e, but mu4e
+must be active (running) for this to work."
+  (let* ((end (point))
+         (start (save-excursion
+                  (re-search-backward "\\(\\`\\|[\n:,]\\)[ \t]*")
+                  (goto-char (match-end 0))
+                  (point))))
+    (list start end #'mu4e--compose-complete-handler)))
+
+(defun mu4e--compose-complete-contact-field ()
+  "Attempt to complete a contact when in a contact field.
+
+This is like `mu4e-compose-complete-contact', but limited to the
+contact fields."
   (let ((mail-abbrev-mode-regexp
          "^\\(To\\|B?Cc\\|Reply-To\\|From\\|Sender\\):")
-        (mail-header-separator mu4e--header-separator)
-        (eoh ;; end-of-headers
-         (save-excursion
-           (goto-char (point-min))
-           (search-forward-regexp mail-header-separator nil t))))
-    ;; try to complete only when we're in the headers area, looking at an
-    ;; address field.
-    (when (and eoh (> eoh (point)) (mail-abbrev-in-expansion-header-p))
-      (let* ((end (point))
-             (start
-              (or start
-                  (save-excursion
-                    (re-search-backward "\\(\\`\\|[\n:,]\\)[ \t]*")
-                    (goto-char (match-end 0))
-                    (point)))))
-        (list start end 'mu4e--compose-complete-handler)))))
+        (mail-header-separator mu4e--header-separator))
+    (when (mail-abbrev-in-expansion-header-p)
+      (mu4e-complete-contact))))
 
 (defun mu4e--compose-setup-completion ()
-  "Set up auto-completion of addresses."
-  (set (make-local-variable 'completion-ignore-case) t)
-  (set (make-local-variable 'completion-cycle-threshold) 7)
-  (add-to-list (make-local-variable 'completion-styles) 'substring)
-  (add-hook 'completion-at-point-functions
-            'mu4e--compose-complete-contact nil t))
-
+  "Set up auto-completion of addresses if enabled."
+  ;; turn off message-mode's completion, it's just interfering.
+  (remove-hook 'completion-at-point-functions
+               #'message-completion-function 'local)
+  (when mu4e-compose-complete-addresses
+    (set (make-local-variable 'completion-ignore-case) t)
+    (set (make-local-variable 'completion-cycle-threshold) 7)
+    (add-to-list (make-local-variable 'completion-styles) 'substring)
+    (add-hook 'completion-at-point-functions
+              #'mu4e--compose-complete-contact-field nil t)))
 
 (defun mu4e--fcc-handler (msgpath)
   "Handle Fcc: for MSGPATH.
@@ -440,7 +445,10 @@ If MSGPATH is nil, do nothing."
       (message-narrow-to-headers)
       (unless (message-fetch-field "Message-ID")
         (message-generate-headers '(Message-ID)))
-      (message-generate-headers '(Date)))
+        ;; older Emacsen (<= 28 perhaps?) won't update the Date
+        ;; if there already is one; so make sure it's gone.
+      (message-remove-header "Date")
+      (message-generate-headers '(Date Subject From)))
     (mu4e--delimit-headers 'undelimit))) ;; remove separator
 
 (defvar mu4e--compose-buffer-max-name-length 48)
@@ -479,25 +487,26 @@ message buffer."
   (let ((buf (find-file-noselect path)))
     (when buf
       (with-current-buffer buf
-        (message-narrow-to-headers-or-head)
-        (let ((in-reply-to (message-fetch-field "in-reply-to"))
-              (forwarded-from)
-              (references (message-fetch-field "references")))
-          (unless in-reply-to
-            (when references
-              (with-temp-buffer ;; inspired by `message-shorten-references'.
-                (insert references)
-                (goto-char (point-min))
-                (let ((refs))
-                  (while (re-search-forward "<[^ <]+@[^ <]+>" nil t)
-                    (push (match-string 0) refs))
-                  ;; the last will be the first
-                  (setq forwarded-from (car refs))))))
-          ;; remove the <> and update the flags on the server-side.
-          (when (and in-reply-to (string-match "<\\(.*\\)>" in-reply-to))
-            (mu4e--server-move (match-string 1 in-reply-to) nil "+R-N"))
-          (when (and forwarded-from (string-match "<\\(.*\\)>" forwarded-from))
-            (mu4e--server-move (match-string 1 forwarded-from) nil "+P-N")))))))
+        (save-restriction
+          (message-narrow-to-headers)
+          (let ((in-reply-to (message-fetch-field "in-reply-to"))
+                (forwarded-from)
+                (references (message-fetch-field "references")))
+            (unless in-reply-to
+              (when references
+                (with-temp-buffer ;; inspired by `message-shorten-references'.
+                  (insert references)
+                  (goto-char (point-min))
+                  (let ((refs))
+                    (while (re-search-forward "<[^ <]+@[^ <]+>" nil t)
+                      (push (match-string 0) refs))
+                    ;; the last will be the first
+                    (setq forwarded-from (car refs))))))
+            ;; remove the <> and update the flags on the server-side.
+            (when (and in-reply-to (string-match "<\\(.*\\)>" in-reply-to))
+              (mu4e--server-move (match-string 1 in-reply-to) nil "+R-N"))
+            (when (and forwarded-from (string-match "<\\(.*\\)>" forwarded-from))
+              (mu4e--server-move (match-string 1 forwarded-from) nil "+P-N"))))))))
 
 (defun mu4e--compose-after-save()
   "Function called immediately after the draft buffer is saved."
@@ -517,6 +526,9 @@ message buffer."
   "Handler called with DOCID and PATH for the just-sent message.
 For Forwarded ('Passed') and Replied messages, try to set the
 appropriate flag at the message forwarded or replied-to."
+  ;; XXX we don't need this function anymore here, but
+  ;; we have an external caller in mu4e-icalendar... we should
+  ;; update that.
   (mu4e--set-parent-flags path)
   ;; if the draft file exists, remove it now.
   (when (file-exists-p path)
@@ -534,19 +546,29 @@ appropriate flag at the message forwarded or replied-to."
   ;; Remove References: if In-Reply-To: is missing.
   ;; This allows the user to effectively start a new message-thread by
   ;; removing the In-Reply-To header.
-  (when (eq mu4e-compose-type 'reply)
-    (unless (message-fetch-field "In-Reply-To")
-      (message-remove-header "References")))
-  (when use-hard-newlines
-    (mu4e--send-harden-newlines))
-  ;; for safety, always save the draft before sending
-  (set-buffer-modified-p t)
-  (save-buffer))
-
-(defun mu4e--compose-after-send ()
-  "Function called just after sending a message."
-  (setq mu4e-sent-func #'mu4e-sent-handler)
-  (mu4e--server-sent (buffer-file-name)))
+  (save-restriction
+    (message-narrow-to-headers)
+    (when (eq mu4e-compose-type 'reply)
+      (unless (message-fetch-field "In-Reply-To")
+        (message-remove-header "References")))
+    (when use-hard-newlines
+      (mu4e--send-harden-newlines))
+    ;; now handle what happens _after_ sending; typically, draft is gone and
+    ;; the sent message appears in sent. Update flags for related messages,
+    ;; i.e. for Forwarded ('Passed') and Replied messages, try to set the
+    ;; appropriate flag at the message forwarded or replied-to.
+    (add-hook 'message-sent-hook
+              (lambda ()
+                (save-restriction
+                  (message-narrow-to-headers)
+                  (when-let ((fcc-path (message-fetch-field "Fcc")))
+                    (mu4e--set-parent-flags fcc-path)
+                    ;; we end up with a ((buried) buffer here, visiting
+                    ;; the fcc-path; not quite sure why. But let's
+                    ;; get rid of it (#2681)
+                    (when-let ((buf (find-buffer-visiting fcc-path)))
+                      (kill-buffer buf)))))
+              nil t)))
 
 ;;; Crypto
 (defun mu4e--compose-setup-crypto (parent compose-type)
@@ -653,11 +675,8 @@ buffers; lets remap its faces so it uses the ones for mu4e."
     (set (make-local-variable 'message-send-mail-real-function) nil)
     ;; Set to nil to enable `electric-quote-local-mode' to work:
     (set (make-local-variable 'comment-use-syntax) nil)
-    ;; offer completion for e-mail addresses
-    (when mu4e-compose-complete-addresses
-      (mu4e--compose-setup-completion))
-    ;; format-flowed
-    (if mu4e-compose-format-flowed
+    (mu4e--compose-setup-completion) ;; maybe offer address completion
+    (if mu4e-compose-format-flowed   ;; format-flowed
         (progn
           (turn-off-auto-fill)
           (setq truncate-lines nil
@@ -699,9 +718,11 @@ With HEADERS-ONLY non-nil, only include the headers part."
     ;; in rare (broken) case, if a message-id is missing use the generated one
     ;; from mu.
     (mu4e--delimit-headers)
-    (unless (message-fetch-field "Message-Id")
-      (goto-char (point-min))
-      (insert (format "Message-Id: <%s>\n" (plist-get msg :message-id))))
+    (save-restriction
+      (message-narrow-to-headers)
+      (unless (message-fetch-field "Message-Id")
+        (goto-char (point-min))
+        (insert (format "Message-Id: <%s>\n" (plist-get msg :message-id)))))
     (mu4e--delimit-headers 'undelimit)
     (ignore-errors (run-hooks 'gnus-article-decode-hook))
     (buffer-substring-no-properties (point-min) (point-max))))
@@ -783,12 +804,11 @@ PARENT is the \"parent\" message; nil
       ;; annoyingly, various message- functions call `message-pop-to-buffer`
       ;; (showing the message. But we're not ready for that yet. So
       ;; temporarily override that.
-      (advice-add 'message-pop-to-buffer
-                  :override #'mu4e--fake-pop-to-buffer)
-      (funcall compose-func parent)
+      (cl-letf (((symbol-function #'message-pop-to-buffer)
+                  #'mu4e--fake-pop-to-buffer))
+        (funcall compose-func parent))
       ;; add some more headers, if needed.
       (message-generate-headers (mu4e--headers compose-type))
-      (advice-remove 'message-pop-to-buffer #'mu4e--fake-pop-to-buffer)
       (current-buffer)))) ;; returns new buffer (this is not the tmp buf)
 
 
@@ -802,12 +822,14 @@ This is mu4e's version of `message-hidden-headers'.")
 FUNC is the original function, and ARGS are its arguments.
 Is this address yours?"
   (if (mu4e-running-p)
-      (let ((sender (message-fetch-field "from"))
-            (from (message-fetch-field "sender")))
-        (or (and sender (mu4e-personal-or-alternative-address-p
-                         (car (mail-header-parse-address sender))))
-            (and from (mu4e-personal-or-alternative-address-p
-                       (car (mail-header-parse-address from))))))
+      (save-restriction
+        (message-narrow-to-headers)
+        (let ((sender (message-fetch-field "from"))
+              (from (message-fetch-field "sender")))
+          (or (and sender (mu4e-personal-or-alternative-address-p
+                           (car (mail-header-parse-address sender))))
+              (and from (mu4e-personal-or-alternative-address-p
+                         (car (mail-header-parse-address from)))))))
     (apply func args)))
 
 (defun mu4e--compose-setup-post (compose-type &optional parent)
@@ -830,7 +852,6 @@ replied to or forwarded, etc."
   (add-hook 'before-save-hook  #'mu4e--compose-before-save nil t)
   (add-hook 'after-save-hook   #'mu4e--compose-after-save nil t)
   (add-hook 'message-send-hook #'mu4e--compose-before-send nil t)
-  (add-hook 'message-sent-hook #'mu4e--compose-after-send nil t)
 
   (when-let ((fcc-path (mu4e--fcc-path (mu4e--message-basename) parent)))
     (message-add-header (concat "Fcc: " fcc-path "\n")))
@@ -965,15 +986,17 @@ must be from current user, as determined through
        (mu4e--delimit-headers)
        ;; message-forward expects message-reply-headers to be set up; here we
        ;; only need message-id & references, rest is for completeness.
-       (setq-local message-reply-headers
-             (make-full-mail-header
-              0
-              (or (message-fetch-field "subject") "none")
-              (or (message-fetch-field "from") "nobody")
-              (message-fetch-field "date")
-              (message-fetch-field "message-id" t)
-              (message-fetch-field "references")
-              0 0 ""))
+       (save-restriction
+         (message-narrow-to-headers)
+         (setq-local message-reply-headers
+                     (make-full-mail-header
+                      0
+                      (or (message-fetch-field "subject") "none")
+                      (or (message-fetch-field "from") "nobody")
+                      (message-fetch-field "date")
+                      (message-fetch-field "message-id" t)
+                      (message-fetch-field "references")
+                      0 0 "")))
        (mu4e--delimit-headers 'undelimit)
        (set-buffer-modified-p nil)
        (message-forward)))))
@@ -988,8 +1011,10 @@ must be from current user, as determined through
     (mu4e--compose-setup
      'edit
      (lambda (parent)
-       (find-file (plist-get parent :path))
-       (mu4e--delimit-headers)))))
+       (let ((buf (find-file-noselect (plist-get parent :path))))
+         (with-current-buffer buf
+           (mu4e--delimit-headers))
+         (switch-to-buffer buf))))))
 
 ;;;###autoload
 (defun mu4e-compose-resend (address)

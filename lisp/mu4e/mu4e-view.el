@@ -640,8 +640,7 @@ As a side-effect, a message that is being viewed loses its
         ;; problems later (#2260, #2508), so let's remove those
         (article-remove-cr)
         (setq-local mu4e--view-message msg)
-        (mu4e--view-render-buffer msg)
-        (setq-local mu4e--view-mime-part-cached nil))
+        (mu4e--view-render-buffer msg))
       (mu4e-loading-mode 0)))
   (unless (mu4e--view-detached-p gnus-article-buffer)
     (with-current-buffer mu4e-linked-headers-buffer
@@ -658,7 +657,9 @@ As a side-effect, a message that is being viewed loses its
       (select-window mu4e~headers-view-win)))
   (with-current-buffer gnus-article-buffer
     (let ((inhibit-read-only t))
-      (run-hooks 'mu4e-view-rendered-hook))))
+      (run-hooks 'mu4e-view-rendered-hook))
+    ;; only needed on some setups; #2683
+    (goto-char (point-min))))
 
 (defun mu4e-view-message-text (msg)
   "Return the rendered MSG as a string."
@@ -730,6 +731,8 @@ determine which browser function to use."
           (ignore-errors (run-hooks 'gnus-article-decode-hook))
           (gnus-article-prepare-display)
           (mu4e--view-activate-urls)
+          ;; `gnus-summary-bookmark-make-record' does not work properly when "appeased."
+          (kill-local-variable 'bookmark-make-record-function)
           (setq mu4e~gnus-article-mime-handles gnus-article-mime-handles
                 gnus-article-decoded-p gnus-article-decode-hook)
           (set-buffer-modified-p nil)

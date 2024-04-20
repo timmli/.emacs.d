@@ -268,13 +268,12 @@
 (make-obsolete-variable 'mu4e-compose-dont-reply-to-self
                         "message-dont-reply-to-names"
                         "1.11.24")
-
 ;; calendar
-(define-obsolete-function-alias 'mu4e-icalendar-setup #'ignore '"1.11.22")
+(define-obsolete-function-alias 'mu4e-icalendar-setup
+  'gnus-icalendar-setup '"1.11.22")
 
 ;; mu4e.
-(make-obsolete 'mu4e-clear-caches "No longer used" "1.11.15")
-
+(define-obsolete-function-alias 'mu4e-clear-caches #'ignore "1.11.15")
 
 (provide 'mu4e-obsolete)
 ;;; mu4e-obsolete.el ends here
