@@ -9627,6 +9627,7 @@ Yet Another Snippet system for Emacs.
 #+begin_src emacs-lisp
 (use-package yasnippet
 	:ensure t
+	:pin MELPA
 	:config 
 	(yas-global-mode 1)
 	(add-to-list 'warning-suppress-types '(yasnippet backquote-change)))
