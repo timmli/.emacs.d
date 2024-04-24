@@ -8042,9 +8042,15 @@ Finally, activate the iCalendar-to-Org export:
 							(when (re-search-forward message-citation-line-format nil t)
 								(replace-match (tl/message-citation-line-string) t)))
 
+						;; General fill settings
 						(turn-off-auto-fill)
 						(set-fill-column 79)
+
+						;; Activate spell checking
 						(flyspell-mode)
+
+						;; Do not autosafe drafts
+						(auto-save-mode -1)
 						
 						;; FIXME: Does not work! 
 						(when (re-search-forward "<#part sign=smime>" nil t)
@@ -8052,14 +8058,6 @@ Finally, activate the iCalendar-to-Org export:
 							(open-line 1)
 							(forward-line))
 						))
-
-;; Do not autosafe drafts
-(add-hook 'mu4e-compose-mode-hook #'(lambda () (auto-save-mode -1)))
-
-;; Each paragraph is a single long line; at sending, emacs will add the special line continuation characters.
-(setq mu4e-compose-format-flowed t)
-;; This seems necessary to avoid unwanted whitespace and line breaks being inserted into the sent message.
-(setq fill-flowed-encode-column 998)
 
 ;; Only complete with mail addresses that have been used recently and with personal contact
 (setq mu4e-compose-complete-only-personal t 
@@ -8079,13 +8077,6 @@ Finally, activate the iCalendar-to-Org export:
 ;; Presupposes: mu init --my-address=your.email@address
 (setq mu4e-compose-dont-reply-to-self t)
 #+END_SRC
-
-In mu4e, line breaks are handled in a way that is very unusual when coming from, e.g., Thunderbird. Namely, line breaks are *ignored* if they are preceded by trailing whitespace, which may lead to an unexpected paragraph structure in the sent message. (This is probably an effect of using format=flowed above.) In order to preserve the line breaks that one intentionally makes when writing the message, the following code therefore adds =delete-trailing-whitespace= to =message-send-hook=: 
-
-#+BEGIN_SRC emacs-lisp
-(add-hook 'message-send-hook
-          'delete-trailing-whitespace)
-#+END_SRC 
 
 Edit-as-new feature: since v1.12, this feature is supported to some extend with the function =mu4e-compose-supersede=. Let's bind it to [N]: 
 
@@ -8275,11 +8266,45 @@ Check whether the message has a subject:
 
 ****** Templating
 
-For re-using predefined text snippets, [[yasnippet]] can be used. See [[file:snippets/mu4e-compose-mode/message greeting]] for an example.
+For re-using predefined text snippets, [[tempel]] can be used. See [[file:templates/tempel/templates]] for an example.
 
-A simpler method might be [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Abbrevs.html][abbrevs]], which is built-in in Emacs. 
+[[yasnippet]] is not recommended when the snippet directly changes the buffer using functions (which is what I want).
+ 
+A simpler method might be [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Abbrevs.html][abbrevs]], which is built-in in Emacs, 
 
 For specifying templates of whole emails, there is no straightforward solution as far as I know.
+
+****** Formatting
+
+[[https://www.ietf.org/rfc/rfc2646.txt][format=flowed]] is a general technique to give mail clients the flexibility to reformat parts of a message, particularly by inserting soft line breaks when paragraphs are filled. With this, the receiving email client will later be able to distinguish "deliberate"/hard from "automatic"/soft line breaks. The motivation ist that using hard line breaks when filling paragraphs will likely mess up the display of quoted text in downstream email clients.
+
+Mu4e has built-in support of format=flowed, see https://www.djcbsoftware.nl/code/mu/mu4e/Writing-messages.html#How-can-I-apply-format_003dflowed-to-my-outgoing-messages_003f.
+
+#+BEGIN_SRC emacs-lisp
+;; Activate format=flowed (i.e. the automatic insertion of soft line breaks).
+(setq mu4e-compose-format-flowed t)
+#+END_SRC
+
+Notice that the Emacs MIME library also knows format=flowed, see https://www.gnu.org/software//emacs/manual/html_node/emacs-mime/Flowed-text.html.
+
+#+BEGIN_SRC emacs-lisp
+;; Column beyond which format=flowed lines are wrapped, in outgoing messages.
+;; The variable controls how the text will look in a client that does not support flowed text, the default is to wrap after 66 characters.
+(setq fill-flowed-encode-column 66)
+#+END_SRC
+
+A relevant Emacs function also is =use-hard-newlines=. If it is enabled, a *hard* line break will be inserted whenever return is pressed (using the function =newline=). This is fine when writing text. However, if one yanks text (or expands a template), the visible line breaks will be underspecified, and therefore interpreted as *soft* line breaks if there are any hard line breaks inserted with return. This can result in a great mess, because empty lines are potentially not interpreted as separators between paragraphs and the visible paragraph structure will be lost ... Therefore I decided to turn off =use-hard-newlines=.
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'mu4e-compose-mode-hook #'(lambda () (use-hard-newlines -1)))
+#+END_SRC
+
+*Perhaps obsolete:* In mu4e, line breaks are handled in a way that is very unusual when coming from, e.g., Thunderbird. Namely, (hard) line breaks are *ignored* if they are preceded by trailing whitespace, which may lead to an unexpected paragraph structure in the sent message. (This is probably an effect of using format=flowed above.) In order to preserve the line breaks that one intentionally makes when writing the message, the following code therefore adds =delete-trailing-whitespace= to =message-send-hook=: 
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(add-hook 'message-send-hook
+          'delete-trailing-whitespace)
+#+END_SRC 
 
 ****** TODO Calendar invitations
 :LOGBOOK:
