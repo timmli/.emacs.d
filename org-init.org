@@ -9913,7 +9913,7 @@ https://github.com/minad/tempel
 	:config
 	(setq tempel-path (expand-file-name "templates/tempel/*" user-emacs-directory))
 	;; Require trigger prefix before template name when completing.
-  (setq tempel-trigger-prefix "<")
+  (setq tempel-trigger-prefix nil)
 
 	)
 
