@@ -1,0 +1,76 @@
+;; -*- mode: lisp-data; -*-
+;;
+;; All the Tempo syntax elements are fully supported. The syntax
+;; elements are described in detail in the docstring of
+;; `tempo-define-template` in tempo.el. We document the important ones
+;; here:
+;;
+;; - “string” Inserts a string literal.
+;; - `p` Inserts an unnamed placeholder field.
+;; - `n` Inserts a newline.
+;; - `>` Indents with indent-according-to-mode.
+;; - `r` Inserts the current region. If no region is active, quits the containing template when jumped to.
+;; - `r>` Acts like `r`, but indent region.
+;; - `n>` Inserts a newline and indents.
+;; - `&` Insert newline unless there is only whitespace between line start and point.
+;; - `%` Insert newline unless there is only whitespace between point and line end.
+;; - `o` Like `%` but leaves the point before newline.
+;; - `(s NAME)` Inserts a named field.
+;; - `(p PROMPT <NAME> <NOINSERT>)` Insert an optionally named field with a prompt. The PROMPT
+;; is displayed directly in the buffer as default value. If NOINSERT is non-nil, no field is inserted. Then the minibuffer is used for prompting and the value is bound to NAME.
+;; - `(r PROMPT <NAME> <NOINSERT>)` Insert region or act like `(p ...)`.
+;; - `(r> PROMPT <NAME> <NOINSERT>)` Act like `(r ...)`, but indent region.
+;;
+;; Furthermore Tempel supports syntax extensions:
+;;
+;; - `(p FORM <NAME> <NOINSERT>)` Like `p` described above, but FORM is evaluated.
+;; - `(FORM ...)` Other Lisp forms are evaluated. Named fields are lexically bound.
+;; - `q` Quits the containing template when jumped to.
+
+fundamental-mode ;; Available everywhere
+
+(today (format-time-string "%Y-%m-%d"))
+
+(VG n
+		(delete-blank-lines)
+		n
+		n
+		(if (string= (guess-language-buffer) "de")
+				(completing-read "Choose: " '("Viele Grüße"
+	 																		"Mit freundlichen Grüßen"
+																			"Herzliche Grüße"
+																			"Danke und Viele Grüße"))
+			(completing-read "Choose: " '("Best,"
+																		"Kind regards,"
+																		"Thanks,"
+																		)))
+		n
+		n
+		"Timm Lichte"
+		n
+		n
+		:post (progn
+						(re-search-backward "Timm Lichte")
+						(end-of-line)
+						)
+		)
+
+prog-mode
+
+(fixme (if (derived-mode-p 'emacs-lisp-mode) ";; " comment-start) "FIXME ")
+(todo (if (derived-mode-p 'emacs-lisp-mode) ";; " comment-start) "TODO ")
+(bug (if (derived-mode-p 'emacs-lisp-mode) ";; " comment-start) "BUG ")
+(hack (if (derived-mode-p 'emacs-lisp-mode) ";; " comment-start) "HACK ")
+
+text-mode
+
+(box "┌─" (make-string (length str) ?─) "─┐" n
+		 "│ " (s str)                       " │" n
+		 "└─" (make-string (length str) ?─) "─┘" n)
+(abox "+-" (make-string (length str) ?-) "-+" n
+			"| " (s str)                       " |" n
+			"+-" (make-string (length str) ?-) "-+" n)
+(cut "--8<---------------cut here---------------start------------->8---" n r n
+		 "--8<---------------cut here---------------end--------------->8---" n)
+
+

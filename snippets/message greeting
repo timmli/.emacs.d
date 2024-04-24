@@ -3,12 +3,10 @@
 # key: VG
 # --
 `(progn
-	(remove-newlines-or-blank-lines-dwim)
-	(remove-newlines-or-blank-lines-dwim)
-	(newline)
-	(newline))
+	(delete-blank-lines)
+	(delete-blank-lines)
+	(newline 2))
 `
-
 `(if (string= (guess-language-buffer) "de")
    (yas-choose-value '("Viele Grüße"
 	 				             "Mit freundlichen Grüßen"
@@ -22,10 +20,8 @@
 `
 
 Timm ${1:Lichte}$0
-
 `(progn
-	(remove-newlines-or-blank-lines-dwim)
-	(remove-newlines-or-blank-lines-dwim)
-	(newline)
-	(newline))
+	(delete-blank-lines)
+	(delete-blank-lines)
+	(newline 2))
 `
