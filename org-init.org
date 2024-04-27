@@ -8293,10 +8293,24 @@ Notice that the Emacs MIME library also knows format=flowed, see https://www.gnu
 (setq fill-flowed-encode-column 66)
 #+END_SRC
 
-A relevant Emacs function also is =use-hard-newlines=. If it is enabled, a *hard* line break will be inserted whenever return is pressed (using the function =newline=). This is fine when writing text. However, if one yanks text (or expands a template), the visible line breaks will be underspecified, and therefore interpreted as *soft* line breaks if there are any hard line breaks inserted with return. This can result in a great mess, because empty lines are potentially not interpreted as separators between paragraphs and the visible paragraph structure will be lost ... Therefore I decided to turn off =use-hard-newlines=.
+*There is one nasty detail though:* Mu4e will only apply format=flowed, if =use-hard-newlines= is enabled, in which case a *hard* line break will be inserted whenever return is pressed (using the function =newline= or =open-line=). This is fine when writing text directly in the compose buffer. However, if one yanks text (or expands a template), the visible line breaks will be underspecified, and therefore interpreted as *soft* line breaks if there are any hard line breaks inserted with return. This can result in a great mess, because empty lines are potentially not interpreted as separators between paragraphs and the visible structure will be lost. 
+
+My solution is to harden *all* manually inserted or pasted line breaks at the very end when sending the message. Quoted messages do not get hard line breaks (this obviously would make format=flowed useless) with two exceptions: 
+  - the header of quoted messages, which start with box symbols (┌│└)
+  - lines in quotes which start with two consecutive spaces after the quote symbols
+This will, for example, avoid breaking Org tables, if they are preceded by at least two consecutive spaces. 
 
 #+BEGIN_SRC emacs-lisp
-(add-hook 'mu4e-compose-mode-hook #'(lambda () (use-hard-newlines -1)))
+(add-hook 'message-send-hook
+          (defun format-message-before-sending ()
+						(save-excursion
+							(message-goto-body)
+							(delete-trailing-whitespace)
+							;; Harden line breaks except most quoted ones
+							(while (search-forward-regexp "^\\([^>]\\|>+[ ][ ┌│└]\\).*\n"  nil t)
+								(put-text-property (1- (point)) (point) 'hard t))
+							;; Harden further line breaks and activate use-hard-newlines
+							(use-hard-newlines 1 t))))
 #+END_SRC
 
 *Perhaps obsolete:* In mu4e, line breaks are handled in a way that is very unusual when coming from, e.g., Thunderbird. Namely, (hard) line breaks are *ignored* if they are preceded by trailing whitespace, which may lead to an unexpected paragraph structure in the sent message. (This is probably an effect of using format=flowed above.) In order to preserve the line breaks that one intentionally makes when writing the message, the following code therefore adds =delete-trailing-whitespace= to =message-send-hook=: 
@@ -8347,13 +8361,16 @@ For adding further fields of a message to the citation line, I replace a special
 				 (date (mu4e-message-field msg :date)))
 		(concat
 		 "\n"
-		 "From: " (mapconcat 'tl/mail-address-plist-to-string from ", ") "\n"
-		 "Subject: " subject "\n"
-		 "To: " (mapconcat 'tl/mail-address-plist-to-string to ", ") "\n"
-		 (when cc (concat "Cc: " (mapconcat 'tl/mail-address-plist-to-string cc ", ") "\n"))
-		 "Date: " (format-time-string "%A, %Y-%m-%d, at %H:%M" date)
-		 ))
-	)
+		 "> ┌ " "\n"
+		 "> │ From: " (mapconcat 'tl/mail-address-plist-to-string from ", ") "\n"
+		 "> │ Subject: " (save-match-data
+											 (string-replace "\n" "\n> │          "
+																			 (string-fill subject (- message-fill-column 13)))) "\n"
+		 "> │ To: " (mapconcat 'tl/mail-address-plist-to-string to ",\n> │     ") "\n"
+		 (when cc (concat "> │ Cc: " (mapconcat 'tl/mail-address-plist-to-string cc ",\n> │     ") "\n"))
+		 "> │ Date: " (format-time-string "%A, %Y-%m-%d, at %H:%M" date) "\n"
+		 "> └ "
+		 )))
 #+END_SRC
 
 Since v1.12, citation lines of forwarded messages should be changed using [[https://www.gnu.org/software/emacs/manual/html_node/message/Forwarding.html#Forwarding][Gnus' message-forward]]:
