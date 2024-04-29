@@ -8365,7 +8365,7 @@ For adding further fields of a message to the citation line, I replace a special
 		 "> │ From: " (mapconcat 'tl/mail-address-plist-to-string from ", ") "\n"
 		 "> │ Subject: " (save-match-data
 											 (string-replace "\n" "\n> │          "
-																			 (string-fill subject (- message-fill-column 13)))) "\n"
+																			 (string-fill subject (- message-fill-column 15)))) "\n"
 		 "> │ To: " (mapconcat 'tl/mail-address-plist-to-string to ",\n> │     ") "\n"
 		 (when cc (concat "> │ Cc: " (mapconcat 'tl/mail-address-plist-to-string cc ",\n> │     ") "\n"))
 		 "> │ Date: " (format-time-string "%A, %Y-%m-%d, at %H:%M" date) "\n"
