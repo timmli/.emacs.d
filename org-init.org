@@ -11676,50 +11676,50 @@ This solution reuses code from here:
 ;; (use-package load-theme-buffer-local
 ;; 	:ensure t)
 
-(defun tl/harden-newlines-in-buffer ()
-	"Make all the newlines in the buffer hard."
+(defun tl/harden-visual-line-breaks-in-buffer ()
+	"Insert real newlines at visual line breaks."
 	(interactive)
 	(save-excursion
 		(goto-char (point-min))
-		(loop-while (= 0 (save-excursion (forward-line)))
-			(when (this-line-empty-p)
-				(forward-line)
-				(loop-continue))
-			(end-of-visual-line)
-			(newline)
-			(when (and (this-line-empty-p)
-								 (= 0 (save-excursion (forward-line))))
-				(kill-line))
-			)))
+		(while (= 0 (save-excursion (forward-line)))
+			(unless (this-line-empty-p)
+				(end-of-visual-line)
+				(newline)
+				;; Kill empty line if it was just inserted
+				(when (this-line-empty-p)
+					(kill-line)))
+			(forward-line))))
 
 ;; Print line numbers when in prog-mode
 (add-hook 'prog-mode-hook
 					(lambda () (setq ps-line-number t)))
 
-(when (executable-find "ps2pdf")
-	(defun tl/print-buffer-to-pdf ()
-		"Print the current buffer to print_buffertitle_timestamp.pdf without faces.
+(defun tl/print-buffer-to-pdf ()
+	"Print the current buffer to print_buffertitle_timestamp.pdf without faces.
 This command depends on the shell command `ps2pdf'."
-		(interactive)
-		(let* ((buf (current-buffer))
-					 (tempbuf (generate-new-buffer (concat "*Temporary buffer of: " (buffer-name buf) "*" )))
-					 (filename (concat "print_"
-														 (replace-regexp-in-string "\\ \\|\\[\\|\\]\\|\\*" "" (buffer-name buf))
-														 "_" (format-time-string "%Y-%m-%d"))))
-			(save-current-buffer
-				(set-buffer tempbuf)
-				(insert-buffer buf)
-				(visual-line-mode t)
-				(tl/harden-newlines-in-buffer)
-				(if (y-or-n-p "Print with faces?")
-						(progn
-							;; (load-theme-buffer-local 'leuven tempbuf) ; FIXME: doesn't seem to take effect
-							(ps-print-with-faces (point-min) (point-max) (concat filename ".ps")))
-					(progn (ps-print-without-faces (point-min) (point-max) (concat filename ".ps"))))
-				(kill-buffer tempbuf))
-			(shell-command (concat "ps2pdf " filename ".ps"))
-			(delete-file (concat filename ".ps"))
-			(message (concat "PDF saved to " filename ".pdf")))))
+	(interactive)
+	(let* ((buf (current-buffer))
+				 (tempbuf (generate-new-buffer (concat "*Temporary buffer of: " (buffer-name buf) "*" )))
+				 (path (read-directory-name "Save PDF to: " (expand-file-name "~/Downloads")))
+				 (filename (expand-file-name
+										(concat "print_"
+														(replace-regexp-in-string "\\ \\|\\[\\|\\]\\|\\*" "" (buffer-name buf))
+														"_" (format-time-string "%Y-%m-%d"))
+										path)))
+		(save-current-buffer
+			(set-buffer tempbuf)
+			(insert-buffer buf)
+			(visual-line-mode t)
+			(tl/harden-visual-line-breaks-in-buffer)
+			(if (y-or-n-p "Print with faces?")
+					(progn
+						;; (load-theme-buffer-local 'leuven tempbuf) ; FIXME: doesn't seem to take effect
+						(ps-print-with-faces (point-min) (point-max) (concat filename ".ps")))
+				(progn (ps-print-without-faces (point-min) (point-max) (concat filename ".ps"))))
+			(kill-buffer tempbuf))
+		(shell-command (concat "ps2pdf " filename ".ps"))
+		(delete-file (concat filename ".ps"))
+		(message (concat "PDF saved to " filename ".pdf"))))
 #+END_SRC
 
 ** Integers
