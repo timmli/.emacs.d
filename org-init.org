@@ -7921,7 +7921,7 @@ Actions:
 				("save email as file" . tl/mu4e-action-copy-message-file)))
 #+END_SRC
 
-****** COMMENT Remove attachments
+****** Remove attachments
 
 The following code is taken from https://github.com/djcb/mu/issues/2247#issuecomment-1978059294.
 It depends on [[https://pldaniels.com/altermime/][alterMIME]].
@@ -7968,7 +7968,7 @@ It depends on [[https://pldaniels.com/altermime/][alterMIME]].
 ;; display this header field in message view
 (add-to-list 'mu4e-view-fields :xremoved t)
 
-(add-to-list 'mu4e-view-qmime-part-actions
+(add-to-list 'mu4e-view-mime-part-actions
              '(:name "delete-attachment"
 										 :handler bjm/mu4e-delete-attachment
 										 :receives index))
@@ -14858,7 +14858,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
      _C_ Compose                 _p_ Previous _[_ unread       _g_ Refresh                       _H_ Help
      _R_ Reply                   _n_ Next _]_ unread           _s_ Search                        _q_ quit
      _F_ Forward                 _j_ Jump to mailbox         _b_ Search with bookmarks        
-     ^^                          _;_ Switch context   _M-<left>_ Previous search
+     _N_ Edit as new             _;_ Switch context   _M-<left>_ Previous search
      ^Mark for^                  ^^                  _M-<right>_ Next search       
          _d_/_=_ Trash/Untrash                               _f_ Search with helm-mu
          _!_/_?_ Read/Unread      _Sv_ ?Sv? Split vertic.       _c_ Contacts					
@@ -14866,7 +14866,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
      _u_ Unmark                	^^			                    _Pr_ Toggle show related		
      _U_ Unmark all            	^^                           _O_ Change Sorting															
      _T_ Mark whole thread       _._ View raw message
-     _A_ Action   
+     _a_ Action   
      _x_ Execute marks
 "         
 	("p" mu4e-headers-prev :color pink)
@@ -14880,6 +14880,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("C" mu4e-compose-new)
 	("R" mu4e-compose-reply)
 	("F" mu4e-compose-forward)
+	("N" mu4e-compose-supersede)
 	("Pt" mu4e-headers-toggle-threading)
 	("Pr" mu4e-headers-toggle-include-related)
 	("O" mu4e-search-change-sorting)
@@ -14913,12 +14914,12 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 (defhydra hydra-mu4e-view (:hint nil :color blue)
 	"
      ^^                           ^^                          ^^                             ╭───────────┐   
-     ^Mail^                    ^Navigation^                ^Filter^                          │ mu4e-view │
+     ^Message^                   ^Navigation^                ^Filter^                          │ mu4e-view │
 	╭──^^───────────────────────────^^──────────────────────────^^─────────────────────────────┴───────────╯ 
      _C_ Compose                 _p_ Previous _[_ unread       _g_ Refresh                       _H_ Help
      _R_ Reply                   _n_ Next _]_ unread           _s_ Search                        _q_ quit
      _F_ Forward                 _j_ Jump to mailbox         _b_ Search with bookmarks
-     ^^                          _;_ Switch context          _c_ Contacts
+     _N_ Edit as new             _;_ Switch context          _c_ Contacts
      ^Mark for^                  ^^                          
          _d_/_=_ Trash/Untrash     _z_ Detach view           _Pt_ Toggle threading     
          _!_/_?_ Read/Unread       _._ View raw              _Pr_ Toggle show related  
@@ -14926,7 +14927,8 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
      _u_ Unmark                  _e_ Save attachment 
      _U_ Unmark all              _o_ Save inline image
      _T_ Mark whole thread
-     _A_ Action
+     _a_ Action
+     _A_ Action on attachment
      _x_ Execute marks
 "
 	("p" mu4e-view-headers-prev :color pink)
@@ -14941,6 +14943,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("o" image-save)
 	("R" mu4e-compose-reply)
 	("F" mu4e-compose-forward)
+	("N" mu4e-compose-supersede)
 	("O" mu4e-search-change-sorting)
 	("Pt" mu4e-headers-toggle-threading)
 	("Pr" mu4e-headers-toggle-include-related)
@@ -14959,7 +14962,8 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("." mu4e-view-raw-message)
 	("[" mu4e-view-headers-prev-unread :color pink)
 	("]" mu4e-view-headers-next-unread :color pink)
-	("A" mu4e-view-action)
+	("a" mu4e-view-action)
+	("A" mu4e-view-mime-part-action)
 	("H" mu4e-display-manual)
 	("q" nil :color blue)
 	)
