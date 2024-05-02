@@ -14903,7 +14903,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("]" mu4e-headers-next-unread :color pink)
 	("M-<left>" mu4e-search-prev :color pink)
   ("M-<right>" mu4e-search-next :color pink)
-	("A" mu4e-headers-mark-for-action)
+	("a" mu4e-headers-mark-for-action)
 	("q" nil :color blue)
 	)
 #+END_SRC
