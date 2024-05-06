@@ -7631,6 +7631,43 @@ A typing tutor inspired by [[https://monkeytype.com/][monkeytype.com]].
 
 *** Email
 
+**** Helper functions
+
+Functions to extract email addresses from strings and buffers:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/extract-email-addresses-in-buffer (&optional separator)
+	"Extract email addresses from current buffer and return them as string mit SEPARATOR."
+	(or (stringp separator)
+			(setq separator ", "))
+	(save-excursion
+		(goto-char (point-min))
+		(let ((email-list '()))
+			(while (search-forward "@" nil t)
+				(let ((email (thing-at-point 'email)))
+					(when email
+						(setq email-list (cons email email-list)))))
+			(setq email-list (sort email-list 'string<))
+			(mapconcat 'identity email-list separator))))
+
+(defun tl/extract-email-addresses-from-string (string &optional separator)
+	"Extract email addresses from STRING and return them as string mit SEPARATOR."
+	(with-temp-buffer
+		(insert string)
+		(goto-char (point-min))
+		(tl/extract-email-addresses-in-buffer separator)))
+
+(defun tl/insert-string-to-new-buffer (string)
+	"Insert STRING into new buffer and go to this buffer."
+	(let ((new-buffer (generate-new-buffer "*temp*")))
+		(switch-to-buffer new-buffer)
+		(insert string)
+		(goto-char (point-min))))
+
+;; Usage:
+;; (tl/insert-string-to-new-buffer (tl/extract-email-addresses-in-buffer "\n"))
+#+END_SRC
+
 **** Interoperability with Thunderbird 
 
 The [[https://github.com/exteditor/exteditor][Exteditor]] plugin can be used in Thunderbird in order to open and edit an email in Emacs.
