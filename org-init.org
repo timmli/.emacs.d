@@ -8648,6 +8648,38 @@ Adapt description of links:
 (setq mu4e-org-link-desc-func 'tl/mu4e-org-link-descr)
 #+END_SRC
 
+Open links messages in the mu4e frame:
+
+See the discussion here: https://groups.google.com/g/mu-discuss/c/EME00itASYM/m/hu0faSFSBwAJ
+I choose a different approach, namely modifying the function =mu4e-org-open=.
+
+#+BEGIN_SRC emacs-lisp
+(defun mu4e-org-open (link)
+  "Open the org LINK.
+Open the mu4e message (for links starting with \"msgid:\") or run
+the query (for links starting with \"query:\")."
+  (require 'mu4e)
+	;; BEGIN: added by TL
+	;; Swich to frame with buffer "*mu4e-headers*"
+  (let* ((buffer-name mu4e-headers-buffer-name)
+				 (buffer (get-buffer buffer-name)))
+    (if buffer
+        (let ((frames (frame-list)))
+            (dolist (frame frames)
+              (when (get-buffer-window buffer frame)
+                (select-frame-set-input-focus frame))))
+			(progn
+				(message (format "No buffer named %s; creating new frame to open link" buffer-name))
+				(make-frame))))
+	;; END: added by TL
+  (cond
+   ((string-match "^msgid:\\(.+\\)" link)
+    (mu4e-view-message-with-message-id (match-string 1 link)))
+   ((string-match "^query:\\(.+\\)" link)
+    (mu4e-search (match-string 1 link) current-prefix-arg))
+   (t (mu4e-error "Unrecognized link type '%s'" link))))
+#+END_SRC
+
 ***** COMMENT mu4e-thread-folding
 
 https://github.com/rougier/mu4e-thread-folding
