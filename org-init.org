@@ -9582,6 +9582,10 @@ OpenStreetMap viewer for Emacs.
 	)
 #+END_SRC
 
+*** GIF screencast
+
+https://gitlab.com/ambrevar/emacs-gif-screencast
+
 * Minor modes
 ** COMMENT literal-calc-mode
 
