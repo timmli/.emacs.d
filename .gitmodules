@@ -19,3 +19,6 @@
 [submodule "lisp/mu4e-thread-folding"]
 	path = lisp/mu4e-thread-folding
 	url = https://github.com/rougier/mu4e-thread-folding.git
+[submodule "lisp/helm-khard"]
+	path = lisp/helm-khard
+	url = https://github.com/timmli/helm-khard.git
