@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-05-25 Sat 23:51:59
+;; Last modified: 2024-05-26 Sun 10:01:44
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -60,12 +60,6 @@
   :type 'file
   :group 'helm-khard)
 
-(defcustom helm-khard-contact-fields
-  '("index" "name" "organisations" "categories" "uid" "emails" "phone_numbers")
-  "List of used Khard data fields as strings."
-  :type 'sexp
-  :group 'helm-khard)
-
 (defcustom helm-khard-insert-with-organisation nil
   "If non-nil, add organisation when inserting contact. This variable
   is used by `helm-khard--generate-insert-string'."
@@ -88,6 +82,10 @@
 (defvar helm-khard--addressbooks nil
   "List of Khard's addressbooks, which are pairs of a name and a
   path. This variable is set with `helm-khard--initialize'.")
+
+(defvar helm-khard--used-contact-fields
+  '("index" "name" "organisations" "categories" "uid" "emails" "phone_numbers")
+  "List of used Khard data fields as strings.")
 
 (defvar helm-khard--available-contact-fields nil
   "List of contact fields that can be accessed with
@@ -198,7 +196,7 @@
       (call-process helm-khard-executable nil t nil 
                     "-c"  helm-khard-config-file
                     "list" "-p"
-                    "-F" (mapconcat 'concat helm-khard-contact-fields ","))
+                    "-F" (mapconcat 'concat helm-khard--used-contact-fields ","))
       (goto-char (point-min))
       (let (
             ;; Each line consists of tab-separated fields
@@ -206,15 +204,15 @@
                           "^"
                           (mapconcat
                            #'(lambda (field) (concat "\\(.*\\)")) ; "\\(.*?\\)" would not recognize the whole last field
-                           helm-khard-contact-fields "\t"))))
+                           helm-khard--used-contact-fields "\t"))))
         (cl-loop
          while (re-search-forward line-regexp nil t)
          do (setq helm-khard--contact nil)
          collect (progn
                    (setq helm-khard--contact nil)
                    (cl-loop
-                    for field in helm-khard-contact-fields
-                    for field-number in (number-sequence 1 (length helm-khard-contact-fields))
+                    for field in helm-khard--used-contact-fields
+                    for field-number in (number-sequence 1 (length helm-khard--used-contact-fields))
                     do (let ((field-value (match-string field-number)))
                          (setq helm-khard--contact
                                (plist-put helm-khard--contact
