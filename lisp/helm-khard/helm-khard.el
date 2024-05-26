@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: https://github.com/timmli/.emacs.d/tree/master/lisp/helm-khard.el
 ;; Version: 0
-;; Last modified: 2024-05-26 Sun 10:01:44
+;; Last modified: 2024-05-26 Sun 10:07:56
 ;; Package-Requires: ((helm "3.9.6") (uuidgen "20220405.1345") (yaml-mode "0.0.13"))
 ;; Keywords: helm
 
@@ -41,7 +41,7 @@
 
 ;;====================
 ;;
-;; Customization
+;; General customization
 ;;
 ;;--------------------
 
@@ -320,7 +320,7 @@ the width is nil, the corresponding field is not trimmed of filled."
 (defvar helm-khard--last-window-width 0
   "Window width when `helm-khard--make-candidates' was called the last time.")
 
-(defcustom helm-khard-update-window-width nil
+(defvar helm-khard-update-window-width nil
   "If non-nil, the candidate list format is updated every time the
 window width changes.")
 
@@ -519,10 +519,8 @@ If nil, the buffer represents a new contact.")
     map)
   "Keymap for `helm-khard-edit-mode'.")
 
-(defcustom helm-khard-edit-finished-hook nil
-  "Hook run when the editing a contact is completed."
-  :type 'hook
-  :group 'helm-khard)
+(defvar helm-khard-edit-finished-hook nil
+  "Hook run when the editing a contact is completed.")
 
 (defcustom helm-khard-sync-after-editing nil
   "If non-nil, synchronize Khard database after editing."
