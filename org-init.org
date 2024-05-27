@@ -8011,7 +8011,13 @@ It depends on [[https://pldaniels.com/altermime/][alterMIME]].
 										 :receives index))
 #+END_SRC
 
-****** iCalender support
+****** TODO iCalender support
+:LOGBOOK:
+- State "TODO"       from              [2024-05-27 Mon 11:49]
+:END:
+
+- [ ] Adapt the Org heading generated for the event
+      - See function gnus-icalendar-event->org-entry (not yet customizable)
 
 With the help of Gnus, iCalendar invitations can be viewed and replied to.
 Documentation: https://www.djcbsoftware.nl/code/mu/mu4e/iCalendar.html
