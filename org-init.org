@@ -9592,6 +9592,13 @@ OpenStreetMap viewer for Emacs.
 
 https://gitlab.com/ambrevar/emacs-gif-screencast
 
+Slim GIF screencasts for Emacs. This package uses [[https://github.com/resurrecting-open-source-projects/scrot][scrot]], [[https://imagemagick.org/script/convert.php][convert]] and [[https://www.lcdf.org/gifsicle/][Gifsicle]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package gif-screencast
+	:ensure t)
+#+END_SRC
+
 * Minor modes
 ** COMMENT literal-calc-mode
 
