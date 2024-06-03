@@ -11342,7 +11342,7 @@ https://github.com/davep/boxquote.el
 Mark quotes with brackets on the left side.
 
 #+BEGIN_EXAMPLE 
-,----
+,----[ Title ]
 |  Example quote
 `----
 #+END_EXAMPLE
@@ -11356,6 +11356,21 @@ Issues
 	:pin MELPA)
 #+END_SRC
 
+Additional DWIM function to use boxquote:
+
+#+BEGIN_SRC emacs-lisp
+(defun boxquote-dwim ()
+"Do what I mean when using boxquote."
+	(interactive)
+	(if (region-active-p)
+			(if (boxquote-quoted-p)
+					(call-interactively 'boxquote-unbox-region)
+				(call-interactively 'boxquote-region))
+		(if (boxquote-quoted-p)
+				(call-interactively 'boxquote-unbox)
+			(call-interactively 'boxquote-text))))
+#+END_SRC
+  
 ** Line actions
 *** Delete line
 
@@ -13418,7 +13433,7 @@ Hydra for marking contents of a buffer.
       [_e_] edit same symbol       [_g_] git gutter                                       
       [_*_] critic markup          [_w_] show/hide whitespaces                                         
       [_(_] key macro              [_o_] highlight with overlays  
-       ^^                          ^^                               [_q_]uit
+      [_>_] box-quote              ^^                               [_q_]uit
 	"
 	("a" mark-whole-buffer :exit t)
 	("g" hydra-git-gutter/body :exit t)
@@ -13432,6 +13447,7 @@ Hydra for marking contents of a buffer.
 	;; ("t" hydra-tags/body :exit t)
 	("w" whitespace-mode :exit t)
 	("(" hydra-macro/body :exit t)
+	(">" boxquote-dwim :exit t)
 	("m" hydra-macro/body :exit t)
   ("*" hydra-cm-mode/body :exit t )
 	("q" nil :color blue)
