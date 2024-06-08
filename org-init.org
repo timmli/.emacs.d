@@ -2521,17 +2521,6 @@ Note that the last export command on the current buffer can be reused with =C-u 
 
 It is notoriously unclear how to export lists with description items (marked with "::"). The following tries to export them as regular lists.  
 
-<dl class="org-dl">
-<dt>Lensch</dt><dd>New equipment BA1</dd>
-</dl>
-
-<ul>
-<dt>Lensch</dt><dd>New equipment BA1
-<ul class="org-ul">
-<li>2–3 switches per rack, 12k € per rack, 4 racks &#x2013;&gt; 48k €</li>
-</ul></dd>
-</ul>
-
 #+BEGIN_SRC emacs-lisp
 (defun tl/org-html-export-description-list-as-regular-list (data backend info)
   "Convert description lists to regular list items during HTML export."
