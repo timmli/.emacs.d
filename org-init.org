@@ -12977,13 +12977,17 @@ Look up information about words and phrases in online databases such as Wikpedia
 
 * Remote connections
 
-** COMMENT tramp
+** tramp
 
-Issues
-- Commented because of an error during completion in helm-mini.
+https://www.gnu.org/software/tramp/
+
+Built-in package for editing remote files. 
+
+Issues:
+- Disabled because of an error during completion in helm-mini.
       - =(error "Process *tramp/archive file.odg* not running")=
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle no
 (require 'tramp)
 (if (eq system-type 'windows-nt) 
     (progn
