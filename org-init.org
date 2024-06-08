@@ -112,6 +112,7 @@
       - [[#atomic-chrome][atomic-chrome]]
       - [[#xah-lookup][xah-lookup]]
 - [[#remote-connections][Remote connections]]
+      - [[#tramp][tramp]]
       - [[#emacs-ssh-deploy][emacs-ssh-deploy]]
 - [[#help][Help]]
       - [[#helpful][helpful]]
