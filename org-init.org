@@ -8698,7 +8698,7 @@ Adapt description of links:
 (setq mu4e-org-link-desc-func 'tl/mu4e-org-link-descr)
 #+END_SRC
 
-Open links messages in the mu4e frame:
+Open links to messages in the mu4e frame:
 
 See the discussion here: https://groups.google.com/g/mu-discuss/c/EME00itASYM/m/hu0faSFSBwAJ
 I choose a different approach, namely modifying the function =mu4e-org-open=.
@@ -8728,6 +8728,18 @@ the query (for links starting with \"query:\")."
    ((string-match "^query:\\(.+\\)" link)
     (mu4e-search (match-string 1 link) current-prefix-arg))
    (t (mu4e-error "Unrecognized link type '%s'" link))))
+#+END_SRC
+
+# TODO: With browsers, a composition buffer is created, but the mail address is not transmitted. 
+To open mailto URLs in mu4e, do the following (taken from https://emacs.stackexchange.com/questions/52281/handling-mailto-links-with-mu4e):
+- Set =mail-user-agent= to =#'mu4e-user-agent=.
+- Create a desktop file which executes =emacsclient -c --eval "(browse-url-mail \"$@\")"=.
+- Select this as default programm to open mailto URLs in your browser.
+- Optionally add it to =~/.config/mimeapps.list=.
+
+#+BEGIN_SRC emacs-lisp
+(setq mail-user-agent #'mu4e-user-agent
+			message-mail-user-agent t)
 #+END_SRC
 
 ***** COMMENT mu4e-thread-folding
