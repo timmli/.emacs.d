@@ -32,38 +32,42 @@ is non-nil.
 
 ;;; Generated autoloads from mu4e-compose.el
 
+(defalias 'mu4e-compose-mail #'mu4e-compose-new)
 (autoload 'mu4e-compose-new "mu4e-compose" "\
 Mu4e's implementation of `compose-mail'.
-TO, SUBJECT, OTHER-HEADERS, CONTINUE, SWITCH-FUNCTION,
-YANK-ACTION SEND-ACTIONS RETURN-ACTION are as described in
-`compose-mail', and to the extend that they do not conflict with
-mu4e inner workings.
+TO, SUBJECT, OTHER-HEADERS, CONTINUE, YANK-ACTION SEND-ACTIONS
+RETURN-ACTION are as described in `compose-mail', and to the
+extend that they do not conflict with mu4e's inner workings.
+SWITCH-FUNCTION is ignored.
 
 (fn &optional TO SUBJECT OTHER-HEADERS CONTINUE SWITCH-FUNCTION YANK-ACTION SEND-ACTIONS RETURN-ACTION &rest _)" t)
-(defalias 'mu4e-compose-mail #'mu4e-compose-new)
-(autoload 'mu4e-compose-reply "mu4e-compose" "\
+(autoload 'mu4e-compose-reply-to "mu4e-compose" "\
 Reply to the message at point.
-If WIDE is non-nil, make it a \"wide\" reply (a.k.a.
-\"reply-to-all\").
+Optional TO can be the To: address for the message. If WIDE is
+non-nil, make it a \"wide\" reply (a.k.a. \"reply-to-all\").
+
+(fn &optional TO WIDE)" t)
+(autoload 'mu4e-compose-reply "mu4e-compose" "\
+Reply to the message at point. If WIDE is
+non-nil, make it a \"wide\" reply (a.k.a. \"reply-to-all\").
 
 (fn &optional WIDE)" t)
 (autoload 'mu4e-compose-wide-reply "mu4e-compose" "\
-Wide-reply to the message at point.
-A.k.a., \"reply-to-all\"." t)
+Wide reply to the message at point.
+(a.k.a. \"reply-to-all\")." t)
 (autoload 'mu4e-compose-supersede "mu4e-compose" "\
-Supersede message at point.
+Supersede the message at point.
 
 That is, send the message again, with all the same recipients;
 this can be useful to follow-up on a sent message. The message
-must be from current user, as determined through
+must originate from the current user, as determined through
 `mu4e-personal-or-alternative-address-p'." t)
-(autoload 'mu4e-compose-forward "mu4e-compose" "\
-Forward the message at point." t)
 (autoload 'mu4e-compose-edit "mu4e-compose" "\
 Edit an existing draft message." t)
 (autoload 'mu4e-compose-resend "mu4e-compose" "\
 Re-send the message at point to ADDRESS.
-The message is resent as-is, without any editing.
+The message is resent as-is, without any editing. See
+`message-resend' for details.
 
 (fn ADDRESS)" t)
 (define-mail-user-agent 'mu4e-user-agent #'mu4e-compose-mail #'message-send-and-exit #'message-kill-buffer 'message-send-hook)
@@ -88,6 +92,11 @@ The message is resent as-is, without any editing.
 ;;; Generated autoloads from mu4e-contrib.el
 
 (register-definition-prefixes "mu4e-contrib" '("eshell/mu4e-attach" "mu4e-"))
+
+
+;;; Generated autoloads from mu4e-draft.el
+
+(register-definition-prefixes "mu4e-draft" '("mu4e-"))
 
 
 ;;; Generated autoloads from mu4e-folders.el
