@@ -2518,35 +2518,6 @@ Use a less intrusive export interface:
 
 Note that the last export command on the current buffer can be reused with =C-u C-c C-e=. 
 
-**** To HTML
-
-It is notoriously unclear how to export lists with description items (marked with "::"). The following tries to export them as regular lists.  
-
-#+BEGIN_SRC emacs-lisp
-(defun tl/org-html-export-description-list-as-regular-list (data backend info)
-  "Convert description lists to regular list items during HTML export."
-  (when (org-export-derived-backend-p backend 'html)
-		(replace-regexp-in-string
-     "<dt>\\([^<]+\\)</dt>[[:space:]]*<dd>\\([^<]+\\)"
-     "<li>\\1 :: \\2"
-		 (replace-regexp-in-string
-			"</dd>"
-			"</li>"
-			(replace-regexp-in-string
-       "<dl.*?>"
-			 "<ul class=\"org-ul\">"
-			 (replace-regexp-in-string
-				"</dl>"
-				"</ul>" 
-				(replace-regexp-in-string
-				 "<li id=\"\\(.*?\\)\">"
-				 "<li>\\1 :: "
-				 data)))))))
-
-(add-to-list 'org-export-filter-plain-list-functions
-             'tl/org-html-export-description-list-as-regular-list)
-#+END_SRC
-
 **** Clipboard
 
 Usually, when copying parts of an Org file to the system clipboard (i.e. with =kill-ring-save=) and inserting it in another application, the formatting (bold face, links, lists, code blocks, ...) is not preserved, but the bare Org markup is shown. To preserve the formatting, the Org markup has to be exported to HTML first, and then copied to the clipboard. 
@@ -2587,7 +2558,8 @@ Copy selected regions in Org buffers as formatted text to the clipboard. With =o
 (define-key org-mode-map (kbd "s-w") 'tl/ox-clip-formatted-copy)
 #+END_SRC
 
-I add some custom filters for list items:
+I add some custom filters for list items: 
+# TODO: Why necessary?
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/ox-clip-formatted-copy ()
@@ -2595,7 +2567,7 @@ I add some custom filters for list items:
 `ox-clip-formatted-copy', but with custom filters."
   (interactive)
   (let ((org-export-filter-plain-list-functions
-         '(tl/org-html-export-description-list-as-regular-list)))
+         '(org-fm-export-description-list-to-html)))
     (call-interactively 'ox-clip-formatted-copy)))
 
 (define-key org-mode-map (kbd "s-w") 'tl/ox-clip-formatted-copy)
