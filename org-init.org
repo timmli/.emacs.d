@@ -8082,6 +8082,27 @@ Finally, activate the iCalendar-to-Org export:
 - State "TODO"       from              [2024-05-02 Thu 23:12]
 :END:
 
+****** TODO Display attachments
+:LOGBOOK:
+- State "TODO"       from              [2024-06-14 Fri 19:33]
+:END:
+
+The variable =gnus-mime-button-line-format= controls the text of Gnus buttons for attachments. 
+
+Valid specifiers include:
+%t  The MIME type
+%T  MIME type, along with additional info
+%n  The ‘name’ parameter
+%d  The description, if any
+%l  The length of the encoded part
+%p  The part identifier number
+%e  Dots if the part isn’t displayed
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(setq gnus-mime-button-line-format "%{%([%p. %d%T]%)%}%e
+")
+#+END_SRC
+
 ***** Compose messages
 
 #+BEGIN_SRC emacs-lisp
