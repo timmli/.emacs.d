@@ -93,6 +93,7 @@
       - [[#magit][magit]]
       - [[#forge][Forge]]
       - [[#git-gutter][git-gutter]]
+      - [[#git-link][git-link]]
 - [[#kill-ring][Kill ring]]
 - [[#shells][Shells]]
       - [[#better-shell][better-shell]]
@@ -12510,6 +12511,19 @@ An Emacs port of the Sublime Text plugin [[https://github.com/jisaacks/GitGutter
 	)
 #+END_SRC
 
+** git-link
+
+https://github.com/sshaw/git-link
+
+Create URLs for files and commits in GitHub/Bitbucket/GitLab/... repositories.
+
+#+BEGIN_SRC emacs-lisp
+(use-package git-link
+	:ensure t
+	:bind (("C-c g l" . git-link))
+	)
+#+END_SRC
+
 ** COMMENT Blamer
 
 https://github.com/Artawower/blamer.el
@@ -13462,13 +13476,14 @@ Hydra for marking contents of a buffer.
     ------------------------------^^-------------------------------^^-----------------------
       [_a_] mark all               [_c_] highlight changes          [_b_] add bookmark
       [_r_] mark rectangular       [_s_] highlight same symbols     [_p_] position register
-      [_e_] edit same symbol       [_g_] git gutter                                       
+      [_e_] edit same symbol      [_gg_] git gutter                [_gl_] git link                     
       [_*_] critic markup          [_w_] show/hide whitespaces                                         
       [_(_] key macro              [_o_] highlight with overlays  
       [_>_] box-quote              ^^                               [_q_]uit
 	"
 	("a" mark-whole-buffer :exit t)
-	("g" hydra-git-gutter/body :exit t)
+	("gg" hydra-git-gutter/body :exit t)
+	("gl" git-link :exit t)
 	("c" hydra-highlight-changes/body :exit t)
 	("r" rectangle-mark-mode :exit t)
 	("b" hydra-add-bookmark/body :exit t)
