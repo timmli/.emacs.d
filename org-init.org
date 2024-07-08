@@ -2568,7 +2568,9 @@ I add some custom filters for list items:
 `ox-clip-formatted-copy', but with custom filters."
   (interactive)
   (let ((org-export-filter-plain-list-functions
-         '(org-fm-export-description-list-to-html)))
+         '(org-fm-export-list-item-to-html))
+				(org-export-filter-final-output-functions
+				 '(org-fm-export-final-list-to-html)))
     (call-interactively 'ox-clip-formatted-copy)))
 
 (define-key org-mode-map (kbd "s-w") 'tl/ox-clip-formatted-copy)
