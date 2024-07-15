@@ -14106,24 +14106,24 @@ Download with [[org-download]].
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-agenda (:hint nil :color red)
 	"
-    ^^                   ^^                  ^^                       ^^                 ^^                ╭────────────┐
-     ^Calendar^          ^Heading^           ^Clocking^               ^Filter^           ^Navigation^      │ org-agenda │
-	╭─^^───────────────────^^─────────────────^^────────────────────────^^─────────────────^^────────────────┴────────────╯
-    _b_ backward d/w/y   _+_ priority up     _I_ clock in						  _/_ by tag         _F_ follow mode 
-    _._ today            _-_ priority down   _O_ clock out					  _<_ by category    _J_ clocked-in  
-    _f_ forward d/w/y    _t_ set todo        _J_ jump to clocked-in	  \^ siblings        ^^^             
-    _j_ goto date        _:_ set tags        _R_ clocking report  	  _|_ remove all     ^^              
-    _d_ day view         _>_ set date        ^^                       _l_ show done (log mode)^^        _S_ync with CalDAV 
-    _w_ week view      _C-d_ set deadline    ^^
-   _vm_ month view     _C-s_ set schedule    ^^                       _C_ complete agenda
-   _vy_ year view      _C-k_ kill            ^^                       _H_ home agenda ^^                _r_efresh
-    ^^       _M-S-<up>_ earlier hour       _M-S-<up>_ earlier time    _W_ work agenda ^^                _q_uit hydra
-    ^^     _M-S-<down>_ later hour       _M-S-<down>_ later time      _E_ events      ^^               e_x_it agenda
-    ^^    _M-S-<right>_ earlier day          ^^                       
-    ^^     _M-S-<down>_ later day            ^^                       _m_ mark						
-    _h_ show holidays		^^									 ^^		 							      _u_ unmark          
-    _]_ show inactive timestamps ^^					 ^^	 								      _B_ action on marked
-    _k_ capture with timestamp	 ^^				   ^^			 									^^                  
+    ^^                     ^^                 ^^                       ^^                        ╭────────────┐
+     ^Calendar^             ^Heading^          ^Clocking^               ^Filter^                 │ org-agenda │
+	╭─^^─────────────────────^^─────────────────^^───────────────────────^^────────────────────────┴────────────╯
+    _b_ backward d/w/y     _+_ priority up    _I_ clock in					   _/_ by tag            _S_ync with CalDAV
+    _._ today              _-_ priority down  _O_ clock out					   _<_ by category    
+    _f_ forward d/w/y      _t_ set todo       _J_ jump to clocked-in	 \^ siblings        
+    _j_ goto date          _:_ set tags       _R_ clocking report  	   _|_ remove all     
+    _d_ day view           _>_ set date       ^^                       _l_ show done (log mode) 
+    _w_ week view    _C-c C-d_ set deadline   ^^
+   _vm_ month view   _C-c C-s_ set schedule   ^^                       _C_ complete agenda
+   _vy_ year view        _C-k_ kill           ^^                       _H_ home agenda ^^         _r_efresh
+    ^^       _M-S-<up>_ earlier hour       _M-S-<up>_ earlier time     _W_ work agenda ^^         _q_uit hydra
+    ^^     _M-S-<down>_ later hour       _M-S-<down>_ later time       _E_ events      ^^        e_x_it agenda
+    ^^    _M-S-<right>_ earlier day            ^^                       
+    ^^     _M-S-<down>_ later day              ^^                      _m_ mark						
+    _h_ show holidays		^^									   ^^		 							     _u_ unmark          
+    _]_ show inactive timestamps ^^					   ^^	 								     _B_ action on marked
+    _k_ capture with timestamp	 ^^				     ^^			 								^^                  
 "																																			
 	("+" org-agenda-priority-up)
 	("-" org-agenda-priority-down)
@@ -14147,8 +14147,8 @@ Download with [[org-download]].
 	("J" org-agenda-clock-goto)
 	("." org-agenda-goto-today)
 	("C-k" org-agenda-kill)
-	("C-s" org-agenda-schedule)
-	("C-d" org-agenda-deadline)
+	("C-c C-s" org-agenda-schedule)
+	("C-c C-d" org-agenda-deadline)
 	("M-S-<left>" org-agenda-date-earlier)
 	("M-S-<right>" org-agenda-date-later)
 	("M-S-<up>" tl/org-agenda-alt-shift-up)
