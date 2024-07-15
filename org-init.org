@@ -2570,7 +2570,7 @@ I add some custom filters for list items:
   (let ((org-export-filter-plain-list-functions
          '(org-fm-export-list-item-to-html))
 				(org-export-filter-final-output-functions
-				 '(org-fm-export-final-list-to-html)))
+				 '(org-fm-export-whole-list-to-html)))
     (call-interactively 'ox-clip-formatted-copy)))
 
 (define-key org-mode-map (kbd "s-w") 'tl/ox-clip-formatted-copy)
@@ -3015,6 +3015,9 @@ See https://orgmode.org/Changes.html#org685f215.
 #+END_SRC
 
 *** TODO Links
+
+Issues:
+- [ ] Replace timestamp in link description, either deleting it completely or replacing just the brackets
 
 Function to update link syntax that got changed in =org-mode= v9.3 (taken from https://orgmode.org/Changes.html):
 #+BEGIN_SRC emacs-lisp
