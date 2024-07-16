@@ -8660,9 +8660,11 @@ Let's write a proper mu4e action based on this:
   "Copy message to <date>_<subject>.eml in some user-specified
 directory."
   (interactive)
-	(let ((target (format "%s_%s.eml"
-												(format-time-string "%F" (mu4e-message-field msg :date))
-												(or (mu4e-message-field msg :subject) "No subject"))))
+	(let ((target
+				 (string-replace "/" "-"
+												 (format "%s_%s.eml"
+																 (format-time-string "%F" (mu4e-message-field msg :date))
+																 (or (mu4e-message-field msg :subject) "No subject")))))
 		(copy-file
 		 (mu4e-message-field msg :path)
 		 (format "%s/%s" (read-directory-name "Copy message to: " (expand-file-name "~/")) target) 1)))
