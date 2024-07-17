@@ -3890,7 +3890,7 @@ Issues
 				 "${todo:10} "
 				 ;; "${title:*} "
 				 "${hierarchy:*} "			 ; provided by org-roam-node-hierarchy
-				 (propertize "${tags:50}" 'face 'org-tag)) ; add tags to org-roam-node-find
+				 (propertize "${tags:40}" 'face 'org-tag)) ; add tags to org-roam-node-find
 				)
 
 	;; ;; Make completion case-insensitive (https://emacs.stackexchange.com/a/77296/12336)
