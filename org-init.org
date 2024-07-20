@@ -11791,6 +11791,34 @@ Translation framework for Emacs.
 (use-package go-translate
 :ensure t
 :config
+(setq gt-langs '("de" "en"))
+
+;;;; Example from Github
+;; (setq gt-default-translator
+;;       (gt-translator
+;;        :taker   (gt-taker :text 'buffer :pick 'paragraph)  ; config the Taker
+;;        :engines (list (gt-bing-engine) (gt-google-engine)) ; specify the Engines
+;;        :render  (gt-buffer-render)))                       ; config the Render
+
+(setq gt-default-translator
+      (gt-translator
+       :taker   (gt-taker :text 'word :pick 'paragraph)  
+       :engines (list 
+								 ;; (gt-bing-engine)
+      					 (gt-deepl-engine :key user-deepl-key)
+								 (gt-google-engine)
+								 ;; (gt-google-rpc-engine)
+								 )
+       :render (gt-buffer-render)))
+)
+#+END_SRC
+
+DEPRECATED:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(use-package go-translate
+:ensure t
+:config
 (setq gts-translate-list '(("de" "en")))
 
 ;; (setq gts-default-translator (gts-translator :engines (gts-bing-engine)))
@@ -13311,7 +13339,7 @@ Hydra for everything about checking buffer contents.
 	("c" hydra-flycheck/body :exit t)
 	("r" recover-this-file :exit t)
 	("s" hydra-flyspell/body :exit t)
-  ("t" gts-do-translate :exit t)
+  ("t" gt-do-translate :exit t)
 	("=" literate-calc-minor-mode :exit t)
 	("L" hydra-lookup/body :exit t)
 	("#w" count-words :exit t)
