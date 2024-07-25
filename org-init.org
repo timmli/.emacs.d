@@ -1832,19 +1832,21 @@ Show all headers with clocks, timestamps and todos in one overview buffer.
 (require 'org-agenda)
 #+END_SRC
 
-**** General appearance
+**** TODO General appearance
+:LOGBOOK:
+- State "TODO"       from              [2024-07-25 Thu 11:28]
+:END:
 
 Don't split window when opening agenda:
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-window-setup "current-window")
 #+END_SRC
 
-Show notifications of agenda events:
+Show notifications of agenda events (NOT USED):
 #+BEGIN_SRC emacs-lisp :tangle no
 (use-package org-alert
 	:ensure t)
 #+END_SRC
-
 
 Sort agenda TODOs with =org-agenda-sorting-strategy=.
 
@@ -1874,12 +1876,23 @@ Agenda remains open in background. No need to recompile it every time you call i
 (setq org-agenda-sticky t)
 #+END_SRC
 
-Show tags at the right edge of the screen:
+Do not show tags in agenda, because it takes too much space:
 #+BEGIN_SRC emacs-lisp
+(setq org-agenda-remove-tags t)
+#+END_SRC
+
+Truncate lines:
+#+BEGIN_SRC emacs-lisp
+(add-hook 'org-agenda-finalize-hook
+					#'(lambda () (toggle-truncate-lines t)))
+#+END_SRC
+
+Show tags at the right edge of the screen (DEPRECATED):
+#+BEGIN_SRC emacs-lisp :tangle no
 ;; (setq org-agenda-tags-column (- (- (window-total-width) 3)))
 
 ;; taken from https://lists.gnu.org/archive/html/emacs-orgmode/2010-12/msg00410.html
-(add-hook 'org-finalize-agenda-hook 'place-agenda-tags)
+(add-hook 'org-finalize-agenda-hook #'place-agenda-tags)
 (defun place-agenda-tags ()
   "Put the agenda tags by the right border of the agenda window."
   (setq org-agenda-tags-column (- 4 (window-width)))
@@ -1925,7 +1938,7 @@ Change font faces:
 (set-face-attribute 'org-agenda-date-weekend nil :foreground "#66d9ef")
 
 	)
-(add-hook 'org-agenda-mode-hook 'tl/org-agenda-style)
+(add-hook 'org-agenda-mode-hook #'tl/org-agenda-style)
 #+END_SRC
 
 **** Views
@@ -2041,7 +2054,7 @@ Sorting function for clocked headings:
 (setq org-agenda-cmp-user-defined 'tl/org-agenda-sort-clocks-function)
 #+END_SRC
 
-Function to check whether a heading has CLOCK lines:
+Function to check if a heading has CLOCK lines:
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/org-heading-with-clock-p ()
@@ -7714,6 +7727,9 @@ Good examples of elaborate mu4e configurations:
 - https://config.daviwil.com/mail
 - https://github.com/munen/emacs.d/#mu4e
 - https://github.com/rougier/dotemacs/blob/master/dotemacs.org#mail
+
+Email workflow with org-capture:
+- https://systemcrafters.net/emacs-mail/email-workflow-with-org-mode/
 
 ***** Installation & general settings
 
