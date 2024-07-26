@@ -1856,7 +1856,7 @@ Skip scheduled items and items with deadline when they are DONE:
 			org-agenda-skip-deadline-if-done t)
 #+END_SRC 
 
-Make the block agenda more compact:
+Do not make the block agenda more compact:
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-compact-blocks nil)
 #+END_SRC
@@ -1939,6 +1939,11 @@ Change font faces:
 
 	)
 (add-hook 'org-agenda-mode-hook #'tl/org-agenda-style)
+#+END_SRC
+
+Do not dim blocked headings (headings with TODO subheadings):
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-dim-blocked-tasks nil)
 #+END_SRC
 
 **** Views
