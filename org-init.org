@@ -10930,6 +10930,10 @@ Cursor position history (LOCAL)
     (point-undo-doit point-redo-ring point-undo-ring)))
 #+end_src
 
+*** cursor-undo
+
+https://elpa.gnu.org/packages/cursor-undo.html
+
 *** goto-last-change
 
 https://github.com/camdez/goto-last-change.el
