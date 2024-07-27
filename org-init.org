@@ -1948,11 +1948,20 @@ Do not dim blocked headings (headings with TODO subheadings):
 
 **** Views
 
+Specifying the timespan of org-agenda views:
+
+#+BEGIN_SRC emacs-lisp
+(defvar tl/org-agenda-timespan
+	'((org-agenda-start-on-weekday nil)
+		(org-agenda-span 7)
+    (org-agenda-start-day "-3d")))
+#+END_SRC
+
 Specifying the sections of org-agenda views:
 
 #+BEGIN_SRC emacs-lisp
 (defvar tl/org-agenda-structure
-	'((agenda "")
+	`((agenda "" ,tl/org-agenda-timespan)
 		(tags "PRIORITY=\"A\""
 					((org-agenda-skip-function '(org-agenda-skip-entry-if 'todo 'done))
 					 (org-agenda-overriding-header "HIGH-PRIORITY TASKS")))
@@ -1979,7 +1988,7 @@ Customize the content of views:
 
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-custom-commands
-			`(("e" "Events with timestamp"
+			`(("E" "Events with timestamp"
 				 ((tags "event"
                 ((org-agenda-overriding-header "Events without date")
                  (org-agenda-prefix-format '((tags . " %i %-12:c %?-12t")))
@@ -2008,7 +2017,7 @@ Customize the content of views:
 								 (org-agenda-sorting-strategy '((tags ts-down)))
 								 (org-agenda-prefix-format '((tags . " %i %-12:c %?-12t")))
 								 ))))
-				("c" "Clocked Headings"
+				("C" "Clocked Headings"
          ((tags "*"
                 ((org-agenda-overriding-header "Clocked Headings")
 								 (org-agenda-prefix-format '((tags . " %i %-12:c %?-12t")))
@@ -2025,10 +2034,10 @@ Customize the content of views:
 														end))))
 								 (org-agenda-sorting-strategy '((tags user-defined-down)))
 								 ))))
-				("w" "Work-related agenda and tasks"
+				("W" "Work-related agenda and tasks"
 				 ,tl/org-agenda-structure
 				 ((org-agenda-tag-filter-preset '("+@work"))))
-				("h" "Home-related agenda and tasks"
+				("H" "Home-related agenda and tasks"
 				 ,tl/org-agenda-structure
 				 ((org-agenda-tag-filter-preset '("+@home"))))
 				("A" "Complete list of agenda and tasks"
@@ -2075,11 +2084,11 @@ Set up key bindings for each view:
 #+BEGIN_SRC emacs-lisp
 (defun org-agenda-list-work ()
 	(interactive)
-	(org-agenda nil "w"))
+	(org-agenda nil "W"))
 
 (defun org-agenda-list-home ()
 	(interactive)
-	(org-agenda nil "h"))
+	(org-agenda nil "H"))
 
 (defun org-agenda-list-complete ()
 	(interactive)
@@ -2087,11 +2096,11 @@ Set up key bindings for each view:
 
 (defun org-agenda-list-events ()
 	(interactive)
-	(org-agenda nil "e"))
+	(org-agenda nil "E"))
 
 (defun org-agenda-list-clocks ()
 	(interactive)
-	(org-agenda nil "c"))
+	(org-agenda nil "C"))
 
 (define-key org-agenda-mode-map (kbd "W") 'org-agenda-list-work)
 (define-key org-agenda-mode-map (kbd "H") 'org-agenda-list-home)
