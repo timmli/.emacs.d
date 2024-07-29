@@ -2195,9 +2195,10 @@ While timestamps in headers are automatically removed when they trigger the appe
 (defun tl/org-agenda-view-remove-timestamps ()
   "Remove timestamps from the agenda view."
   (save-excursion
-    (goto-char (point-min))
-    (while (re-search-forward (concat org-ts-regexp-both " ") nil t)
-      (replace-match ""))))
+		(when (org-agenda-check-type nil 'agenda)
+			(goto-char (point-min))
+			(while (re-search-forward (concat org-ts-regexp-both " ") nil t)
+				(replace-match "")))))
 
 (add-hook 'org-agenda-finalize-hook 'tl/org-agenda-view-remove-timestamps)
 #+END_SRC
