@@ -873,11 +873,14 @@ List active key bindings.
 
 *** org-mode
 
+https://github.com/emacs-helm/helm-org
+
 Complete tags with =helm= when using =org-set-tags=:
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-org
 	:ensure t
+	:pin MELPA
 	:config
 	(add-to-list 'helm-completing-read-handlers-alist '(org-capture . helm-org-completing-read-tags))
 	(add-to-list 'helm-completing-read-handlers-alist '(org-set-tags . helm-org-completing-read-tags))
@@ -9109,9 +9112,11 @@ _u_pdate
   ("q" doom/escape))
 #+END_SRC
 
-*** RSS/Atom feed reader 
+*** COMMENT RSS/Atom feed reader 
 
 **** elfeed
+
+https://github.com/skeeto/elfeed
 
 Largely taken from http://cestlaz.github.io/posts/using-emacs-29%20elfeed/.
 Feed collections can be converted to the format of =elfeed-org= with the function =elfeed-org-import-opml=.
@@ -12587,6 +12592,7 @@ Issues:
 #+BEGIN_SRC emacs-lisp
 (use-package forge
 	:ensure t
+	:pin MELPA
 	:after magit)
 #+END_SRC
 

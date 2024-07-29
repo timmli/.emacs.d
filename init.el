@@ -23,8 +23,9 @@
 ;; start emacs server
 ;; (server-start)  ; uncomment this, if you want the server to start on every start-up
 
-;; Use the older, more tolerant version of seq-empty-p.
-(require 'seq-24)
+;; Emacs 28: Use the older, more tolerant version of seq-empty-p.
+(when (= emacs-major-version 28)
+	(require 'seq-24))
 
 
 ;;==========================================================
