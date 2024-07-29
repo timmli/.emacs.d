@@ -8621,6 +8621,13 @@ Support of DKIM
 			smtpmail-debug-info t)
 #+END_SRC
 
+Normally, smtpmail will try first to send emails via SMTP without user/password credentials, and then retry using credentials if
+the server says that it requires it. Some mail servers do not like this and will therefore reject these requests. This can be changed by setting =smtpmail-servers-requiring-authorization= to the address of the SMTP server. As a default, the following enforces authentification for all SMTP servers. 
+
+#+BEGIN_SRC emacs-lisp
+(setq smtpmail-servers-requiring-authorization ".*")
+#+END_SRC
+
 ***** Search messages
 
 There is a built-in search, but I prefer [[helm-mu]], which allows for incremental search of mails and contacts.
