@@ -293,8 +293,8 @@ This variable should be changed in private-emacs-settings.el.")
 ;; list the packages you want
 (setq package-list '(async 							; paradox needs async
 										 paradox
-										 use-package
-										 org
+										 use-package				; built-in as of v29 
+										 org								; built-in
                      ))
 ;; ;; fetch the list of packages available
 ;; (unless package-archive-contents
