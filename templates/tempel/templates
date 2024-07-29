@@ -35,25 +35,28 @@ fundamental-mode ;; Available everywhere
 		(delete-blank-lines)
 		n
 		n
-		(if (string= (guess-language-buffer) "de")
-				(completing-read "Choose: " '("Viele Grüße"
-	 																		"Mit freundlichen Grüßen"
-																			"Herzliche Grüße"
-																			"Danke und Viele Grüße"))
-			(completing-read "Choose: " '("Best,"
-																		"Kind regards,"
-																		"Thanks,"
-																		)))
+		(let ((english-greetings '("Best,"
+															 "Kind regards,"
+															 "Thanks,"
+															 ))
+					(german-greetings '("Viele Grüße"
+	 														"Mit freundlichen Grüßen"
+															"Herzliche Grüße"
+															"Danke und Viele Grüße")))
+			(completing-read "Choose: " 
+													 (if (string= (guess-language-buffer) "de")
+															 (append german-greetings english-greetings)
+														 (append english-greetings german-greetings))))
 		n
-		n
-		"Timm Lichte"
-		n
-		n
-		:post (progn
-						(re-search-backward "Timm Lichte")
-						(end-of-line)
-						)
-		)
+		 n
+		 "Timm Lichte"
+		 n
+		 n
+		 :post (progn
+						 (re-search-backward "Timm Lichte")
+						 (end-of-line)
+						 )
+		 )
 
 prog-mode
 
@@ -72,5 +75,3 @@ text-mode
 			"+-" (make-string (length str) ?-) "-+" n)
 (cut "--8<---------------cut here---------------start------------->8---" n r n
 		 "--8<---------------cut here---------------end--------------->8---" n)
-
-
