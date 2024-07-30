@@ -4696,10 +4696,11 @@ Insert timestamp when changing deadline:
 (setq org-log-redeadline 'time)
 #+END_SRC
 
-Insert timestamp when changing schedule:
+Do not insert timestamp or note when changing schedule:
 #+BEGIN_SRC emacs-lisp
-(setq org-log-reschedule 'time)
+(setq org-log-reschedule nil)
 #+END_SRC
+As I frequently change SCHEDULED and (mis)use it for planning when to work next on a project, this is to prevent the LOGBOOK from being cluttered.   
 
 Observe dependencies between TODOs:
 #+BEGIN_SRC emacs-lisp
