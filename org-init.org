@@ -8267,6 +8267,11 @@ Configure the body of forwarded messages:
 
 ****** Attachments & pasting from clipboard
 
+Generally, files should be attached at the end of a message:
+#+BEGIN_SRC emacs-lisp
+(setq mml-attach-file-at-the-end t)
+#+END_SRC
+
 Attachments can be included directly from [[*dired][dired]] with the help of =gnus=. 
 
 Taken from https://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired.
