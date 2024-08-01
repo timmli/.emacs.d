@@ -10535,13 +10535,34 @@ Similar to [[embrace]].
 	(sp-with-modes '(org-mode mu4e-compose-mode)
 		(sp-local-pair "*" "*"
 									 ;; :actions '(insert wrap) ; Don't know what this is good for.
-									 :unless '(sp-point-before-word-p sp-point-after-word-p sp-point-at-bol-p sp-in-math-p) )
-		(sp-local-pair "_" "_" :unless '(sp-point-before-word-p sp-point-after-word-p sp-in-math-p) )
-		(sp-local-pair "/" "/" :unless '(sp-point-before-word-p sp-point-after-word-p sp-in-math-p) )
-		(sp-local-pair "~" "~" :unless '(sp-point-before-word-p sp-point-after-word-p sp-in-math-p) )
-		(sp-local-pair "=" "=" :unless '(sp-point-before-word-p sp-point-after-word-p sp-in-math-p) )
-		(sp-local-pair "+" "+" :unless '(sp-point-before-word-p sp-point-after-word-p sp-in-math-p tl/sp-point-after-hash-p) )
-		(sp-local-pair "$" "$" :unless '(sp-point-before-word-p sp-point-after-word-p) )
+									 :unless '(sp-point-before-word-p
+														 sp-point-after-word-p
+														 sp-point-at-bol-p
+														 sp-in-math-p
+														 tl/sp-point-next-to-non-space-p) )
+		(sp-local-pair "_" "_" :unless '(sp-point-before-word-p
+																		 sp-point-after-word-p
+																		 sp-in-math-p
+																		 tl/sp-point-next-to-non-space-p) )
+		(sp-local-pair "/" "/" :unless '(sp-point-before-word-p
+																		 sp-point-after-word-p
+																		 sp-in-math-p
+																		 tl/sp-point-next-to-non-space-p) )
+		(sp-local-pair "~" "~" :unless '(sp-point-before-word-p
+																		 sp-point-after-word-p
+																		 sp-in-math-p
+																		 tl/sp-point-next-to-non-space-p) )
+		(sp-local-pair "=" "=" :unless '(sp-point-before-word-p
+																		 sp-point-after-word-p
+																		 sp-in-math-p
+																		 tl/sp-point-next-to-non-space-p) )
+		(sp-local-pair "+" "+" :unless '(sp-point-before-word-p
+																		 sp-point-after-word-p
+																		 sp-in-math-p
+																		 tl/sp-point-next-to-non-space-p) )
+		(sp-local-pair "$" "$" :unless '(sp-point-before-word-p
+																		 sp-point-after-word-p
+																		 tl/sp-point-next-to-non-space-p) )
 		(sp-local-pair "«" "»"))
 	;; latex-mode
 	(sp-local-pair 'LaTeX-mode "$" nil :unless '(sp-point-before-word-p sp-point-after-word-p))
@@ -10553,6 +10574,14 @@ Similar to [[embrace]].
 	Its definition follows the one of sp-point-after-word-p."
 	(when (eq action 'insert)
 		(sp--looking-back-p (concat "\\(#\\)" (regexp-quote id)))))
+
+(defun tl/sp-point-next-to-non-space-p (id action context)
+  "Return t if the character before or after point is a non-space
+  character. This predicate is only tested on \"insert\" action. Its
+  definition follows the one of sp-point-after-word-p."
+  (and (eq action 'insert)
+       (or (sp--looking-back-p "[^ \t\n]")
+					 (sp--looking-at-p "[^ \t\n]"))))
 
 ;; jump to matching paren
 (defun goto-match-paren (arg)
