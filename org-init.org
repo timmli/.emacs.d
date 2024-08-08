@@ -8279,9 +8279,9 @@ Configure the body of forwarded messages:
 
 ****** Attachments & pasting from clipboard
 
-Generally, files should be attached at the end of a message:
+In general, files should be attached at the end of a message except for inline attachments. Since =mml-attach-file-at-the-end= does not differentiate between inline and other attachments, it should not be used:
 #+BEGIN_SRC emacs-lisp
-(setq mml-attach-file-at-the-end t)
+(setq mml-attach-file-at-the-end nil)
 #+END_SRC
 
 Attachments can be included directly from [[*dired][dired]] with the help of =gnus=. 
