@@ -8280,6 +8280,7 @@ Configure the body of forwarded messages:
 ****** Attachments & pasting from clipboard
 
 In general, files should be attached at the end of a message except for inline attachments. Since =mml-attach-file-at-the-end= does not differentiate between inline and other attachments, it should not be used:
+
 #+BEGIN_SRC emacs-lisp
 (setq mml-attach-file-at-the-end nil)
 #+END_SRC
@@ -8815,6 +8816,29 @@ To open mailto URLs in mu4e, do the following (taken from https://emacs.stackexc
 #+BEGIN_SRC emacs-lisp
 (setq mail-user-agent #'mu4e-user-agent
 			message-mail-user-agent t)
+#+END_SRC
+
+***** Capture messages
+
+One can store messages using Org's capture mechanism. See also the dedicated page in the documentation of mu4e:
+https://www.djcbsoftware.nl/code/mu/mu4e/Org_002dmode-links.html
+
+I mainly use this for scheduling when to work on messages. For this, I add a suitable template to =org-capture-templates=, which will create a header with a link in my capture file:
+
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'org-capture-templates
+						 '("s" "scheduled emails" entry
+							 (file+headline (lambda nil
+																(expand-file-name "captures.org" org-directory))
+															"Scheduled emails")
+							 "* %?%a\nSCHEDULED: %^T" :prepend t))
+#+END_SRC
+
+Let's also add keybindings for capturing messages:
+
+#+BEGIN_SRC emacs-lisp
+(define-key mu4e-headers-mode-map (kbd "C-c c") 'mu4e-org-store-and-capture)
+(define-key mu4e-view-mode-map    (kbd "C-c c") 'mu4e-org-store-and-capture)
 #+END_SRC
 
 ***** COMMENT mu4e-thread-folding
@@ -10509,7 +10533,7 @@ https://github.com/Fuco1/smartparens
 
 Dealing with pairs of symbols (e.g. parens) in Emacs.
 Similar to [[embrace]].
-
+  
 #+begin_src emacs-lisp
 (use-package smartparens
 	:ensure t
