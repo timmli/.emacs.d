@@ -8827,7 +8827,7 @@ I mainly use this for scheduling when to work on messages. For this, I add a sui
 
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-capture-templates
-						 '("s" "scheduled emails" entry
+						 '("s" "Scheduled emails" entry
 							 (file+headline (lambda nil
 																(expand-file-name "captures.org" org-directory))
 															"Scheduled emails")
