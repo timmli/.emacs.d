@@ -7119,6 +7119,18 @@ if (dired-get-file-for-visit ~= /^.*\.(pdf|wav|mp3|flac|...)/ ) {
 } 
 #+END_SRC
 
+***** dired-open-with
+
+https://github.com/FrostyX/dired-open-with
+
+Select external program to open a file. 
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-open-with
+  :ensure t)
+(define-key dired-mode-map (kbd "C-<return>") 'dired-open-with)
+#+END_SRC
+
 ***** xah-open-in-external-app
 
 #+BEGIN_SRC emacs-lisp
@@ -7156,7 +7168,7 @@ Version 2019-11-04"
         (mapc
          (lambda ($fpath) (let ((process-connection-type nil))
                             (start-process "" nil "xdg-open" $fpath))) $file-list))))))
-(define-key dired-mode-map (kbd "C-<return>") 'xah-open-in-external-app)
+;; (define-key dired-mode-map (kbd "C-<return>") 'xah-open-in-external-app)
 #+END_SRC
 
 ****** Archive
