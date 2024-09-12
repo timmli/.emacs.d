@@ -487,11 +487,17 @@ Replace LaTeX commands by UTF8 symbols:
 
 *** Emojis
 
-**** emacs-emojify
+As of Emacs v29, displaying and selecting emojis is now built-in via [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Input-Methods.html][input methods]]. 
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-c i e") 'emoji-search)
+#+END_SRC
+
+**** COMMENT emacs-emojify
 
 https://github.com/iqbalansari/emacs-emojify
 
-Display and insert emojis in Emacs.
+Display and insert emojis in Emacs. Superseded by the built-in support of emojis in Emacs v29.
 Tutorial: https://ianyepan.github.io/posts/emacs-emojis/
 
 #+BEGIN_SRC emacs-lisp
