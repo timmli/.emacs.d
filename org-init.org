@@ -8141,6 +8141,8 @@ Finally, activate the iCalendar-to-Org export:
 - State "TODO"       from              [2024-06-14 Fri 19:33]
 :END:
 
+- [ ] Display attachments in the header as list: https://github.com/djcb/mu/issues/1983
+
 The variable =gnus-mime-button-line-format= controls the text of Gnus buttons for attachments. 
 
 Valid specifiers include:
@@ -8152,8 +8154,10 @@ Valid specifiers include:
 %p  The part identifier number
 %e  Dots if the part isn’t displayed
 
-#+BEGIN_SRC emacs-lisp :tangle no
-(setq gnus-mime-button-line-format "%{%([%p. %d%T]%)%}%e
+The following changes the default display removing the MIME type and adding quotes around the file name.   
+
+#+BEGIN_SRC emacs-lisp
+(setq gnus-mime-button-line-format "%{%([%p. \"%n\"]%)%}%e
 ")
 #+END_SRC
 
