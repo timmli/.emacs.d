@@ -8153,8 +8153,21 @@ Valid specifiers include:
 The following changes the default display removing the MIME type and adding quotes around the file name.   
 
 #+BEGIN_SRC emacs-lisp
-(setq gnus-mime-button-line-format "%{%([%p. \"%n\"]%)%}%e
+(setq gnus-mime-button-line-format "%{%([%p. \"%n\" – %t]%)%}%e
 ")
+#+END_SRC
+
+Since Gnus removes line breaks (which I want) with =skip-chars-backward=  when "buttonizing" attachments, the following disables =skip-chars-backward= locally. Not optimal, but it works for now.
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/advice-gnus-mime-buttonize-attachments-in-header (orig-fun &rest args)
+  "Advice for `gnus-mime-buttonize-attachments-in-header` that locally disables `skip-chars-backward`."
+	(cl-letf (((symbol-function 'skip-chars-backward)
+						 (lambda (&rest args) nil)))
+		(apply orig-fun args)))
+
+(advice-add 'gnus-mime-buttonize-attachments-in-header
+            :around #'tl/advice-gnus-mime-buttonize-attachments-in-header)
 #+END_SRC
 
 ***** Compose messages
