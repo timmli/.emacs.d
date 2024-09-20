@@ -3653,6 +3653,10 @@ plot x * x title 'AA', (1-x) * (1-x) title 'aa', 2 * x * (1-x) title 'Aa'
 ;; (org-babel-do-load-languages  'org-babel-load-languages '((dot . t)))
 #+END_SRC
 
+**** LaTeX support
+
+The LaTeX compiler is specified in =org-latex-compiler= or buffer-locally in =#+LATEX_COMPILER=. 
+
 **** Plantuml support 
 
 https://orgmode.org/worg/org-contrib/babel/languages/ob-doc-plantuml.html
