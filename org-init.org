@@ -8125,12 +8125,7 @@ Finally, activate the iCalendar-to-Org export:
 - State "TODO"       from              [2024-05-02 Thu 23:12]
 :END:
 
-****** TODO Display attachments
-:LOGBOOK:
-- State "TODO"       from              [2024-06-14 Fri 19:33]
-:END:
-
-- [ ] Display attachments in the header as list: https://github.com/djcb/mu/issues/1983
+****** Display attachments
 
 The variable =gnus-mime-button-line-format= controls the text of Gnus buttons for attachments. 
 
@@ -8143,14 +8138,14 @@ Valid specifiers include:
 %p  The part identifier number
 %e  Dots if the part isn’t displayed
 
-The following changes the default display removing the MIME type and adding quotes around the file name.   
+The following changes the default look of buttons.   
 
 #+BEGIN_SRC emacs-lisp
 (setq gnus-mime-button-line-format "%{%([%p. \"%n\" – %t]%)%}%e
 ")
 #+END_SRC
 
-Since Gnus removes line breaks (which I want) with =skip-chars-backward=  when "buttonizing" attachments, the following disables =skip-chars-backward= locally. Not optimal, but it works for now.
+Since Gnus removes line breaks (which I want) with =skip-chars-backward=  when "buttonizing" attachments, the following disables =skip-chars-backward= locally. Not optimal, but it works for now. See the discussion here: https://github.com/djcb/mu/issues/1983
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/advice-gnus-mime-buttonize-attachments-in-header (orig-fun &rest args)
