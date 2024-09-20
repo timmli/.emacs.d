@@ -7114,20 +7114,7 @@ See http://emacs.stackexchange.com/a/30890/12336
 (define-key dired-mode-map (kbd "<S-down>") 'my-dired-mark-down)
 #+END_SRC
 
-**** TODO Open with external program
-:LOGBOOK:
-- State "TODO"       from              [2020-05-13 Mi 19:06]
-:END:
-
-- [ ] How to open certain binary files automatically with external program from within dired?
-
-#+BEGIN_SRC
-advice(dired-find-file :before)
-if (dired-get-file-for-visit ~= /^.*\.(pdf|wav|mp3|flac|...)/ ) {
-  xah-open-in-external-app(dired-get-file-for-visit)
-  return t
-} 
-#+END_SRC
+**** Open with external program
 
 ***** dired-open-with
 
@@ -7137,7 +7124,9 @@ Select external program to open a file.
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired-open-with
-  :ensure t)
+  :load-path "lisp/"
+  ;; :ensure t
+)
 (define-key dired-mode-map (kbd "C-<return>") 'dired-open-with)
 #+END_SRC
 
