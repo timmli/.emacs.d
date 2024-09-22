@@ -48,13 +48,14 @@ non-nil, make it a \"wide\" reply (a.k.a. \"reply-to-all\").
 
 (fn &optional TO WIDE)" t)
 (autoload 'mu4e-compose-reply "mu4e-compose" "\
-Reply to the message at point. If WIDE is
-non-nil, make it a \"wide\" reply (a.k.a. \"reply-to-all\").
+Reply to the message at point.
+If WIDE is non-nil, make it a \"wide\" reply (a.k.a.
+\"reply-to-all\").
 
 (fn &optional WIDE)" t)
 (autoload 'mu4e-compose-wide-reply "mu4e-compose" "\
 Wide reply to the message at point.
-(a.k.a. \"reply-to-all\")." t)
+I.e., \"reply-to-all\"." t)
 (autoload 'mu4e-compose-supersede "mu4e-compose" "\
 Supersede the message at point.
 

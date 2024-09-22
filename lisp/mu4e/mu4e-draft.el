@@ -514,7 +514,14 @@ while in a buffer with the to-be-forwarded/replied-to message."
   (let* ((message-this-is-mail t)
          (message-generate-headers-first nil)
          (message-newsreader mu4e-user-agent-string)
-         (message-mail-user-agent nil))
+         (message-mail-user-agent nil)
+         (mam message-alternative-emails)
+         (message-alternative-emails
+          (lambda (addr)
+            (or (mu4e-personal-address-p addr)
+                (cond
+                 ((functionp mam) (funcall mam addr))
+                 ((stringp mam)   (string-match mam addr)))))))
     (cl-letf
         ;; `message-pop-to-buffer' attempts switching the visible buffer;
         ;; instead, we manipulate it to _return_ the buffer.
@@ -612,13 +619,13 @@ COMPOSE-TYPE and PARENT are as in `mu4e--draft'."
   (undo-boundary))
 
 ;;
-;; mu4e-compose-pos-hook helpers
+;; mu4e-compose-post-hook helpers
 
 (defvar mu4e--before-draft-window-config nil
   "The window configuration just before creating the draft.")
 
 (defun mu4e-compose-post-restore-window-configuration()
-  "Function that perhaps restores the window configuration.
+  "Function that might restore the window configuration.
 I.e. the configuration just before the draft buffer appeared.
 This is for use in `mu4e-compose-post-hook'.
 See `set-window-configuration' for further details."
@@ -632,7 +639,7 @@ See `set-window-configuration' for further details."
 Used internally for mu4e-compose-post-kill-frame.")
 
 (defun mu4e-compose-post-kill-frame ()
-  "Function that perhaps kills the composition frame.
+  "Function that might kill the composition frame.
 This is for use in `mu4e-compose-post-hook'."
   (let ((msgframe (selected-frame)))
     ;;(message "kill frame? %s %s" mu4e--draft-activation-frame msgframe)
@@ -701,6 +708,11 @@ it must be nil.
 After this, user is presented with a message composition buffer.
 
 Returns the new buffer."
+  ;; run pre-hook early, so user can influence later steps.
+  (let ((mu4e-compose-parent-message parent)
+        (mu4e-compose-type compose-type))
+    (run-hooks 'mu4e-compose-pre-hook))
+
   (mu4e--prepare-draft parent)
   ;; evaluate BODY; this must yield a hidden, live buffer. This is evaluated in
   ;; a temp buffer with contains the parent-message, if any. if there's a
@@ -744,3 +756,4 @@ but note the different order."
    parent))
 
 (provide 'mu4e-draft)
+;;; mu4e-draft.el ends here
