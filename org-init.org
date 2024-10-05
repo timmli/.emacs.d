@@ -5614,6 +5614,8 @@ https://github.com/js-emacs/js2-refactor.el
 
 **** TODO indium
 
+https://github.com/NicolasPetton/Indium
+
 JavaScript development environment for Emacs
 
 **** TODO tern
@@ -10793,6 +10795,15 @@ Show vertical line per indentation level.
 	(setq highlight-indent-guides-method 'character)
 	)
 #+end_src
+
+*** TODO indent-bars
+:LOGBOOK:
+- State "TODO"       from              [2024-09-26 Thu 14:45]
+:END:
+
+https://github.com/jdtsmith/indent-bars
+
+Indentation guide supporting tree-sitter. Maybe an alternative to [[highlight-indent-guides]]?
 
 ** Selection
 
