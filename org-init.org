@@ -8702,6 +8702,8 @@ My bookmarks are narrowed to =helm-mu-default-search-string=, which makes it nec
 
 ***** Export messages
 
+Note: As of v1.12.6, mu4e comes with a function =mu4e-save-message=.
+
 The following function (written by Dirk-Jan Binnema, copied from https://notes.baty.net/notes/saving-a-maildir-email-as-.eml-using-mu4e/) exports an email at point to an eml file.
 
 #+BEGIN_SRC emacs-lisp
