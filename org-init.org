@@ -15561,16 +15561,16 @@ Hydra taken from https://github.com/abo-abo/hydra/wiki/PDF-Tools#my-hydra-for-pd
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-pdftools (:color blue :hint nil)
 	"
-                                                                         ╭───────────┐
-       Move  History   Scale/Fit     Annotations     Search/Link    Do   │ PDF Tools │
-   ╭─────────────────────────────────────────────────────────────────────┴───────────╯
-         ^^_g_^^      _B_    ^↧^    _+_    ^ ^     [_al_] list       [_f_] search     [_u_] revert buffer
-         ^^^↑^^^      ^↑^    _H_    ^↑^  ↦ _W_ ↤   [_am_] markup...  [_o_] outline    [_i_] info
-         ^^_p_^^      ^ ^    ^↥^    _0_    ^ ^     [_at_] text       [_F_] link       [_d_] dark mode
-         ^^^↑^^^      ^↓^  ╭─^─^─┐  ^↓^  ╭─^ ^─┐   [_ad_] delete     [_f_] search link
-    _h_ ←pag_e_→ _l_  _N_  │ _P_ │  _-_    _b_     [_aa_] dired
-         ^^^↓^^^      ^ ^  ╰─^─^─╯  ^ ^  ╰─^ ^─╯   [_y_]  yank
-         ^^_n_^^      ^ ^  _r_eset slice box
+                                                                                         ╭───────────┐
+       Move     History       Scale/Fit       Annotations            Search/Link    Do   │ PDF Tools │
+   ╭─────────────────────────────────────────────────────────────────────────────────────┴───────────╯
+         ^^_g_^^      _B_/_M-<left>_    ^↧^    _+_    ^ ^     [_C-c C-a l_] list       [_f_] search     [_u_] revert buffer
+         ^^^↑^^^         ^↑^^^          _H_    ^↑^  ↦ _W_ ↤   [_C-c C-a m_] markup...  [_o_] outline    [_i_] info
+         ^^_p_^^        ^ ^^^           ^↥^    _0_    ^ ^     [_C-c C-a t_] text       [_F_] link       [_d_] dark mode
+         ^^^↑^^^         ^↓^^^        ╭─^─^─┐  ^↓^  ╭─^ ^─┐   [_C-c C-a D_] delete     [_f_] search link
+    _h_ ←pag_e_→ _l_  _N_/_M-<right>_ │ _P_ │  _-_    _b_     [_C-c C-a a_] attacments
+         ^^^↓^^^         ^ ^^^        ╰─^─^─╯  ^ ^  ╰─^ ^─╯   [_C-w_]  copy
+         ^^_n_^^         ^ ^^^        _r_eset slice box
          ^^^↓^^^
          ^^_G_^^
    --------------------------------------------------------------------------------
@@ -15578,12 +15578,12 @@ Hydra taken from https://github.com/abo-abo/hydra/wiki/PDF-Tools#my-hydra-for-pd
 	("\\" hydra-master/body "back")
 	("<ESC>" nil "quit")
 	("q" nil nil)
-	("al" pdf-annot-list-annotations)
-	("ad" pdf-annot-delete)
-	("aa" pdf-annot-attachment-dired)
-	("am" hydra-pdftools-markup/body)
-	("at" pdf-annot-add-text-annotation)
-	("y"  pdf-view-kill-ring-save)
+	("C-c C-a l" pdf-annot-list-annotations)
+	("C-c C-a D" pdf-annot-delete)
+	("C-c C-a a" pdf-annot-attachment-dired)
+	("C-c C-a m" hydra-pdftools-markup/body)
+	("C-c C-a t" pdf-annot-add-text-annotation)
+	("C-w"  pdf-view-kill-ring-save)
 	("+" pdf-view-enlarge :color red)
 	("-" pdf-view-shrink :color red)
 	("0" pdf-view-scale-reset)
@@ -15606,7 +15606,9 @@ Hydra taken from https://github.com/abo-abo/hydra/wiki/PDF-Tools#my-hydra-for-pd
 	("F" pdf-links-action-perfom)
 	;; ("f" pdf-links-isearch-link)
 	("B" pdf-history-backward :color red)
+	("M-<left>" pdf-history-backward :color red)
 	("N" pdf-history-forward :color red)
+	("M-<right>" pdf-history-forward :color red)
 	("l" image-forward-hscroll :color red)
 	("h" image-backward-hscroll :color red))
 
