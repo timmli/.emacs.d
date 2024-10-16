@@ -615,6 +615,46 @@ Interactive debugger for font-lock keywords.
 	:ensure t)
 #+END_SRC
 
+** Echo area / Messages
+
+https://www.gnu.org/software/emacs/manual/html_node/elisp/The-Echo-Area.html
+
+The *echo area* is used for displaying error messages, messages created with the =message= function, and for echoing keystrokes. It is not to be confused with the [[minibuffer]], although it is shown in the same place of an Emacs window, 
+
+Messages from the echo area are also recorded in the =*Messages*= buffer. 
+
+*** Format of =*Messages*= buffer
+
+The following code adds timestamps to messages in the =*Messages*= buffer. It is a modified version of https://emacs.stackexchange.com/a/64551/12336.
+
+#+BEGIN_SRC emacs-lisp
+(defvar last-message-with-timestamp nil
+  "Last message with timestamp appended to it.")
+
+(defun add-timestamp-to-message (format-string &rest args)
+  "Prepend timestamp to each message in message buffer.
+
+FORMAT-STRING and ARGS are used by `message' to print a formatted string.
+
+Enable with (advice-add 'message :before 'add-timestamp-to-message)"
+  (when (and message-log-max
+             (not (string-equal format-string "%s%s")))
+    (let ((formatted-message-string (if args
+                                        (apply 'format `(,format-string ,@args))
+                                      format-string)))
+      (unless (string= formatted-message-string last-message-with-timestamp)
+        (setq last-message-with-timestamp formatted-message-string)
+        (let ((deactivate-mark nil)
+              (inhibit-read-only t))
+          (with-current-buffer "*Messages*"
+            (goto-char (point-max))
+            (when (not (bolp))
+              (newline))
+            (insert (format-time-string "[%F %T] "))))))))
+
+(advice-add 'message :before 'add-timestamp-to-message)
+#+END_SRC
+
 * Minibuffer
 
 ** General
