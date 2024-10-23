@@ -9088,11 +9088,17 @@ Issues:
 
 *** Mastodon
 
-**** mastodon.el
+**** TODO mastodon.el
+:LOGBOOK:
+- State "TODO"       from              [2024-10-23 Wed 08:40]
+:END:
 
 https://codeberg.org/martianh/mastodon.el
 
 A Mastodon client for Emacs.
+
+Issues:
+- [ ] Several bugs
 
 #+BEGIN_SRC emacs-lisp
 (use-package mastodon
@@ -9116,7 +9122,7 @@ A Mastodon client for Emacs.
 
 A nice alternative design by Nicolas Rougier: https://github.com/rougier/mastodon-alt
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle nil
 (use-package mastodon-alt
   :load-path "./lisp/mastodon-alt.el"
   :after mastodon
