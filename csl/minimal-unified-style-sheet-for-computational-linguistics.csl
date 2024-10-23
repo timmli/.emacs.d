@@ -2,7 +2,7 @@
 <style class="in-text" version="1.0" default-locale="en-US" xmlns="http://purl.org/net/xbiblio/csl">
   <!-- This style was edited with the Visual CSL Editor (https://editor.citationstyles.org/visualEditor/) -->
   <info>
-    <title>Minimal unified style sheet for computational linguistics</title>
+    <title>Minimal Unified Style Sheet for Computational Linguistics</title>
     <title-short>MUSS</title-short>
     <id>http://www.zotero.org/styles/minimal-unified-style-sheet-for-computational-linguistics</id>
     <link rel="self" href="http://www.zotero.org/styles/minimal-unified-style-sheet-for-computational-linguistics"/>
@@ -11,10 +11,12 @@
       <email>timm.lichte@uni-tuebingen.de</email>
     </author>
     <category citation-format="author-date"/>
-    <category field="(computational) linguistics"/>
-    <category field="natural language processing"/>
-    <updated>2023-09-10T11:58:24+00:00</updated>
-    <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 4.0 License</rights>
+    <category field="linguistics"/>
+		<category field="engineering"/>
+    <summary></summary>
+    <link href="https://github.com/timmli/biblatex-muss" rel="documentation"/>
+    <updated>2023-09-10T21:42:26+00:00</updated>
+    <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
   </info>
   <locale>
     <terms>
@@ -44,15 +46,15 @@
     <choose>
       <if type="book report article" match="any">
         <group prefix=" (" suffix=")">
-          <text macro="series"/>
-          <text macro="type"/>
-          <text macro="number"/>
+          <text macro="biblatex-series"/>
+          <text macro="biblatex-type"/>
+          <text macro="biblatex-number"/>
         </group>
       </if>
       <else-if type="thesis" match="any">
         <group prefix=" (" suffix=")">
-          <text macro="type"/>
-          <text macro="publisher" prefix=" at "/>
+          <text macro="biblatex-type"/>
+          <text macro="biblatex-publisher" prefix=" at "/>
         </group>
       </else-if>
     </choose>
@@ -61,8 +63,8 @@
     <choose>
       <if type="chapter" match="any">
         <group prefix=" (" suffix=")">
-          <text macro="series"/>
-          <text macro="number"/>
+          <text macro="biblatex-series"/>
+          <text macro="biblatex-number"/>
         </group>
       </if>
     </choose>
@@ -166,7 +168,7 @@
     </choose>
     <text macro="TYPEOF-collection"/>
   </macro>
-  <macro name="publisher">
+  <macro name="biblatex-publisher">
     <text variable="publisher"/>
   </macro>
   <macro name="YEAR">
@@ -174,11 +176,10 @@
       <date-part name="year"/>
     </date>
   </macro>
-  <group/>
   <macro name="ACCESS-publisher">
     <choose>
       <if type="book chapter article" match="any">
-        <text macro="publisher"/>
+        <text macro="biblatex-publisher"/>
       </if>
     </choose>
   </macro>
@@ -202,13 +203,13 @@
       <text macro="PARTOF-book-volume"/>
     </group>
   </macro>
-  <macro name="series">
+  <macro name="biblatex-series">
     <text variable="collection-title"/>
   </macro>
-  <macro name="number">
+  <macro name="biblatex-number">
     <text variable="number" prefix=" "/>
   </macro>
-  <macro name="type">
+  <macro name="biblatex-type">
     <text variable="genre"/>
   </macro>
   <citation et-al-min="4" et-al-use-first="1" disambiguate-add-year-suffix="true" disambiguate-add-names="true" disambiguate-add-givenname="true">
