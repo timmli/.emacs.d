@@ -7780,6 +7780,8 @@ Open eml-files with =org-mode= turned on:
 https://www.djcbsoftware.nl/code/mu/mu4e/index.html
 https://github.com/djcb/mu
 
+Mu4e is an email client for Emacs that uses mu, which constructs a [[https://xapian.org/][Xapian]] database for emails in the Maildir format for faster search.   
+
 Note that it is recommended to use the version of mu4e that is shipped together with the installed mu.
 Currently supported version: 1.12.x
 
@@ -8782,7 +8784,7 @@ Documentation: https://www.djcbsoftware.nl/code/mu/mu4e/Org_002dmode-links.html
 
 Load org-mode integration (FIXME: necessary?):
 #+BEGIN_SRC emacs-lisp
-(require 'mu4e-org)											
+(require 'mu4e-org)
 #+END_SRC
 
 Store link to message if in header view, not to header query:
@@ -8837,16 +8839,18 @@ the query (for links starting with \"query:\")."
    (t (mu4e-error "Unrecognized link type '%s'" link))))
 #+END_SRC
 
-# TODO: With browsers, a composition buffer is created, but the mail address is not transmitted. 
+***** Open mailto links
+
 To open mailto URLs in mu4e, do the following (taken from https://emacs.stackexchange.com/questions/52281/handling-mailto-links-with-mu4e):
 - Set =mail-user-agent= to =#'mu4e-user-agent=.
-- Create a desktop file which executes =emacsclient -c --eval "(browse-url-mail \"$@\")"=.
+- Create a desktop file which executes =emacsclient -c --eval "(browse-url-mail \"$@\")"=. Note that I actually do not use the =-c= option for creating a new frame. 
 - Select this as default programm to open mailto URLs in your browser.
 - Optionally add it to =~/.config/mimeapps.list=.
 
 #+BEGIN_SRC emacs-lisp
 (setq mail-user-agent #'mu4e-user-agent
-			message-mail-user-agent t)
+			message-mail-user-agent t  ; when t, use MUA specified in mail-user-agent
+)
 #+END_SRC
 
 ***** Capture messages
@@ -9019,18 +9023,6 @@ Show an email thread in a single buffer.
 	:after mu4e
 	:config (global-mu4e-conversation-mode)
 )
-#+END_SRC
-
-**** COMMENT mu4e under Windows
-
-- incompatible with windows?
-  - Drafts are saved with incompatible file names (including colons).
-
-#+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path (expand-file-name "lisp/mu4e" user-emacs-directory))
-(require 'mu4e)
-(setq mu4e-mu-binary (expand-file-name "mu/mu.bat" wemacs-dir)
-			mu4e-maildir (expand-file-name "Maildir" home-directory)) 
 #+END_SRC
 
 **** COMMENT notmuch under Windows
