@@ -8842,15 +8842,40 @@ the query (for links starting with \"query:\")."
 ***** Open mailto links
 
 To open mailto URLs in mu4e, do the following (taken from https://emacs.stackexchange.com/questions/52281/handling-mailto-links-with-mu4e):
+
 - Set =mail-user-agent= to =#'mu4e-user-agent=.
-- Create a desktop file which executes =emacsclient -c --eval "(browse-url-mail \"$@\")"=. Note that I actually do not use the =-c= option for creating a new frame. 
-- Select this as default programm to open mailto URLs in your browser.
-- Optionally add it to =~/.config/mimeapps.list=.
 
 #+BEGIN_SRC emacs-lisp
 (setq mail-user-agent #'mu4e-user-agent
 			message-mail-user-agent t  ; when t, use MUA specified in mail-user-agent
 )
+#+END_SRC
+
+- Create a desktop file which executes =emacsclient --alternate-editor= --eval "(message-mailto \"%u\")"=. Emacs provides a specific desktop file for opening mailto URLs (https://git.savannah.gnu.org/cgit/emacs.git/tree/etc/emacsclient-mail.desktop), but unfortunately it does not work for me as is. The following is the content of my adapted desktop file:
+
+#+BEGIN_SRC conf :tangle no
+[Desktop Entry]
+Name=Emacs client for mailto URLs
+Comment=Open mailto URL in Emacs
+MimeType=x-scheme-handler/mailto;
+## From the original Emacs desktop file (https://git.savannah.gnu.org/cgit/emacs.git/tree/etc/emacsclient-mail.desktop)
+# Exec=emacsclient --alternate-editor= --eval "(message-mailto (pop server-eval-args-left))" %u
+## My adaptation of the above
+Exec=emacsclient --alternate-editor= --eval "(message-mailto \"%u\")"
+Icon=emacs
+Type=Application
+Terminal=false
+Categories=Development;TextEditor;
+StartupWMClass=Emacs
+#+END_SRC
+
+- Select this as default programm to open mailto URLs in your browser.
+
+- Optionally add the desktop file to =~/.config/mimeapps.list=.
+
+#+BEGIN_SRC conf :tangle no
+[Default Applications]
+x-scheme-handler/mailto=emacsclient-mailto.desktop
 #+END_SRC
 
 ***** Capture messages
