@@ -10369,6 +10369,8 @@ Specify the private dictionary file (use the system defaults when set to =nil=):
 
 *** flyspell
 
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Spelling.html
+
 Built-in on-the-fly spell checking.
 
 #+begin_src emacs-lisp
@@ -10514,6 +10516,8 @@ To see what dictionaries are installed, call
 
 *** COMMENT flyspell-popup
 
+https://github.com/xuchunyang/flyspell-popup
+
 Deprecated. I instead use =flyspell-correct=.
 
 #+BEGIN_SRC emacs-lisp
@@ -10537,6 +10541,30 @@ Deprecated. I instead use =flyspell-correct=.
 https://codeberg.org/ideasman42/emacs-spell-fu
 
 Fast spell checking without external programs.
+
+*** TODO jinx
+:LOGBOOK:
+- State "TODO"       from              [2024-11-02 Sat 21:40]
+:END:
+
+- [ ] Compilation throws an error
+
+https://github.com/minad/jinx
+
+An alternative to [[flyspell]] that uses [[https://rrthomas.github.io/enchant/][Enchant]]. Only the visible part of the buffer is checked.
+
+Requirements:
+- libenchant-2-dev (>v2.3.1)
+- pkgconf
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(use-package jinx
+	:ensure t
+  ;; :hook (emacs-startup . global-jinx-mode)
+  ;; :bind (("M-$" . jinx-correct)
+  ;;        ("C-M-$" . jinx-languages))
+)
+#+END_SRC
 
 ** Grammar checking
 
