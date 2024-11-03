@@ -9120,9 +9120,6 @@ https://codeberg.org/martianh/mastodon.el
 
 A Mastodon client for Emacs.
 
-Issues:
-- [ ] Several bugs
-
 #+BEGIN_SRC emacs-lisp
 (use-package mastodon
   :ensure t    
@@ -9136,14 +9133,17 @@ Issues:
 				mastodon-media--avatar-height 40
 				mastodon-media--preview-max-height 500
 				mastodon-tl--highlight-current-toot nil)
-	(advice-add 'mastodon-tl--goto-prev-item
-							:after #'recenter)
-  (advice-add 'mastodon-tl--goto-next-item
-							:after #'recenter)
+	;;; Recentering the view like this will throw "apply: Wrong number of arguments: (0 . 1), 2"	
+	;; (advice-add 'mastodon-tl--goto-prev-item
+	;; 						:after #'recenter)
+  ;; (advice-add 'mastodon-tl--goto-next-item
+	;; 						:after #'recenter)
 	)
 #+END_SRC
 
 A nice alternative design by Nicolas Rougier: https://github.com/rougier/mastodon-alt
+
+- [ ] Crashes 
 
 #+BEGIN_SRC emacs-lisp :tangle nil
 (use-package mastodon-alt
@@ -9151,10 +9151,10 @@ A nice alternative design by Nicolas Rougier: https://github.com/rougier/mastodo
   :after mastodon
   :config
 	(mastodon-alt-tl-activate)
-	(advice-add 'mastodon-tl--goto-prev-item
-							:after #'recenter)
-  (advice-add 'mastodon-tl--goto-next-item
-							:after #'recenter)
+	;; (advice-add 'mastodon-tl--goto-prev-item
+	;; 						:after #'recenter)
+  ;; (advice-add 'mastodon-tl--goto-next-item
+	;; 						:after #'recenter)
 	)
 #+END_SRC
 
