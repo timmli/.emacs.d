@@ -8857,7 +8857,7 @@ To open mailto URLs in mu4e, do the following (taken from https://emacs.stackexc
 )
 #+END_SRC
 
-- Create a desktop file which executes =emacsclient --alternate-editor= --eval "(message-mailto \"%u\")"=. Emacs provides a specific desktop file for opening mailto URLs (https://git.savannah.gnu.org/cgit/emacs.git/tree/etc/emacsclient-mail.desktop), but unfortunately it does not work for me as is. The following is the content of my adapted desktop file:
+- Create a desktop file which executes ~emacsclient --alternate-editor= --eval "(message-mailto \"%u\")"~. Emacs provides a specific desktop file for opening mailto URLs (https://git.savannah.gnu.org/cgit/emacs.git/tree/etc/emacsclient-mail.desktop), but unfortunately it does not work for me as is. The following is the content of my adapted desktop file:
 
 #+BEGIN_SRC conf :tangle no
 [Desktop Entry]
