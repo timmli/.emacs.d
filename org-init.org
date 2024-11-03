@@ -5548,6 +5548,12 @@ Guides
 Makefiles
 - https://nullprogram.com/blog/2020/01/22/
 
+**** Eldev
+
+https://github.com/emacs-eldev/eldev
+
+Elisp development tool similar to Cask, but fully written in Elisp.  
+
 **** Last modified
 
 If the file keyword =;; Last modified:= is present within the first 20 lines, the following timestamp gets updated when saving the file:
@@ -11442,6 +11448,14 @@ There is also an interface to [[multiple-cursors]].
 (use-package visual-regexp-steroids
 	:ensure t)
 #+END_SRC
+
+*** visual-replace
+
+https://github.com/szermatt/visual-replace
+
+Visual helper for standard query-replace in Emacs similar to [[visual-regexp]], but with a prompt that lets one modify the search and the replacement at the same time.
+
+I'm not using it right now.
 
 ** Narrowing
 
