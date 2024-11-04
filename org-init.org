@@ -10220,9 +10220,10 @@ Choose from a collection of academic phrases.
 
 *** tempel
 
-Another package for writing text templates, which is a little simpler than [[yasnippet]].
-
 https://github.com/minad/tempel
+
+Another package for writing text templates, which is a little simpler than [[yasnippet]].
+Templates are stored in [[file:templates/tempel/templates]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package tempel
