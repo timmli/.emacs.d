@@ -20,6 +20,7 @@
       - [[#overlays][Overlays]]
       - [[#icons][Icons]]
       - [[#debugging][Debugging]]
+      - [[#echo-area--messages][Echo area / Messages]]
 - [[#minibuffer][Minibuffer]]
       - [[#general][General]]
       - [[#ido-ivy][ido, ivy]]
