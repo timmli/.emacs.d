@@ -9912,7 +9912,7 @@ Used in [[hydra-image]].
 	)
 #+END_SRC
 
-*** COMMENT OSM
+*** OSM
 
 https://github.com/minad/osm
 
@@ -9933,7 +9933,7 @@ OpenStreetMap viewer for Emacs.
   ;; Take a look at the customization group `osm' for more options.
   (osm-server 'default) ;; Configure the tile server
   (osm-copyright t)     ;; Display the copyright information
-
+	:config
 	(add-hook 'osm-mode-hook #'(lambda () (visual-line-mode -1)))
 	)
 #+END_SRC
