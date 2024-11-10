@@ -9295,6 +9295,56 @@ Web feed reader for Emacs.
 							#'(lambda ()
 									(with-current-buffer "*elfeed-search*"
 										(toggle-truncate-lines t))))
+
+	;; Generate filter hydra for a given set of tags (using code macros).
+	;; Taken from http://cestlaz.github.io/posts/using-emacs-31-elfeed-3/.
+
+	(defun z/hasCap (s) 
+		""
+		(let ((case-fold-search nil))
+      (string-match-p "[[:upper:]]" s)
+      ))
+
+	(defun z/get-hydra-option-key (s)
+		"returns single upper case letter (converted to lower) or first"
+		(interactive)
+		(let ( (loc (z/hasCap s)))
+			(if loc
+					(downcase (substring s loc (+ loc 1)))
+				(substring s 0 1)
+				)))
+
+	(defun mz/make-elfeed-cats (tags)
+		"Returns a list of lists. Each one is line for the hydra configuratio in the form
+     (c function hint)"
+		(interactive)
+		(mapcar (lambda (tag)
+							(let* (
+										 (tagstring (symbol-name tag))
+										 (c (z/get-hydra-option-key tagstring))
+										 )
+								(list c (append '(elfeed-search-set-filter) (list (format "@6-months-ago +%s" tagstring) ))tagstring  )))
+						tags))
+
+	(defmacro mz/make-elfeed-hydra ()
+		`(defhydra mz/hydra-elfeed ()
+			 "filter"
+			 ,@(mz/make-elfeed-cats (elfeed-db-get-all-tags))
+			 ("*" (elfeed-search-set-filter "@6-months-ago +star") "Starred")
+			 ;; ("M" elfeed-toggle-star "Mark")
+			 ("A" (elfeed-search-set-filter "@6-months-ago") "All")
+			 ("T" (elfeed-search-set-filter "@1-day-ago") "Today")
+			 ("Q" bjm/elfeed-save-db-and-bury "Quit Elfeed" :color blue)
+			 ("q" nil "quit" :color blue)
+			 ))
+
+	(defun mz/make-and-run-elfeed-hydra ()
+		""
+		(interactive)
+		(mz/make-elfeed-hydra)
+		(mz/hydra-elfeed/body))
+
+
 	)
 #+END_SRC
 
@@ -9310,23 +9360,36 @@ Change the columns (and some faces) of the elfeed-search buffer:
          (feed-title
           (when feed
             (or (elfeed-meta feed :title) (elfeed-feed-title feed))))
-         (tags (mapcar #'symbol-name (elfeed-entry-tags entry)))
-         (tags-str (mapconcat
-                    (lambda (s) (propertize s 'face 'elfeed-search-tag-face))
-                    tags ","))
+				 (feed-title-max-width 20)
+				 (feed-short-title
+					(if (> (length feed-title) (- feed-title-max-width 1))
+							(concat (truncate-string-to-width feed-title
+																								(- feed-title-max-width 1))              
+											"… ")
+						feed-title))
+				 (feed-title-column (elfeed-format-column
+														 feed-short-title (elfeed-clamp
+																							 feed-title-max-width
+																							 feed-title-max-width
+																							 feed-title-max-width)
+														 :left))
+				 (elfeed-search-trailing-width (+ 11 feed-title-max-width 20))
          (title-width (- (window-width) 10 elfeed-search-trailing-width))
+				 (elfeed-search-title-max-width
+					(or (and (> title-width elfeed-search-title-max-width)
+									 title-width)
+							elfeed-search-title-max-width))
          (title-column (elfeed-format-column
                         title (elfeed-clamp
                                elfeed-search-title-min-width
                                title-width
                                elfeed-search-title-max-width)
                         :left))
-				 (feed-title-column (elfeed-format-column
-														 feed-title (elfeed-clamp
-																				 15
-																				 (length feed-title)
-																				 35)
-														 :left)))
+         (tags (mapcar #'symbol-name (elfeed-entry-tags entry)))
+         (tags-str (mapconcat
+                    (lambda (s) (propertize s 'face 'elfeed-search-tag-face))
+                    tags ","))
+				 )
     (insert (propertize date 'face 'elfeed-search-date-face) " ")
 		(insert (propertize feed-title-column 'face 'font-lock-number-face) " ") ; Only hard-coding the face seems to work.
 		;; (when feed-title
@@ -9375,56 +9438,6 @@ Issues:
   (define-key elfeed-search-mode-map (kbd "n") (elfeed-search-show-entry-pre +1))
   (define-key elfeed-search-mode-map (kbd "p") (elfeed-search-show-entry-pre -1))
   (define-key elfeed-search-mode-map (kbd "M-RET") (elfeed-search-show-entry-pre)))
-#+END_SRC
-
-Generate filter hydra for a given set of tags (using code macros).
-Taken from http://cestlaz.github.io/posts/using-emacs-31-elfeed-3/.
-
-#+BEGIN_SRC emacs-lisp :tangle nil
-(defun z/hasCap (s) 
-	""
-	(let ((case-fold-search nil))
-				 (string-match-p "[[:upper:]]" s)
-				 ))
-
-(defun z/get-hydra-option-key (s)
-  "returns single upper case letter (converted to lower) or first"
-  (interactive)
-  (let ( (loc (z/hasCap s)))
-    (if loc
-				(downcase (substring s loc (+ loc 1)))
-      (substring s 0 1)
-			)))
-
-(defun mz/make-elfeed-cats (tags)
-  "Returns a list of lists. Each one is line for the hydra configuratio in the form
-     (c function hint)"
-  (interactive)
-  (mapcar (lambda (tag)
-						(let* (
-									 (tagstring (symbol-name tag))
-									 (c (z/get-hydra-option-key tagstring))
-									 )
-							(list c (append '(elfeed-search-set-filter) (list (format "@6-months-ago +%s" tagstring) ))tagstring  )))
-					tags))
-
-(defmacro mz/make-elfeed-hydra ()
-  `(defhydra mz/hydra-elfeed ()
-     "filter"
-     ,@(mz/make-elfeed-cats (elfeed-db-get-all-tags))
-     ("*" (elfeed-search-set-filter "@6-months-ago +star") "Starred")
-     ;; ("M" elfeed-toggle-star "Mark")
-     ("A" (elfeed-search-set-filter "@6-months-ago") "All")
-     ("T" (elfeed-search-set-filter "@1-day-ago") "Today")
-     ("Q" bjm/elfeed-save-db-and-bury "Quit Elfeed" :color blue)
-     ("q" nil "quit" :color blue)
-     ))
-
-(defun mz/make-and-run-elfeed-hydra ()
-  ""
-  (interactive)
-  (mz/make-elfeed-hydra)
-  (mz/hydra-elfeed/body))
 #+END_SRC
 
 The following code allows one to watch YouTube videos with [[https://mpv.io/][mpv]].
@@ -9502,7 +9515,6 @@ https://github.com/SqrtMinusOne/elfeed-summary
 A tree-based feed summary interface for [[elfeed]].
 
 Issues & TODOs:
-- [ ] Rebind keys: R --> mark as read, U --> update
 - [ ] Add hydra
 
 #+BEGIN_SRC emacs-lisp
@@ -9532,6 +9544,12 @@ Issues & TODOs:
 											 (:elements
 												(query . (,tag)))))
 								 (elfeed-db-get-all-tags))))
+	:bind (:map elfeed-summary-mode-map
+							("<C-tab>" . iflipb-next-buffer)
+							("<C-iso-lefttab>" . iflipb-previous-buffer)
+							("C-c C-u" . elfeed-summary-update)
+							("U" . elfeed-summary-update)
+							("R" . elfeed-summary--action-mark-read))
 	:custom-face
 	(elfeed-summary-count-face-unread ((t (:inherit unread-elfeed-entry))))
 	)
@@ -13734,8 +13752,8 @@ Hydra for functions specific to the buffer major mode.
 		(hydra-deft/body))
 	 ((string-equal (buffer-mode) "dired-mode")
 		(hydra-dired-main/body))
-	 ;; ((string-equal (buffer-mode) "elfeed-search-mode")
-	 ;; 	(mz/make-and-run-elfeed-hydra))
+	 ((string-equal (buffer-mode) "elfeed-search-mode")
+		(mz/make-and-run-elfeed-hydra))
 	 ((string-equal (buffer-mode) "image-mode")
 		(hydra-image/body))
 	 ((string-equal (buffer-mode) "latex-mode")
