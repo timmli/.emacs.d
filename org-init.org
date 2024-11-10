@@ -9224,11 +9224,17 @@ _u_pdate
 
 *** RSS/Atom feed reader 
 
-**** elfeed
+**** TODO elfeed
+:LOGBOOK:
+- State "TODO"       from              [2024-11-10 Sun 20:06]
+:END:
 
 https://github.com/skeeto/elfeed
 
 Web feed reader for Emacs.
+
+Issues:
+- [ ] Rework hydra 
 
 #+BEGIN_SRC emacs-lisp
 (use-package elfeed
@@ -9344,6 +9350,13 @@ Web feed reader for Emacs.
 		(mz/make-elfeed-hydra)
 		(mz/hydra-elfeed/body))
 
+	;; Write to disk when quiting
+	;; TODO: Still needed?
+	(defun bjm/elfeed-save-db-and-bury ()
+		"Wrapper to save the elfeed db to disk before burying buffer"
+		(interactive)
+		(elfeed-db-save)
+		(quit-window))
 
 	)
 #+END_SRC
