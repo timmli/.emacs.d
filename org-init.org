@@ -9222,42 +9222,50 @@ _u_pdate
   ("q" doom/escape))
 #+END_SRC
 
-*** COMMENT RSS/Atom feed reader 
+*** RSS/Atom feed reader 
 
 **** elfeed
 
 https://github.com/skeeto/elfeed
 
-Largely taken from http://cestlaz.github.io/posts/using-emacs-29%20elfeed/.
-Feed collections can be converted to the format of =elfeed-org= with the function =elfeed-org-import-opml=.
+Web feed reader for Emacs.
 
 #+BEGIN_SRC emacs-lisp
 (use-package elfeed
   :ensure t
   :bind (:map elfeed-search-mode-map
-							("q" . bjm/elfeed-save-db-and-bury)
-							("Q" . bjm/elfeed-save-db-and-bury)
 							("m" . elfeed-toggle-star)
 							("M" . tl/elfeed-show-starred)
 							("R" . elfeed-mark-all-as-read)
 							("U" . tl/elfeed-show-unread)
-							("s" . bjm/elfeed-search-live-filter-space)
-							("f" . bjm/elfeed-search-live-filter-space)
+							("s" . tl/elfeed-search-live-filter-space)
+							("f" . tl/elfeed-search-live-filter-space)
 							("*" . tl/elfeed-show-starred)
-							("/" . mz/make-and-run-elfeed-hydra)
+							;; 						;; ("/" . mz/make-and-run-elfeed-hydra)
 							("A" . tl/elfeed-show-all)
 							)
 	:config
+
 	(when (boundp 'my-elfeed-db-directory)
 		(setq elfeed-db-directory my-elfeed-db-directory))
 	(defalias 'elfeed-toggle-star
 		(elfeed-expose #'elfeed-search-toggle-all 'star))
 
 	(defface star-elfeed-entry
-		'((t :foreground "#f77"))
-		"Marks an starred Elfeed entry.")
+		'((t :foreground "#FD5FF0" :weight bold))
+		"Face of a starred Elfeed entry.")
 	(push '(star star-elfeed-entry)
 				elfeed-search-face-alist)
+
+	(defface unread-elfeed-entry
+		'((t :inherit font-lock-keyword-face))
+		"Face of an unread Elfeed entry.")
+	(push '(unread unread-elfeed-entry)
+				elfeed-search-face-alist)
+
+	;; TODO: Unfortunately, it does not work like this.
+  ;; (set-face-attribute 'elfeed-search-feed-face nil :inherit font-lock-number-face)
+	;; (set-face-attribute 'elfeed-search-tag-face nil :inherit 'font-lock-comment-face)
 
 	(defun elfeed-mark-all-as-read ()
 		(interactive)
@@ -9276,49 +9284,60 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 		(interactive)
 		(elfeed-search-set-filter "@6-months-ago +unread"))
 
-	;;functions to support syncing .elfeed between machines
-	;;makes sure elfeed reads index from disk before launching
-	(defun bjm/elfeed-load-db-and-open ()
-		"Wrapper to load the elfeed db from disk before opening"
-		(interactive)
-		(elfeed-db-load)
-		(elfeed)
-		(elfeed-search-update--force))
-
-	;;write to disk when quiting
-	(defun bjm/elfeed-save-db-and-bury ()
-		"Wrapper to save the elfeed db to disk before burying buffer"
-		(interactive)
-		(elfeed-db-save)
-		(quit-window))
-
-	;;insert space before elfeed filter
-	(defun bjm/elfeed-search-live-filter-space ()
-		"Insert space when running elfeed filter"
+	(defun tl/elfeed-search-live-filter-space ()
+		"Insert trailing space when running elfeed filter"
 		(interactive)
 		(let ((elfeed-search-filter (concat elfeed-search-filter " ")))
-			(elfeed-search-live-filter)))
-
-	;;add time to date
-	(defun elfeed-search-format-date (date)
-		(format-time-string "%Y-%m-%d %H:%M" (seconds-to-time date)))
-
-	(use-package elfeed-goodies
-		:ensure t
-		:config
-		(elfeed-goodies/setup)
-		(setq elfeed-goodies/entry-pane-size 0.75
-					elfeed-goodies/entry-pane-position 'bottom))
-
-	(use-package elfeed-org
-		:ensure t
-		:config
-		(elfeed-org)
-		(when (boundp 'my-elfeed-org-file)
-			(setq rmh-elfeed-org-files (list my-elfeed-org-file)))
-		(setq rmh-elfeed-org-auto-ignore-invalid-feeds nil)) ; handle with care
-
+			(elfeed-search-live-filter)))	
+	
+	(advice-add 'elfeed :after
+							;; (add-hook 'elfeed-search-mode-hook
+							#'(lambda ()
+									(with-current-buffer "*elfeed-search*"
+										(toggle-truncate-lines t))))
 	)
+#+END_SRC
+
+Change the columns (and some faces) of the elfeed-search buffer:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/elfeed-search-print-entry (entry)
+  "Print ENTRY to the buffer."
+  (let* ((date (elfeed-search-format-date (elfeed-entry-date entry)))
+         (title (or (elfeed-meta entry :title) (elfeed-entry-title entry) ""))
+         (title-faces (elfeed-search--faces (elfeed-entry-tags entry)))
+         (feed (elfeed-entry-feed entry))
+         (feed-title
+          (when feed
+            (or (elfeed-meta feed :title) (elfeed-feed-title feed))))
+         (tags (mapcar #'symbol-name (elfeed-entry-tags entry)))
+         (tags-str (mapconcat
+                    (lambda (s) (propertize s 'face 'elfeed-search-tag-face))
+                    tags ","))
+         (title-width (- (window-width) 10 elfeed-search-trailing-width))
+         (title-column (elfeed-format-column
+                        title (elfeed-clamp
+                               elfeed-search-title-min-width
+                               title-width
+                               elfeed-search-title-max-width)
+                        :left))
+				 (feed-title-column (elfeed-format-column
+														 feed-title (elfeed-clamp
+																				 15
+																				 (length feed-title)
+																				 35)
+														 :left)))
+    (insert (propertize date 'face 'elfeed-search-date-face) " ")
+		(insert (propertize feed-title-column 'face 'font-lock-number-face) " ") ; Only hard-coding the face seems to work.
+		;; (when feed-title
+		;; 	(insert (propertize feed-title 'face 'elfeed-search-feed-face) " "))
+		(insert (propertize title-column 'face title-faces 'kbd-help title) " ")
+		(when tags
+			(insert (propertize (concat "(" tags-str ")") 'face 'font-lock-comment-face))) ; Only hard-coding the face seems to work.
+		;; (when tags
+		;; 	(insert "(" tags-str ")"))
+		))
+(setq elfeed-search-print-entry-function #'tl/elfeed-search-print-entry)
 #+END_SRC
 
 Wrapper function for elfeed (used in [[*hydra-f7][hydra-f7]]):
@@ -9330,10 +9349,38 @@ Wrapper function for elfeed (used in [[*hydra-f7][hydra-f7]]):
 	(visual-line-mode -1))
 #+END_SRC
 
+Split-pane view for Elfeed, taken from https://karthinks.com/software/lazy-elfeed/.
+
+Issues:
+- [ ] Killing the elfeed-show buffer replaces it with a new elfeed-search window. Intended behavior: Return to original elfeed-search window and "unsplit" it.    
+
+#+BEGIN_SRC emacs-lisp :tangle nil
+(setq elfeed-show-entry-switch #'elfeed-display-buffer)
+(defun elfeed-display-buffer (buf &optional act)
+	(pop-to-buffer buf)
+	(set-window-text-height (get-buffer-window) (round (* 0.7 (frame-height)))))
+
+(defun elfeed-search-show-entry-pre (&optional lines)
+	"Returns a function to scroll forward or back in the Elfeed
+  search results, displaying entries without switching to them."
+  (lambda (times)
+    (interactive "p")
+    (forward-line (* times (or lines 0)))
+    (recenter)
+    (call-interactively #'elfeed-search-show-entry)
+    (select-window (previous-window))
+    (unless elfeed-search-remain-on-entry (forward-line -1))))
+
+(with-eval-after-load 'elfeed
+  (define-key elfeed-search-mode-map (kbd "n") (elfeed-search-show-entry-pre +1))
+  (define-key elfeed-search-mode-map (kbd "p") (elfeed-search-show-entry-pre -1))
+  (define-key elfeed-search-mode-map (kbd "M-RET") (elfeed-search-show-entry-pre)))
+#+END_SRC
+
 Generate filter hydra for a given set of tags (using code macros).
 Taken from http://cestlaz.github.io/posts/using-emacs-31-elfeed-3/.
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle nil
 (defun z/hasCap (s) 
 	""
 	(let ((case-fold-search nil))
@@ -9378,7 +9425,6 @@ Taken from http://cestlaz.github.io/posts/using-emacs-31-elfeed-3/.
   (interactive)
   (mz/make-elfeed-hydra)
   (mz/hydra-elfeed/body))
-
 #+END_SRC
 
 The following code allows one to watch YouTube videos with [[https://mpv.io/][mpv]].
@@ -9405,6 +9451,47 @@ Taken from https://joshrollinswrites.com/help-desk-head-desk/20200611/.
 (define-key elfeed-search-mode-map (kbd "v") 'elfeed-view-mpv)
 #+END_SRC 
 
+**** elfeed-goodies
+
+https://github.com/jeetelongname/elfeed-goodies
+
+From the documentation:
+- An adaptive, powerline-based header for the *elfeed-search* and *elfeed-entry* buffers, with a matching entry format.
+- Split pane setup.
+- A function to toggle the *elfeed-log* buffer in a popup window.
+- Easy customisation.
+
+Issues (therefore disabled right now)
+- [ ] No date column: https://github.com/jeetelongname/elfeed-goodies/issues/39
+
+#+BEGIN_SRC emacs-lisp :tangle nil
+(use-package elfeed-goodies
+	:ensure t
+	:after elfeed
+	:config
+	(elfeed-goodies/setup)
+	(setq elfeed-goodies/entry-pane-size 0.75
+				elfeed-goodies/entry-pane-position 'bottom))
+#+END_SRC
+
+**** elfeed-org
+
+https://github.com/remyhonig/elfeed-org
+
+Configure the Elfeed RSS reader with an Org file, the path of which is specified in =my-elfeed-org-file=.
+Feed collections can be converted to the format of =elfeed-org= with the function =elfeed-org-import-opml=.
+
+#+BEGIN_SRC emacs-lisp
+	(use-package elfeed-org
+		:ensure t
+		:after elfeed
+		:config
+		(elfeed-org)
+		(when (boundp 'my-elfeed-org-file)
+			(setq rmh-elfeed-org-files (list my-elfeed-org-file)))
+		(setq rmh-elfeed-org-auto-ignore-invalid-feeds nil)) ; handle with care
+#+END_SRC
+
 **** TODO elfeed-summary
 :LOGBOOK:
 - State "TODO"       from              [2022-05-15 Sun 10:53]
@@ -9422,6 +9509,7 @@ Issues & TODOs:
 (use-package elfeed-summary
 	:ensure t
 	:config
+  :init
 	(setq elfeed-summary-settings
 				(append
 				 '(
@@ -9445,8 +9533,21 @@ Issues & TODOs:
 												(query . (,tag)))))
 								 (elfeed-db-get-all-tags))))
 	:custom-face
-	(elfeed-summary-count-face-unread ((t (:inherit elfeed-log-error-level-face))))
+	(elfeed-summary-count-face-unread ((t (:inherit unread-elfeed-entry))))
 	)
+#+END_SRC
+
+Wrapper function for starting elfeed-summary with [[hydra-f7]].
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/elfeed-summary ()
+	(interactive)
+	(elfeed) ; This is necessary for truncating lines. 
+	(elfeed-summary)
+	(with-current-buffer "*elfeed-summary*"
+		(forward-line +1)
+		(magit-section-forward)
+		(forward-line +1)))
 #+END_SRC
 
 **** elfeed-tube
@@ -13633,8 +13734,8 @@ Hydra for functions specific to the buffer major mode.
 		(hydra-deft/body))
 	 ((string-equal (buffer-mode) "dired-mode")
 		(hydra-dired-main/body))
-	 ((string-equal (buffer-mode) "elfeed-search-mode")
-		(mz/make-and-run-elfeed-hydra))
+	 ;; ((string-equal (buffer-mode) "elfeed-search-mode")
+	 ;; 	(mz/make-and-run-elfeed-hydra))
 	 ((string-equal (buffer-mode) "image-mode")
 		(hydra-image/body))
 	 ((string-equal (buffer-mode) "latex-mode")
@@ -13737,7 +13838,7 @@ Hydra for opening a new buffer.
 	("o" xah-open-in-external-app :exit t)
 	("p" helm-projectile :exit t)
 	("P" pandoc-main-hydra/body :exit t)
-	("r" elfeed-summary :exit t)
+	("r" tl/elfeed-summary :exit t)
 	;; ("r" tl/elfeed :exit t)
 	("R" R :exit t)
 	("t" pomidor :exit t)
