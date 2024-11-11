@@ -3294,6 +3294,8 @@ Fast minutes with =org-fm=.
 	(org-fm-minor-mode))
 #+END_SRC
 
+HTML export of =org-fm= is used in [[ox-clip]].
+
 *** Modules
 
 See http://orgmode.org/worg/org-contrib/
