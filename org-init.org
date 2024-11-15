@@ -9742,6 +9742,33 @@ URL: https://github.com/fuxialexander/org-pdftools
 		))
 #+END_SRC
 
+**** Signature
+
+The following function checks the signature of a PDF that is opened in a buffer or under point in [[dired]] (taken from ChatGPT). It uses the command line tool =pdfsig= of the Poppler library:
+
+#+BEGIN_SRC emacs-lisp
+(defun check-pdf-signature-dwim ()
+  "Check the digital signature of a PDF file.
+If in Dired, check the PDF file at point. If in a `pdf-view-mode` buffer,
+check the currently opened PDF file. Otherwise, prompt for a file."
+  (interactive)
+  (let* ((file (cond
+                ;; If in Dired, use the file at point.
+                ((derived-mode-p 'dired-mode) (dired-get-file-for-visit))
+                ;; If in a `pdf-view-mode` buffer, use the current file.
+                ((eq major-mode 'pdf-view-mode) (buffer-file-name))
+                ;; Otherwise, prompt the user for a file.
+                (t (read-file-name "Select PDF file: "))))
+         (output-buffer "*PDF Signature*"))
+    (if (and file (string-match "\\.pdf\\'" file))
+        (with-output-to-temp-buffer output-buffer
+          (call-process "pdfsig" nil output-buffer nil file)
+          (display-buffer output-buffer))
+      (message "Not a valid PDF file"))))
+#+END_SRC
+
+I will add this to [[hydra-f4]].
+
 **** COMMENT bibliothek
 
 Nice idea, but it currently does not work because of "too many open files".
@@ -13716,11 +13743,13 @@ Hydra for everything about checking buffer contents.
    ╭─────^^─────────^^─────────^^──╯     └─────────^^───^^───────^^───────^^───────^^─────╯
  
       [_e_] compilation errors      [_c_] code checking     [_s_] spell checking 
-     [_#m_] count matches           [_r_] recover file      [_=_] inline calculator       [_q_]uit
-     [_#w_] count words/lines/chars [_t_] translate         [_L_] lookup in online resource      
+     [_#m_] count matches           [_r_] recover file      [_=_] inline calculator       
+     [_#w_] count words/lines/chars [_t_] translate         [_L_] lookup in online resource    [_q_]uit
+      [_p_] PDF signature  
  	"
 	("e" hydra-compilation-error/body :exit t)
 	("c" hydra-flycheck/body :exit t)
+	("p" check-pdf-signature-dwim :exit t)
 	("r" recover-this-file :exit t)
 	("s" hydra-flyspell/body :exit t)
   ("t" gt-do-translate :exit t)
