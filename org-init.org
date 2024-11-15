@@ -2681,6 +2681,262 @@ I add some custom filters for list items:
 (define-key org-mode-map (kbd "s-w") 'tl/ox-clip-formatted-copy)
 #+END_SRC
 
+**** iCalendar
+
+https://www.gnu.org/software/emacs/manual/html_node/org/iCalendar-Export.html
+
+***** General options
+
+#+BEGIN_SRC emacs-lisp
+(setq org-icalendar-timezone "Europe/Berlin"
+			org-icalendar-include-todo nil			; Non-nil means create VTODO components from TODO items.
+			org-icalendar-use-deadline '(event-if-todo ; Deadlines in TODO entries become calendar events.
+																	 event-if-not-todo ; Deadlines in non-TODO entries become calendar events.
+																	 todo-due					 ; Use deadlines in TODO entries as due-dates.
+																	 ) 
+			org-icalendar-use-scheduled '(;; todo-start ; Scheduling time stamps in TODO entries become start date.
+																		;; event-if-todo ; Scheduling time stamps in TODO entries become an event.
+																		;; event-if-not-todo ; Scheduling time stamps in non-TODO entries become an event.
+																		) 
+			org-icalendar-include-body nil)		; Amount of text below headline to be included in iCalendar export.
+#+END_SRC
+
+Helper function for removing timestamps from headers:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/remove-org-timestamps (&optional file)
+	"Remove all (exported) Org timestamps and surrounding blanks from buffer or FILE."
+  (save-window-excursion
+		(when file (find-file file))
+		(beginning-of-buffer)
+		(while (re-search-forward
+						(concat "\\([[:blank:]]\\)*"
+										"\\(" org-element--timestamp-regexp "\\)"
+										"\\(–\\|[[:blank:]]\\)*"
+										) nil t)
+			(replace-match ""))
+		(when file
+			(save-buffer)
+			(kill-buffer))
+		))
+#+END_SRC
+
+Helper function for removing old dates in an icalender file: 
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/icalendar-remove-dates-older-than (&optional date-string-Ymd)
+	"Remove all events older than DATE-STRING-YMD in an icalendar/ics buffer.
+
+The argument DATE-STRING-YMD is optional.  If not specified, it is set 90 days
+before current time."
+	(beginning-of-buffer)
+	(let ((date-string-Ymd (or date-string-Ymd
+														 (format-time-string "%Y%m%d"
+																								 (let ((time (decode-time (current-time)))
+																											 (delta (make-decoded-time :day -90)))
+																									 (encode-time (decoded-time-add time delta)))
+																								 )
+														 ;; (format-time-string "%Y%m%d"
+														 ;; 										 (time-subtract
+														 ;; 											(current-time)
+														 ;; 											(seconds-to-time (* 60 60 24 90))))
+														 )
+												 ))
+		(while (re-search-forward "DTSTART\\(?:;VALUE=DATE\\)?:[[:blank:]]*\\(.\\{8\\}\\)" nil t)
+			(when (< (string-to-number (match-string 1))
+							 (string-to-number date-string-Ymd))
+				(delete-region
+				 (re-search-backward "BEGIN:VEVENT")
+				 (re-search-forward "END:VEVENT"))
+				;; Remove empty line
+				(if (save-excursion
+							(beginning-of-line)
+							(looking-at-p "[[:blank:]]*$"))
+						(delete-line)
+					())
+				))))
+#+END_SRC
+
+***** Export of org-agenda
+
+I now and then export the dates of my [[org-agenda]] and push them to a CalDAV server with [[https://github.com/pimutils/vdirsyncer][vdirsyncer]].
+
+See blog post [[https://200ok.ch/posts/2022-02-13_integrating_org_mode_agenda_into_other_calendar_apps.html][Integrating Org mode Agenda into other calendar apps]].
+
+The org-mode agenda can be exported with two commands:
+
+- =org-icalendar-export-agenda-files=: export to separate files.
+- =org-icalendar-combine-agenda-files=: combine all exported entries in one file, which is specified in =org-icalendar-combined-agenda-file= (=~/org.ics= by default).
+ 
+The idea is to export the agenda to an icalendar file (when saving an agenda file) that is regularly imported to the calendar. 
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-export-agenda-to-ics ()
+	(interactive)
+	(if (org-agenda-files)
+			(let* (
+						 (org-export-with-broken-links t) ; Ignore broken links
+						 (org-agenda-start-day "-2w") ; Unfortunately, this does not limit the export to recent dates 
+						 )
+				(org-icalendar-combine-agenda-files) ; Non-nil argument for asynchronuous processing 
+				(message (concat "org-agenda exported to "  org-icalendar-combined-agenda-file))
+				(save-window-excursion
+					(find-file org-icalendar-combined-agenda-file)
+					(tl/remove-org-timestamps)
+					(tl/icalendar-remove-dates-older-than)
+					(save-buffer)
+					(kill-buffer))
+				(message (concat "org-agenda calendar file cleaned and saved: " org-icalendar-combined-agenda-file)))
+		(message "tl/org-export-agenda-to-ics: org-agenda-files not specified, export aborted.")
+		)
+	)
+#+END_SRC
+
+The export can be narrowed to specific org-agenda files in the following way: 
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(let ((org-agenda-files (list
+												 "/path/to/my/org-file.org"))
+			(org-icalendar-combined-agenda-file "/path/to/my/ics-file.ics"))
+	(org-icalendar-combine-agenda-files))
+#+END_SRC
+
+Lets create a helper function that can exports an org-mode buffer to an ics file with the same path:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-export-buffer-to-ics ()
+	(interactive)
+	(if (buffer-file-name (current-buffer))
+			(let* ((file-name (buffer-file-name (current-buffer)))
+						 (org-agenda-files (list file-name))
+						 (org-icalendar-combined-agenda-file
+							(concat
+							 (file-name-sans-extension file-name)
+							 ".ics")))
+				(tl/org-export-agenda-to-ics))
+		(message "tl/org-export-buffer-to-ics: buffer has no file, export aborted.")
+		))
+#+END_SRC
+
+Finally, wrap a function around the export of the org-agenda and syncing it with a CalDAV server using [[https://github.com/pimutils/vdirsyncer][vdirsyncer]].
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-export-agenda-to-caldav ()
+	"Export `org-agenda' to icalendar/ics file and upload it to CalDAV server."
+	(interactive)
+	(message "Exporting org-agenda to ics file...")
+	(tl/org-export-agenda-to-ics)
+	(message "Exporting org-agenda to ics file finished.")
+	(message "Syncing org-agenda and CalDav server...")
+	(shell-command "vdirsyncer sync org_agenda_calendar")
+	(while (yes-or-no-p "Sync with vdirsyncer once more? ")
+		(shell-command "vdirsyncer sync org_agenda_calendar"))
+	(message "Syncing org-agenda and CalDav server finished.")
+	)
+#+END_SRC 
+
+***** Export of buffer or heading
+
+There is a function =org-icalendar-export-to-ics=, which exports a buffer or region to a single iCalendar file.  
+
+Let's define a robuster function that exports just the heading under point and removes Org timestamps:
+
+#+BEGIN_SRC emacs-lisp
+(defun org-icalendar-export-heading-to-ics () 
+	"Export heading under point to ics file."
+	(interactive)
+	(let* ((org-export-with-broken-links t)
+				 (org-icalendar-after-save-hook 'tl/remove-org-timestamps))
+		(org-icalendar-export-to-ics nil t)))
+#+END_SRC
+
+***** COMMENT org-caldav
+
+https://github.com/dengste/org-caldav
+
+CalDAV sync for org-mode.
+
+Issues
+- Unfortunately, =org-caldav= is not able to handle recurring events created on the calendar side, see "Known Bugs" and https://github.com/dengste/org-caldav/issues/150. On the other hand, =icalendar-import-file= can import them to the Emacs diary.
+- [ ] =org-caldav= adds IDs  to all headings in synced org files. It should be possible to only add IDs to headings that matter. Adding IDs to headings might have side effects, e.g., in =org-roam=.
+- [ ] The possibility to call =org-caldav-sync= asynchronously is missing.
+      - see https://github.com/dengste/org-caldav/issues/111#issuecomment-306137822
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-caldav
+  :ensure t
+	:after (org org-agenda)
+	:init
+	(when (not (file-exists-p (concat org-directory "caldav")))
+		(make-directory (concat org-directory "caldav")))
+  :config (setq org-icalendar-timezone "Europe/Berlin"
+								;; org-caldav-files (org-agenda-files)	; list of org files you would like to sync
+								;; org-caldav-inbox	"org-caldav-inbox.org" ; org filename where new entries from the calendar should be stored
+								org-caldav-backup-file (concat org-directory "caldav/org-caldav-backup.org")
+								org-caldav-save-directory (concat org-directory "caldav/")
+								org-caldav-delete-org-entries 'never ; take over changes in calendar? values: 'never 'ask
+								org-caldav-delete-calendar-entries 'ask ; take over changes in org-file? values: 'never 'ask
+								;; for creating calendar events from org headings
+								org-icalendar-include-todo t
+								org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due)
+								org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo))
+	)
+#+END_SRC
+
+Add IDs to headings only if necessary, thus with active time stamps. 
+Taken from: https://github.com/dengste/org-caldav/issues/227
+
+#+BEGIN_SRC emacs-lisp
+(straight-use-package 'el-patch)
+(el-patch-defun org-caldav-create-uid (file &optional bell)
+								"Set ID property on headlines missing it in FILE.
+When optional argument BELL is non-nil, inform the user with
+a message if the file was modified. This func is the same as
+org-icalendar-create-uid except that it ignores entries that
+match org-caldav-skip-conditions."
+								(let (modified-flag)
+									(el-patch-swap
+									 (org-map-entries
+										(lambda ()
+											(let ((entry (org-element-at-point)))
+												(unless (org-element-property :ID entry)
+													(unless (apply 'org-agenda-skip-entry-if org-caldav-skip-conditions)
+														(org-id-get-create)
+														(setq modified-flag t)
+														(forward-line)))))
+										nil nil 'comment)
+									 (let ((timestamps
+													(thread-last
+															(org-element-map (org-element-parse-buffer) '(headline timestamp) 'identity)
+														(seq-map #'(lambda (el)
+																				 (let ((ts (pcase el
+																										 (`(headline ,(map :scheduled :deadline) . ,_)
+																											(or scheduled deadline))
+																										 (`(timestamp . ,_)
+																											el))))
+																					 (pcase ts
+																						 (`(timestamp ,(map :type :begin) . ,_)
+																							(and (or (eq type 'active) (eq type 'active-range)) begin))))))
+														(seq-filter #'identity)
+														(seq-reverse))))
+										 (save-excursion
+											 (mapc #'(lambda (pos)
+																 (goto-char pos)
+																 (org-back-to-heading t)
+																 (unless (org-element-property :ID (org-element-at-point))
+																	 (unless (apply 'org-agenda-skip-entry-if org-caldav-skip-conditions)
+																		 (org-id-get-create)
+																		 (setq id-pos pos)
+																		 (setq modified-flag t)
+																		 (forward-line))))
+														 timestamps))))
+									(when (and bell modified-flag)
+										(message "ID properties created in file \"%s\"" file)
+										(sit-for 2))))
+#+END_SRC
+
+The syncing process is startet with =org-caldav-sync=.
+
 **** ox-hugo
 
 https://ox-hugo.scripter.co/
@@ -2764,6 +3020,10 @@ When inserting formatted content from the clipboard, this is first converted to 
 	(shell-command "xclip -o -t text/html | pandoc -f html -t org -" '(4)))
 (define-key org-mode-map (kbd "s-y") 'org-insert-formatted-text-from-clipboard)
 #+END_SRC
+
+**** iCalendar
+
+When receiving an ics file by mail, this is handled by [[mu4e]].
 
 *** LaTeX support
 
@@ -5008,165 +5268,11 @@ Adds German holidays to the calendar.
 *** iCalendar import
 
 iCalendar files can be imported
-- via [[calfw]].
-- via the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Diary.html][Emacs diary]]: =icalendar-import-file= imports ics-files from caldav servers into the diary file. This will eventually be shown in org-agenda based on the variable =org-agenda-include-diary=.
+- via [[calfw]]
+- via the [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Diary.html][Emacs diary]]: =icalendar-import-file= imports ics-files from caldav servers into the diary file. This will eventually be shown in org-agenda based on the variable =org-agenda-include-diary=
+- via [[org-mode]] and [[mu4e]]
 
-**** TODO Import iCalendar file to Org
-:LOGBOOK:
-- State "TODO"       from              [2023-10-11 Wed 15:54]
-:END:
-
-If you receive ics files with appointments, you can convert them to Org headings in the following way:
-
-*** iCalendar export
-
-I now and then export the dates of my [[org-agenda]] and push them to a CalDAV server with [[https://github.com/pimutils/vdirsyncer][vdirsyncer]].
-
-Issues: 
-- [X] Error "Unable to resolve link": Some broken links will terminate the export for no good reason.
-      - Solution: Use =org-export-with-broken-links= to ignore broken links! 
-
-General options:
-
-#+BEGIN_SRC emacs-lisp
-(setq org-icalendar-timezone "Europe/Berlin"
-			org-icalendar-include-todo nil			; Non-nil means create VTODO components from TODO items.
-			org-icalendar-use-deadline '(event-if-todo ; Deadlines in TODO entries become calendar events.
-																	 event-if-not-todo ; Deadlines in non-TODO entries become calendar events.
-																	 todo-due					 ; Use deadlines in TODO entries as due-dates.
-																	 ) 
-			org-icalendar-use-scheduled '(;; todo-start ; Scheduling time stamps in TODO entries become start date.
-																		;; event-if-todo ; Scheduling time stamps in TODO entries become an event.
-																		;; event-if-not-todo ; Scheduling time stamps in non-TODO entries become an event.
-																		) 
-			org-icalendar-include-body nil)		; Amount of text below headline to be included in iCalendar export.
-#+END_SRC
-
-Helper function for removing timestamps from headers:
-
-#+BEGIN_SRC emacs-lisp
-(defun tl/remove-org-timestamps ()
-	"Remove all (exported) Org timestamps and surrounding blanks from buffer."
-	(beginning-of-buffer)
-	(while (re-search-forward
-					(concat "\\([[:blank:]]\\)*"
-									"\\(" org-element--timestamp-regexp "\\)"
-									"\\(–\\|[[:blank:]]\\)*"
-									) nil t)
-		(replace-match "")))
-#+END_SRC
-
-Helper function for removing old dates in an icalender file: 
-
-#+BEGIN_SRC emacs-lisp
-(defun tl/icalendar-remove-dates-older-than (&optional date-string-Ymd)
-	"Remove all events older than DATE-STRING-YMD in an icalendar/ics buffer.
-
-The argument DATE-STRING-YMD is optional.  If not specified, it is set 90 days
-before current time."
-	(beginning-of-buffer)
-	(let ((date-string-Ymd (or date-string-Ymd
-														 (format-time-string "%Y%m%d"
-																								 (let ((time (decode-time (current-time)))
-																											 (delta (make-decoded-time :day -90)))
-																									 (encode-time (decoded-time-add time delta)))
-																								 )
-														 ;; (format-time-string "%Y%m%d"
-														 ;; 										 (time-subtract
-														 ;; 											(current-time)
-														 ;; 											(seconds-to-time (* 60 60 24 90))))
-														 )
-												 ))
-		(while (re-search-forward "DTSTART\\(?:;VALUE=DATE\\)?:[[:blank:]]*\\(.\\{8\\}\\)" nil t)
-			(when (< (string-to-number (match-string 1))
-							 (string-to-number date-string-Ymd))
-				(delete-region
-				 (re-search-backward "BEGIN:VEVENT")
-				 (re-search-forward "END:VEVENT"))
-				;; Remove empty line
-				(if (save-excursion
-							(beginning-of-line)
-							(looking-at-p "[[:blank:]]*$"))
-						(delete-line)
-					())
-				))))
-#+END_SRC
-
-**** org-agenda
-
-See blog post [[https://200ok.ch/posts/2022-02-13_integrating_org_mode_agenda_into_other_calendar_apps.html][Integrating Org mode Agenda into other calendar apps]].
-
-The org-mode agenda can be exported with two commands:
-
-- =org-icalendar-export-agenda-files=: export to separate files.
-- =org-icalendar-combine-agenda-files=: combine all exported entries in one file, which is specified in =org-icalendar-combined-agenda-file= (=~/org.ics= by default).
- 
-The idea is to export the agenda to an icalendar file (when saving an agenda file) that is regularly imported to the calendar. 
-
-#+BEGIN_SRC emacs-lisp
-(defun tl/org-export-agenda-to-ics ()
-	(interactive)
-	(if (org-agenda-files)
-			(let* (
-						 (org-export-with-broken-links t) ; Ignore broken links
-						 (org-agenda-start-day "-2w") ; Unfortunately, this does not limit the export to recent dates 
-						 )
-				(org-icalendar-combine-agenda-files) ; Non-nil argument for asynchronuous processing 
-				(message (concat "org-agenda exported to "  org-icalendar-combined-agenda-file))
-				(save-window-excursion
-					(find-file org-icalendar-combined-agenda-file)
-					(tl/remove-org-timestamps)
-					(tl/icalendar-remove-dates-older-than)
-					(save-buffer)
-					(kill-buffer))
-				(message (concat "org-agenda calendar file cleaned and saved: " org-icalendar-combined-agenda-file)))
-		(message "tl/org-export-agenda-to-ics: org-agenda-files not specified, export aborted.")
-		)
-	)
-#+END_SRC
-
-The export can be narrowed to specific org-agenda files in the following way: 
-
-#+BEGIN_SRC emacs-lisp :tangle no
-(let ((org-agenda-files (list
-												 "/path/to/my/org-file.org"))
-			(org-icalendar-combined-agenda-file "/path/to/my/ics-file.ics"))
-	(org-icalendar-combine-agenda-files))
-#+END_SRC
-
-Lets create a helper function that can exports an org-mode buffer to an ics file with the same path:
-
-#+BEGIN_SRC emacs-lisp
-(defun tl/org-export-buffer-to-ics ()
-	(interactive)
-	(if (buffer-file-name (current-buffer))
-			(let* ((file-name (buffer-file-name (current-buffer)))
-						 (org-agenda-files (list file-name))
-						 (org-icalendar-combined-agenda-file
-							(concat
-							 (file-name-sans-extension file-name)
-							 ".ics")))
-				(tl/org-export-agenda-to-ics))
-		(message "tl/org-export-buffer-to-ics: buffer has no file, export aborted.")
-		))
-#+END_SRC
-
-Finally, wrap a function around the export of the org-agenda and syncing it with a CalDAV server using [[https://github.com/pimutils/vdirsyncer][vdirsyncer]].
-
-#+BEGIN_SRC emacs-lisp
-(defun tl/org-export-agenda-to-caldav ()
-	"Export `org-agenda' to icalendar/ics file and upload it to CalDAV server."
-	(interactive)
-	(message "Exporting org-agenda to ics file...")
-	(tl/org-export-agenda-to-ics)
-	(message "Exporting org-agenda to ics file finished.")
-	(message "Syncing org-agenda and CalDav server...")
-	(shell-command "vdirsyncer sync org_agenda_calendar")
-	(while (yes-or-no-p "Sync with vdirsyncer once more? ")
-		(shell-command "vdirsyncer sync org_agenda_calendar"))
-	(message "Syncing org-agenda and CalDav server finished.")
-	)
-#+END_SRC 
+*** [[org-agenda]]
 
 *** calfw 
 
@@ -5268,93 +5374,6 @@ Helper functions:
 			(url-copy-file url filename t nil nil)
 		(display-warning 'calendar (concat "Could not download " filename))))
 #+END_SRC
-
-*** COMMENT org-caldav
-
-https://github.com/dengste/org-caldav
-
-CalDAV sync for org-mode.
-
-Issues
-- Unfortunately, =org-caldav= is not able to handle recurring events created on the calendar side, see "Known Bugs" and https://github.com/dengste/org-caldav/issues/150. On the other hand, =icalendar-import-file= can import them to the Emacs diary.
-- [ ] =org-caldav= adds IDs  to all headings in synced org files. It should be possible to only add IDs to headings that matter. Adding IDs to headings might have side effects, e.g., in =org-roam=.
-- [ ] The possibility to call =org-caldav-sync= asynchronously is missing.
-      - see https://github.com/dengste/org-caldav/issues/111#issuecomment-306137822
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-caldav
-  :ensure t
-	:after (org org-agenda)
-	:init
-	(when (not (file-exists-p (concat org-directory "caldav")))
-		(make-directory (concat org-directory "caldav")))
-  :config (setq org-icalendar-timezone "Europe/Berlin"
-								;; org-caldav-files (org-agenda-files)	; list of org files you would like to sync
-								;; org-caldav-inbox	"org-caldav-inbox.org" ; org filename where new entries from the calendar should be stored
-								org-caldav-backup-file (concat org-directory "caldav/org-caldav-backup.org")
-								org-caldav-save-directory (concat org-directory "caldav/")
-								org-caldav-delete-org-entries 'never ; take over changes in calendar? values: 'never 'ask
-								org-caldav-delete-calendar-entries 'ask ; take over changes in org-file? values: 'never 'ask
-								;; for creating calendar events from org headings
-								org-icalendar-include-todo t
-								org-icalendar-use-deadline '(event-if-todo event-if-not-todo todo-due)
-								org-icalendar-use-scheduled '(todo-start event-if-todo event-if-not-todo))
-	)
-#+END_SRC
-
-Add IDs to headings only if necessary, thus with active time stamps. 
-Taken from: https://github.com/dengste/org-caldav/issues/227
-
-#+BEGIN_SRC emacs-lisp
-(straight-use-package 'el-patch)
-(el-patch-defun org-caldav-create-uid (file &optional bell)
-								"Set ID property on headlines missing it in FILE.
-When optional argument BELL is non-nil, inform the user with
-a message if the file was modified. This func is the same as
-org-icalendar-create-uid except that it ignores entries that
-match org-caldav-skip-conditions."
-								(let (modified-flag)
-									(el-patch-swap
-									 (org-map-entries
-										(lambda ()
-											(let ((entry (org-element-at-point)))
-												(unless (org-element-property :ID entry)
-													(unless (apply 'org-agenda-skip-entry-if org-caldav-skip-conditions)
-														(org-id-get-create)
-														(setq modified-flag t)
-														(forward-line)))))
-										nil nil 'comment)
-									 (let ((timestamps
-													(thread-last
-															(org-element-map (org-element-parse-buffer) '(headline timestamp) 'identity)
-														(seq-map #'(lambda (el)
-																				 (let ((ts (pcase el
-																										 (`(headline ,(map :scheduled :deadline) . ,_)
-																											(or scheduled deadline))
-																										 (`(timestamp . ,_)
-																											el))))
-																					 (pcase ts
-																						 (`(timestamp ,(map :type :begin) . ,_)
-																							(and (or (eq type 'active) (eq type 'active-range)) begin))))))
-														(seq-filter #'identity)
-														(seq-reverse))))
-										 (save-excursion
-											 (mapc #'(lambda (pos)
-																 (goto-char pos)
-																 (org-back-to-heading t)
-																 (unless (org-element-property :ID (org-element-at-point))
-																	 (unless (apply 'org-agenda-skip-entry-if org-caldav-skip-conditions)
-																		 (org-id-get-create)
-																		 (setq id-pos pos)
-																		 (setq modified-flag t)
-																		 (forward-line))))
-														 timestamps))))
-									(when (and bell modified-flag)
-										(message "ID properties created in file \"%s\"" file)
-										(sit-for 2))))
-#+END_SRC
-
-The syncing process is startet with =org-caldav-sync=.
 
 *** khalel
 
