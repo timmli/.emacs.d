@@ -14384,7 +14384,7 @@ Don't ask for the path when searching for files:
 	("c" hydra-org-clock/body)
 	("E" my-sem-hydra-start)
 	("e" my-sem-hydra-start)
-	("i" org-id-get-createq)
+	("i" org-id-get-create)
 	("j" org-goto :color pink)
 	("l" org-toggle-latex-fragment)
 	("dl" my/org-delete-link)
