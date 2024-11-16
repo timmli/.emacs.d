@@ -2859,7 +2859,20 @@ Let's define a robuster function that exports just the heading under point and r
 		(save-restriction
 			(widen)
 			(org-narrow-to-subtree)
-			(org-icalendar-export-to-ics)
+			;; Add property EXPORT_FILE_NAME, which org-icalendar-export-to-ics will read when
+			;; SUBTREEP is t.
+			(unless (org-entry-get nil "EXPORT_FILE_NAME")
+				(org-set-property "EXPORT_FILE_NAME"
+													(concat
+													 (read-directory-name "Select directory to safe ics file: "
+																								(expand-file-name "~/Downloads/"))
+													 (org-entry-get nil "ID")
+													 ".ics")))
+			;; Mark subtree if there is no active region. If SUBTREEP is t, only marked regions are exported.
+			(beginning-of-buffer)
+			(unless (region-active-p) (save-excursion	(org-mark-subtree)))
+			(org-icalendar-export-to-ics nil t) ; If SUBTREEP is t.
+			(deactivate-mark)
 			(widen))))
 #+END_SRC
 
