@@ -2847,12 +2847,20 @@ There is a function =org-icalendar-export-to-ics=, which exports a buffer or reg
 Let's define a robuster function that exports just the heading under point and removes Org timestamps:
 
 #+BEGIN_SRC emacs-lisp
-(defun org-icalendar-export-heading-to-ics () 
+(defun tl/org-icalendar-export-heading-to-ics () 
 	"Export heading under point to ics file."
 	(interactive)
 	(let* ((org-export-with-broken-links t)
-				 (org-icalendar-after-save-hook 'tl/remove-org-timestamps))
-		(org-icalendar-export-to-ics nil t)))
+				 (org-icalendar-after-save-hook 'tl/remove-org-timestamps)
+				 (org-icalendar-store-UID t)
+				 (org-icalendar-categories nil)
+				 (org-icalendar-include-body t))
+		;; (org-icalendar-export-to-ics nil t) ; Only works for regions
+		(save-restriction
+			(widen)
+			(org-narrow-to-subtree)
+			(org-icalendar-export-to-ics)
+			(widen))))
 #+END_SRC
 
 ***** COMMENT org-caldav
