@@ -2495,7 +2495,7 @@ Renders =org-mode= citations and bibliographies during export in Citation Style 
 				 "* %^T %?\t:appointment:\n\n" 
 				 :prepend t
 				 :jump-to-captured t
-				 :before-finalize org-id-get-create
+				 ;; :before-finalize org-id-get-create    ; Not always needed
 				 )
 				;; ;; used for org-gcal
 				;; ("a" "Appointment" entry (file (concat org-directory "/gcal.org"))
