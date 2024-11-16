@@ -2488,10 +2488,15 @@ Renders =org-mode= citations and bibliographies during export in Citation Style 
 (setq org-capture-templates
 			`(
 				;; uses appointment tag
-				("a" "Appointment" entry (file+headline 
-																	(lambda () (expand-file-name "captures.org" org-directory))
-																	"Appointments")
-				 "* %? %^T\t%^G:appointment:\n\n" :prepend t)
+				("a" "Appointment"
+				 entry (file+headline 
+								(lambda () (expand-file-name "captures.org" org-directory))
+								"Appointments")
+				 "* %^T %?\t:appointment:\n\n" 
+				 :prepend t
+				 :jump-to-captured t
+				 :before-finalize org-id-get-create
+				 )
 				;; ;; used for org-gcal
 				;; ("a" "Appointment" entry (file (concat org-directory "/gcal.org"))
 				;;  "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
