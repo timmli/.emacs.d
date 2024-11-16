@@ -2870,7 +2870,7 @@ Let's define a robuster function that exports just the heading under point and r
 													 ".ics")))
 			;; Mark subtree if there is no active region. If SUBTREEP is t, only marked regions are exported.
 			(beginning-of-buffer)
-			(unless (region-active-p) (save-excursion	(org-mark-subtree)))
+			(unless (region-active-p) (save-excursion (org-mark-subtree)))
 			(org-icalendar-export-to-ics nil t) ; If SUBTREEP is t.
 			(deactivate-mark)
 			(widen))))
