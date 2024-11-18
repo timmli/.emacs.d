@@ -2876,7 +2876,7 @@ Let's define a robuster function that exports just the heading under point and r
 													(concat
 													 (read-directory-name "Select directory to safe ics file: "
 																								(expand-file-name "~/Downloads/"))
-													 (org-entry-get nil "ID")
+													 (org-id-get-create)
 													 ".ics")))
 			;; Mark subtree if there is no active region. If SUBTREEP is t, only marked regions are exported.
 			(beginning-of-buffer)
@@ -5016,6 +5016,8 @@ From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywo
 "WAIT(w@/!)".  "@" means to add a note (with time), "!" means to record only the time of the state change.  With X and Y being either "@" or "!", "X/Y" means use X when entering the state, and use Y when leaving the state if and only if the *target* state does not define X.  You may omit any of the fast-selection key or X or /Y, so WAIT(w@), WAIT(w/@) and WAIT(@/@) are all valid.
 #+END_QUOTE
 
+Keywords for tasks and projects: 
+
 - TODO: something that needs to be done, maybe now, maybe later. 
 - NEXT: something that can be done /now/. There's everything you need to start doing it.
 - INPROGRESS: something that is being done right now.
@@ -5024,10 +5026,17 @@ From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywo
 - SOMEDAY: you are not yet sure whether this needs to be done.
 - DELEGATED: something that has been delegated and is not tracked any more.  
 
+Keywords for events and appointments:
+
+- TENTATIVE: not yet confirmed that something will take place.
+- CONFIRMED: confirmed that something will take place. This is the default.
+- CANCELLED: something will not take place though it was planned.
+
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-keywords
       (quote ((sequence "TODO(t!)" "NEXT(n!)" "INPROGRESS(p!)" "|" "DONE(d)")
-              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "SOMEDAY(s)" "|" "DELEGATED(l@/!)" "CANCELLED(c@/!)"))))
+              (sequence "WAITING(w@/!)" "HOLD(h@/!)" "SOMEDAY(s)" "|" "DELEGATED(l@/!)" "CANCELLED(c@/!)")
+							(sequence "TENTATIVE(T!)" "|" "CONFIRMED(C!)" "CANCELLED(c@/!)" ))))
 
 (setq org-todo-keyword-faces
       (quote (("TODO" :foreground "red" :weight bold)
@@ -5039,6 +5048,8 @@ From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywo
               ("CANCELLED" :foreground "forest green" :weight bold)
               ("DELEGATED" :foreground "forest green" :weight bold)
 							("SOMEDAY" :foreground "goldenrod" :weight bold)
+							("CONFIRMED" :foreground "forest green" :weight bold)
+							("TENTATIVE" :foreground "cyan" :weight bold)
 							)))
 #+END_SRC
 
