@@ -2866,7 +2866,7 @@ Let's define a robuster function that exports just the heading under point and r
 													(concat
 													 (read-directory-name "Select directory to safe ics file: "
 																								(expand-file-name "~/Downloads/"))
-													 (org-entry-get nil "ID")
+													 (org-id-get-create)
 													 ".ics")))
 			;; Mark subtree if there is no active region. If SUBTREEP is t, only marked regions are exported.
 			(beginning-of-buffer)
