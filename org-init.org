@@ -5011,12 +5011,11 @@ Insert or update a Github-compatible table of contents under a heading with tag 
 
 (Must appear before =org-agenda= settings. Otherwise =org-todo-keywords= may not get updated buffer locally.)
 
-From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywords):
-#+BEGIN_QUOTE
-"WAIT(w@/!)".  "@" means to add a note (with time), "!" means to record only the time of the state change.  With X and Y being either "@" or "!", "X/Y" means use X when entering the state, and use Y when leaving the state if and only if the *target* state does not define X.  You may omit any of the fast-selection key or X or /Y, so WAIT(w@), WAIT(w/@) and WAIT(@/@) are all valid.
-#+END_QUOTE
+https://orgmode.org/manual/TODO-Items.html
 
-Keywords for tasks and projects: 
+TODO keywords appear in headlines right after the initial stars. They can be used to keep track of the states of projects and tasks.  
+
+State keywords for tasks and projects: 
 
 - TODO: something that needs to be done, maybe now, maybe later. 
 - NEXT: something that can be done /now/. There's everything you need to start doing it.
@@ -5026,11 +5025,16 @@ Keywords for tasks and projects:
 - SOMEDAY: you are not yet sure whether this needs to be done.
 - DELEGATED: something that has been delegated and is not tracked any more.  
 
-Keywords for events and appointments:
+State keywords for events and appointments:
 
 - TENTATIVE: not yet confirmed that something will take place.
 - CONFIRMED: confirmed that something will take place. This is the default.
 - CANCELLED: something will not take place though it was planned.
+
+From the org-mode documentation (http://orgmode.org/worg/doc.html#org-todo-keywords):
+#+BEGIN_QUOTE
+"WAIT(w@/!)".  "@" means to add a note (with time), "!" means to record only the time of the state change.  With X and Y being either "@" or "!", "X/Y" means use X when entering the state, and use Y when leaving the state if and only if the *target* state does not define X.  You may omit any of the fast-selection key or X or /Y, so WAIT(w@), WAIT(w/@) and WAIT(@/@) are all valid.
+#+END_QUOTE
 
 #+BEGIN_SRC emacs-lisp
 (setq org-todo-keywords
