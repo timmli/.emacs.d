@@ -1906,6 +1906,16 @@ Skip scheduled items and items with deadline when they are DONE:
 			org-agenda-skip-deadline-if-done t)
 #+END_SRC 
 
+Change the face of deadline items in agenda:
+#+BEGIN_SRC emacs-lisp
+(setq org-agenda-deadline-faces
+			'((1.0 . org-imminent-deadline)
+				(0.5 . org-upcoming-deadline)
+				(0.0 . org-upcoming-deadline)
+				;; (0.0 . org-upcoming-distant-deadline) ; default
+				))
+#+END_SRC
+
 Do not make the block agenda more compact:
 #+BEGIN_SRC emacs-lisp
 (setq org-agenda-compact-blocks nil)
