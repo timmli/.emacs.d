@@ -3557,7 +3557,8 @@ Function to open links in new frame:
 		(org-open-at-point)
 		(recenter)))
 #+END_SRC
-Added to [[hydra-f6]].
+Added to [[hydra-org]].
+- [ ] Also add it to the mouse context menu!
 
 *** Listings
 
