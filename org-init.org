@@ -4536,6 +4536,17 @@ See https://github.com/jkitchin/jmax/blob/master/org/org-show.org for more infor
 (require 'org-show) 
 #+END_SRC
 
+*** org-timeblock
+
+https://github.com/ichernyshovvv/org-timeblock
+
+Show events in the agenda as timeblocks.
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-timeblock
+	:ensure t)
+#+END_SRC
+
 *** org-transclusion
 
 https://github.com/nobiot/org-transclusion
