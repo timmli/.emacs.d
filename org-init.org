@@ -3417,38 +3417,6 @@ See https://orgmode.org/Changes.html#org685f215.
 
 *** TODO Links
 
-Issues:
-- [ ] Replace timestamp in link description, either deleting it completely or replacing just the brackets
-
-Function to update link syntax that got changed in =org-mode= v9.3 (taken from https://orgmode.org/Changes.html):
-#+BEGIN_SRC emacs-lisp
-(defun org-update-link-syntax (&optional no-query)
-  "Update syntax for links in current buffer.
-Query before replacing a link, unless optional argument NO-QUERY
-is non-nil."
-  (interactive "P")
-  (org-with-point-at 1
-    (let ((case-fold-search t))
-      (while (re-search-forward "\\[\\[[^]]*?%\\(?:2[05]\\|5[BD]\\)" nil t)
-        (let ((object (save-match-data (org-element-context))))
-          (when (and (eq 'link (org-element-type object))
-                     (= (match-beginning 0)
-                        (org-element-property :begin object)))
-            (goto-char (org-element-property :end object))
-            (let* ((uri-start (+ 2 (match-beginning 0)))
-                   (uri-end (save-excursion
-                              (goto-char uri-start)
-                              (re-search-forward "\\][][]" nil t)
-                              (match-beginning 0)))
-                   (uri (buffer-substring-no-properties uri-start uri-end)))
-              (when (or no-query
-                        (y-or-n-p
-                         (format "Possibly obsolete URI syntax: %S.  Fix? "
-                                 uri)))
-                (setf (buffer-substring uri-start uri-end)
-                      (org-link-escape (org-link-decode uri)))))))))))
-#+END_SRC
-
 Follow links when pressing =<return>=:
 #+BEGIN_SRC emacs-lisp
 (setq org-return-follows-link t)
@@ -3559,6 +3527,64 @@ Function to open links in new frame:
 #+END_SRC
 Added to [[hydra-org]].
 - [ ] Also add it to the mouse context menu!
+
+Replace timestamp in link description, either completely deleting it or replacing just the brackets
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-store-link-advice (orig-fun &rest args)
+	"Modify Org heading before creating an Org link.
+
+Timestamps are deactivated by replacing angular brackets with curly braces."
+	(interactive)
+	(org-copy-subtree)
+	(save-window-excursion
+		(let ((temp-file (make-temp-file "-temp-buffer-")))
+			(find-file temp-file)
+			(yank)
+			(org-mode)
+			(goto-char (point-min))
+			(when (re-search-forward org-element--timestamp-regexp (line-end-position) t)
+				(let* ((timestamp-start-pos (match-beginning 0))
+							 (timestamp-end-pos (match-end 0)))
+					(replace-regexp "<" "{" nil timestamp-start-pos timestamp-end-pos t)
+					(replace-regexp ">" "}" nil timestamp-start-pos timestamp-end-pos t)
+					))
+			(save-buffer)
+			(org-run-like-in-org-mode orig-fun)
+			)))
+
+(advice-add 'org-store-link :around #'tl/org-store-link-advice)
+#+END_SRC
+
+**** Obsolete
+
+Function to update link syntax that got changed in =org-mode= v9.3 (taken from https://orgmode.org/Changes.html):
+#+BEGIN_SRC emacs-lisp
+(defun org-update-link-syntax (&optional no-query)
+  "Update syntax for links in current buffer.
+Query before replacing a link, unless optional argument NO-QUERY
+is non-nil."
+  (interactive "P")
+  (org-with-point-at 1
+    (let ((case-fold-search t))
+      (while (re-search-forward "\\[\\[[^]]*?%\\(?:2[05]\\|5[BD]\\)" nil t)
+        (let ((object (save-match-data (org-element-context))))
+          (when (and (eq 'link (org-element-type object))
+                     (= (match-beginning 0)
+                        (org-element-property :begin object)))
+            (goto-char (org-element-property :end object))
+            (let* ((uri-start (+ 2 (match-beginning 0)))
+                   (uri-end (save-excursion
+                              (goto-char uri-start)
+                              (re-search-forward "\\][][]" nil t)
+                              (match-beginning 0)))
+                   (uri (buffer-substring-no-properties uri-start uri-end)))
+              (when (or no-query
+                        (y-or-n-p
+                         (format "Possibly obsolete URI syntax: %S.  Fix? "
+                                 uri)))
+                (setf (buffer-substring uri-start uri-end)
+                      (org-link-escape (org-link-decode uri)))))))))))
+#+END_SRC
 
 *** Listings
 
