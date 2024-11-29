@@ -7829,6 +7829,17 @@ A file system analyzer similar to [[https://dev.yorhel.nl/ncdu][ncdu]]. However,
 	:load-path "lisp/disk-usage/")
 #+END_SRC
 
+*** ztree
+
+https://codeberg.org/fourier/ztree
+
+Show folder structure as foldable tree, also allowing for diffs on folders with =ztree-diff=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package ztree
+	:ensure t)
+#+END_SRC
+
 ** Getting things done
 
 *** Pomodoro technique
@@ -14446,8 +14457,9 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
 
 (defhydra hydra-dired-diff (:hint nil :after-exit (hydra-dired-main/body))
 	"Diff"
-	("=" diredp-ediff "diff")
-	("e" ora-ediff-files "diff on marked")
+	("=" diredp-ediff "ediff")
+	("e" ora-ediff-files "ediff on marked")
+	("d" ztree-diff "diff on directories")
 	("p" diffpdf-dired--command "diffpdf")
 	("q" hydra-dired-main/body "quit" :color blue)
 	)
