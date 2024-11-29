@@ -2886,6 +2886,31 @@ Let's define a robuster function that exports just the heading under point and r
 			(widen))))
 #+END_SRC
 
+Work in progress:
+#+BEGIN_SRC emacs-lisp :tangle nil
+(defun org-icalendar--add-status (entry)
+  "Return the iCalendar STATUS field based on the :STATUS: property."
+  (let ((status (org-entry-get (point) "STATUS")))
+    (cond
+     ((equal status "TENTATIVE") "STATUS:TENTATIVE\n")
+     ((equal status "CONFIRMED") "STATUS:CONFIRMED\n")
+     ((equal status "CANCELLED") "STATUS:CANCELLED\n")
+     (t nil))))
+
+(advice-add 'org-icalendar--vevent :around
+            (lambda (orig-fn &rest args)
+              "Include STATUS in iCalendar export within VEVENT."
+              (let* ((event (apply orig-fn args))
+                     (status (org-icalendar--add-status (car args))))
+                (if status
+                    ;; Insert the STATUS line after the SUMMARY line
+                    (replace-regexp-in-string
+                     "\\(SUMMARY:.*\\)"
+                     (concat "\\1\n" status)
+                     event)
+                  event))))
+#+END_SRC
+
 ***** COMMENT org-caldav
 
 https://github.com/dengste/org-caldav
