@@ -3512,27 +3512,49 @@ Function to remove all ID properties from buffer:
 				(org-id-update-id-locations)))))
 #+END_SRC
 
-- [ ] Adopt a function that replaces links by their description using the =org-element= API (see https://emacs.stackexchange.com/a/49068/12336)
-
-Function to replace a link with its description, taken from https://emacs.stackexchange.com/a/10712/12336:
+Function to replace a link with its description, inspired by https://emacs.stackexchange.com/a/10712/12336:
 #+BEGIN_SRC emacs-lisp
-(defun my/org-delete-link ()
-  "Replace an org link of the format [[LINK][DESCRIPTION]] with DESCRIPTION.
+(defun tl/org-replace-link-with-description ()
+	"Replace an Org link of the format [[LINK][DESCRIPTION]] with DESCRIPTION.
 If the link is of the format [[LINK]], delete the whole org link.
 
 In both the cases, save the LINK to the kill-ring.
 
-Execute this command while the point is on or after the hyper-linked org link."
-  (interactive)
-  (when (derived-mode-p 'org-mode)
-    (let ((search-invisible t) start end)
-      (save-excursion
-        (when (re-search-backward "\\[\\[" nil :noerror)
-          (when (re-search-forward "\\[\\[\\(.*?\\)\\(\\]\\[.*?\\)*\\]\\]" nil :noerror)
-            (setq start (match-beginning 0))
-            (setq end   (match-end 0))
-            (kill-new (match-string-no-properties 1)) ; Save the link to kill-ring
-            (replace-regexp "\\[\\[.*?\\(\\]\\[\\(.*?\\)\\)*\\]\\]" "\\2" nil start end)))))))
+Execute this command when point is at an Org link."
+	(interactive)
+	(when (and (derived-mode-p 'org-mode)
+						 (org-in-regexp org-link-bracket-re))
+		(save-excursion
+			(let* ((link-range (org-in-regexp org-link-bracket-re 1))
+						 (link-start-pos (car link-range))
+						 (link-end-pos (cdr link-range))
+						 (link (match-string 0))
+						 (target (match-string 1))
+						 (description (match-string 2))
+						 ;; (description-start-pos (match-beginning 2))
+						 ;; (description-end-pos (match-end 2))
+						 )
+				(kill-new (substring-no-properties target)) ; Save the link target to kill-ring
+				(delete-region link-start-pos link-end-pos)
+				(insert description)))))
+
+;; (defun my/org-delete-link ()
+;;   "Replace an org link of the format [[LINK][DESCRIPTION]] with DESCRIPTION.
+;; If the link is of the format [[LINK]], delete the whole org link.
+
+;; In both the cases, save the LINK to the kill-ring.
+
+;; Execute this command while the point is on or after the hyper-linked org link."
+;;   (interactive)
+;;   (when (derived-mode-p 'org-mode)
+;;     (let ((search-invisible t) start end)
+;;       (save-excursion
+;;         (when (re-search-backward "\\[\\[" nil :noerror)
+;;           (when (re-search-forward "\\[\\[\\(.*?\\)\\(\\]\\[.*?\\)*\\]\\]" nil :noerror)
+;;             (setq start (match-beginning 0))
+;;             (setq end   (match-end 0))
+;;             (kill-new (match-string-no-properties 1)) ; Save the link to kill-ring
+;;             (replace-regexp "\\[\\[.*?\\(\\]\\[\\(.*?\\)\\)*\\]\\]" "\\2" nil start end)))))))
 #+END_SRC
 
 Open file types with specific programs:
@@ -14532,7 +14554,7 @@ Don't ask for the path when searching for files:
 	("i" org-id-get-create)
 	("j" org-goto :color pink)
 	("l" org-toggle-latex-fragment)
-	("dl" my/org-delete-link)
+	("dl" tl/org-replace-link-with-description)
 	("dt" delete-org-latex-aux-files)
 	("$" org-fragtog-mode)
 	("m" hydra-org-markup/body)
@@ -14922,7 +14944,7 @@ As of v9.3, moving cells is built into =org-mode=. Before that I used =org-table
 	("t" tl/insert-org-link-term "term" :exit t)
 	("u" (org-emphasize ?_) "underlined" :exit t)
 	("x" tl/insert-org-link-example "example" :exit t)
-	("d" my/org-delete-link "delete markup" :exit t)
+	("d" tl/org-replace-link-with-description "delete markup" :exit t)
 	("q" nil :color blue))
 (global-set-key (kbd "C-c m") 'hydra-org-markup/body)
 #+END_SRC
