@@ -3561,26 +3561,30 @@ Replace timestamp in link description, either completely deleting it or replacin
 Timestamps are deactivated by replacing angular brackets with curly braces."
 	(interactive)
 	;; (when (derived-mode-p 'org-mode)
-	(when (and (eq major-mode 'org-mode)
-						 (org-current-level)) 				; t if below heading
-		(org-id-get)													; Create ID if missing
-		(org-copy-subtree)
-		(save-window-excursion
-			(let ((temp-file (make-temp-file "-temp-buffer-")))
-				(find-file temp-file)
-				(yank)
-				(org-mode)
-				(goto-char (point-min))
-				(when (re-search-forward org-element--timestamp-regexp (line-end-position) t)
-					(let* ((timestamp-start-pos (match-beginning 0))
-								 (timestamp-end-pos (match-end 0)))
-						(replace-regexp "<" "{" nil timestamp-start-pos timestamp-end-pos t)
-						(replace-regexp ">" "}" nil timestamp-start-pos timestamp-end-pos t)
-						))
-				(save-buffer))))
-	(org-run-like-in-org-mode orig-fun))
+	(if (and (eq major-mode 'org-mode)
+					 (org-current-level)) 				; t if below heading
+			(progn
+				(org-id-get nil t)													; Create ID if missing
+				(org-copy-subtree)
+				(save-window-excursion
+					(let ((temp-file (make-temp-file "-temp-buffer-")))
+						(find-file temp-file)
+						(yank)
+						(org-mode)
+						(goto-char (point-min))
+						(when (re-search-forward org-element--timestamp-regexp (line-end-position) t)
+							(let* ((timestamp-start-pos (match-beginning 0))
+										 (timestamp-end-pos (match-end 0)))
+								(replace-regexp "<" "{" nil timestamp-start-pos timestamp-end-pos t)
+								(replace-regexp ">" "}" nil timestamp-start-pos timestamp-end-pos t)
+								))
+						(save-buffer)
+						(org-run-like-in-org-mode orig-fun)
+						(let ((buffer-offer-save nil))
+							(kill-buffer)))))
+		(org-run-like-in-org-mode orig-fun)))
 
-(advice-add 'org-store-link :around #'tl/org-store-link-advice)
+	(advice-add 'org-store-link :around #'tl/org-store-link-advice)
 #+END_SRC
 
 **** Obsolete
