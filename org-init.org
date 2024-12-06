@@ -13641,7 +13641,10 @@ Disable =tramp-archive.el=, because it tries to mount odt/odg files, see https:/
 
 #+BEGIN_SRC emacs-lisp
 (with-eval-after-load 'tramp-archive
-  (setq tramp-archive-enabled nil))
+  (setq tramp-archive-enabled nil)
+	;; Remove Libreoffice file extensions
+	(dolist (ext '("odb" "odf" "odg" "odp" "ods" "odt"))
+		(setq tramp-archive-suffixes (delete ext tramp-archive-suffixes))))
 #+END_SRC
 
 ** emacs-ssh-deploy
