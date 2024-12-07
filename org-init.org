@@ -3575,8 +3575,35 @@ Function to open links in new frame:
 Added to [[hydra-org]].
 - [ ] Also add it to the mouse context menu!
 
-Replace timestamp in link description, either completely deleting it or replacing just the brackets
+Deactivate timestamps in link description by replacing angular brackets. The following approach advices =org-insert-link=:
 #+BEGIN_SRC emacs-lisp
+(defun tl/org-link-deactivate-timestamp ()
+	"Deactivate timestamp in Org link description by replacing angular brackets with curly braces."
+	(interactive)
+	(when (and (derived-mode-p 'org-mode)
+	 (org-in-regexp org-link-bracket-re))
+		(save-excursion
+	(let* ((link-range (org-in-regexp org-link-bracket-re 1))
+	 (link-start-pos (car link-range))
+	 (link-end-pos (cdr link-range))
+	 (link (match-string 0))
+	 (target (match-string 1))
+	 (description (match-string 2))
+	 (description-start-pos (match-beginning 2))
+	 (description-end-pos (match-end 2)))
+				(goto-char description-start-pos)
+				(while (re-search-forward org-element--timestamp-regexp description-end-pos t)
+					(let* ((timestamp-start-pos (match-beginning 0))
+								 (timestamp-end-pos (match-end 0)))
+						(replace-regexp "<" "{" nil timestamp-start-pos timestamp-end-pos t)
+						(replace-regexp ">" "}" nil timestamp-start-pos timestamp-end-pos t)
+						))))))
+
+(advice-add 'org-insert-link :after #'tl/org-link-deactivate-timestamp)
+#+END_SRC
+
+Alternatively, one could change the heading before generating the link with org-store-link. However, this is more complicated and creates other problems, for example, when using the capture mechanism:
+#+BEGIN_SRC emacs-lisp :tangle no
 (defun tl/org-store-link-advice (orig-fun &rest args)
 	"Modify Org heading before creating an Org link.
 
@@ -3584,7 +3611,11 @@ Timestamps are deactivated by replacing angular brackets with curly braces."
 	(interactive)
 	;; (when (derived-mode-p 'org-mode)
 	(if (and (eq major-mode 'org-mode)
-					 (org-current-level)) 				; t if below heading
+					 (org-current-level)					; t if below heading
+					 ;; Heading has a timestamp?
+					 (save-excursion
+             (org-back-to-heading t)
+             (re-search-forward org-element--timestamp-regexp (line-end-position) t)))
 			(progn
 				(org-id-get nil t)													; Create ID if missing
 				(org-copy-subtree)
@@ -3594,19 +3625,22 @@ Timestamps are deactivated by replacing angular brackets with curly braces."
 						(yank)
 						(org-mode)
 						(goto-char (point-min))
-						(when (re-search-forward org-element--timestamp-regexp (line-end-position) t)
+						(while (re-search-forward org-element--timestamp-regexp (line-end-position) t)
 							(let* ((timestamp-start-pos (match-beginning 0))
 										 (timestamp-end-pos (match-end 0)))
 								(replace-regexp "<" "{" nil timestamp-start-pos timestamp-end-pos t)
 								(replace-regexp ">" "}" nil timestamp-start-pos timestamp-end-pos t)
 								))
 						(save-buffer)
-						(org-run-like-in-org-mode orig-fun)
+						;; (org-run-like-in-org-mode orig-fun)
+						(call-interactively orig-fun) ; FIXME: issue with non-interactive calls
 						(let ((buffer-offer-save nil))
 							(kill-buffer)))))
-		(org-run-like-in-org-mode orig-fun)))
+		;; (org-run-like-in-org-mode orig-fun)
+		(call-interactively orig-fun) ; FIXME: issue with non-interactive calls
+		))
 
-	(advice-add 'org-store-link :around #'tl/org-store-link-advice)
+(advice-add 'org-store-link :around #'tl/org-store-link-advice)
 #+END_SRC
 
 **** Obsolete
