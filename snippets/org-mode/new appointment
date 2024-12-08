@@ -7,4 +7,5 @@
 - CREATED: `(yas/org-insert-time-stamp (current-time) t t)`
 :END:
 
+`(progn (org-id-get-create) (delete-line))`
 $0
