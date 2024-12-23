@@ -31,10 +31,11 @@
 (require 'ido)
 (require 'cl-lib)
 (require 'bookmark)
+(require 'message)
 
 (require 'mu4e-window)
 (require 'mu4e-config)
-
+
 ;;; Customization
 
 (defcustom mu4e-debug nil
@@ -46,7 +47,7 @@
   "Function to be used to receive user-input during completion.
 
 Suggested possible values are:
- * `completing-read':      emacs built-in completion method
+ * `completing-read':      Emacs' built-in completion method
  * `ido-completing-read':  dynamic completion within the minibuffer.
 
 The function is used in two contexts -
@@ -109,8 +110,6 @@ marked as read-only, or non-nil otherwise."
           function)
   :group 'mu4e-view)
 
-
-
 (defun mu4e-select-other-view ()
   "Switch between headers view and message view."
   (interactive)
@@ -121,13 +120,11 @@ marked as read-only, or non-nil otherwise."
            ((mu4e-current-buffer-type-p 'headers)
             (mu4e-get-view-buffer))
            (t (mu4e-error
-               "This window is neither the headers nor the view window."))))
+               "This window is neither the headers nor the view window"))))
          (other-win (and other-buf (get-buffer-window other-buf))))
     (if (window-live-p other-win)
         (select-window other-win)
       (mu4e-message "No window to switch to"))))
-
-
 
 ;;; Messages, warnings and errors
 (defun mu4e-format (frm &rest args)
@@ -216,7 +213,7 @@ after trying an exact match.
 Return the matching choice value (cdr of the cell)."
   (let* ((metadata `(metadata
                      (display-sort-function . ,#'identity)
-                     (cycle-sort-function .   ,#'identity)))
+                     (cycle-sort-function   . ,#'identity)))
          (quick-result)
          (result
           (minibuffer-with-setup-hook
@@ -248,7 +245,7 @@ Return the matching choice value (cdr of the cell)."
   "Read and return one of CHOICES, prompting for PROMPT.
 
 PROMPT describes a multiple-choice question to the user. CHOICES
-is an alist of the fiorm
+is an alist of the form
   ( ( <display-string>  ( <shortcut> . <value> ))
      ... )
 Any input that is not one of CHOICES is ignored. This is mu4e's
@@ -324,7 +321,6 @@ Function returns the value (cdr) of the matching cell."
                 (characterp (plist-get item :key)))
               lst))
 
-
 ;;; Logging / debugging
 
 (defconst mu4e--log-max-size 1000000
@@ -400,8 +396,6 @@ log-buffer. See `mu4e-show-log'."
       (mu4e-warn "No debug log available"))
     (display-buffer buf)))
 
-
-
 ;;; Flags
 ;; Converting flags->string and vice-versa
 
@@ -450,7 +444,6 @@ http://cr.yp.to/proto/maildir.html."
           (_     nil))))
      str))))
 
-
 ;;; Misc
 (defun mu4e-copy-thing-at-point ()
   "Copy e-mail address or URL at point to the kill ring.
@@ -528,7 +521,7 @@ Or go to the top level if there is none."
           ('mu4e-view-mode    "(mu4e)Message view")
           (_                  "mu4e"))))
 
-
+
 ;;; bookmarks
 (defun mu4e--make-bookmark-record ()
   "Create a bookmark for the message at point."
@@ -553,14 +546,12 @@ Or go to the top level if there is none."
   (when-let ((msgid (bookmark-prop-get bookmark 'message-id)))
     (mu4e-view-message-with-message-id msgid)))
 
-;;; Macros
+;;; Macros
 
 (defmacro mu4e-setq-if-nil (var val)
   "Set VAR to VAL if VAR is nil."
   `(unless ,var (setq ,var ,val)))
 
-
-
 ;;; Misc
 (defun mu4e-join-paths (directory &rest components)
   "Append COMPONENTS to DIRECTORY and return the resulting string.
@@ -585,6 +576,31 @@ Mu4e version of emacs 28's string-replace."
 This is mu4e's version of Emacs 29's `plistp'."
   (let ((len (proper-list-p object)))
     (and len (zerop (% len 2)))))
+
+(defun mu4e--message-hide-headers ()
+  "Hide headers based on the `message-hidden-headers' variable.
+This is mu4e's version of the post-emacs-28 `message-hide-headers',
+which we need to avoid #2661."
+  (let ((regexps (if (stringp message-hidden-headers)
+                     (list message-hidden-headers)
+                   message-hidden-headers))
+        end-of-headers)
+    (when regexps
+      (save-excursion
+        (save-restriction
+          (message-narrow-to-headers)
+          (setq end-of-headers (point-min-marker))
+          (goto-char (point-min))
+          (while (not (eobp))
+            (if (not (message-hide-header-p regexps))
+                (message-next-header)
+              (let ((begin (point)))
+                (message-next-header)
+                (let ((header (delete-and-extract-region begin (point))))
+                  (save-excursion
+                    (goto-char end-of-headers)
+                    (insert-before-markers header))))))))
+      (narrow-to-region end-of-headers (point-max)))))
 
 (defun mu4e-key-description (cmd)
   "Get the textual form of current binding to interactive function CMD.

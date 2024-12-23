@@ -282,21 +282,34 @@ Optionally,
 
 (defun mu4e-view-save-attachments (&optional ask-dir)
   "Save files from the current view buffer.
-This applies to all MIME-parts that are \"attachment-like\" (have a filename),
-regardless of their disposition.
+
+This applies to all MIME-parts that are \"attachment-like\" (have
+a filename), regardless of their disposition.
 
 With ASK-DIR is non-nil, user can specify the target-directory; otherwise
-one is determined using `mu4e-attachment-dir'."
+one is determined using `mu4e-attachment-dir'.
+
+This command assumes unique filenames for the attachments, since
+that is how the underlying completion mechanism works. If there
+are duplicates, only one is recognized.
+
+Furthermore, file-names that match `crm-separator' (by default,
+commas) are not supported (see `completing-read-multiple' for
+further details).
+
+For such corner-cases, it is recommended to use
+`mu4e-view-mime-part-action' instead, which does not have this
+limitation."
   (interactive "P")
   (let* ((parts (mu4e-view-mime-parts))
          (candidates  (seq-map
-                         (lambda (fpart)
-                           (cons ;; (filename . annotation)
-                            (plist-get fpart :filename)
-                            fpart))
-                         (seq-filter
-                          (lambda (part) (plist-get part :attachment-like))
-                          parts)))
+                       (lambda (fpart)
+                         (cons ;; (filename . annotation)
+                          (plist-get fpart :filename)
+                          fpart))
+                       (seq-filter
+                        (lambda (part) (plist-get part :attachment-like))
+                        parts)))
          (candidates (or candidates
                          (mu4e-warn "No attachments for this message")))
          (files (mu4e--completing-read "Save file(s): " candidates
@@ -309,8 +322,10 @@ one is determined using `mu4e-attachment-dir'."
                      (path (mu4e--uniqify-file-name
                             (mu4e-join-paths
                              (or custom-dir (plist-get part :target-dir))
-                             (plist-get part :filename)))))
-                (mm-save-part-to-file (plist-get part :handle) path)))
+                             (plist-get part :filename))))
+                     (handle (plist-get part :handle)))
+                (when handle ;; completion may fail, and then there's no handle.
+                  (mm-save-part-to-file handle path))))
             files)))
 
 (defvar mu4e-view-mime-part-actions

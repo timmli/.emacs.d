@@ -157,6 +157,12 @@ The message is resent as-is, without any editing. See
 
 ;;; Generated autoloads from mu4e-org.el
 
+(autoload 'mu4e-org-open "mu4e-org" "\
+Open the org LINK.
+Open the mu4e message (for links starting with \"msgid:\") or run
+the query (for links starting with \"query:\").
+
+(fn LINK)")
 (register-definition-prefixes "mu4e-org" '("mu4e-"))
 
 
