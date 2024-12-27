@@ -1048,9 +1048,8 @@ Select an ssh connection from the server list in ~/.ssh/config with the helm int
 Does not work under windows so far.
 
 #+BEGIN_SRC emacs-lisp
-(when (not (eq system-type 'windows-nt))
-	(use-package helm-tramp
-		:ensure t))
+(use-package helm-tramp
+	:ensure t)
 #+END_SRC
 
 *** helm-mu
@@ -2623,9 +2622,8 @@ https://github.com/abo-abo/org-download
 	:pin MELPA
 	:config
 	(setq org-download-image-org-width 400 ; will also add #+ATTR_ORG keyword
-				org-download-method 'attach)
-	(when (not (eq system-type 'windows-nt))
-		(setq org-download-screenshot-method "scrot -s %s"))
+				org-download-method 'attach
+				org-download-screenshot-method "scrot -s %s")
   (add-hook 'dired-mode-hook 'org-download-enable))
 #+END_SRC
 
@@ -9916,26 +9914,25 @@ Issues
 - [ ] Add multi-page view: https://github.com/vedang/pdf-tools/pull/224
 
 #+BEGIN_SRC emacs-lisp
-(when (not (eq system-type 'windows-nt))
-	(use-package pdf-tools
-		:ensure t
-		:pin MELPA
-		;; :if (executable-find "epdfinfo")
-		:mode (("\\.pdf\\'" . pdf-view-mode))
-		:bind ("M-w" . pdf-view-kill-ring-save) ; does not work
-		:config
-		(setq-default pdf-view-display-size 'fit-page) ; fit page by default
-		(setq pdf-view-resize-factor 1.10
-					pdf-view-selection-style 'glyph)
-		(pdf-tools-install)
-		;; Manually set path to epdfinfo binary
-		;; (setq pdf-info-epdfinfo-program (expand-file-name "epdinfo.exe" (concat wemacs-dir "pdftools")))
-		(define-key pdf-view-mode-map (kbd "M-w") 'pdf-view-kill-ring-save)
-		(define-key pdf-view-mode-map (kbd "C-w") 'pdf-view-kill-ring-save)
-		(define-key pdf-view-mode-map (kbd "M-<left>") 'pdf-history-backward)
-		(define-key pdf-view-mode-map (kbd "M-<right>") 'pdf-history-forward)
-		(add-hook 'pdf-occur-buffer-mode-hook 'next-error-follow-minor-mode) ; activate follow mode in `pdf-occur'
-		))
+(use-package pdf-tools
+	:ensure t
+	:pin MELPA
+	;; :if (executable-find "epdfinfo")
+	:mode (("\\.pdf\\'" . pdf-view-mode))
+	:bind ("M-w" . pdf-view-kill-ring-save) ; does not work
+	:config
+	(setq-default pdf-view-display-size 'fit-page) ; fit page by default
+	(setq pdf-view-resize-factor 1.10
+				pdf-view-selection-style 'glyph)
+	(pdf-tools-install)
+	;; Manually set path to epdfinfo binary
+	;; (setq pdf-info-epdfinfo-program (expand-file-name "epdinfo.exe" (concat wemacs-dir "pdftools")))
+	(define-key pdf-view-mode-map (kbd "M-w") 'pdf-view-kill-ring-save)
+	(define-key pdf-view-mode-map (kbd "C-w") 'pdf-view-kill-ring-save)
+	(define-key pdf-view-mode-map (kbd "M-<left>") 'pdf-history-backward)
+	(define-key pdf-view-mode-map (kbd "M-<right>") 'pdf-history-forward)
+	(add-hook 'pdf-occur-buffer-mode-hook 'next-error-follow-minor-mode) ; activate follow mode in `pdf-occur'
+	)
 #+END_SRC
 
 ***** TODO org-pdftools
@@ -9950,15 +9947,15 @@ URL: https://github.com/fuxialexander/org-pdftools
       - https://github.com/fuxialexander/org-pdftools/issues/34
 
 #+BEGIN_SRC emacs-lisp
-(when (not (eq system-type 'windows-nt))
-	(use-package org-pdftools
-		:ensure t
-		;; :hook (org-load . org-pdftools-setup-link) ; recommended but does not work 
-		:config
-		(with-eval-after-load 'org
-			(org-pdftools-setup-link))
-		;; (setq org-pdftools-root-dir user-bibliography-pdf-dir) ; not supported anymore?
-		))
+(use-package org-pdftools
+	:ensure t
+	;; :hook (org-load . org-pdftools-setup-link) ; recommended but does not work
+	:hook (org-mode . org-pdftools-setup-link) 
+	;; :config
+	;; (with-eval-after-load 'org ; Instead of: :hook (org-mode . org-pdftools-setup-link)
+	;; 	(org-pdftools-setup-link))
+	;; (setq org-pdftools-root-dir user-bibliography-pdf-dir) ; not supported anymore?
+	)
 #+END_SRC
 
 **** Signature
@@ -16125,7 +16122,7 @@ Hydra taken from https://github.com/abo-abo/hydra/wiki/PDF-Tools#my-hydra-for-pd
 	("l" image-forward-hscroll :color red)
 	("h" image-backward-hscroll :color red))
 
-(when (not (eq system-type 'windows-nt))
+(with-eval-after-load 'pdf-tools 
 	(define-key pdf-view-mode-map (kbd "C-f") 'pdf-occur))
 #+END_SRC
 
