@@ -10078,7 +10078,25 @@ Read and annotate djvu with Emacs. Builds on [[djvu]].
 
 *** Media player
 
+**** COMMENT Listen
+
+https://github.com/alphapapa/listen.el
+
+Simple audio/music player for Emacs
+
+Issues
+- [ ] Search is a a little slow and the interface is quite limited. 
+
+#+BEGIN_SRC emacs-lisp
+(use-package listen
+  :quelpa (listen :fetcher github :repo "alphapapa/listen.el")
+	:config
+	(setq listen-directory music-dir))
+#+END_SRC
+
 **** COMMENT emms
+
+https://www.gnu.org/software/emms/
 
 - [ ] takes way to long for scanning my music collection
 - [ ] For some reason, =emms= does not correctly use =vlc= under Windows.
@@ -10113,6 +10131,7 @@ Read and annotate djvu with Emacs. Builds on [[djvu]].
 	:config
 	(require 'helm-adaptive))
 #+END_SRC
+
 
 *** outline-mode
 
