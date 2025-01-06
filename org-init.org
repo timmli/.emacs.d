@@ -12525,7 +12525,7 @@ This solution reuses code from here:
 					(lambda () (setq ps-line-number t)))
 
 (defun tl/print-buffer-to-pdf ()
-	"Print the current buffer to print_buffertitle_timestamp.pdf without faces.
+	"Print the current buffer or region to print_buffertitle_timestamp.pdf.
 This command depends on the shell command `ps2pdf'."
 	(interactive)
 	(let* ((buf (current-buffer))
@@ -12534,16 +12534,20 @@ This command depends on the shell command `ps2pdf'."
 													 "print_"
 													 (replace-regexp-in-string "\\ \\|\\[\\|\\]\\|\\*" "" (buffer-name buf))
 													 "_"
-													 (format-time-string "%Y-%m-%d"))))
+													 (format-time-string "%Y-%m-%d")))
+				 (region-start-pos (when (region-active-p) (region-beginning)))
+				 (region-end-pos (when (region-active-p) (region-end))))
 		(with-temp-buffer
 			(insert-buffer buf)
 			(visual-line-mode t)
 			(tl/harden-visual-line-breaks-in-buffer)
-			(if (y-or-n-p "Print with faces? ")
-					(progn
-						;; (load-theme-buffer-local 'leuven tempbuf) ; FIXME: doesn't seem to take effect
-						(ps-print-with-faces (point-min) (point-max) (concat filename ".ps")))
-				(progn (ps-print-without-faces (point-min) (point-max) (concat filename ".ps")))))
+			(let ((start-pos (or region-start-pos (point-min)))
+						(end-pos (or region-end-pos (point-max))))
+				(if (y-or-n-p "Print with faces? ")
+						(progn
+							;; (load-theme-buffer-local 'leuven tempbuf) ; FIXME: doesn't seem to take effect
+							(ps-print-with-faces start-pos end-pos (concat filename ".ps")))
+					(progn (ps-print-without-faces start-pos end-pos (concat filename ".ps"))))))
 		(shell-command (concat "ps2pdf " filename ".ps " filename ".pdf" ))
 		(delete-file (concat filename ".ps"))
 		(message (concat "PDF saved to " filename ".pdf"))))
