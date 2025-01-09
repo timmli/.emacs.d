@@ -5767,13 +5767,19 @@ https://elpa.gnu.org/packages/elisp-benchmarks.html
 
 See http://xahlee.info/emacs/emacs/elisp_benchmark.html for examples.
 
+Usage:
+- =(benchmark-run REPETITIONS FORMS)=
+- =(benchmark-run-compiled REPETITIONS FORMS)=: Use the ad-hoc byte-compiled version of FORMS.
+
 ***** profiler (built-in)
 
 https://www.gnu.org/software/emacs/manual/html_node/elisp/Profiling.html
 
 Interactive profiler that records the CPU time consumed by function calls. 
 
+Usage:
 - =(profiler-start MODE)=: start profiler
+- =(profiler-stop)=: end profiler
 - =(profiler-report)=: show profiler report
 
 **** Eldev
