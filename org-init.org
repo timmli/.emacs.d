@@ -9114,7 +9114,8 @@ MimeType=x-scheme-handler/mailto;
 ## From the original Emacs desktop file (https://git.savannah.gnu.org/cgit/emacs.git/tree/etc/emacsclient-mail.desktop)
 # Exec=emacsclient --alternate-editor= --eval "(message-mailto (pop server-eval-args-left))" %u
 ## My adaptation of the above
-Exec=emacsclient --alternate-editor= --eval "(message-mailto \"%u\")"
+## For some unkown reason, there can be a trailing apostrophe. 
+Exec=emacsclient --alternate-editor= --eval "(message-mailto (string-trim-right \"%u\" \"'\"))"
 Icon=emacs
 Type=Application
 Terminal=false
