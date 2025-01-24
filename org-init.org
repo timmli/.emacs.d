@@ -3501,11 +3501,13 @@ Function to remove all ID properties from buffer:
 	(save-excursion
 		(beginning-of-buffer)
 		(let ((id-removed-p nil))
-			(while (and
-							(not (org-next-visible-heading 1))
-							(org-at-heading-p))
+			(when (not (org-at-heading-p))
+				(org-next-visible-heading 1))
+			;; org-next-visible-heading moves point to end of buffer after last heading
+			(while (not (eobp)) 
 				(when (org-entry-delete (point) "ID")
-					(setq id-removed-p t)))
+					(setq id-removed-p t))
+				(org-next-visible-heading 1))
 			(when (symbol-value 'id-removed-p)
 				(org-id-update-id-locations)))))
 #+END_SRC
@@ -5756,6 +5758,31 @@ Guides
 
 Makefiles
 - https://nullprogram.com/blog/2020/01/22/
+
+**** Benchmarking
+
+***** elisp-benchmarks 
+
+https://elpa.gnu.org/packages/elisp-benchmarks.html
+
+***** benchmark (built-in)
+
+See http://xahlee.info/emacs/emacs/elisp_benchmark.html for examples.
+
+Usage:
+- =(benchmark-run REPETITIONS FORMS)=
+- =(benchmark-run-compiled REPETITIONS FORMS)=: Use the ad-hoc byte-compiled version of FORMS.
+
+***** profiler (built-in)
+
+https://www.gnu.org/software/emacs/manual/html_node/elisp/Profiling.html
+
+Interactive profiler that records the CPU time consumed by function calls. 
+
+Usage:
+- =(profiler-start MODE)=: start profiler
+- =(profiler-stop)=: end profiler
+- =(profiler-report)=: show profiler report
 
 **** Eldev
 
@@ -12525,29 +12552,30 @@ This solution reuses code from here:
 					(lambda () (setq ps-line-number t)))
 
 (defun tl/print-buffer-to-pdf ()
-	"Print the current buffer to print_buffertitle_timestamp.pdf without faces.
+	"Print the current buffer or region to print_buffertitle_timestamp.pdf.
 This command depends on the shell command `ps2pdf'."
 	(interactive)
 	(let* ((buf (current-buffer))
-				 (tempbuf (generate-new-buffer (concat "*Temporary buffer of: " (buffer-name buf) "*" )))
 				 (path (read-directory-name "Save PDF to: " (expand-file-name "~/Downloads")))
-				 (filename (expand-file-name
-										(concat "print_"
-														(replace-regexp-in-string "\\ \\|\\[\\|\\]\\|\\*" "" (buffer-name buf))
-														"_" (format-time-string "%Y-%m-%d"))
-										path)))
-		(save-current-buffer
-			(set-buffer tempbuf)
+				 (filename (concat path
+													 "print_"
+													 (replace-regexp-in-string "\\ \\|\\[\\|\\]\\|\\*" "" (buffer-name buf))
+													 "_"
+													 (format-time-string "%Y-%m-%d")))
+				 (region-start-pos (when (region-active-p) (region-beginning)))
+				 (region-end-pos (when (region-active-p) (region-end))))
+		(with-temp-buffer
 			(insert-buffer buf)
 			(visual-line-mode t)
 			(tl/harden-visual-line-breaks-in-buffer)
-			(if (y-or-n-p "Print with faces?")
-					(progn
-						;; (load-theme-buffer-local 'leuven tempbuf) ; FIXME: doesn't seem to take effect
-						(ps-print-with-faces (point-min) (point-max) (concat filename ".ps")))
-				(progn (ps-print-without-faces (point-min) (point-max) (concat filename ".ps"))))
-			(kill-buffer tempbuf))
-		(shell-command (concat "ps2pdf " filename ".ps"))
+			(let ((start-pos (or region-start-pos (point-min)))
+						(end-pos (or region-end-pos (point-max))))
+				(if (y-or-n-p "Print with faces? ")
+						(progn
+							;; (load-theme-buffer-local 'leuven tempbuf) ; FIXME: doesn't seem to take effect
+							(ps-print-with-faces start-pos end-pos (concat filename ".ps")))
+					(progn (ps-print-without-faces start-pos end-pos (concat filename ".ps"))))))
+		(shell-command (concat "ps2pdf " filename ".ps " filename ".pdf" ))
 		(delete-file (concat filename ".ps"))
 		(message (concat "PDF saved to " filename ".pdf"))))
 #+END_SRC
