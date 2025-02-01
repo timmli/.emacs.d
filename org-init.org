@@ -12852,6 +12852,8 @@ URL: https://github.com/jeremy-compostella/pdfgrep
 
 ** Backup
 
+Emacs copies the old contents of a file before actually saving it, called the "backup".
+
 https://www.emacswiki.org/emacs/BackupFiles
 http://pragmaticemacs.com/emacs/auto-save-and-backup-every-save/
 
@@ -12873,7 +12875,19 @@ The target directory is to determined by the variable =backup-directory-alist=.
       `(("." . ,backup-dir)))
 #+END_SRC
 
+Show difference between current file buffer and auto-save file (taken from https://www.emacswiki.org/emacs/AutoSave):
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/diff-auto-save-file ()
+  "Get auto-save #file# difference with current buffer."
+  (interactive)
+  (diff (make-auto-save-file-name) (current-buffer) nil 'noasync))
+#+END_SRC
+
 ** Autosave
+
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Auto-Save.html
+https://www.emacswiki.org/emacs/AutoSave
 
 ** Locking files
 
