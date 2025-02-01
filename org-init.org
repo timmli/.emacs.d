@@ -9126,7 +9126,8 @@ MimeType=x-scheme-handler/mailto;
 ## From the original Emacs desktop file (https://git.savannah.gnu.org/cgit/emacs.git/tree/etc/emacsclient-mail.desktop)
 # Exec=emacsclient --alternate-editor= --eval "(message-mailto (pop server-eval-args-left))" %u
 ## My adaptation of the above
-Exec=emacsclient --alternate-editor= --eval "(message-mailto \"%u\")"
+## For some unkown reason, there can be a trailing apostrophe. 
+Exec=emacsclient --alternate-editor= --eval "(message-mailto (string-trim-right \"%u\" \"'\"))"
 Icon=emacs
 Type=Application
 Terminal=false
@@ -13755,6 +13756,8 @@ Disable =tramp-archive.el=, because it tries to mount odt/odg files, see https:/
 	;; Remove Libreoffice file extensions
 	(dolist (ext '("odb" "odf" "odg" "odp" "ods" "odt"))
 		(setq tramp-archive-suffixes (delete ext tramp-archive-suffixes))))
+;; Another try ...
+(setq tramp-ignored-file-name-regexp "\\(^.\\.odt.\\)")
 #+END_SRC
 
 ** emacs-ssh-deploy
