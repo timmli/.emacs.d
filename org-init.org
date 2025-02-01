@@ -5404,6 +5404,10 @@ Issues
 
 !!! WORK IN PROGRESS !!!
 
+https://github.com/timmli/helm-khard
+
+A Helm interface for khard.
+
 #+BEGIN_SRC emacs-lisp
 (use-package uuidgen
 	:ensure t
@@ -5592,6 +5596,12 @@ Important limitations:
 #+end_src
 
 *** org-ical-sync
+
+!!! WORK IN PROGRESS !!!
+
+https://codeberg.org/timmli/org-ical-sync
+
+Sync Org headings with iCal database.
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-ical-sync
