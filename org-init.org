@@ -5591,6 +5591,18 @@ Important limitations:
 
 #+end_src
 
+*** org-ical-sync
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-ical-sync
+	:after org
+  :load-path "lisp/org-ical-sync/"
+	:config
+	(org-ical-sync-setup)
+	(setq org-ical-sync-vdirsyncer-command "vdirsyncer-sync-calendars.sh"
+				org-ical-sync-after-save t))
+#+END_SRC
+
 ** Coding & Writing
 
 *** Artist mode

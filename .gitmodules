@@ -22,3 +22,6 @@
 [submodule "lisp/helm-khard"]
 	path = lisp/helm-khard
 	url = https://github.com/timmli/helm-khard.git
+[submodule "lisp/org-ical-sync"]
+	path = lisp/org-ical-sync
+	url = https://codeberg.org/timmli/org-ical-sync.git
