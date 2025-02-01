@@ -11305,18 +11305,24 @@ Not sure whether I want to auto-indent whole files ...
 	)
 #+END_SRC
 
-*** highlight-indent-guides
+*** TODO highlight-indent-guides
+:LOGBOOK:
+- State "TODO"       from              [2025-01-10 Fri 08:30]
+:END:
 
 https://github.com/DarthFennec/highlight-indent-guides
 
 Show vertical line per indentation level.
+
+Issues:
+- [ ] Vertical lines sometimes do not have the right color (white or barely visible). This is independent of =highlight-indent-guides-method=.
 
 #+begin_src emacs-lisp
 (use-package highlight-indent-guides
 	:ensure t
 	:config
 	(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
-	(setq highlight-indent-guides-method 'character)
+	(setq highlight-indent-guides-method 'bitmap)
 	)
 #+end_src
 
