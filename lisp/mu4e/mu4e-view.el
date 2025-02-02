@@ -183,11 +183,9 @@ previous header."
    (mu4e~headers-move (- (or n 1)))))
 
 (defun mu4e--view-prev-or-next (func backwards)
-  "Move point to the next or previous message.
-Go to the previous message if BACKWARDS is non-nil.
-unread message header in the headers buffer connected with this
-message view. If this succeeds, return the new docid. Otherwise,
-return nil."
+  "Move point to the next or previous message and invoke FUNC.
+Go to the previous message if BACKWARDS is non-nil. If this
+succeeds, return the new docid. Otherwise, return nil."
   (mu4e--view-in-headers-context (funcall func backwards))
   (mu4e-select-other-view)
   (mu4e-headers-view-message))
@@ -231,7 +229,6 @@ If this succeeds, return the new docid. Otherwise, return nil."
   (interactive)
   (mu4e--view-in-headers-context (mu4e-thread-fold-toggle-all)))
 
-
 ;;; Interactive functions
 (defun mu4e-view-action (&optional msg)
   "Ask user for some action to apply on MSG, then do it.
@@ -615,7 +612,7 @@ As a side-effect, a message that is being viewed loses its
   ;; buffer-local state that *must* survive is correctly copied
   ;; across.
   (let ((linked-headers-buffer))
-    (when-let ((existing-buffer (mu4e-get-view-buffer nil nil)))
+    (when-let* ((existing-buffer (mu4e-get-view-buffer nil nil)))
       ;; required; this state must carry over from the killed buffer
       ;; to the new one.
       (setq linked-headers-buffer mu4e-linked-headers-buffer)
@@ -749,17 +746,24 @@ determine which browser function to use."
   "Refresh the message view."
   ;;; XXX: sometimes, side-effect: increase the header-buffers size
   (interactive)
-  (when-let ((msg (and (derived-mode-p 'mu4e-view-mode)
+  (when-let* ((msg (and (derived-mode-p 'mu4e-view-mode)
                        mu4e--view-message)))
     (mu4e-view-quit)
     (mu4e-view msg)))
 
-(defun mu4e-view-toggle-show-mime-parts()
-  "Toggle whether to show all MIME-parts."
+(defun mu4e-view-show-mime-parts()
+  "Show all MIME-parts.
+
+This can be useful for messages with embedded images etc. that
+you want to save, and that are not accessible otherwise. However,
+note that Emacs can get slow with big attached images.
+
+To go back to normal display, quit the message and re-open."
   (interactive)
-  (setq gnus-inhibit-mime-unbuttonizing
-        (not gnus-inhibit-mime-unbuttonizing))
-  (mu4e-view-refresh))
+  (let* ((toggle (not gnus-mime-display-multipart-as-mixed))
+         (gnus-inhibit-mime-unbuttonizing (not toggle))
+         (gnus-mime-display-multipart-as-mixed toggle))
+    (mu4e-view-refresh)))
 
 (defun mu4e-view-toggle-fill-flowed()
   "Toggle flowed-message text filling."
@@ -789,7 +793,7 @@ Note that for some messages, this can trigger high CPU load."
               ((or ':path ':maildir ':list)
                (mu4e--view-gnus-insert-header field fieldval))
               (':message-id
-               (when-let ((msgid (plist-get msg :message-id)))
+               (when-let* ((msgid (plist-get msg :message-id)))
                  (mu4e--view-gnus-insert-header field (format "<%s>" msgid))))
               (':mailing-list
                (let ((list (plist-get msg :list)))
@@ -848,6 +852,11 @@ Note that for some messages, this can trigger high CPU load."
         (setq handle (cons buf (cons ty rest)))
         (list handle attendee))
   handle-attendee))
+
+(defun mu4e-view-jump-to-mime-part (number)
+  "Jump to MIME-part with NUMBER."
+  (interactive "P")
+  (call-interactively #'gnus-article-jump-to-part number))
 
 (defun mu4e--view-mode-p ()
   "Is the buffer in mu4e-view-mode or one of its descendants?"
@@ -921,6 +930,7 @@ This is useful for advising some Gnus-functionality that does not work in mu4e."
     (define-key map "a" #'mu4e-view-action)
     (define-key map "A" #'mu4e-view-mime-part-action)
     (define-key map "e" #'mu4e-view-save-attachments)
+    (define-key map "J" #'mu4e-view-jump-to-mime-part)
 
     ;; change the number of headers
     (define-key map (kbd "C-+") #'mu4e-headers-split-view-grow)
@@ -1011,7 +1021,7 @@ This is useful for advising some Gnus-functionality that does not work in mu4e."
   "Keymap for mu4e-view mode.")
 
 (easy-menu-define mu4e-view-mode-menu
-  mu4e-view-mode-map "Menu for mu4e's view-mode."
+  mu4e-view-mode-map "Menu for mu4e's view mode."
   (append
    '("View"
      "--"
@@ -1102,14 +1112,13 @@ Article Treatment' for more options."
   (interactive)
   (funcall (mu4e-read-option "Massage: " mu4e-view-massage-options)))
 
-
 (defun mu4e-view-toggle-html ()
   "Toggle html-display of the first html-part found."
   (interactive)
   ;; This function assumes `gnus-article-mime-handle-alist' is sorted by
   ;; pertinence, i.e. the first HTML part found in it is the most important one.
   (save-excursion
-    (if-let ((html-part
+    (if-let*((html-part
               (seq-find (lambda (handle)
                           (equal (mm-handle-media-type (cdr handle))
                                  "text/html"))
@@ -1121,7 +1130,6 @@ Article Treatment' for more options."
                         gnus-article-mime-handle-alist)))
         (gnus-article-inline-part (car html-part))
       (mu4e-warn "Cannot switch; no html and/or text part in this message"))))
-
 ;;; Bug Reference mode support
 
 ;; Due to mu4e's view buffer handling (mu4e-view-mode is called long before the
@@ -1162,6 +1170,5 @@ GROUP-REGEXP and each header value against HEADER-REGEXP in
   (add-hook 'bug-reference-auto-setup-functions
             #'mu4e--view-try-setup-bug-reference-mode))
 
-
 (provide 'mu4e-view)
 ;;; mu4e-view.el ends here

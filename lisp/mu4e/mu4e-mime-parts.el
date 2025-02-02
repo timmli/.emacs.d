@@ -1,6 +1,6 @@
 ;;; mu4e-mime-parts.el --- Dealing with MIME-parts & URLs -*- lexical-binding: t -*-
 
-;; Copyright (C) 2023 Dirk-Jan C. Binnema
+;; Copyright (C) 2023-2024 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -24,19 +24,15 @@
 
 ;; Implements functions and variables for dealing with MIME-parts and URLs.
 
-
 ;;; TODO:
 ;; [~] mime part candidate sorting -> is his even possible generally?
 ;; [ ] URL support
 
 ;;; Code:
-
-
 (require 'mu4e-vars)
 (require 'mu4e-folders)
 (require 'gnus-art)
-
-
+(require 'crm)
 
 (defcustom mu4e-view-open-program
   (pcase system-type
@@ -54,7 +50,17 @@ specified a function as viewer."
   :type '(choice string function)
   :group 'mu4e-view)
 
-
+(defcustom mu4e-uniquify-save-file-name-function 'mu4e--uniquify-file-name
+  "Function to create a unique, not-yet-existing file name.
+
+Takes one parameter, a file-name path, and returns a file-name
+path that does not yet exist. This can be the same, or some
+variation.
+
+See `mu4e--uniquify-file-name' for an example."
+  :type 'function
+  :group 'mu4e-view)
+
 ;; remember the mime-handles, so we can clean them up when
 ;; we quit this buffer.
 (defvar-local mu4e~gnus-article-mime-handles nil)
@@ -66,11 +72,9 @@ specified a function as viewer."
     (mm-destroy-parts mu4e~gnus-article-mime-handles)
     (setq mu4e~gnus-article-mime-handles nil)))
 
-
 ;;; MIME-parts
 (defvar-local mu4e--view-mime-parts nil
   "Cached MIME parts for this message.")
-
 
 (defun mu4e-view-mime-parts()
   "Get the list of MIME parts for this message.
@@ -97,7 +101,7 @@ There are some internal fields as well, e.g. ; subject to change:
          (save-excursion
            (goto-char (point-min))
            (while (not (eobp))
-             (when-let ((part (get-text-property (point) 'gnus-data))
+             (when-let* ((part (get-text-property (point) 'gnus-data))
                         (index (get-text-property (point) 'gnus-part)))
                (when (and part (numberp index) (not (member index indices)))
                  (let* ((disp (mm-handle-disposition part))
@@ -135,8 +139,9 @@ There are some internal fields as well, e.g. ; subject to change:
 
 ;; https://emacs.stackexchange.com/questions/74547/completing-read-search-also-in-annotationsxc
 
-(defun mu4e--uniqify-file-name (fname)
-  "Return a non-yet-existing filename based on FNAME.
+(defun mu4e--uniquify-file-name (fname)
+  "Return a not-yet-existing filename based on FNAME.
+
 If FNAME does not yet exist, return it unchanged.
 Otherwise, return a file with a unique number appended to the base-name."
   (let ((num 1) (orig-name fname))
@@ -176,8 +181,8 @@ Otherwise, return a file with a unique number appended to the base-name."
   :keymap mu4e-view-completion-minor-mode-map)
 
 (defun mu4e--part-annotation (candidate part type longest-filename)
-  "Calculate the annotation candidates as per
-`:annotation-function' (see `completion-extra-properties')
+  "Calculate the annotation candidates as per annotation.
+I.e., `:annotation-function' (see `completion-extra-properties')
 
 CANDIDATE is the value to annotate.
 
@@ -226,7 +231,6 @@ information' is used for alignment."
         "       "
         (format "%s" (concat "-> " target))))
       (_ (mu4e-error "Unsupported annotation type %s" type)))))
-
 
 (defvar helm-comp-read-use-marked)
 (defun mu4e--completing-read-real (prompt candidates multi)
@@ -293,20 +297,22 @@ This command assumes unique filenames for the attachments, since
 that is how the underlying completion mechanism works. If there
 are duplicates, only one is recognized.
 
-Furthermore, file-names that match `crm-separator' (by default,
-commas) are not supported (see `completing-read-multiple' for
-further details).
-
-For such corner-cases, it is recommended to use
-`mu4e-view-mime-part-action' instead, which does not have this
-limitation."
+Furthermore, file-names that match `crm-separator' (by default, a
+comma and some optional whitespace) are not supported (see
+`completing-read-multiple' for further details). Hence, when we
+detect that, the function bails out and advises to use
+`mu4e-view-mime-part-action' instead, which does support such
+files."
   (interactive "P")
   (let* ((parts (mu4e-view-mime-parts))
          (candidates  (seq-map
                        (lambda (fpart)
-                         (cons ;; (filename . annotation)
-                          (plist-get fpart :filename)
-                          fpart))
+                         (let ((fname (plist-get fpart :filename)))
+                           (when (and crm-separator (string-match-p crm-separator fname))
+                             (mu4e-warn (concat  "File(s) match `crm-separator'; "
+                                                 "use mu4e-view-mime-part-action instead")))
+                           ;; (filename . annotation)
+                           (cons fname fpart)))
                        (seq-filter
                         (lambda (part) (plist-get part :attachment-like))
                         parts)))
@@ -319,7 +325,7 @@ limitation."
     ;; we have determined what files to save, and where.
     (seq-do (lambda (fname)
               (let* ((part (cdr (assoc fname candidates)))
-                     (path (mu4e--uniqify-file-name
+                     (path (funcall mu4e-uniquify-save-file-name-function
                             (mu4e-join-paths
                              (or custom-dir (plist-get part :target-dir))
                              (plist-get part :filename))))
@@ -381,7 +387,6 @@ Each of the actions is a plist with keys
                        ;;          or as a string parameter to a function
 ).")
 
-
 (defun mu4e--view-mime-part-to-temp-file (handle)
   "Write MIME-part HANDLE to a temporary file and return the file name.
 The filename is deduced from the MIME-part's filename, or
@@ -421,7 +426,7 @@ If N is not specified, ask for it. For instance, '3 A o' opens
 the third MIME-part."
   ;; (interactive
   ;;  (list (read-number "Number of MIME-part: ")))
-  (interactive)
+  (interactive "P")
   (let* ((parts (mu4e-view-mime-parts))
          (candidates (seq-map
                       (lambda (part)
@@ -496,6 +501,5 @@ the third MIME-part."
     (display-buffer buf)))
 
 
-
 (provide 'mu4e-mime-parts)
 ;;; mu4e-mime-parts.el ends here

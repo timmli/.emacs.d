@@ -669,7 +669,7 @@ This is suitable for displaying in the header view."
 
 (defsubst mu4e~headers-insert-header (msg pos)
   "Insert a header for MSG at point POS."
-  (when-let ((line (mu4e~message-header-line msg))
+  (when-let* ((line (mu4e~message-header-line msg))
              (docid (plist-get msg :docid)))
     (goto-char pos)
     (insert
@@ -1093,19 +1093,23 @@ true, do *not* update the query history stack."
 
 (defun mu4e~headers-maybe-auto-update ()
   "Update the current headers buffer after indexing changes.
+
 Furthermore, `mu4e-headers-auto-update' is non-nil and there is
-no user-interaction ongoing."
-  (when (and mu4e-headers-auto-update ;; must be set
-             mu4e-index-update-status
-             (not (mu4e-get-view-buffer)) ;; not when viewing a message
-             (not (zerop (plist-get mu4e-index-update-status :updated)))
-             ;; NOTE: `mu4e-mark-marks-num' can return nil. Is that intended?
-             (zerop (or (mu4e-mark-marks-num) 0)) ;; non active marks
-             (not (active-minibuffer-window)))    ;; no user input only
-    ;; rerun search if there's a live window with search results;
-    ;; otherwise we'd trigger a headers view from out of nowhere.
-    (when (and (buffer-live-p (mu4e-get-headers-buffer))
-               (window-live-p (get-buffer-window (mu4e-get-headers-buffer) t)))
+no user-interaction ongoing.
+
+We only update headers when quite a few conditions are true --
+see the code."
+  (when-let* ((hdrsbuf (mu4e-get-headers-buffer)))
+    (when (and mu4e-headers-auto-update ;; must be set
+               mu4e-index-update-status
+               (not (mu4e-get-view-buffer)) ;; not when viewing a message
+               (not (zerop (plist-get mu4e-index-update-status :updated)))
+               (buffer-live-p hdrsbuf)
+               (window-live-p (get-buffer-window hdrsbuf t))
+               ;; don't disturb marks.
+               (zerop (or (with-current-buffer hdrsbuf (mu4e-mark-marks-num)) 0))
+               (not (active-minibuffer-window))) ;; no user input only
+      ;; when all that is true, rerun the current query.
       (let ((mu4e--search-background t))
         (mu4e-search-rerun)))))
 
@@ -1436,7 +1440,7 @@ If SUBTHREAD is non-nil, only apply to subthread."
           (if (functionp mu4e-view-auto-mark-as-read)
               (funcall mu4e-view-auto-mark-as-read msg)
             mu4e-view-auto-mark-as-read)))
-    (when-let ((buf (mu4e-get-view-buffer (current-buffer) nil)))
+    (when-let* ((buf (mu4e-get-view-buffer (current-buffer) nil)))
       (with-current-buffer buf
         (mu4e-loading-mode 1)))
     (mu4e--server-view docid mark-as-read)))

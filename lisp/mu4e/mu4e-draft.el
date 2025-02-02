@@ -387,26 +387,34 @@ also marked as Seen.
 
 Function assumes that it is executed in the context of the
 message buffer."
-  (when-let ((buf (find-file-noselect path)))
+  ;; note that we can't use mu4e-compose-parent-message here, since it
+  ;; no longer available when editing a draft. So we scan the outgoing
+  ;; message for the information.
+  (when-let* ((buf (find-file-noselect path)))
     (with-current-buffer buf
-      (let ((in-reply-to (message-field-value "in-reply-to"))
-            (forwarded-from)
-            (references (message-field-value "references")))
-        (unless in-reply-to
-          (when references
-            (with-temp-buffer ;; inspired by `message-shorten-references'.
-              (insert references)
-              (goto-char (point-min))
-              (let ((refs))
-                (while (re-search-forward "<[^ <]+@[^ <]+>" nil t)
-                  (push (match-string 0) refs))
-                ;; the last will be the first
-                (setq forwarded-from (car refs))))))
-        ;; remove the <> and update the flags on the server-side.
-        (when (and in-reply-to (string-match "<\\(.*\\)>" in-reply-to))
-          (mu4e--server-move (match-string 1 in-reply-to) nil "+R-N"))
-        (when (and forwarded-from (string-match "<\\(.*\\)>" forwarded-from))
-          (mu4e--server-move (match-string 1 forwarded-from) nil "+P-N"))))))
+      (let* ((in-reply-to (message-field-value "in-reply-to"))
+             (references (message-field-value "references"))
+             (forwarded-from
+              (unless (or in-reply-to (not references))
+                (with-temp-buffer ;; inspired by `message-shorten-references'.
+                  (insert references)
+                  (goto-char (point-min))
+                  (let ((refs))
+                    (while (re-search-forward "<[^ <]+@[^ <]+>" nil t)
+                      (push (match-string 0) refs))
+                    (car refs))))) ;; the last shall be the first
+             ;; remove the <>
+             (in-reply-to (and in-reply-to (string-match "<\\(.*\\)>" in-reply-to)
+                               (match-string 1 in-reply-to)))
+             (forwarded-from (and forwarded-from (string-match "<\\(.*\\)>" forwarded-from)
+                                  (match-string 1 forwarded-from))))
+        ;; mark parents.
+        (when in-reply-to
+          (mu4e-log 'misc "mark %s as Replied" in-reply-to)
+          (mu4e--server-move in-reply-to nil "+R-N"))
+        (when forwarded-from
+          (mu4e-log 'misc "mark %s as Passed (forwarded)" forwarded-from)
+          (mu4e--server-move forwarded-from nil "+P-N"))))))
 
 (defun mu4e--compose-after-save()
   "Function called immediately after the draft buffer is saved."
@@ -445,14 +453,14 @@ appropriate flag at the message forwarded or replied-to."
   ;; typically, draft is gone and the sent message appears in sent. Update flags
   ;; for related messages, i.e. for Forwarded ('Passed') and Replied messages,
   ;; try to set the appropriate flag at the message forwarded or replied-to.
-  (when-let ((fcc-path (message-field-value "Fcc")))
+  (when-let* ((fcc-path (message-field-value "Fcc")))
     (mu4e--set-parent-flags fcc-path)
     ;; we end up with a ((buried) buffer here, visiting the
     ;; fcc-path; not quite sure why. But let's get rid of it (#2681)
-    (when-let ((buf (find-buffer-visiting fcc-path)))
+    (when-let* ((buf (find-buffer-visiting fcc-path)))
       (kill-buffer buf)))
   ;; remove draft
-  (when-let ((draft (buffer-file-name)))
+  (when-let* ((draft (buffer-file-name)))
     (mu4e--server-remove draft)))
 
 (defun mu4e--compose-before-send ()
@@ -492,7 +500,7 @@ Creates a buffer NAME and returns it."
 (defun mu4e--message-is-yours-p ()
   "Mu4e's override for `message-is-yours-p'."
   (seq-some (lambda (field)
-              (if-let ((recip (message-field-value field)))
+              (if-let* ((recip (message-field-value field)))
                   (mu4e-personal-or-alternative-address-p
                    (car (mail-header-parse-address recip)))))
             '("From" "Sender")))
@@ -596,7 +604,7 @@ COMPOSE-TYPE and PARENT are as in `mu4e--draft'."
     (set-visited-file-name ;; make it a draft file
      (mu4e--draft-message-path (mu4e--draft-basename) parent)))
   ;; fcc
-  (when-let ((fcc-path (mu4e--fcc-path (mu4e--draft-basename) parent)))
+  (when-let* ((fcc-path (mu4e--fcc-path (mu4e--draft-basename) parent)))
     (message-add-header (concat "Fcc: " fcc-path "\n")))
 
   (mu4e--prepare-draft-headers compose-type)

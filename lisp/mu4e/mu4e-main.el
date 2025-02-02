@@ -270,7 +270,7 @@ for aligning them."
    "\n"))
 
 (defun mu4e--main-baseline-time-string ()
-  "Calculate the baseline time string for use in the main-"
+  "Calculate the baseline time string for use in the main-view."
   (let* ((baseline-t mu4e--query-items-baseline-tstamp)
          (updated-t (plist-get mu4e-index-update-status :tstamp))
          (delta-t (and baseline-t updated-t
@@ -299,9 +299,7 @@ Otherwise, do nothing."
          "* "
          (propertize "mu4e" 'face 'mu4e-header-key-face)
          (propertize " - mu for emacs version " 'face 'mu4e-title-face)
-         (propertize  (concat mu4e-mu-version
-                              (if (mu4e--server-xapian-single-threaded-p) "-st" ""))
-                      'face 'mu4e-header-key-face)
+         (propertize  mu4e-mu-version 'face 'mu4e-header-key-face)
          "\n\n"
          (propertize "  Basics\n\n" 'face 'mu4e-title-face)
          (mu4e--main-action
