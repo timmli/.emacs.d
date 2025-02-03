@@ -5610,7 +5610,8 @@ Sync Org headings with iCal database.
 	:config
 	(org-ical-sync-setup)
 	(setq org-ical-sync-vdirsyncer-command "vdirsyncer-sync-calendars.sh"
-				org-ical-sync-after-save t))
+				org-ical-sync-after-save t)
+	(org-ical-sync-call-vdirsyncer-now))
 #+END_SRC
 
 ** Coding & Writing
