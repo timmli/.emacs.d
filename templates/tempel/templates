@@ -58,6 +58,29 @@ fundamental-mode ;; Available everywhere
 						 )
 		 )
 
+(vg n
+		(delete-blank-lines)
+		n
+		(let ((english-greetings '("Best, "
+															 "Kind regards, "
+															 "Thanks, "
+															 ))
+					(german-greetings '("VG, "
+	 														"Grüße, "
+															"LG, "
+															"Danke, ")))
+			(completing-read "Choose: " 
+											 (if (string= (guess-language-buffer) "de")
+													 (append german-greetings english-greetings)
+												 (append english-greetings german-greetings))))
+		user-full-name
+		n
+		:post (progn
+						(re-search-backward user-full-name)
+						(end-of-line)
+						)
+		)
+
 prog-mode
 
 (fixme (if (derived-mode-p 'emacs-lisp-mode) ";; " comment-start) "FIXME ")
