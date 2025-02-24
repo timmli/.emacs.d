@@ -203,45 +203,6 @@ This variable should be changed in private-emacs-settings.el.")
 	(when (file-exists-p private-settings-file)
 		(load-file private-settings-file)))
 
-;;==========================================================
-;;      WEMACS
-;;=========================================================
-
-(when (eq system-type 'windows-nt)
-
-	(defvar wemacs-dir "") 
-	(when (getenv "WEMACS_HOME")
-		;; set path to wemacs folder with additional third-party software
-		(setq wemacs-dir
-					(expand-file-name (getenv "WEMACS_HOME"))))
-
-	(when (getenv "WEMACS_PATH")
-		;; using setenv makes available the PATH variable to the emacs shells
-		(setenv "PATH" (expand-file-name (concat (getenv "WEMACS_PATH") ";" (getenv "PATH"))))
-		;; using exec-path makes available the PATH variable to the rest of emacs
-		(setq exec-path
-					(append (split-string (expand-file-name (getenv "WEMACS_PATH")) ";") exec-path))
-		;; (setq exec-path (concat (getenv "PATH") ";" exec-path))  
-		)
-
-	;; the following can be left implicit
-	;; ;; use ported gnu find command under windows
-	;; ;; findutils seems to be faster than gnuwin32
-	;; (setq find-program
-	;; 			(expand-file-name
-	;; 			 (concat wemacs-dir "/findutils/bin/find")))
-
-	;; ;; use external ls instead of ls-lisp
-	;; ;; (caveat: grouping of directories might not work out of the box any more.)
-	;; (setq ls-lisp-use-insert-directory-program t)
-	
-	;; make PC keyboard's Win key to type Super or Hyper, for emacs running on Windows.
-	(progn
-		(setq w32-pass-lwindow-to-system nil)
-		(setq w32-lwindow-modifier 'super) ; Left Windows key
-		)	
-
-	)
 
 ;;==========================================================
 ;;      CUSTOM.EL
