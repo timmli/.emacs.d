@@ -13745,10 +13745,6 @@ https://www.gnu.org/software/tramp/
 
 Built-in package for editing remote files. 
 
-Issues:
-- Disabled because of an error during completion in helm-mini.
-      - =(error "Process *tramp/archive file.odg* not running")=
-
 #+BEGIN_SRC emacs-lisp :tangle no
 (require 'tramp)
 (if (eq system-type 'windows-nt) 
@@ -13759,7 +13755,7 @@ Issues:
 ;; (setq tramp-default-user "")
 #+END_SRC
 
-Disable =tramp-archive.el=, because it tries to mount odt/odg files, see https://emacs.stackexchange.com/a/56345/12336.
+There is a strange interaction with [[org-roam]]: Archive files (odt, zip, ...) in my org-roam directory are mounted by Tramp when starting Emacs. Disabling =tramp-archive.el= as suggested in https://emacs.stackexchange.com/a/56345/12336 does not help. 
 
 #+BEGIN_SRC emacs-lisp
 (with-eval-after-load 'tramp-archive
@@ -13769,6 +13765,13 @@ Disable =tramp-archive.el=, because it tries to mount odt/odg files, see https:/
 		(setq tramp-archive-suffixes (delete ext tramp-archive-suffixes))))
 ;; Another try ...
 (setq tramp-ignored-file-name-regexp "\\(^.\\.odt.\\)")
+#+END_SRC
+
+Last straw: disable Tramp alltogether. Only works when disabling Tramp already in =init.el=!
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(with-eval-after-load 'tramp
+	(setq tramp-mode nil))
 #+END_SRC
 
 ** emacs-ssh-deploy

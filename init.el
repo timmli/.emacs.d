@@ -27,6 +27,9 @@
 (when (= emacs-major-version 28)
 	(require 'seq-24))
 
+;; Disable Tramp to prevent mounting archive files 
+(setq tramp-mode nil)
+
 
 ;;==========================================================
 ;;      DIRECTORIES SETUP
