@@ -1,6 +1,6 @@
 ;;; mu4e.el --- Mu4e, the mu mail user agent -*- lexical-binding: t -*-
 
-;; Copyright (C) 2011-2024 Dirk-Jan C. Binnema
+;; Copyright (C) 2011-2025 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -45,7 +45,6 @@
 (require 'mu4e-notification)
 (require 'mu4e-server)     ;; communication with backend
 
-
 
 (when mu4e-speedbar-support
   (require 'mu4e-speedbar)) ;; support for speedbar
@@ -56,7 +55,14 @@
 ;; desktop-save-mode; so let's turn that off.
 (with-eval-after-load 'desktop
   (eval '(add-to-list 'desktop-modes-not-to-save 'mu4e-compose-mode)))
-
+
+(defvar mu4e--initialized nil
+  "Is mu4e initialized? Only needed once per Emacs session.")
+
+(defvar mu4e--started nil
+  "Has mu4e been started?
+I.e. have we received the server pong? Needed whenever
+we (re)start mu4e.")
 
 ;;;###autoload
 (defun mu4e (&optional background)
@@ -64,10 +70,10 @@
 Then, show the main window, unless BACKGROUND (prefix-argument)
 is non-nil."
   (interactive "P")
-  (if (not (mu4e-running-p))
-      (progn
-        (mu4e--init-handlers)
-        (mu4e--start (unless background #'mu4e--main-view)))
+  (when (not mu4e--initialized)
+    (mu4e--init-handlers))
+  (if (not mu4e--started)
+      (mu4e--start (unless background #'mu4e--main-view))
     ;; mu4e already running; show unless BACKGROUND
     (unless background
       (if (buffer-live-p (get-buffer mu4e-main-buffer-name))
@@ -86,7 +92,6 @@ Otherwise, completely quit mu4e, including automatic updating."
         (when (y-or-n-p (mu4e-format "Are you sure you want to quit?"))
           (mu4e--stop))
       (mu4e--stop))))
-
 ;;; Internals
 
 (defun mu4e--check-requirements ()
@@ -117,6 +122,7 @@ Otherwise, completely quit mu4e, including automatic updating."
 (defun mu4e--pong-handler (_data func)
   "Handle \"pong\" responses from the mu server.
 Invoke FUNC if non-nil."
+  (setq mu4e--started t)
   (let ((doccount (plist-get (mu4e-server-properties) :doccount)))
     (mu4e--check-requirements)
     (when func (funcall func))
@@ -125,8 +131,9 @@ Invoke FUNC if non-nil."
     (when (and mu4e-update-interval (null mu4e--update-timer))
       (setq mu4e--update-timer
             (run-at-time 0 mu4e-update-interval
-                         (lambda () (mu4e-update-mail-and-index
-                                     mu4e-index-update-in-background)))))))
+                         (defun mu4e--refresh-timer ()
+                           (mu4e-update-mail-and-index
+                            mu4e-index-update-in-background)))))))
 
 (defun mu4e--start (&optional func)
   "Start mu4e.
@@ -134,8 +141,8 @@ If `mu4e-contexts' have been defined, but we don't have a context
 yet, switch to the matching one, or none matches, the first. If
 mu4e is already running, invoke FUNC (if non-nil).
 
-Otherwise, check requirements, then start mu4e. When successful, invoke
- FUNC (if non-nil) afterwards."
+Otherwise, check requirements, then start mu4e. When successful,
+invoke FUNC (if available) afterwards."
   (unless (mu4e-context-current)
     (mu4e--context-autoswitch nil mu4e-context-policy))
   (setq mu4e-pong-func
@@ -143,7 +150,7 @@ Otherwise, check requirements, then start mu4e. When successful, invoke
   ;; show some notification?
   (when mu4e-notification-support
     (add-hook 'mu4e-query-items-updated-hook #'mu4e--notification))
-  ;; modeline support
+  ;; mode-line support
   (when mu4e-modeline-support
     (mu4e--modeline-register #'mu4e--bookmarks-modeline-item 'global)
     (mu4e-modeline-mode)
@@ -151,12 +158,13 @@ Otherwise, check requirements, then start mu4e. When successful, invoke
   (mu4e-modeline-mode (if mu4e-modeline-support 1 -1))
   ;; redraw main buffer if there is one.
   (add-hook 'mu4e-query-items-updated-hook #'mu4e--main-redraw)
-  (mu4e--query-items-refresh 'reset-baseline)
+  (setq mu4e--initialized t) ;; last before we call the server.
   (mu4e--server-ping)
   ;; ask for the maildir-list
   (mu4e--server-data 'maildirs)
   ;; maybe request the list of contacts, automatically refreshed after
   ;; re-indexing
+  (mu4e--query-items-refresh 'reset-baseline)
   (unless mu4e--contacts-set
     (mu4e--request-contacts-maybe)))
 
@@ -169,7 +177,8 @@ Otherwise, check requirements, then start mu4e. When successful, invoke
   (setq ;; clear some caches
    mu4e-maildir-list nil
    mu4e--contacts-set nil
-   mu4e--contacts-tstamp "0")
+   mu4e--contacts-tstamp "0"
+   mu4e--started nil)
 
   (remove-hook 'mu4e-query-items-updated-hook #'mu4e--main-redraw)
   (remove-hook 'mu4e-query-items-updated-hook #'mu4e--modeline-update)
@@ -191,7 +200,7 @@ Otherwise, check requirements, then start mu4e. When successful, invoke
                        '(mu4e-headers-mode mu4e-view-mode mu4e-main-mode))
            (kill-buffer)))))
    (buffer-list)))
-
+
 ;;; Handlers
 (defun mu4e--default-handler (&rest args)
   "Dummy handler function with arbitrary ARGS."
@@ -262,6 +271,5 @@ chance."
 
   (mu4e-setq-if-nil mu4e-queries-func      #'mu4e--query-items-queries-handler))
 
-;;;
 (provide 'mu4e)
 ;;; mu4e.el ends here

@@ -1,5 +1,5 @@
 ;; -*- no-byte-compile: t; -*-
-(define-package "mu4e" "1.12.8"
+(define-package "mu4e" "1.12.9"
   "part of mu4e, the mu mail user agent"
   '((emacs "26.3"))
   :authors '(("Dirk-Jan C. Binnema" . "djcb@djcbsoftware.nl"))

@@ -1,6 +1,6 @@
 ;;; mu4e-server.el --- Control mu server from mu4e -*- lexical-binding: t -*-
 
-;; Copyright (C) 2011-2024 Dirk-Jan C. Binnema
+;; Copyright (C) 2011-2025 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -93,11 +93,9 @@ stop/start mu4e."
   :group 'mu4e
   :safe  'booleanp)
 
-
 ;; Cached data
 (defvar mu4e-maildir-list)
 
-
 ;; Handlers are not strictly internal, but are not meant
 ;; for overriding outside mu4e. The are mainly for breaking
 ;; dependency cycles.
@@ -151,7 +149,6 @@ from the server process.")
   "A function called for each (:contacts (<list-of-contacts>))
 sexp received from the server process.")
 
-
 ;;; Dealing with Server properties
 (defvar mu4e--server-props nil
   "Metadata we receive from the mu4e server.")
@@ -178,7 +175,7 @@ sexp received from the server process.")
            (plist-get mu4e--server-props :version))
       (mu4e-error "Version unknown; did you start mu4e?")))
 
-;;; remember queries result.
+;;; remember query results.
 (defvar mu4e--server-query-items nil
   "Query items results we receive from the mu4e server.
 Those are the results from the counting-queries
@@ -188,12 +185,32 @@ for bookmarks and maildirs.")
   "Get the latest server query items."
   mu4e--server-query-items)
 
-;; temporary
-(defun mu4e--server-xapian-single-threaded-p()
-  "Are we using Xapian in single-threaded mode?"
-  (plist-get mu4e--server-props :xapian-single-threaded))
+(defvar mu4e--server-query nil
+  "Last query executed by the server.
+This is a plist, see `mu4e-server-last-query' for details.")
 
-
+(defun mu4e-server-last-query ()
+  "Get a plist with information about the last server-query.
+
+This has the following fields:
+- :query: this is the last query the server executed (a string)
+- :query-sexp: this is that last query as processed by the query engine
+  (an s-expression as a string)
+- :query-sexp-expanded: like :query-sexp, but with combination fields
+   expanded (if any)."
+  (cl-remf mu4e--server-query :found) ;; there's no plist-delete
+  mu4e--server-query)
+
+(defvar mu4e--last-query-buffer-name)
+(defun mu4e-analyze-last-query ()
+  "Pop-up a buffer with the most recent query as the server saw it.
+See `mu4e-server-last-query' for the fields.
+It is the mu4e-version of \"mu find <query> --analyze\"."
+  (interactive)
+  (mu4e--popup-lisp-buffer
+   mu4e--last-query-buffer-name
+   (mu4e-server-last-query)))
+
 ;;; Handling raw server data
 
 (defvar mu4e--server-buf nil
@@ -218,13 +235,14 @@ Match 1 will be the length (in hex).")
 
 (defvar mu4e--server-indexing nil "Currently indexing?")
 
-
 (defun mu4e-running-p ()
   "Whether mu4e is running.
 Checks whether the server process is live."
   (and mu4e--server-process
        (memq (process-status mu4e--server-process)
              '(run open listen connect stop)) t))
+
+(declare-function mu4e--massage-addresses "mu4e-contacts")
 
 (defsubst mu4e--server-eat-sexp-from-buf ()
   "Eat the next s-expression from `mu4e--server-buf'.
@@ -279,11 +297,10 @@ This for the few sexps we get from the mu server that support
           (read (current-buffer)))
       val)))
 
-
 (defun mu4e--server-filter (_proc str)
   "Filter string STR from PROC.
 This processes the \"mu server\" output. It accumulates the
-strings into valid sexpsv and evaluating those.
+strings into valid s-expressions and evaluates those.
 
 The server output is as follows:
 
@@ -323,7 +340,7 @@ The server output is as follows:
   3. a view looks like:
   (:view <msg-sexp>)
   => the <msg-sexp> (see 2.) will be passed to `mu4e-view-func'.
-     the <msg-sexp> also contains :body-txt and/or :body-html
+     the <msg-sexp> also contains :body
 
   4. a database update looks like:
   (:update <msg-sexp> :move <nil-or-t>)
@@ -354,6 +371,8 @@ The server output is as follows:
 
          ;; the found sexp, we receive after getting all the headers
          ((plist-get sexp :found)
+          ;; capture the query-info
+          (setq mu4e--server-query sexp)
           (funcall mu4e-found-func (plist-get sexp :found)))
 
          ;; viewing a specific message
@@ -366,7 +385,12 @@ The server output is as follows:
 
          ;; received a pong message
          ((plist-get sexp :pong)
-          (setq mu4e--server-props (plist-get sexp :props))
+          (let ((props (plist-get sexp :props)))
+            ;; attempt to translate the regex-style.
+            (plist-put props :personal-addresses
+                       (mu4e--massage-addresses
+                        (plist-get props :personal-addresses)))
+            (setq mu4e--server-props props))
           (funcall mu4e-pong-func sexp))
 
          ;; receive queries info
@@ -542,12 +566,18 @@ You cannot run the repl when mu4e is running (or vice-versa)."
      (t
       (error "Something bad happened to the mu server process")))))
 
+(declare-function mu4e "mu4e")
+(defvar mu4e--initialized)
+
 (defun mu4e--server-call-mu (form)
   "Call the mu server with some command FORM."
+  (unless mu4e--initialized
+    (mu4e 'background))
+  ;; ensure the server is running as well
   (unless (mu4e-running-p)
     (mu4e--server-start))
   ;; in single-threaded mode, mu can't accept our command right now.
-  (when (and (mu4e--server-xapian-single-threaded-p) mu4e--server-indexing)
+  (when mu4e--server-indexing
     (mu4e-message "Cannot handle command while indexing, please retry later."))
   (let* ((print-length nil) (print-level nil)
          (cmd (format "%S" form)))
@@ -719,6 +749,5 @@ will be delivered to the function registered as `mu4e-view-func'."
      ;; because mbsync seems to get confused.
      :rename  ,(and mu4e-change-filenames-when-moving t))))
 
-
 (provide 'mu4e-server)
 ;;; mu4e-server.el ends here

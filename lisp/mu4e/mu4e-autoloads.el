@@ -157,12 +157,22 @@ The message is resent as-is, without any editing. See
 
 ;;; Generated autoloads from mu4e-org.el
 
+(autoload 'mu4e-org-store-link "mu4e-org" "\
+Store a link to a mu4e message or query.
+It links to the last known query when in `mu4e-headers-mode' with
+`mu4e-org-link-query-in-headers-mode' set; otherwise it links to
+a specific message, based on its message-id, so that links stay
+valid even after moving the message around.")
 (autoload 'mu4e-org-open "mu4e-org" "\
 Open the org LINK.
 Open the mu4e message (for links starting with \"msgid:\") or run
 the query (for links starting with \"query:\").
 
 (fn LINK)")
+(autoload 'mu4e-org-store-and-capture "mu4e-org" "\
+Store a link to the current message or query.
+(depending on `mu4e-org-link-query-in-headers-mode', and capture
+it with org)." t)
 (register-definition-prefixes "mu4e-org" '("mu4e-"))
 
 
@@ -193,6 +203,11 @@ Create buttons for any mu4e BUFFER.
 ;;; Generated autoloads from mu4e-thread.el
 
 (register-definition-prefixes "mu4e-thread" '("mu4e-thread-"))
+
+
+;;; Generated autoloads from mu4e-transient.el
+
+(register-definition-prefixes "mu4e-transient" '("mu4e--define-toggle-suffix"))
 
 
 ;;; Generated autoloads from mu4e-update.el
