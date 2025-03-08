@@ -16950,7 +16950,8 @@ Use =M-x cancel-debug-on-entry= to cancel the effect of this command.
 
 **** toggle-debug-on-error
 
-https://www.gnu.org/software/emacs/manual/html_node/elisp/Error-Debugging.html
+- https://www.gnu.org/software/emacs/manual/html_node/elisp/Error-Debugging.html
+- https://emacsredux.com/blog/2025/03/01/debugging-errors-in-emacs/
 
 Toggle whether to enter Lisp debugger when an error is signaled.
 
