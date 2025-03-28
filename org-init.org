@@ -5816,6 +5816,7 @@ Elisp development tool similar to Cask, but fully written in Elisp.
 **** Last modified
 
 If the file keyword =;; Last modified:= is present within the first 20 lines, the following timestamp gets updated when saving the file:
+
 #+BEGIN_SRC emacs-lisp
 (add-hook 'emacs-lisp-mode-hook (lambda ()
 													 (set (make-local-variable 'time-stamp-pattern)
@@ -5915,6 +5916,17 @@ https://github.com/js-emacs/js2-refactor.el
 	(add-hook 'js2-mode-hook #'js2-refactor-mode)
 	(js2r-add-keybindings-with-prefix "C-c C-r")
 	(define-key js2-mode-map (kbd "C-k") #'js2r-kill))
+#+END_SRC
+
+**** Last modified
+
+If the file keyword =// Last modified:= is present within the first 20 lines, the following timestamp gets updated when saving the file:
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'js-mode-hook (lambda ()
+                          (set (make-local-variable 'time-stamp-pattern)
+                               "20/^// Last modified:[ \t]+%:y-%02m-%02d %3a %02H:%02M:%02S$")))
+(add-hook 'before-save-hook 'time-stamp)
 #+END_SRC
 
 **** TODO indium
