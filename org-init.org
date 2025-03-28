@@ -5929,6 +5929,21 @@ If the file keyword =// Last modified:= is present within the first 20 lines, th
 (add-hook 'before-save-hook 'time-stamp)
 #+END_SRC
 
+**** JSDoc
+
+[[https://jsdoc.app/][JSDoc]] is a commeting style of JavaScript source code. Other than [[https://en.wikipedia.org/wiki/Docstring][docstrings]] in languages like Lisp, however, these comments are not part of the program, and are usually stripped off during parsing.
+
+***** jsdoc.el
+
+https://github.com/isamert/jsdoc.el
+
+Provides simple [[https://jsdoc.app/][JSDoc]] support for the prize of requiring [[Tree-Sitter]].
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(use-package jsdoc
+:ensure t)
+#+END_SRC
+
 **** TODO indium
 
 https://github.com/NicolasPetton/Indium
