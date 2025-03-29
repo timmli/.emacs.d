@@ -2,25 +2,29 @@
 ;;      GENERAL SETUP
 ;;==========================================================
 
-;; speed up start
-(setq gc-cons-threshold 100000000)			; provide more memory
+;; A tip from https://emacsredux.com/blog/2025/03/28/speed-up-emacs-startup-by-tweaking-the-gc-settings/
+;; Temporarily increase GC threshold during startup
+(setq gc-cons-threshold most-positive-fixnum)
+;; Restore to normal value after startup (e.g. 50MB)
+(add-hook 'emacs-startup-hook
+          (lambda () (setq gc-cons-threshold (* 50 1024 1024))))
 
-;; don't show startup message
+;; Don't show startup message
 (setq inhibit-startup-message t)
 
-;; character encodings default to utf-8.
+;; Character encodings default to utf-8.
 (prefer-coding-system 'utf-8)
 (set-language-environment 'utf-8)
 (set-default-coding-systems 'utf-8)
 (set-terminal-coding-system 'utf-8)
 (set-selection-coding-system 'utf-8)
-;; treat clipboard input as UTF-8 string first; compound text next, etc.
+;; Treat clipboard input as UTF-8 string first; compound text next, etc.
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
 ;; MS Windows clipboard is UTF-16LE 
 (when (eq system-type 'windows-nt)
   (set-clipboard-coding-system 'utf-16le-dos))
 
-;; start emacs server
+;; Start emacs server
 ;; (server-start)  ; uncomment this, if you want the server to start on every start-up
 
 ;; Emacs 28: Use the older, more tolerant version of seq-empty-p.
@@ -35,7 +39,7 @@
 ;;      DIRECTORIES SETUP
 ;;==========================================================
 
-;; set home directory
+;; Set home directory
 ;; 1: check HOME variable
 (when (or
 			 (not (getenv "HOME"))
@@ -62,13 +66,13 @@
 	(setq user-emacs-directory
 				(expand-file-name (concat (getenv "EMACS_USER_DIRECTORY") "/"))))
 
-;; set path to local lisp libaries
+;; Set path to local lisp libaries
 (defvar lisp-dir)
 (setq lisp-dir
       (expand-file-name "lisp" user-emacs-directory))
 (add-to-list 'load-path lisp-dir)
 
-;; save point position between sessions
+;; Save point position between sessions
 (require 'saveplace)
 (setq-default save-place t)
 (setq save-place-file (expand-file-name ".places" user-emacs-directory))
@@ -115,7 +119,7 @@ This variable should be changed in private-emacs-settings-before.el.")
 	"Path to bookmarks file.
 This variable should be changed in private-emacs-settings-before.el.")
 
-;; if system variable exists, use it
+;; If system variable exists, use it
 (when (getenv "PRIVATE_EMACS_SETTINGS")
 	(setq private-emacs-settings-dir
 				(expand-file-name (concat (getenv "PRIVATE_EMACS_SETTINGS") "/"))))
@@ -220,14 +224,14 @@ This variable should be changed in private-emacs-settings.el.")
 ;; (when (not (find-font (font-spec :name "Segoe UI"))) ; Segoe UI might be unavailable on Linux
 ;; (setq custom-variable-pitch-font "Arial"))
 
-;; stolen from custom.el (can be overridden by custom.el)
+;; Stolen from custom.el (can be overridden by custom.el)
 (custom-set-faces
  `(default ((t (:family ,custom-default-font :foundry "outline" :slant normal :weight normal :height 113 :width normal))))
  `(fixed-pitch ((t (:family ,custom-fixed-pitch-font :foundry "outline" :slant normal :weight normal :height 113 :width normal))))
  `(variable-pitch ((t (:family ,custom-variable-pitch-font :foundry "outline" :slant normal :weight normal :height 125 :width normal))))
  )
 
-;; load custom file
+;; Load custom file
 (setq custom-file (expand-file-name "custom.el" user-emacs-directory))
 (if (file-exists-p custom-file)
     (load custom-file)
@@ -254,17 +258,17 @@ This variable should be changed in private-emacs-settings.el.")
 	;; (add-to-list 'package-archives 				; repository of the sunrise commander
 	;; 						 '("SC"   . "http://joseito.republika.pl/sunrise-commander/") t)
   (package-initialize))
-;; list the packages you want
+;; List the packages you want
 (setq package-list '(async 							; paradox needs async
 										 paradox
 										 use-package				; built-in as of v29 
 										 org								; built-in
                      ))
-;; ;; fetch the list of packages available
+;; ;; Fetch the list of packages available
 ;; (unless package-archive-contents
 ;;   (package-refresh-contents))
 
-;; install the missing packages (and refresh the package list if necessary)
+;; Install the missing packages (and refresh the package list if necessary)
 (setq package-list-refreshed nil)
 (dolist (package package-list)
   (unless (package-installed-p package)
@@ -276,10 +280,10 @@ This variable should be changed in private-emacs-settings.el.")
 			)
 		)
 	)
-;; upgrade packages (this slows down start-up somewhat)
+;; Upgrade packages (this slows down start-up somewhat)
 ;; (paradox-upgrade-packages)
 
-;; upgrade org-mode if necessary
+;; Upgrade org-mode if necessary
 ;; (require 'org)
 ;; (when (version< org-version "9.3")
 ;; 	(when (not package-list-refreshed) 				; package list already refreshed?
@@ -289,7 +293,7 @@ This variable should be changed in private-emacs-settings.el.")
 ;; 	(require 'org))
 
 ;; use-package
-;; taken from https://github.com/jwiegley/use-package
+;; Taken from https://github.com/jwiegley/use-package
 (eval-when-compile											
   (require 'use-package))
 (setq use-package-verbose t)
@@ -297,7 +301,7 @@ This variable should be changed in private-emacs-settings.el.")
 	:ensure t)
 (require 'bind-key)
 
-;; quelpa: a tool to compile and install Emacs Lisp packages
+;; Quelpa: a tool to compile and install Emacs Lisp packages
 (use-package quelpa
 	:ensure t)
 (quelpa
@@ -334,7 +338,7 @@ This variable should be changed in private-emacs-settings.el.")
 ;;      LOAD REMAINING SETTINGS
 ;;==========================================================
 
-;; the remaining settings are in org-init.org
+;; The remaining settings are in org-init.org
 (setq org-fold-core-style 'overlays) 		; Org v9.6 comes with a new folding technique.
 																				; Use the old folding technique with overlays for
 																				; better interoperability with 3rd-party packages.
