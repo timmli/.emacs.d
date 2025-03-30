@@ -9873,6 +9873,8 @@ A tree-based feed summary interface for [[elfeed]].
 
 Issues & TODOs:
 - [ ] Add hydra
+- [ ] Fold all groups in the beginning
+- [ ] Change group face if it contains unread entities
 
 #+BEGIN_SRC emacs-lisp
 (use-package elfeed-summary
@@ -9886,21 +9888,23 @@ Issues & TODOs:
 					 ;; (:title . "All feeds")
 					 ;; (:elements
 					 ;; (query . :all)))
-					 (group
-						(:title . "Searches")
-						(:elements
-						 (search
-							(:filter . "@7-days-ago +unread")
-							(:title . "Unread entries this week"))
-						 (search
-							(:filter . "@6-months-ago emacs")
-							(:title . "Something about Emacs")))))
-				 (mapcar #'(lambda (tag)
-										 `(group
-											 (:title . ,(upcase-initials (symbol-name tag)))
-											 (:elements
-												(query . (,tag)))))
-								 (elfeed-db-get-all-tags))))
+					 (group (:title . "Searches")
+									(:elements
+									 (search
+										(:filter . "+star")
+										(:title . "Starred/marked entries"))
+									 (search
+										(:filter . "@14-days-ago +unread")
+										(:title . "Unread entries this and last week"))))
+					 (auto-tags (:max-level . 2)
+											(:original-order . t))
+					 ;; (tag-groups (:repeat-feeds . t))
+					 ;; (mapcar #'(lambda (tag)
+					 ;; 						 `(group
+					 ;; 							 (:title . ,(upcase-initials (symbol-name tag)))
+					 ;; 							 (:elements (query . (,tag)))))
+					 ;; 				 (elfeed-db-get-all-tags))
+					 )))
 	:bind (:map elfeed-summary-mode-map
 							("<C-tab>" . iflipb-next-buffer)
 							("<C-iso-lefttab>" . iflipb-previous-buffer)
