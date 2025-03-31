@@ -9879,6 +9879,7 @@ Issues & TODOs:
 #+BEGIN_SRC emacs-lisp
 (use-package elfeed-summary
 	:ensure t
+  :pin MELPA
 	:config
   :init
 	(setq elfeed-summary-settings
