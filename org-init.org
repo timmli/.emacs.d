@@ -11062,7 +11062,7 @@ Correcting misspelled words with flyspell using your favourite interface. Mine i
 		:ensure t)
 	;; (add-hook 'flyspell-mode-hook #'flyspell-correct-auto-mode)
 	;; (setq flyspell-correct-auto-delay 0.8)
-	;; :bind ("C-;" . flyspell-correct-wrapper)
+	:bind ("M-$" . flyspell-correct-at-point)
 	)
 #+END_SRC
 
