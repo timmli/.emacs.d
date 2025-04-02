@@ -25,3 +25,6 @@
 [submodule "lisp/org-ical-sync"]
 	path = lisp/org-ical-sync
 	url = https://codeberg.org/timmli/org-ical-sync.git
+[submodule "lisp/helm-elfeed"]
+	path = lisp/helm-elfeed
+	url = https://codeberg.org/timmli/helm-elfeed

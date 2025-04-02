@@ -9821,6 +9821,23 @@ Taken from https://joshrollinswrites.com/help-desk-head-desk/20200611/.
 (define-key elfeed-search-mode-map (kbd "v") 'elfeed-view-mpv)
 #+END_SRC 
 
+**** helm-elfeed
+
+!!! WORK IN PROGRESS !!!
+
+https://codeberg.org/timmli/helm-elfeed
+
+A Helm interface for Elfeed.
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-elfeed
+	:after elfeed
+  :load-path "lisp/helm-elfeed/"
+	:config
+	(define-key elfeed-search-mode-map (kbd "C-i") 'helm-elfeed)
+)
+#+END_SRC
+
 **** elfeed-goodies
 
 https://github.com/jeetelongname/elfeed-goodies
@@ -9870,13 +9887,14 @@ Feed collections can be converted to the format of =elfeed-org= with the functio
 https://github.com/SqrtMinusOne/elfeed-summary
 
 A tree-based feed summary interface for [[elfeed]].
+Superseded (in my view) by [[helm-elfeed]]. 
 
 Issues & TODOs:
 - [ ] Add hydra
 - [ ] Fold all groups in the beginning
 - [ ] Change group face if it contains unread entities
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle nil
 (use-package elfeed-summary
 	:ensure t
   :pin MELPA
@@ -9919,7 +9937,7 @@ Issues & TODOs:
 
 Wrapper function for starting elfeed-summary with [[hydra-f7]].
 
-#+BEGIN_SRC emacs-lisp
+#+BEGIN_SRC emacs-lisp :tangle nil
 (defun tl/elfeed-summary ()
 	(interactive)
 	(elfeed) ; This is necessary for truncating lines. 
@@ -14294,8 +14312,8 @@ Hydra for opening a new buffer.
 	("o" xah-open-in-external-app :exit t)
 	("p" helm-projectile :exit t)
 	("P" pandoc-main-hydra/body :exit t)
-	("r" tl/elfeed-summary :exit t)
-	;; ("r" tl/elfeed :exit t)
+	;; ("r" tl/elfeed-summary :exit t)
+	("r" tl/elfeed :exit t)
 	("R" R :exit t)
 	("t" pomidor :exit t)
 	("v" vterm :exit t)
