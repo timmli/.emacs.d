@@ -8944,6 +8944,11 @@ Remove buttons like =[[S/MIME ...= from text bodies of cited messages:
 
  - https://emacs.stackexchange.com/questions/80445/how-to-define-and-use-contact-groups-mailing-lists-in-mu4e
 
+I use [[helm-khard]] for this. The steps are:
+- Make sure that categories are shown in helm-khard.
+- The contacts of the mailing list are assign a specific category.
+- When writing an email, contacts are selected by filtering for this category.
+
 ****** COMMENT Org-msg
 
 https://github.com/jeremy-compostella/org-msg
