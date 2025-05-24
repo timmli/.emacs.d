@@ -1,9 +1,17 @@
-;; auto-generated
+;;; mu4e-config.el --- configuration values -*- lexical-binding: t -*-
 
-(defconst mu4e-mu-version "1.12.9"
-  "Required mu binary version; mu4e's version must agree with this.")
+;;; Commentary:
 
-(defconst mu4e-doc-dir "/gnu/store/l0a9d49wml2agwq1rhsvp7l9zl91c9q0-mu-1.12.9/share/doc/mu"
-  "Mu4e's data-dir.")
+;; Auto-generated configuration values
+
+;;; Code:
+
+(defconst mu4e-mu-version "1.12.11"
+  "Required mu binary version.
+mu4e's version must agree with this.")
+
+(defconst mu4e-doc-dir "/gnu/store/sq6nhnqh4zlaanq0yg5dnbs0ks8b3hdw-mu-1.12.11/share/doc/mu"
+  "Directory for mu4e documentation.")
 
 (provide 'mu4e-config)
+;;; mu4e-config.el.in ends here

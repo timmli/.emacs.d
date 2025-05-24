@@ -223,39 +223,30 @@ bookmark or maildir."
             (unread (or (plist-get last-results-item :unread) 0))
             (baseline-count  (or (plist-get baseline-item :count) count))
             (baseline-unread (or (plist-get baseline-item :unread) unread))
-            (delta-unread (- unread baseline-unread))
-            (value
-             (list
-              :name         name
-              :query        query
-              :key          (plist-get item :key)
-              :count        count
-              :unread       unread
-              :delta-count  (- count baseline-count)
-              :delta-unread delta-unread)))
-       ;; remember the *effective* query too; we don't really need it, but
-       ;; useful for debugging.
-       (unless (string= query effective-query)
-         (plist-put value :effective-query effective-query))
-       ;;for matching maildir shortcuts
-       (when maildir (plist-put value :maildir maildir))
-       ;; nil props bring me discomfort
-       (when (plist-get item :favorite)
-         (plist-put value :favorite t))
-       (when (plist-get item :hide)
-         (plist-put value :hide t))
-       (when (plist-get item :hide-unread)
-         (plist-put value :hide-unread t))
-       value))
-   data))
+            (delta-unread (- unread baseline-unread)))
+       (mu4e-plist-remove-nils
+        (mu4e-plist-put-many
+         item
+         :name         name
+         :type         type
+         :key          (plist-get item :key)
+         :query        query
+         :count        count
+         :unread       unread
+         :delta-count  (- count baseline-count)
+         :delta-unread delta-unread
+         :maildir      maildir
+         ;; remember the *effective* query too; we don't really need it, but
+         ;; useful for debugging.
+         :effective-query effective-query))))
+     data))
 
-(defun mu4e-query-items (&optional type)
+(defun mu4e-query-items (&optional type refresh)
   "Grab cached information about query items of some TYPE.
 
 TYPE is a symbol; either `bookmarks' or `maildirs', or nil for
 both, and returns a list of plists. The information is based on
 the last (cached) information known by mu4e.
-
 This combines:
 - the latest queries data (i.e., `(mu4e-server-query-items)')
 - baseline queries data (i.e. `mu4e-baseline') with the combined
@@ -274,8 +265,13 @@ Currently, the plist contains the following fields:
 There are some other fields for internal mu4e use, better not use
 those externally.
 
+If REFRESH is non-nil, clear caches first.
+
 For the various nuances with the unread count and baseline,
 please refer to info node `(mu4e) Bookmarks and Maildirs'."
+  (when refresh ; clear caches?
+    (setq mu4e--bookmark-items-cached nil
+          mu4e--maildir-items-cached nil))
   (cond
    ((equal type 'bookmarks)
     (or mu4e--bookmark-items-cached

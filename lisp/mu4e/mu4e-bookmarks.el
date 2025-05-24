@@ -48,14 +48,16 @@
     ( :name "Messages with images"
       :query "mime:image/*"
       :key ?p))
-  "List of pre-defined queries that are shown on the main screen.
+  "List of predefined queries that are shown on the main screen.
 
 Each of the list elements is a plist with at least:
 `:name'  - the name of the query
 `:query' - the query expression string or function
+
+Likely, you also want to assign a shortcut key;
 `:key'   - the shortcut key (single character)
 
-Optionally, you can add the following:
+Furthermore, you can add the following:
 
 - `:favorite' - if t, monitor the results of this query, and make
 it eligible for showing its status in the modeline. At most
@@ -65,6 +67,10 @@ item must be unique among `mu4e-bookmarks' and
 `mu4e-maildir-shortcuts'.
 - `:hide' - if t, the bookmark is hidden from the main-view and
 speedbar.
+- `:hide-if-no-unread' - if t, the shortcut is hidden from
+   the main-view if it contains are no unread messages.
+
+You can also use:
 - `:hide-unread' - do not show the counts of
 unread/total number of matches for the query in the main-view.
 This can be useful if a bookmark uses a very slow query.
@@ -81,10 +87,13 @@ query."
 (declare-function mu4e-query-items "mu4e-query-items")
 (declare-function mu4e--query-item-display-short-counts "mu4e-query-items")
 
-(defun mu4e-ask-bookmark (prompt)
+(defun mu4e-ask-bookmark (prompt &optional query-item)
   "Ask user for bookmark using PROMPT.
 Return the corresponding query. The bookmark are as defined in
 `mu4e-bookmarks'.
+
+If QUERY-ITEM is non-nil, return the full query-item rather than
+just the query-string.
 
 The names of the bookmarks are displayed in the minibuffer,
 suffixed with the short version of the unread counts, as per
@@ -101,10 +110,13 @@ suffixed with the short version of the unread counts, as per
                (cons (format "%c%s%s"
                              (plist-get bm :key)
                              (plist-get bm :name)
-                             unreads)
-                     (plist-get bm :query))))
-          (mu4e-filter-single-key (mu4e-bookmarks)))))
-  (mu4e-read-option prompt bmarks)))
+                             unreads) bm)))
+          (mu4e-filter-single-key (mu4e-bookmarks))))
+         (chosen (mu4e-read-option prompt bmarks)))
+    ;; return either the query string, or the corresponding query-item.
+    (if query-item
+        chosen
+      (plist-get chosen :query))))
 
 (defun mu4e-get-bookmark-query (kar)
   "Get the corresponding bookmarked query for shortcut KAR.

@@ -1,4 +1,4 @@
-;;; mu4e-headers.el --- Message headers -*- lexical-binding: t; coding:utf-8 -*-
+;;; mu4e-headers.el --- Message headers -*- lexical-binding: t  -*-
 
 ;; Copyright (C) 2011-2025 Dirk-Jan C. Binnema
 
@@ -52,7 +52,6 @@
 
 (declare-function mu4e-view       "mu4e-view")
 (declare-function mu4e--main-view  "mu4e-main")
-
 
 ;;; Configuration
 
@@ -216,7 +215,6 @@ When it is showing, respectively, From: or To:. It is a cons cell
 (defvar mu4e-headers-list-mark      '("l" . "Ⓛ") "Mailing list.")
 (defvar mu4e-headers-personal-mark  '("p" . "Ⓟ") "Personal.")
 (defvar mu4e-headers-calendar-mark  '("c" . "Ⓒ") "Calendar invitation.")
-
 
 ;;;; Graph drawing
 
@@ -386,8 +384,6 @@ Returns the docid, or nil if there is none."
       (goto-char point))
     (get-text-property (line-beginning-position) 'docid)))
 
-
-
 (defun mu4e~headers-goto-docid (docid &optional to-mark)
   "Go to beginning of the line with DOCID.
 Nil if it cannot be found. If the optional TO-MARK is
@@ -550,9 +546,9 @@ e.g. \"mutt\"."
 (defsubst mu4e~headers-custom-field-value (msg field)
   "Show custom header FIELD for MSG, or raise error if not found."
   (let* ((item (or (assoc field mu4e-header-info-custom)
-                   (mu4e-error "field %S not found" field)))
+                   (mu4e-error "Field %S not found" field)))
          (func (or (plist-get (cdr-safe item) :function)
-                   (mu4e-error "no :function defined for field %S %S"
+                   (mu4e-error "No :function defined for field %S %S"
                                field (cdr item)))))
     (funcall func msg)))
 
@@ -846,7 +842,8 @@ true, do *not* update the query history stack."
      mu4e-search-include-related)))
 
 (defun mu4e~headers-benchmark-message (count)
-  "Get some report message for messaging search and rendering speed."
+  "Get some report message for messaging search and rendering speed.
+COUNT is the number of messages found."
   (if (and mu4e-headers-report-render-time
            mu4e~headers-search-start
            mu4e~headers-render-start
@@ -861,7 +858,7 @@ true, do *not* update the query history stack."
     ""))
 
 (defun mu4e~headers-found-handler (count)
-  "Create one=line description of the COUNT of headers found."
+  "Create one-line description of the COUNT of headers found."
   (when (buffer-live-p (mu4e-get-headers-buffer))
     (with-current-buffer (mu4e-get-headers-buffer)
       (save-excursion
@@ -1033,51 +1030,64 @@ true, do *not* update the query history stack."
      )))
 
 ;;; Headers-mode and mode-map
+(defun mu4e~header-line-click (sortable threads)
+  "Return function for header-line clicks.
+If SORTABLE, handle the sorting; otherwise show a message that
+you cannot sort by this field.
+
+If THREADS is non-nil, give a more informative error message."
+  (if (not sortable)
+      (if threads
+          (lambda (&optional e)
+            (interactive "e")
+            (mu4e-message "With threading, you can only sort by date"))
+        (lambda (&optional e)
+          (interactive "e")
+          (mu4e-message "Field is not sortable")))
+    (lambda (&optional e)
+      (interactive "e")
+      ;; getting the field, inspired by `tabulated-list-col-sort'
+      (let* ((obj (posn-object (event-start e)))
+             (field (and obj
+                         (get-text-property 0 'field (car obj)))))
+        ;; "t": if we're already sorted by field, the
+        ;; sort-order is changed
+        (mu4e-search-change-sorting field t)))))
 
 (defun mu4e~header-line-format ()
   "Get the format for the header line."
-  (let ((uparrow   (if mu4e-use-fancy-chars " ▲" " ^"))
-        (downarrow (if mu4e-use-fancy-chars " ▼" " V")))
+  (let* ((plist (mu4e-server-last-query)) ;; info about the last query
+         (reverse (plist-get plist :descending))
+         (threads (plist-get plist :threads))
+         ;; with threads enabled,  we can only sort by ;date
+         (sort-field (if threads :date (plist-get plist :sort-field)))
+         (fields (append mu4e-header-info mu4e-header-info-custom))
+         (arrow (if reverse
+                    (if mu4e-use-fancy-chars " ▼" " V")
+                  (if mu4e-use-fancy-chars " ▲" " ^"))))
     (cons
      (make-string
       (+ mu4e--mark-fringe-len (floor (fringe-columns 'left t))) ?\s)
      (mapcar
       (lambda (item)
-        (let* (;; with threading enabled, we're necessarily sorting by date.
-               (sort-field (if mu4e-search-threads
-                               :date mu4e-search-sort-field))
-               (field (car item)) (width (cdr item))
-               (info (cdr (assoc field
-                                 (append mu4e-header-info
-                                         mu4e-header-info-custom))))
-               (sortable (plist-get info :sortable))
-               ;; if sortable, it is either t (when field is sortable itself)
-               ;; or a symbol (if another field is used for sorting)
-               (this-field (when sortable (if (booleanp sortable)
-                                              field
-                                            sortable)))
+        (let* ((field (car item)) (width (cdr item))
+               (info (cdr (assoc field fields)))
+               (sortable-info (plist-get info :sortable))
+               ;; the effective sort-field for this field is as per its info;
+               ;; if t, it's the field itself; otherwise it's either some
+               ;; _other_ field (for fields which are sorted by some other field), or nil
+               ;; for fields that cannot be sorted.
+               (field-sort-field
+                (if (eq sortable-info t) field sortable-info))
+               ;; only if we're actually looking at if for this column
+               (current-sort-field (and (eq field-sort-field sort-field) field-sort-field))
                (help (plist-get info :help))
                ;; triangle to mark the sorted-by column
-               (arrow
-                (when (and sortable (eq this-field sort-field))
-                  (if (eq mu4e-search-sort-direction 'descending)
-                      downarrow
-                    uparrow)))
-               (name (concat (plist-get info :shortname) arrow))
+               (name (concat (plist-get info :shortname)
+                             (if current-sort-field arrow "")))
                (map (make-sparse-keymap)))
-          (when sortable
-            (define-key map [header-line mouse-1]
-                        (lambda (&optional e)
-                          ;; getting the field, inspired by
-                          ;; `tabulated-list-col-sort'
-                          (interactive "e")
-                          (let* ((obj (posn-object (event-start e)))
-                                 (field
-                                  (and obj
-                                       (get-text-property 0 'field (car obj)))))
-                            ;; "t": if we're already sorted by field, the
-                            ;; sort-order is changed
-                            (mu4e-search-change-sorting field t)))))
+          (define-key map [header-line mouse-1]
+                      (mu4e~header-line-click field-sort-field threads))
           (concat
            (propertize
             (if width
@@ -1086,13 +1096,13 @@ true, do *not* update the query history stack."
               name)
             'face (when arrow 'bold)
             'help-echo help
-            'mouse-face (when sortable 'highlight)
-            'keymap (when sortable map)
+            'mouse-face (when field-sort-field 'highlight)
+            'keymap map
             'field field) " ")))
       mu4e-headers-fields))))
 
 (defun mu4e~headers-maybe-auto-update ()
-  "Update the current headers buffer after indexing changes.
+  "Update the current headers buffer after indexing.
 
 Furthermore, `mu4e-headers-auto-update' is non-nil and there is
 no user-interaction ongoing.
@@ -1265,7 +1275,7 @@ corresponding header."
 
 
 (defun mu4e-headers-find-if (func &optional backward)
-  "Move to the header for which FUNC returns non-nil.
+  "Move to the header where FUNC yields non-nil.
 if BACKWARD is non-nil, search backwards.
 
 FUNC receives one argument, the message s-expression for the

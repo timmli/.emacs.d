@@ -588,10 +588,39 @@ Mu4e's version of Emacs 28's `string-replace'."
 
 (defun mu4e-plistp (object)
   "Non-nil if and only if OBJECT is a valid plist.
-
 This is mu4e's version of Emacs 29's `plistp'."
   (let ((len (proper-list-p object)))
     (and len (zerop (% len 2)))))
+
+(defun mu4e-plist-filter (plist pred)
+  "Return a plist for which a call to pred is non-nil.
+PLIST is some plist, and PRED is a function taking a key and
+value."
+  (let (p)
+    (while plist
+      (let ((key (car plist)) (val (cadr plist)))
+           (when (funcall pred key val)
+             (setq p (plist-put p key val))))
+      (setq plist (cddr plist)))
+    p))
+
+(defun mu4e-plist-remove (plist prop)
+  "Remove PROP from PLIST.
+Returns the updated PLIST."
+  (mu4e-plist-filter plist (lambda (k _v) (not (eq k prop)))))
+
+(defun mu4e-plist-remove-nils (plist)
+  "Remove all properties with value nil from PLIST."
+  (mu4e-plist-filter plist (lambda (_k v) v)))
+
+(defun mu4e-plist-put-many (plist &rest keyvals)
+  "Like `plist-put', but allow for multiple key-value pairs.
+PLIST is a property list, and KEYVALS are key value ... ."
+  (let ((p plist))
+    (while keyvals
+      (setq p (plist-put p (car keyvals) (cadr keyvals)))
+      (setq keyvals (cddr keyvals)))
+    p))
 
 (defun mu4e--message-hide-headers ()
   "Hide headers based on the `message-hidden-headers' variable.
