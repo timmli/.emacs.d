@@ -28,3 +28,6 @@
 [submodule "lisp/helm-elfeed"]
 	path = lisp/helm-elfeed
 	url = https://codeberg.org/timmli/helm-elfeed
+[submodule "lisp/org-drawio"]
+	path = lisp/org-drawio
+	url = https://codeberg.org/timmli/org-drawio.git

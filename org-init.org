@@ -4249,6 +4249,20 @@ Load languages that can be evaluated in org-babel source blocks.
 	 (shell . t)))
 #+END_SRC
 
+*** org-drawio
+
+https://codeberg.org/timmli/org-drawio
+
+WORK IN PROGRESS!
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-drawio
+	:after org
+  :load-path "lisp/org-drawio/"
+	:config
+  (add-hook 'org-mode-hook 'org-drawio-mode))
+#+END_SRC
+
 *** org-drill 
 
 https://gitlab.com/phillord/org-drill/
