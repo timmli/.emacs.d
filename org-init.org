@@ -8881,7 +8881,7 @@ This will, for example, avoid breaking Org tables, if they are preceded by at le
 - https://github.com/djcb/mu/issues/2308
 - https://github.com/djcb/mu/blob/master/IDEAS.org
 
-****** Citations
+****** Citation lines & Quoting
 
 Citation lines precede cited contents of replied or forwarded messages. Out of the box, Mu4e only includes the sender, which can be adjusted with =message-citation-line-format=:
 
@@ -8939,8 +8939,9 @@ By default, mu4e removes the signature from cited messages by using =message-cit
 ;; (setq mu4e-compose-cite-function 'message-cite-original)
 #+END_SRC
 
-Taken from https://github.com/djcb/mu/issues/1843, but should be fixed in upcomping versions of mu4e. 
-Remove buttons like =[[S/MIME ...= from text bodies of cited messages:
+
+Remove buttons like =[[S/MIME ...= from text bodies of cited messages.
+Taken from https://github.com/djcb/mu/issues/1843, but should be fixed in upcomping versions of mu4e. Last checked with mu4e v1.12.11. 
 
 #+BEGIN_SRC emacs-lisp
 (defun tv/mu4e-remove-buttons-in-reply (original-fn &rest args)
@@ -8952,6 +8953,56 @@ Remove buttons like =[[S/MIME ...= from text bodies of cited messages:
         (replace-match "")))
     (apply original-fn args)))
 (add-function :around mu4e-compose-cite-function #'tv/mu4e-remove-buttons-in-reply)
+#+END_SRC
+
+The following interactive functions could be handy for stepwise quoting or unquoting regions, but I prefer using the more simplistic =comment-or-uncomment-region-or-line=:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(defun tl/message-quote-region ()
+	"Quote the selected region by adding '>' at the beginning of each line."
+	(interactive)
+	(let* ((start (save-excursion
+									(when (use-region-p) (goto-char (region-beginning)))
+									(line-beginning-position)))
+				 (end (save-excursion
+								(when (use-region-p) (goto-char (region-end)))
+								(line-end-position)))
+				 (region (buffer-substring-no-properties start end)))
+		(delete-region start end)
+		(insert (mapconcat (lambda (line)
+												 (concat ">" (if (string-prefix-p ">" line) "" " ") line))
+											 (split-string region "\n" t) "\n"))
+		;; Update marked region
+		(goto-char start)
+		(beginning-of-line)
+		(push-mark)
+		(goto-char end)
+		(end-of-line)
+		(activate-mark)
+		))
+
+(defun tl/message-unquote-region ()
+	"Remove '>' at the beginning of each line."
+	(interactive)
+	(let* ((start (save-excursion
+									(when (use-region-p) (goto-char (region-beginning)))
+									(line-beginning-position)))
+				 (end (save-excursion
+								(when (use-region-p) (goto-char (region-end)))
+								(line-end-position)))
+				 (region (buffer-substring-no-properties start end)))
+		(delete-region start end)
+		(insert (mapconcat (lambda (line)
+												 (string-remove-prefix " " (string-remove-prefix ">" line)))
+											 (split-string region "\n" t) "\n"))
+		;; Update marked region
+		(goto-char start)
+		(beginning-of-line)
+		(push-mark)
+		(goto-char end)
+		(end-of-line)
+		(activate-mark)
+		))
 #+END_SRC
 
 ****** Mailing lists
@@ -8967,7 +9018,7 @@ I use [[helm-khard]] for this. The steps are:
 
 https://github.com/jeremy-compostella/org-msg
 
-Mixing =org-mode= with =message-mode= and sending messages in HTML format. Yet, I actually do not like to send HTML mails, so I'm not using it.
+Mixing =org-mode= with =message-mode= and sending messages in HTML format. I actually do not like to send HTML mails, so I'm not using it.
 
 Dependencies
 - [[htmlize]]
@@ -16038,6 +16089,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
      _C-c C-j_ Delay           _ac_ Clipoard               _E_ Sign & encrypt
      _C-c C-k_ Kill            _aC_ Captured message      _is_ Insert screenshot
      ^^                        ^^                         _ic_ Insert text with CAESAR13
+     ^^                        ^^                          _>_ quote or unquote region
 "         
 	("C-c C-c" message-send-and-exit)
 	("C-c C-d" message-dont-send)
@@ -16048,10 +16100,11 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("ac" my/mu4e-attach-image-from-clipboard)
 	("aC" mu4e-compose-attach-captured-message)
 	("S" mml-secure-sign) 
-   ("C" mml-secure-encrypt)
-	 ("E" mml-secure-message-sign-encrypt)
+  ("C" mml-secure-encrypt)
+	("E" mml-secure-message-sign-encrypt)
 	("is" message-insert-screenshot)
-   ("ic" message-caesar-buffer-body)
+  ("ic" message-caesar-buffer-body)
+	(">" comment-or-uncomment-region-or-line :color pink)
 	("H" mu4e-display-manual)
 	("q" nil :color blue)
 	)
