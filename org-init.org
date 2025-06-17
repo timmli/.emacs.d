@@ -16089,7 +16089,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
      _C-c C-j_ Delay           _ac_ Clipoard               _E_ Sign & encrypt
      _C-c C-k_ Kill            _aC_ Captured message      _is_ Insert screenshot
      ^^                        ^^                         _ic_ Insert text with CAESAR13
-     ^^                        ^^                          _>_ quote or unquote region
+     ^^                        ^^                        _C-;_ Quote or unquote region
 "         
 	("C-c C-c" message-send-and-exit)
 	("C-c C-d" message-dont-send)
@@ -16104,7 +16104,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("E" mml-secure-message-sign-encrypt)
 	("is" message-insert-screenshot)
   ("ic" message-caesar-buffer-body)
-	(">" comment-or-uncomment-region-or-line :color pink)
+	("C-;" comment-or-uncomment-region-or-line :color pink)
 	("H" mu4e-display-manual)
 	("q" nil :color blue)
 	)
