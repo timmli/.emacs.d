@@ -7146,13 +7146,14 @@ Powerful environment for Python coding.
 
 Prerequisites as for Python:
 #+BEGIN_SRC bash
-sudo pip install jedi flake8 importmagic autopep8 # Elpy's recommendation
-sudo pip install pylint virtualenv epc # Zamansky's recommendation
+pip install jedi flake8 importmagic autopep8 # Elpy's recommendation
+pip install pylint virtualenv epc # Zamansky's recommendation
 #+END_SRC
 
 #+BEGIN_SRC emacs-lisp
 (use-package elpy
 	:ensure t
+	:pin MELPA
 	:defer 2
 	:init
 	(elpy-enable)
@@ -7175,6 +7176,12 @@ sudo pip install pylint virtualenv epc # Zamansky's recommendation
 	;; tell elpy to use python3 (or install python-is-python3 under GNU/Linux)
 	(setq elpy-rpc-python-command "python3")
 	)
+#+END_SRC
+
+The configuration can be checked with =elpy-config=:
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(elpy-config)
 #+END_SRC
 
 **** company-jedi
