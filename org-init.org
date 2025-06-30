@@ -489,6 +489,9 @@ Replace LaTeX commands by UTF8 symbols:
 *** Emojis
 
 As of Emacs v29, displaying and selecting emojis is now built-in via [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Input-Methods.html][input methods]]. 
+Further information:
+- https://www.masteringemacs.org/article/inserting-emoji-input-methods
+- http://xahlee.info/emacs/emacs/emacs_emoji.html
 
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "C-c i e") 'emoji-search)
@@ -10690,7 +10693,7 @@ When =company= is actively used by browsing completion candidates, =<return>= sh
 
 **** company-emoji
 
-https://github.com/dunn/company-emoji
+https://codeberg.org/egirl/company-emoji
 
 [[company]] backend for emojis. 
 Recommended to be used with [[emacs-emojify]].
