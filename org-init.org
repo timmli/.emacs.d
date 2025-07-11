@@ -8581,7 +8581,10 @@ Since Gnus removes line breaks (which I want) with =skip-chars-backward=  when "
 #+BEGIN_SRC emacs-lisp
 (add-hook 'mu4e-compose-mode-hook
 					(defun my-mu4e-compose-settings ()
-						"My settings for message composition."
+						"My settings for message composition.
+
+Note that point movements are not persistent since
+`mu4e--jump-to-a-reasonable-place' is called after the hook."
 						(company-mode) 							; Complete addresses with company
 						(save-excursion (message-goto-bcc)
 														(when (not (looking-at "[[:blank:]]*$"))        
@@ -8596,7 +8599,7 @@ Since Gnus removes line breaks (which I want) with =skip-chars-backward=  when "
 
 						;; Replace citation line place keeper.
 						(save-excursion
-							(beginning-of-buffer)
+							(goto-char (point-min))
 							(when (re-search-forward message-citation-line-format nil t)
 								(replace-match (tl/message-citation-line-string) t)))
 
@@ -8609,13 +8612,17 @@ Since Gnus removes line breaks (which I want) with =skip-chars-backward=  when "
 
 						;; Do not autosafe drafts
 						(auto-save-mode -1)
-						
-						;; FIXME: Does not work! 
-						(when (re-search-forward "<#part sign=smime>" nil t)
-							(end-of-line)
-							(open-line 1)
-							(forward-line))
 						))
+
+(defun advice-after-mu4e--jump-to-a-reasonable-place ()
+	"Function executed after `mu4e--jump-to-a-reasonable-place'."
+	;; Add an extra line after sign part
+	(when (looking-at "<#part sign=smime>")
+		(end-of-line)
+		(newline)))
+
+(advice-add 'mu4e--jump-to-a-reasonable-place
+						:after #'advice-after-mu4e--jump-to-a-reasonable-place)
 
 ;; Only complete with mail addresses that have been used recently and with personal contact
 (setq mu4e-compose-complete-only-personal t 
