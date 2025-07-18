@@ -11613,6 +11613,10 @@ Edit regions with identical content in the same way simultaneously. Cool!
 
 *** hideshow
 
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Hideshow.html
+
+Selectively display portions of a program.
+
 #+BEGIN_SRC emacs-lisp
 (use-package hideshow
   :ensure t
@@ -11621,9 +11625,60 @@ Edit regions with identical content in the same way simultaneously. Cool!
 	(add-hook 'prog-mode-hook 'hs-minor-mode))
 #+END_SRC
 
-=hideshow-org= adds org-mode like folding experience to hideshow.
+*** hs-cycle
 
-#+BEGIN_SRC emacs-lisp
+https://karthinks.com/software/simple-folding-with-hideshow/
+
+Org-like cycling function for [[hideshow]] that can be bound to any key.
+This is a more simple alternative for [[hideshow-org]]. 
+
+Currently not in use, as I don't need code folding when programming.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(defun hs-cycle (&optional level)
+  (interactive "p")
+  (let (message-log-max
+        (inhibit-message t))
+    (if (= level 1)
+        (pcase last-command
+          ('hs-cycle
+           (hs-hide-level 1)
+           (setq this-command 'hs-cycle-children))
+          ('hs-cycle-children
+           ;; TODO: Fix this case. `hs-show-block' needs to be
+           ;; called twice to open all folds of the parent
+           ;; block.
+           (save-excursion (hs-show-block))
+           (hs-show-block)
+           (setq this-command 'hs-cycle-subtree))
+          ('hs-cycle-subtree
+           (hs-hide-block))
+          (_
+           (if (not (hs-already-hidden-p))
+               (hs-hide-block)
+             (hs-hide-level 1)
+             (setq this-command 'hs-cycle-children))))
+      (hs-hide-level level)
+      (setq this-command 'hs-hide-level))))
+
+(defun hs-global-cycle ()
+    (interactive)
+    (pcase last-command
+      ('hs-global-cycle
+       (save-excursion (hs-show-all))
+       (setq this-command 'hs-global-show))
+      (_ (hs-hide-all))))
+#+END_SRC
+
+*** hideshow-org
+
+https://github.com/shanecelis/hideshow-org
+
+=hideshow-org= adds org-mode like folding experience to hideshow using =<tab>= and =<S-tab>=.
+
+This package is deactivated because I actually never use it intentionally, but unintentionally when hitting =<tab>= for other purposes. Moreover, a depreciation warning is shown when loading this package.
+
+#+BEGIN_SRC emacs-lisp :tangle no
 (use-package hideshow-org
 	:ensure t
   :config
