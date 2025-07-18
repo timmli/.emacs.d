@@ -20,6 +20,8 @@
 ;; This package allows you to undo/redo point and window-start.
 ;; It is like w3m's UNDO/REDO commands.
 
+;; With some modifications by Timm Lichte marked with "TL"
+
 ;;; Commands:
 ;;
 ;; Below are complete command list:
@@ -103,9 +105,9 @@
 
 (defun point-undo-doit (list1 list2)
   ;; list1, list2 = {point-undo-list, point-redo-list}
-  (destructuring-bind (pt . wst)
-		      (or (car (symbol-value list1)) '(nil)) ;nil-safe
-		      (when pt
+  (cl-destructuring-bind (pt . wst)					 ; TL: destructuring-bind --> cl-destructuring-bind
+			(or (car (symbol-value list1)) '(nil)) ;nil-safe
+		(when pt
 			(set list1 (cdr (symbol-value list1)))
 			(set list2 (cons (cons (point) (window-start)) (symbol-value list2)))
 			(goto-char pt)
