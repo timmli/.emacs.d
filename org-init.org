@@ -387,9 +387,12 @@ https://github.com/oneKelvinSmith/monokai-emacs
 
 The monokai theme is one of my favourites.
 
+Since the last stable version is lagging behind, which leads to warnings, I am using the development version.
+
 #+BEGIN_SRC emacs-lisp
 (use-package monokai-theme
 	:ensure t
+	:pin MELPA 
 	:config
 	(load-theme 'monokai t)
 	
