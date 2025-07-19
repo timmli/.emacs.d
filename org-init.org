@@ -8692,6 +8692,13 @@ Configure the body of forwarded messages:
 			message-forward-before-signature t)
 #+END_SRC
 
+Allow for special characters in From field when replying according to [[https://www.rfc-editor.org/rfc/rfc2047][RFC 2047]]:
+https://github.com/djcb/mu/issues/2662#issuecomment-2147205731
+
+#+BEGIN_SRC emacs-lisp
+(setq rfc2047-quote-decoded-words-containing-tspecials t)
+#+END_SRC
+
 ****** Attachments & pasting from clipboard
 
 In general, files should be attached at the end of a message except for inline attachments. Since =mml-attach-file-at-the-end= does not differentiate between inline and other attachments, it should not be used:
