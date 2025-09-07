@@ -9042,6 +9042,23 @@ I use [[helm-khard]] for this. The steps are:
 - The contacts of the mailing list are assign a specific category.
 - When writing an email, contacts are selected by filtering for this category.
 
+****** mu4e-walk
+
+!!! WORK IN PROGRESS !!!
+
+https://codeberg.org/timmli/mu4e-walk
+
+Send email addresses for a walk.
+
+#+BEGIN_SRC emacs-lisp
+(use-package mu4e-walk
+	:after mu4e
+  :load-path "lisp/mu4e-walk/"
+	:config
+	(add-hook 'mu4e-compose-mode-hook 'mu4e-walk-add-keybindings-compose-mode)
+)
+#+END_SRC
+
 ****** COMMENT Org-msg
 
 https://github.com/jeremy-compostella/org-msg

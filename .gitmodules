@@ -31,3 +31,6 @@
 [submodule "lisp/org-drawio"]
 	path = lisp/org-drawio
 	url = https://codeberg.org/timmli/org-drawio.git
+[submodule "lisp/mu4e-walk"]
+	path = lisp/mu4e-walk
+	url = https://codeberg.org/timmli/mu4e-walk
