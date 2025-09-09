@@ -10475,6 +10475,19 @@ Slim GIF screencasts for Emacs. This package uses [[https://github.com/resurrect
 	:ensure t)
 #+END_SRC
 
+*** keycast
+
+https://github.com/tarsius/keycast
+
+Show current command and its binding.
+
+Can be activated with =keycast-mode-line-mode=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package keycast
+	:ensure t)
+#+END_SRC
+
 * Minor modes
 ** COMMENT literal-calc-mode
 
