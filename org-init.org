@@ -12876,33 +12876,31 @@ Inspired by =andy/increment-number-at-point= from https://gist.github.com/argher
 #+BEGIN_SRC emacs-lisp
 (defun tl/change-number-at-point (step)
 	(interactive)
-	(save-excursion
-		(skip-chars-backward "0123456789")
-		(or (looking-at "[0123456789]+")
-				(error "No number at point"))
-		(replace-match
-		 (let ((number (string-to-number (match-string 0))))
-			 (number-to-string
-				(if (> (+ number step) 0)
-						(+ number step)
-					0))))
-		))
+	(skip-chars-backward "0123456789")
+	(or (looking-at "[0123456789]+")
+			(error "No number at point"))
+	(replace-match
+	 (let ((number (string-to-number (match-string 0))))
+		 (number-to-string (if (> (+ number step) 0)
+													 (+ number step)
+												 0))))
+	(backward-char))
 
 (defun tl/change-number-dwim (step)
 	(interactive)
-	(cond
-	 
-	 ((and (org-at-clock-log-p) (> step 0)) (let ((org-clock-adjust-closest t))
-																						(call-interactively 'org-timestamp-up)))
-	 ((and (org-at-clock-log-p) (< step 0)) (let ((org-clock-adjust-closest t))
-																						(call-interactively 'org-timestamp-down)))
+	(cond	 
+	 ((and (org-at-clock-log-p) (> step 0))
+		(let ((org-clock-adjust-closest t))
+			(call-interactively 'org-timestamp-up)))
+	 ((and (org-at-clock-log-p) (< step 0))
+		(let ((org-clock-adjust-closest t))
+			(call-interactively 'org-timestamp-down)))
 	 ;; with `(org-at-timestamp-p 'lax)', the function matches any part of the document looking like a timestamp
 	 ((and (org-at-timestamp-p 'lax) (> step 0)) 
 		(org-timestamp-up))
 	 ((and (org-at-timestamp-p 'lax) (< step 0))
 		(org-timestamp-down))
-	 (t (tl/change-number-at-point step))
-	 ))
+	 (t (tl/change-number-at-point step))))
 
 (global-set-key (kbd "C-8") (lambda () (interactive) (tl/change-number-dwim -1)))
 (global-set-key (kbd "C-9") (lambda () (interactive) (tl/change-number-dwim +1)))
