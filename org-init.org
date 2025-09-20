@@ -5803,6 +5803,30 @@ Guides
 Makefiles
 - https://nullprogram.com/blog/2020/01/22/
 
+***** package-lint
+
+https://github.com/purcell/package-lint
+
+Linter for package metadata in Elisp files.
+
+#+BEGIN_SRC emacs-lisp
+(use-package package-lint
+	:ensure t
+	:pin MELPA)
+#+END_SRC
+
+***** package-build
+
+https://github.com/melpa/package-build
+
+Build packages using their recipes.
+
+#+BEGIN_SRC emacs-lisp
+(use-package package-build
+	:ensure t
+	:pin MELPA)
+#+END_SRC
+
 **** Benchmarking
 
 ***** elisp-benchmarks 
