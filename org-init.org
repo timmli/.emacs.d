@@ -9068,18 +9068,16 @@ I use [[helm-khard]] for this. The steps are:
 
 ****** mu4e-walk
 
-!!! WORK IN PROGRESS !!!
-
 https://codeberg.org/timmli/mu4e-walk
 
 Send email addresses for a walk.
 
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e-walk
-	:after mu4e
-  :load-path "lisp/mu4e-walk/"
+  :after mu4e
+  :ensure t
 	:config
-	(add-hook 'mu4e-compose-mode-hook 'mu4e-walk-add-keybindings-compose-mode)
+	(add-hook 'mu4e-compose-mode-hook 'mu4e-walk-add-keybindings-compose-mode) ; Optional
 )
 #+END_SRC
 
