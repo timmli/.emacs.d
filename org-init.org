@@ -4270,12 +4270,15 @@ WORK IN PROGRESS!
   (add-hook 'org-mode-hook 'org-drawio-mode))
 #+END_SRC
 
-*** org-drill 
+*** COMMENT org-drill 
 
 https://gitlab.com/phillord/org-drill/
 https://orgmode.org/worg/org-contrib/org-drill.html
 
 Drill yourself in everything you want to learn – inspired by [[https://apps.ankiweb.net/][Anki]].
+
+Issues
+- [2025-10-06 Mon] :: =org-drill/:catch: Wrong number of arguments: (3 . 3), 2=
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-drill
