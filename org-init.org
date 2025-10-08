@@ -558,6 +558,18 @@ Make the mode line nicer and better readable.
 	(sml/setup))
 #+END_SRC
 
+*** minions
+
+https://github.com/tarsius/minions
+
+A minor-mode menu for the mode line
+
+#+BEGIN_SRC emacs-lisp
+(use-package minions
+	:ensure t
+  :config (minions-mode 1))
+#+END_SRC
+
 ** Distraction-free mode
 
 *** writeroom-mode
