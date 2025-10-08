@@ -9195,18 +9195,22 @@ My bookmarks are narrowed to =helm-mu-default-search-string=, which makes it nec
 (add-hook 'mu4e-main-mode-hook
 					(lambda ()
 						(setq mu4e-bookmarks
-									`((:name "With attachment"
-													 :key ?a
-													 :query ,(concat helm-mu-default-search-string " flag:attach"))
+									`((:name "Inbox"
+													 :query ,(concat helm-mu-default-search-string "")
+													 :key ?i
+													 :favorite t)
+										(:name "With attachment"
+													 :query ,(concat helm-mu-default-search-string " flag:attach")
+													 :key ?a)
 										(:name "With calendar invitation"
-													 :key ?c
-													 :query ,(concat helm-mu-default-search-string " flag:calendar"))
+													 :query ,(concat helm-mu-default-search-string " flag:calendar")
+													 :key ?c)
 										(:name "With images"
 													 :query ,(concat helm-mu-default-search-string " mime:image/*")
-													 :key ?i)
+													 :key ?I)
 										(:name "Flagged"
-													 :key ?f
-													 :query ,(concat helm-mu-default-search-string " flag:flagged"))
+													 :query ,(concat helm-mu-default-search-string " flag:flagged")
+													 :key ?f)
 										(:name "Unread messages"
 													 :query ,(concat helm-mu-default-search-string " flag:unread AND NOT flag:trashed")
 													 :key ?u)
@@ -9218,17 +9222,17 @@ My bookmarks are narrowed to =helm-mu-default-search-string=, which makes it nec
 													 :hide-unread t
 													 :key ?w)
 										(:name "[Global] With attachment"
-													 :key ?A
-													 :query "flag:attach")
+													 :query "flag:attach"
+													 :key ?A)
 										(:name "[Global] With calendar invitation"
-													 :key ?C
-													 :query "flag:calendar")
+													 :query "flag:calendar"
+													 :key ?C)
 										(:name "[Global] Messages with images"
 													 :query "mime:image/*"
 													 :key ?I)
 										(:name "[Global] Flagged"
-													 :key ?F
-													 :query "flag:flagged")
+													 :query "flag:flagged"
+													 :key ?F)
 										(:name "[Global] Unread messages"
 													 :query "flag:unread AND NOT flag:trashed"
 													 :key ?U)
