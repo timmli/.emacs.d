@@ -7569,10 +7569,16 @@ https://github.com/FrostyX/dired-open-with
 
 Select external program to open a file. 
 
+Issues:
+- [ ] Does not correctly open files with programs whose desktop files have an Exec value that contains a pipe symbol.
+      - Reason: =split-string-shell-command= (which is used in =dired-open-with--start-process=)  does not handle pipe symbols correctly, cutting off everything to their left.
+            - =(split-string-shell-command "ps -el | grep pdf")= --> =("grep" "pdf")=
+      - Workaround: Wrap complex commands that contain a pipe symbol in script files and use them in Exec instead.
+
 #+BEGIN_SRC emacs-lisp
 (use-package dired-open-with
-  :load-path "lisp/"
-  ;; :ensure t
+  ;; :load-path "lisp/"
+  :ensure t
 )
 (define-key dired-mode-map (kbd "C-<return>") 'dired-open-with)
 #+END_SRC
