@@ -7305,6 +7305,43 @@ I'm using [[flycheck]] instead,  which can [[https://www.flycheck.org/en/latest/
 		(add-hook 'sh-mode-hook 'flymake-shellcheck-load)))
 #+END_SRC
 
+*** Syntree
+
+https://github.com/enricoflor/syntree
+
+Draw plain text syntactic trees from plain text descriptions.
+
+#+BEGIN_SRC emacs-lisp
+(use-package syntree
+:ensure t)
+#+END_SRC
+
+Example:
+
+#+begin_src syntree
+("Sentences"
+ "_NP:the young women"
+ "Aux:may"
+ ("VP" "Verb:hit"
+  ("NP" "T:the" "N:ball")))
+#+end_src
+
+#+RESULTS:
+#+begin_example
+             Sentence             
+       ._________|._______.       
+       |          |       |       
+       NP        Aux     VP       
+.______|______.  may  .___|__.    
+|_____________|       |      |    
+the young women     Verb     NP   
+                     hit  .__|__. 
+                          |     | 
+                          T     N 
+                         the  ball
+                                  
+#+end_example
+
 *** Tree-Sitter
 
 Fast incremental parsing of source code.
