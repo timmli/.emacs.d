@@ -7318,13 +7318,13 @@ Draw plain text syntactic trees from plain text descriptions.
 
 Example:
 
-#+begin_src syntree
+#+BEGIN_SRC syntree
 ("Sentences"
  "_NP:the young women"
  "Aux:may"
  ("VP" "Verb:hit"
   ("NP" "T:the" "N:ball")))
-#+end_src
+#+END_SRC
 
 #+RESULTS:
 #+begin_example
