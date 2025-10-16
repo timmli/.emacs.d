@@ -10439,7 +10439,6 @@ https://www.gnu.org/software/emms/
 	(require 'helm-adaptive))
 #+END_SRC
 
-
 *** outline-mode
 
 **** COMMENT outline-magic
@@ -10520,19 +10519,6 @@ Slim GIF screencasts for Emacs. This package uses [[https://github.com/resurrect
 
 #+BEGIN_SRC emacs-lisp
 (use-package gif-screencast
-	:ensure t)
-#+END_SRC
-
-*** keycast
-
-https://github.com/tarsius/keycast
-
-Show current command and its binding.
-
-Can be activated with =keycast-mode-line-mode=.
-
-#+BEGIN_SRC emacs-lisp
-(use-package keycast
 	:ensure t)
 #+END_SRC
 
@@ -11989,7 +11975,29 @@ Move Where I Mean: switch between various line positions, like moving to the beg
 
 ** Keystroke visualizer
 
+*** keypression
+
 https://github.com/chuntaro/emacs-keypression
+
+Show keystrokes in child frames.
+
+#+BEGIN_SRC emacs-lisp
+(use-package keypression
+	:ensure t) 
+#+END_SRC
+
+*** keycast
+
+https://github.com/tarsius/keycast
+
+Show current command and its binding.
+
+Can be activated with =keycast-mode-line-mode=.
+
+#+BEGIN_SRC emacs-lisp
+(use-package keycast
+	:ensure t)
+#+END_SRC
 
 ** Lorem ipsum / Blindtext
 
