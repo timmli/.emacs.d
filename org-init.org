@@ -266,34 +266,17 @@ No beeping:
 (setq visible-bell nil)
 #+END_SRC
 
-** Syntax highlighting
+** Font Lock / Syntax highlighting
 
-Show matching brackets:
-#+BEGIN_SRC emacs-lisp
-(show-paren-mode 1)
-(setq show-paren-delay 0)
-#+END_SRC
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Font-Lock.html
 
-Apply syntax highlighting to all buffers:
+Font Lock takes care of assigning "[[Text faces][faces]]" to the text in a buffer based on the [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Syntax-Tables.html][Syntax Table]].   
+
+Syntax highlighting is done with Font Lock in Emacs.
+
+Apply Font Lock to all buffers:
 #+BEGIN_SRC emacs-lisp
 (global-font-lock-mode t)
-#+END_SRC
-
-*** highlight-symbol
-
-https://github.com/nschum/highlight-symbol.el
-
-Quickly highlight a symbol – most likely the word under point – throughout the buffer and cycle through its locations.
-There is a hydra attached to it: [[hydra-highlight-symbol]]
-
-#+BEGIN_SRC emacs-lisp
-(use-package highlight-symbol
-  :ensure t
-  :config
-  (setq highlight-symbol-idle-delay 0.2)
-  (add-hook 'highlight-symbol-mode-hook
-            (function
-             (lambda () (highlight-symbol-nav-mode +1)))))
 #+END_SRC
 
 ** Lines
@@ -363,11 +346,19 @@ Stretch cursor:
 (setq  x-stretch-cursor t)
 #+END_SRC
 
-** Text faces  
+** Parens / Brackets
 
-A face is a collection of graphical attributes for displaying text: font, foreground color, background color, optional underlining, etc.
+Show matching brackets:
+#+BEGIN_SRC emacs-lisp
+(show-paren-mode 1)
+(setq show-paren-delay 0)
+#+END_SRC
+
+** Text faces
 
 https://www.gnu.org/software/emacs/manual/html_node/emacs/Faces.html
+
+A face is a collection of graphical attributes for displaying text: font, foreground color, background color, optional underlining, etc.
 
 *** Themes
 
@@ -12246,6 +12237,23 @@ https://github.com/szermatt/visual-replace
 Visual helper for standard query-replace in Emacs similar to [[visual-regexp]], but with a prompt that lets one modify the search and the replacement at the same time.
 
 I'm not using it right now.
+
+*** highlight-symbol
+
+https://github.com/nschum/highlight-symbol.el
+
+Quickly highlight a symbol – most likely the word under point – throughout the buffer and cycle through its locations.
+There is a hydra attached to it: [[hydra-highlight-symbol]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package highlight-symbol
+  :ensure t
+  :config
+  (setq highlight-symbol-idle-delay 0.2)
+  (add-hook 'highlight-symbol-mode-hook
+            (function
+             (lambda () (highlight-symbol-nav-mode +1)))))
+#+END_SRC
 
 ** Narrowing
 
