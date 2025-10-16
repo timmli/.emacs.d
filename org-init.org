@@ -12939,6 +12939,7 @@ Inspired by =andy/increment-number-at-point= from https://gist.github.com/argher
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/change-number-at-point (step)
+	"Increase or decrease number by STEP." 
 	(interactive)
 	(skip-chars-backward "0123456789")
 	(or (looking-at "[0123456789]+")
@@ -12951,19 +12952,23 @@ Inspired by =andy/increment-number-at-point= from https://gist.github.com/argher
 	(backward-char))
 
 (defun tl/change-number-dwim (step)
+	"Increase or decrease number by STEP and perform additional
+actions depending on the context." 
 	(interactive)
 	(cond	 
 	 ((and (org-at-clock-log-p) (> step 0))
-		(let ((org-clock-adjust-closest t))
+		;; org-clock-adjust-closest must be set to nil to avoid the error: 
+		;; org-clock-update-time-maybe: Wrong type argument: number-or-marker-p, nil
+		(let ((org-clock-adjust-closest nil))
 			(call-interactively 'org-timestamp-up)))
 	 ((and (org-at-clock-log-p) (< step 0))
-		(let ((org-clock-adjust-closest t))
+		(let ((org-clock-adjust-closest nil))
 			(call-interactively 'org-timestamp-down)))
 	 ;; with `(org-at-timestamp-p 'lax)', the function matches any part of the document looking like a timestamp
 	 ((and (org-at-timestamp-p 'lax) (> step 0)) 
-		(org-timestamp-up))
+		(call-interactively 'org-timestamp-up))
 	 ((and (org-at-timestamp-p 'lax) (< step 0))
-		(org-timestamp-down))
+		(call-interactively 'org-timestamp-down))
 	 (t (tl/change-number-at-point step))))
 
 (global-set-key (kbd "C-8") (lambda () (interactive) (tl/change-number-dwim -1)))
