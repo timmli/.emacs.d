@@ -256,7 +256,7 @@ Custom settings (https://www.gnu.org/software/emacs/manual/html_mono/widget.html
 Show dashboard when also starting a client:
 
 #+BEGIN_SRC emacs-lisp
-(setq initial-buffer-choice (lambda () (get-buffer "*dashboard*")))
+(setq initial-buffer-choice (lambda () (get-buffer-create dashboard-buffer-name)))
 #+END_SRC
 
 ** Signals
