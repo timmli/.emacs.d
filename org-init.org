@@ -13602,6 +13602,7 @@ A Git porcelain inside Emacs.
 https://github.com/magit/orgit
 
 Org links to some Magit buffers.
+A nice blog post about this package: https://mmk2410.org/2022/01/21/my-emacs-package-of-the-week-orgit/
 
 #+BEGIN_SRC emacs-lisp
 (use-package orgit
@@ -13666,7 +13667,18 @@ Create URLs for files and commits in GitHub/Bitbucket/GitLab/... repositories.
 #+BEGIN_SRC emacs-lisp
 (use-package git-link
 	:ensure t
-	:bind (("C-c g l" . git-link))
+	:bind (("C-c g l" . git-link-dwim))
+	:config
+	(defun git-link-dwim ()
+		"DWIM wrapper for `git-link'."
+		(interactive)
+		(cond ((derived-mode-p 'magit-mode)
+					 (if (magit-commit-at-point)
+							 (save-excursion
+								 (beginning-of-line)
+								 (call-interactively 'git-link-commit))
+						 (call-interactively 'git-link)))
+					(t (call-interactively 'git-link))))
 	)
 #+END_SRC
 
@@ -14628,18 +14640,18 @@ Hydra for marking contents of a buffer.
      Help^^   Window^^   Config^^   Check^^   Refresh^^   Mode^^   Open^^  │Mark │  Org^^
    ╭─────^^─────────^^─────────^^────────^^──────────^^───────^^───────^^──╯     └─────^^─╯
 
-       Mark & Edit                ^^Highlight                      ^^Bookmark
-    ------------------------------^^-------------------------------^^-----------------------
-      [_a_] mark all               [_c_] highlight changes          [_b_] add bookmark
-      [_r_] mark rectangular       [_s_] highlight same symbols     [_p_] position register
-      [_e_] edit same symbol      [_gg_] git gutter                [_gl_] git link                     
+       Mark & Edit                ^^Highlight                        ^^Bookmark
+    ------------------------------^^---------------------------------^^-----------------------
+      [_a_] mark all               [_c_] highlight changes            [_b_] add bookmark
+      [_r_] mark rectangular       [_s_] highlight same symbols       [_p_] position register
+      [_e_] edit same symbol      [_gg_] git gutter             [_C-c g l_] git link
       [_*_] critic markup          [_w_] show/hide whitespaces                                         
       [_(_] key macro              [_o_] highlight with overlays  
-      [_>_] box-quote              ^^                               [_q_]uit
+      [_>_] box-quote              ^^                                 [_q_]uit
 	"
 	("a" mark-whole-buffer :exit t)
 	("gg" hydra-git-gutter/body :exit t)
-	("gl" git-link :exit t)
+	("C-c g l" git-link-dwim :exit t)
 	("c" hydra-highlight-changes/body :exit t)
 	("r" rectangle-mark-mode :exit t)
 	("b" hydra-add-bookmark/body :exit t)
@@ -14904,7 +14916,7 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
   ^^                     ^^             ^^                  _S_: symlink          _z_: size
   ^^            v        ^^             _w_: copy file name _P_: change property _ow_: open in other window
             _<down>_     ^^             _W_: copy path      _c_/_Z_: compress      _of_: open in other frame
-  ^^                     ^^             ^^                  _=_: diff
+  ^^                     ^^       _C-c g l_: git link       _=_: diff
    _._: home  _j_: jump  _f_: find        _$_: wdired         _am_: attach to mail    ^^
    ^^         ^^         ^^             ^^                    _af_: goto attached heading
    ^^         ^^         ^^             ^^                    _&_: clone file                 _q_: quit hydra 
@@ -14953,6 +14965,7 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
 	("v" dired-view-file)
 	("w" dired-copy-filename-as-kill)
 	("W" tl/dired-copy-path-at-point)
+	("C-c g l" git-link-dwim)
 	("z" dired-get-size)
 	;; ("q" quit-window :color blue)
 	("q" nil :color blue)
