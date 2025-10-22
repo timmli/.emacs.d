@@ -2488,22 +2488,6 @@ Function to rename =ATTACH_DIR= (deprecated since v9.3) to =DIR=, and to remove 
 
 *** Bibliography
 
-**** citeproc-org
-
-https://github.com/andras-simonyi/citeproc-org
-
-Renders =org-mode= citations and bibliographies during export in Citation Style Language (CSL) styles using the =citeproc-el= library.
-
-=citeproc-org= is used by [[helm-bibtex]].
-
-#+BEGIN_SRC emacs-lisp
-(use-package citeproc-org
-	:ensure t
-	;; :config
-	;; (citeproc-org-setup)
-	)
-#+END_SRC
-
 *** Capture templates
 
 - Template expansions: http://orgmode.org/manual/Template-expansion.html
@@ -6875,52 +6859,13 @@ Search through your BibTeX bibliography with helm.
 	)
 #+END_SRC
 
-One can influence the order of actions in helm like this:
-
-#+BEGIN_SRC emacs-lisp
-;; (helm-delete-action-from-source "Open PDF, URL or DOI" helm-source-bibtex)
-;; (helm-delete-action-from-source "Open PDF file (if present)" helm-source-bibtex)
-;; (helm-delete-action-from-source "Open URL or DOI in browser" helm-source-bibtex)
-;; (helm-delete-action-from-source "Show entry" helm-source-bibtex)
-
-;; (helm-add-action-to-source "Show entry"
-;; 													 'bibtex-completion-show-entry
-;; 													 helm-source-bibtex 5)
-;; (helm-add-action-to-source "Open PDF, URL or DOI"
-;; 													 'bibtex-completion-open-any
-;; 													 helm-source-bibtex 6)
-;; (helm-add-action-to-source "Open PDF file (if present)"
-;; 													 'bibtex-completion-open-pdf
-;; 													 helm-source-bibtex 7)
-;; (helm-add-action-to-source "Open URL or DOI in browser"
-;; 													 'bibtex-completion-open-url-or-doi
-;; 													 helm-source-bibtex 8)
-
-;; ;; Temporarily move "Show entry" to the first position of the action list when in bibtex-mode
-;; (defun tl/promote_show_entry (&optional arg local-bib)
-;; 	(helm-delete-action-from-source "Show entry" helm-source-bibtex)
-;; 	(helm-add-action-to-source "Show entry"
-;; 														 'bibtex-completion-show-entry
-;; 														 helm-source-bibtex 0))
-;; (defun tl/demote_show_entry (&optional arg local-bib)
-;; 	(helm-delete-action-from-source "Show entry" helm-source-bibtex)
-;; 	(helm-add-action-to-source "Show entry"
-;; 														 'bibtex-completion-show-entry
-;; 														 helm-source-bibtex 5))
-;; (defun tl/helm-bibtex-in-bibtex-mode ()
-;; 	(interactive)
-;; 	(tl/promote_show_entry)
-;; 	(helm-bibtex)
-;; 	(tl/demote_show_entry))
-;; (define-key bibtex-mode-map (kbd "C-c h") 'tl/helm-bibtex-in-bibtex-mode)
-;; (define-key bibtex-mode-map (kbd "C-c C-h") 'tl/helm-bibtex-in-bibtex-mode)
-
-#+END_SRC
-
 Support for CSL, see https://github.com/tmalsburg/helm-bibtex/issues/235#issuecomment-383870278.
 
 #+NAME: helm-bibtex-csl
 #+BEGIN_SRC emacs-lisp :tangle no
+(use-package citeproc
+	:ensure t)
+
 (defvar helm-bibtex-csl-style "~/.emacs.d/csl/minimal-unified-style-sheet-for-computational-linguistics.csl")
 
 (defvar helm-bibtex-csl-locale-dir "~/.emacs.d/csl")
@@ -6934,7 +6879,9 @@ Support for CSL, see https://github.com/tmalsburg/helm-bibtex/issues/235#issueco
     (citeproc-append-citations cites proc)
     (insert (car (citeproc-render-bib proc 'plain)))))
 
-(helm-add-action-to-source "Insert citeproc-formatted reference" 'helm-bibtex-insert-citeproc-reference helm-source-bibtex)
+(helm-add-action-to-source "Insert citeproc-formatted reference"
+													 'helm-bibtex-insert-citeproc-reference
+													 helm-source-bibtex)
 #+END_SRC
 
 **** COMMENT ivy-bibtex
