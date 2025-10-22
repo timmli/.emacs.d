@@ -2519,6 +2519,61 @@ Org has its own module for handling citations, described here:
 - https://blog.tecosaur.com/tmio/2021-07-31-citations.html
 
 I like to use [[org-ref]] however.
+ 
+**** org-ref
+
+https://github.com/jkitchin/org-ref
+
+Add all kinds of reference types (citations, text references, indexes, ...) to Org.
+
+Issues
+- [ ] Change format when exporting single citations with  the =org-ref-citation-menu=
+      - Currently hard-coded to use =bibtex-completion-apa-format-reference=
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-ref
+	:ensure t
+	:pin MELPA ; v2.0.0 is not compatible with helm v3.9.1
+	:after (org helm)
+	:init
+	(require 'org-ref) 										; don't know why I need this
+	(setq org-ref-default-bibliography (list user-bibliography-file)
+				;; org-ref-bibliography-notes "~/bibliography/notes.org"
+				org-ref-csl-default-style default-csl-style-file
+				org-ref-pdf-directory user-bibliography-pdf-dir
+				org-ref-prefer-bracket-links t
+				org-ref-default-ref-type "autoref")
+	:config
+	(define-key org-mode-map (kbd "C-c ]") org-ref-insert-cite-function)
+	(define-key org-mode-map (kbd "C-c )") org-ref-insert-ref-function)
+	(define-key org-mode-map (kbd "C-c (") org-ref-insert-label-function)
+	;; :bind (:map org-mode-map
+	;; ("C-c ]" . org-ref-helm-insert-cite-link)  ; Obsolete since > v2.0.0
+	;; ("C-c )" . org-ref-helm-insert-ref-link)	  ; Obsolete since > v2.0.0
+	;; ("C-c (" . org-ref-helm-insert-label-link) ; Obsolete since > v2.0.0
+	;; )
+	)
+#+END_SRC
+
+Add \citeauthoryear and  \citealtauthoryear to org-ref:
+#+BEGIN_SRC emacs-lisp
+;; Obsolete since > v2.0.0
+;; (org-ref-define-citation-link "citeauthoryear")
+;; (add-to-list 'org-ref-cite-types "citeauthoryear")
+;; (org-ref-define-citation-link "citealtauthoryear")
+;; (add-to-list 'org-ref-cite-types "citealtauthoryear")
+#+END_SRC
+
+Set colors:
+#+BEGIN_SRC emacs-lisp
+(custom-set-variables
+ '(org-ref-label-color "magenta")
+ '(org-ref-ref-color "LimeGreen")
+ '(org-ref-cite-color "ForestGreen")
+ )
+#+END_SRC
+
+TODO: 
 
 *** Capture templates
 
@@ -4374,57 +4429,6 @@ EOF
 update-desktop-database ~/.local/share/applications/
 xdg-mime default org-protocol.desktop x-scheme-handler/org-protocol
 #+END_SRC
-
-*** org-ref
-
-https://github.com/jkitchin/org-ref
-
-Add all kinds of reference types (citations, text references, indexes, ...) to Org.
-
-#+BEGIN_SRC emacs-lisp
-(use-package org-ref
-	:ensure t
-	:pin MELPA ; v2.0.0 is not compatible with helm v3.9.1
-	:after (org helm)
-	:init
-	(require 'org-ref) 										; don't know why I need this
-	(setq org-ref-default-bibliography (list user-bibliography-file)
-				;; org-ref-bibliography-notes "~/bibliography/notes.org"
-				org-ref-pdf-directory user-bibliography-pdf-dir
-				org-ref-prefer-bracket-links t
-				org-ref-default-ref-type "autoref"
-				)
-	:config
-	(define-key org-mode-map (kbd "C-c ]") org-ref-insert-cite-function)
-	(define-key org-mode-map (kbd "C-c )") org-ref-insert-ref-function)
-	(define-key org-mode-map (kbd "C-c (") org-ref-insert-label-function)
-	;; :bind (:map org-mode-map
-	;; ("C-c ]" . org-ref-helm-insert-cite-link) ; Obsolete since > v2.0.0
-	;; ("C-c )" . org-ref-helm-insert-ref-link)	; Obsolete since > v2.0.0
-	;; ("C-c (" . org-ref-helm-insert-label-link) ; Obsolete since > v2.0.0
-	;; )
-	)
-#+END_SRC
-
-Add \citeauthoryear and  \citealtauthoryear to org-ref:
-#+BEGIN_SRC emacs-lisp
-;; Obsolete since > v2.0.0
-;; (org-ref-define-citation-link "citeauthoryear")
-;; (add-to-list 'org-ref-cite-types "citeauthoryear")
-;; (org-ref-define-citation-link "citealtauthoryear")
-;; (add-to-list 'org-ref-cite-types "citealtauthoryear")
-#+END_SRC
-
-Set colors:
-#+BEGIN_SRC emacs-lisp
-(custom-set-variables
- '(org-ref-label-color "magenta")
- '(org-ref-ref-color "LimeGreen")
- '(org-ref-cite-color "ForestGreen")
- )
-#+END_SRC
-
-TODO: Change format entry string with =org-ref-formatted-citation-formats=.
 
 *** org-roam
 
