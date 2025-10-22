@@ -4034,7 +4034,7 @@ Here's my own version, which uses =org-table-wrap-region=. This was superseded b
   )
 #+END_SRC
 
-*** TODO org-appear
+*** TODO COMMENT org-appear
 :LOGBOOK:
 - State "TODO"       from              [2023-10-28 Sat 11:33]
 :END:
@@ -4046,6 +4046,7 @@ Automatically toggle visibility of emphasis markers and links under point.
 Issues
 - [ ] Links not shown with Org v9.6.1: https://github.com/awth13/org-appear/issues/46
       - Seems to be connected to =org-fold-core-style= being set to ='overlays=: https://github.com/awth13/org-appear/issues/53
+- [ ] "error in post-command-hook" with Org v9.7: https://github.com/awth13/org-appear/issues/58
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-appear
@@ -4059,14 +4060,17 @@ Issues
 				org-appear-autosubmarkers t))
 #+END_SRC
 
-**** COMMENT Deprecated
+*** org-expose-emphasis-markers
+
+https://github.com/lorniu/org-expose-emphasis-markers
 
 #+BEGIN_SRC emacs-lisp
-(straight-use-package '(org-appear :type git :host github :repo "awth13/org-appear"))
-(add-hook 'org-mode-hook 'org-appear-mode)
-(setq org-appear-autoemphasis t
-			org-appear-autolinks t
-			org-appear-autosubmarkers t)
+(use-package org-expose-emphasis-markers
+	:ensure t
+	:config
+	(setq org-hide-emphasis-markers t)
+	(add-hook 'org-mode-hook (lambda () (org-expose-emphasis-markers-mode t)))
+	)
 #+END_SRC
 
 *** org-babel
