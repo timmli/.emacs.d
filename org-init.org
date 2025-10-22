@@ -2573,8 +2573,6 @@ Set colors:
  )
 #+END_SRC
 
-TODO: 
-
 *** Capture templates
 
 - Template expansions: http://orgmode.org/manual/Template-expansion.html
