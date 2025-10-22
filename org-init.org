@@ -6891,6 +6891,7 @@ Search through your BibTeX bibliography with helm.
 
 	(setq bibtex-completion-display-formats 
 				'((t . "${author:36} ${title:*} ${year:4} ${=has-pdf=:1}${=has-note=:1} ${=type=:7}")))
+
 	<<helm-bibtex-csl>>
 	)
 #+END_SRC
@@ -6898,6 +6899,23 @@ Search through your BibTeX bibliography with helm.
 Support for CSL, see https://github.com/tmalsburg/helm-bibtex/issues/235#issuecomment-383870278.
 
 #+NAME: helm-bibtex-csl
+#+BEGIN_SRC emacs-lisp :tangle no
+(defun helm-bibtex-insert-citeproc-reference (_candidate)
+	(insert (mapconcat (lambda (x) 
+											 (tl/citeproc-format-bibtex-entry x
+																												user-bibliography-file
+																												default-csl-locale-dir
+																												default-csl-style-file
+																												'plain))
+										 (helm-marked-candidates))))
+					
+(helm-add-action-to-source "Insert citeproc-formatted reference"
+													 'helm-bibtex-insert-citeproc-reference
+													 helm-source-bibtex)
+#+END_SRC
+
+Old version:
+
 #+BEGIN_SRC emacs-lisp :tangle no
 (use-package citeproc
 	:ensure t)
@@ -6918,78 +6936,6 @@ Support for CSL, see https://github.com/tmalsburg/helm-bibtex/issues/235#issueco
 (helm-add-action-to-source "Insert citeproc-formatted reference"
 													 'helm-bibtex-insert-citeproc-reference
 													 helm-source-bibtex)
-#+END_SRC
-
-**** COMMENT ivy-bibtex
-
-#+BEGIN_SRC emacs-lisp
-		;; ;; ivy-bibtex
-		;; (use-package ivy-bibtex
-		;; 	:ensure t
-		;; 	:config
-		;; 	;; (setq bibtex-completion-bibliography '("./references.bib"))
-		;; 	(setq bibtex-completion-additional-search-fields '(bibtexkey))
-		;; 	;; (define-key LaTeX-mode-map (kbd "C-l C-r") 'ivy-bibtex)
-		;; 	;; The standard function with modified default action  
-		;; 	(defun ivy-bibtex (&optional arg)
-		;; 		"Search BibTeX entries using ivy. With a prefix ARG the cache is invalidated and the bibliography reread."
-		;; 		(interactive "P")
-		;; 		(when arg
-		;; 			(setq bibtex-completion-bibliography-hash ""))
-		;; 		(bibtex-completion-init)
-		;; 		(ivy-read "BibTeX Items: "
-		;; 							(bibtex-completion-candidates 'ivy-bibtex-candidates-formatter)
-		;; 							:caller 'ivy-bibtex
-		;; 							:action 'bibtex-completion-insert-key))
-		;; 	;; look for local bibliographies
-		;; 	;; (require 'ebib)
-		;; 	(defun ivy-bibtex-with-local-bibliography ()
-		;;     (interactive)
-		;;     (let ((bibtex-completion-bibliography
-		;; 					 (if (eq major-mode 'latex-mode)
-		;; 							 ;; (ebib--get-local-databases)
-		;; 							 (bibtex-completion--get-local-databases)
-		;; 						 bibtex-completion-bibliography)))
-		;; 			(ivy-bibtex)))
-		;; 	;; proposal by jagrg: https://github.com/tmalsburg/helm-bibtex/issues/112 
-		;; 	(defun bibtex-completion--get-local-databases ()
-		;; 		"Return a list of .bib files associated with the current file."
-		;; 		(let ((texfile nil)
-		;; 					(cb (current-buffer)))
-		;; 			(when (and (boundp 'TeX-master)
-		;; 								 (stringp TeX-master))
-		;; 				(setq texfile (if (file-name-extension TeX-master)
-		;; 													TeX-master
-		;; 												(concat TeX-master ".tex"))))
-		;; 			(with-temp-buffer
-		;; 				(if (and texfile (file-readable-p texfile))
-		;; 						(insert-file-contents texfile)
-		;; 					(insert-buffer-substring cb))
-		;; 				(save-match-data
-		;; 					(goto-char (point-min))
-		;; 					(cond
-		;; 					 ;; bibtex
-		;; 					 ((re-search-forward "\\\\\\(?:no\\)*bibliography{\\(.*?\\)}" nil t)
-		;; 						(mapcar (lambda (fname)
-		;; 											(if (file-name-extension fname)
-		;; 													fname
-		;; 												(concat fname ".bib")))
-		;; 										(split-string (match-string-no-properties 1) ",[ ]*")))
-		;; 					 ;; biblatex
-		;; 					 ((re-search-forward "\\\\addbibresource\\(\\[.*?\\]\\)?{\\(.*?\\)}" nil t)
-		;; 						(mapcar (lambda (fname)
-		;; 											(if (file-name-extension fname)
-		;; 													fname
-		;; 												(concat fname ".bib")))
-		;; 										(let ((option (match-string 1))
-		;; 													(file (match-string-no-properties 2)))
-		;; 											(unless (and option (string-match-p "location=remote" option))
-		;; 												(split-string file ",[ ]*")))))
-		;; 					 (t
-		;; 						bibtex-completion-bibliography))))))
-		;; 	:bind (:map LaTeX-mode-map 
-		;; 							("C-l C-r" . ivy-bibtex-with-local-bibliography))
-		;; 	)
 #+END_SRC
 
 **** Beamer
