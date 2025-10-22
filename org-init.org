@@ -5504,7 +5504,10 @@ iCalendar files can be imported
 
 *** [[org-agenda]]
 
-*** calfw 
+*** TODO COMMENT calfw 
+:LOGBOOK:
+- State "TODO"       from              [2025-10-22 Wed 11:40]
+:END:
 
 https://github.com/kiwanami/emacs-calfw/
 
@@ -5512,20 +5515,22 @@ Powerful calendar view for Emacs.
 
 Issues:
 - [ ] Week numbers are not shown: https://github.com/kiwanami/emacs-calfw/issues/137
-- [ ] Recurring events in imported ics files are not shown. 
+- [ ] Recurring events in imported ics files are not shown.
+- [ ] v2: =calfw-compat= is missing in the MELPA recipe: https://github.com/melpa/melpa/pull/9653
 
  #+BEGIN_SRC emacs-lisp
 (use-package calfw
 	:ensure t 
 	:init
-
-	(use-package calfw-org								; for org-agenda
+	(use-package calfw-org								; For integrating org-agenda
 		:ensure t)
-	(use-package calfw-ical								; for ics files
+	(use-package calfw-ical								; For handling ics files
 		:ensure t)
-	(use-package calfw-cal 								; for diaries
+	(use-package calfw-cal 								; For integrating diaries
 		:ensure t)
-
+	:config
+	(require 'calfw-compat)								; Necessary as of v2.0
+	;; (setq calfw-compat-mark-obsolete nil) ; Optional: This supresses obsolete messages
 	(setq cfw:render-line-breaker 'cfw:render-line-breaker-simple)
 	)
 #+END_SRC
