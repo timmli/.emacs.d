@@ -10020,18 +10020,16 @@ Taken from https://joshrollinswrites.com/help-desk-head-desk/20200611/.
 
 **** helm-elfeed
 
-!!! WORK IN PROGRESS !!!
-
 https://codeberg.org/timmli/helm-elfeed
 
 A Helm interface for Elfeed.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-elfeed
+	:ensure t
 	:after elfeed
-  :load-path "lisp/helm-elfeed/"
 	:config
-	(define-key elfeed-search-mode-map (kbd "C-i") 'helm-elfeed)
+	(define-key elfeed-search-mode-map (kbd "C-i") 'helm-elfeed) ; Optional
 )
 #+END_SRC
 
