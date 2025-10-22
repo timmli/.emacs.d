@@ -196,6 +196,14 @@ This variable should be changed in private-emacs-settings.el.")
 	"Path to the user directory of notes belonging to the bibliography.
 This variable should be changed in private-emacs-settings.el.")
 
+(defvar default-csl-style-file
+	(expand-file-name "csl/minimal-unified-style-sheet-for-computational-linguistics.csl" user-emacs-directory)
+	"Path to the default CSL style file.")
+
+(defvar default-csl-locale-dir 
+	(expand-file-name "csl/" user-emacs-directory)
+	"Path to the default CSL locale dir.")
+
 (defvar user-deepl-key
 	"key"
 	"Authentication Key for DeepL API
