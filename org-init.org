@@ -6905,7 +6905,8 @@ Support for CSL, see https://github.com/tmalsburg/helm-bibtex/issues/235#issueco
 																												default-csl-locale-dir
 																												default-csl-style-file
 																												'plain))
-										 (helm-marked-candidates))))
+										 (helm-marked-candidates)
+										 "\n")))
 					
 (helm-add-action-to-source "Insert citeproc-formatted reference"
 													 'helm-bibtex-insert-citeproc-reference
