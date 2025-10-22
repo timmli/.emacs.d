@@ -2486,7 +2486,39 @@ Function to rename =ATTACH_DIR= (deprecated since v9.3) to =DIR=, and to remove 
       (org-delete-property-globally "ATTACH_DIR_INHERIT")))
 #+END_SRC
 
-*** Bibliography
+*** Citations, references and bibliography
+
+**** citeproc
+
+https://github.com/andras-simonyi/citeproc-el
+
+citeproc-el is an Emacs Lisp library for rendering citations and bibliographies in styles described in the Citation Style Language (CSL). 
+
+I define a general function that formats a bibtex entry according to a given CSL file, which is used in [[helm-bibtex]]: 
+
+#+BEGIN_SRC emacs-lisp
+(use-package citeproc
+	:ensure t)
+
+(defun tl/citeproc-format-bibtex-entry (bibtex-key bibtex-bibliography locale-dir csl-file output-format)
+  "Generate a formatted citation string for BIBTEX-KEY of BIBTEX-BIBLIOGRAPHY 
+using CSL-FILE and LOCALE-DIR. OUTPUT-FORMAT can be any of the formats defined in `citeproc-fmt--formatters-alist`."
+  (let* ((locale-getter (citeproc-locale-getter-from-dir locale-dir))
+         (item-getter (citeproc-itemgetter-from-bibtex bibtex-bibliography))
+         (proc (citeproc-create csl-file item-getter locale-getter))
+         (citation (citeproc-citation-create :cites `(((id . ,bibtex-key)))))
+         (cites (list citation)))
+    (citeproc-append-citations cites proc)
+    (car (citeproc-render-bib proc output-format))))
+#+END_SRC
+
+**** org-cite
+
+Org has its own module for handling citations, described here:
+- https://orgmode.org/manual/Citation-handling.html
+- https://blog.tecosaur.com/tmio/2021-07-31-citations.html
+
+I like to use [[org-ref]] however.
 
 *** Capture templates
 
