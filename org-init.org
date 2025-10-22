@@ -1131,11 +1131,17 @@ Helm interface to CIDER.
 				 (clojure-mode . helm-cider-mode)))
 #+END_SRC
 
-*** helm-recoll
+*** TODO helm-recoll
+:LOGBOOK:
+- State "TODO"       from              [2025-10-21 Tue 10:50]
+:END:
 
 https://github.com/emacs-helm/helm-recoll
 
 Helm interface to [[https://www.lesbonscomptes.com/recoll/][recoll]].
+
+Issues:
+- [ ] https://github.com/emacs-helm/helm-recoll/issues/22
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-recoll
@@ -17301,6 +17307,10 @@ https://github.com/publicus/emacs-org-mode-for-the-laity
 
 **** --debug-init
 
+https://www.gnu.org/software/emacs/manual/html_node/efaq/Debugging-a-customization-file.html
+
+Emacs has the command-line option =--debug-init= to enable the debugger before evaluating the init file. 
+
 #+BEGIN_SRC bash :tangle no
 emacs --debug-init
 #+END_SRC
@@ -17321,6 +17331,10 @@ https://stackoverflow.com/q/65815662/6452961
 If you experience strange crashes when starting emacs, it has proven effective to delete the content of the folder =~/.cache/org-persist.= Don't ask me why.
 
 =org-persist= is used to store cached data across Emacs sessions.
+
+**** Skip updating =org-agenda-files=
+
+If Emacs gets stuck while updating =org-agenda-files= during start-up, one can suppress the update by setting the variable =org-agenda-files-last-update= in =custom.el= to today's date. 
 
 *** Functions
 
