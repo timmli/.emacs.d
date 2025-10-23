@@ -2500,16 +2500,27 @@ I define a general function that formats a bibtex entry according to a given CSL
 (use-package citeproc
 	:ensure t)
 
-(defun tl/citeproc-format-bibtex-entry (bibtex-key bibtex-bibliography locale-dir csl-file output-format)
+(defun tl/citeproc-format-bibtex-entry (bibtex-key bibtex-bibliography locale-dir csl-file &optional output-format choose-format)
   "Generate a formatted citation string for BIBTEX-KEY of BIBTEX-BIBLIOGRAPHY 
-using CSL-FILE and LOCALE-DIR. OUTPUT-FORMAT can be any of the formats defined in `citeproc-fmt--formatters-alist`."
+using CSL-FILE and LOCALE-DIR.
+
+OUTPUT-FORMAT can be any of the formats defined in `citeproc-fmt--formatters-alist`.
+
+If OUTPUT-FORMAT is nil and CHOOSE-FORMAT is non-nil, let the user select a
+format specified in `citeproc-fmt--formatters-alist`."
   (let* ((locale-getter (citeproc-locale-getter-from-dir locale-dir))
          (item-getter (citeproc-itemgetter-from-bibtex bibtex-bibliography))
          (proc (citeproc-create csl-file item-getter locale-getter))
          (citation (citeproc-citation-create :cites `(((id . ,bibtex-key)))))
          (cites (list citation)))
     (citeproc-append-citations cites proc)
-    (car (citeproc-render-bib proc output-format))))
+    (car (citeproc-render-bib proc (or output-format
+																			 (and choose-format
+																						(intern 
+																						 (completing-read
+																							"Choose Format: "
+																							(mapcar #'car citeproc-fmt--formatters-alist))))
+																			 'plain))))) 
 #+END_SRC
 
 **** org-cite
@@ -2560,7 +2571,7 @@ Issues
 																		 user-bibliography-file
 																		 default-csl-locale-dir
 																		 default-csl-style-file
-																		 'plain))
+																		 nil t))
 	)
 #+END_SRC
 
@@ -6913,7 +6924,7 @@ Support for CSL, see https://github.com/tmalsburg/helm-bibtex/issues/235#issueco
 																												user-bibliography-file
 																												default-csl-locale-dir
 																												default-csl-style-file
-																												'plain))
+																												nil t))
 										 (helm-marked-candidates)
 										 "\n")))
 					
