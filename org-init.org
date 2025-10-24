@@ -13100,8 +13100,7 @@ Inspired by: http://stackoverflow.com/questions/38061773/add-linked-org-files-to
 											 (file-exists-p org-link-path) ; only existing files
 											 )
 							(princ (concat " " org-link-path))
-							(add-to-list 'output (expand-file-name org-link-path))
-							)))))
+							(add-to-list 'output (expand-file-name org-link-path)))))))
 		(switch-to-buffer (current-buffer))		; return to first buffer
 		output))
 #+END_SRC
@@ -13129,9 +13128,12 @@ Update =org-agenda-files= once a day during start-up:
 #+BEGIN_SRC emacs-lisp
 (defcustom org-agenda-files-last-update nil 
 	"This variable saves the date of the last update of org-agenda-files.")
-(when (not (string-equal org-agenda-files-last-update (format-time-string "%Y-%m-%d")))
+(when (and (not (string-equal org-agenda-files-last-update
+															(format-time-string "%Y-%m-%d")))
+					 (yes-or-no-p "Update Org agenda files?"))
 	(tl/update-org-agenda-files)
-	(customize-save-variable 'org-agenda-files-last-update (format-time-string "%Y-%m-%d"))
+	(customize-save-variable 'org-agenda-files-last-update
+													 (format-time-string "%Y-%m-%d"))
 	(message "org-agenda-files-last-update updated"))
 #+END_SRC
 
