@@ -8201,8 +8201,12 @@ Email workflow with org-capture:
 ***** Installation & general settings
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path (expand-file-name "lisp/mu4e" user-emacs-directory))
-(require 'mu4e)
+;; (add-to-list 'load-path (expand-file-name "lisp/mu4e" user-emacs-directory))
+;; (require 'mu4e)
+
+(use-package mu4e
+	:load-path "lisp/mu4e"
+	)
 
 ;; Home of the Xapian index
 ;; Note that mu does not like to expand ~, as explained here: 
@@ -9076,10 +9080,11 @@ Send email addresses for a walk.
 #+BEGIN_SRC emacs-lisp
 (use-package mu4e-walk
   :after mu4e
-  :ensure t
+  ;; :ensure t
+	:load-path "lisp/mu4e-walk" 					; Uncomment when developing
 	:config
 	(add-hook 'mu4e-compose-mode-hook 'mu4e-walk-add-keybindings-compose-mode) ; Optional
-)
+	)
 #+END_SRC
 
 ****** COMMENT Org-msg
