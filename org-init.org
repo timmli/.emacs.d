@@ -1,4 +1,4 @@
-quit#+TITLE: Literate Emacs configuration
+#+TITLE: Literate Emacs configuration
 #+AUTHOR: Timm Lichte
 #+FILETAGS: emacs
 #+STARTUP: indent
