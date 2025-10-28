@@ -1,4 +1,4 @@
-#+TITLE: Literate Emacs configuration
+quit#+TITLE: Literate Emacs configuration
 #+AUTHOR: Timm Lichte
 #+FILETAGS: emacs
 #+STARTUP: indent
@@ -13035,22 +13035,42 @@ Since there can be a vast amount of org-mode files in =org-directory=, especiall
 (defun tl/update-org-agenda-files ()
 	(interactive)
 	(require 'org-attach) ; in order not get disturbed by org-attach links
+	
+	(message "Searching for Org file in directory %s ..." org-directory)
   (setq org-files 
 				(find-org-files-recursively (expand-file-name (concat org-directory "/")))) ; trailing slash required
+	(message "... %s Org files were found in directory %s ." (length org-files) org-directory)
 	
-	;; search for linked org-mode files within org-files and add them
-	(dolist (file org-files)
-		(setq org-files (append org-files (find-links-to-org-files file))))
+	;; Search for further linked Org files outside org-directory
+	(let* ((number-of-files (length org-files))
+				 (k 0)
+				 (progress-reporter
+					(make-progress-reporter "Searching for linked Org files..."
+																	k number-of-files)))
+		(dolist (file org-files)
+			(setq org-files (append org-files (find-links-to-org-files file)))
+			(setq k (+ k 1))
+			(progress-reporter-update progress-reporter k))
+		(progress-reporter-done progress-reporter))
 
-	;; remove duplicates from org-files
+	(message "Removing duplicates from Org files...")
 	(setq org-files (delete-duplicates org-files :test #'string-equal))
-
+	
 	;; org-agenda-files are org-files with a certain filetag
 	(setq org-agenda-files ())
-	(if org-agenda-file-tag								; include all files if org-agenda-file-tag is nil
-			(dolist (file org-files)
-				(if (tl/org-agenda-file-tag-p file)
-						(setq org-agenda-files (cons file org-agenda-files)))))
+	(if org-agenda-file-tag ; include all files if org-agenda-file-tag is nil
+			(let* ((number-of-files (length org-files))
+						 (k 0)
+						 (progress-reporter
+							(make-progress-reporter "Searching for org-agenda-files..."
+																			k number-of-files)))
+				(dolist (file org-files)
+					(when (tl/org-agenda-file-tag-p file)
+						(setq org-agenda-files (cons file org-agenda-files)))
+					(setq k (+ k 1))
+					(progress-reporter-update progress-reporter k))
+				(progress-reporter-done progress-reporter))
+		(setq org-agenda-files org-files))
 	
 	(customize-save-variable 'org-agenda-files org-agenda-files)
 	(customize-save-variable 'org-files org-files)
