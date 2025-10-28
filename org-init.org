@@ -12984,12 +12984,12 @@ actions depending on the context."
 
 https://github.com/enricoflor/numbex
 
-** TODO Zooming
-:LOGBOOK:
-- State "TODO"       from              [2022-08-10 Wed 12:14]
-:END:
+** Zooming
 
-*** text-scale-adjust
+*** TODO text-scale-adjust
+:LOGBOOK:
+- State "TODO"       from              [2025-10-28 Tue 19:05]
+:END:
 
 Built into Emacs: https://www.gnu.org/software/emacs/manual/html_node/emacs/Text-Scale.html
 
