@@ -8181,11 +8181,42 @@ Functions to extract email addresses from strings and buffers:
 
 **** Interoperability with Thunderbird 
 
-The [[https://github.com/exteditor/exteditor][Exteditor]] plugin can be used in Thunderbird in order to open and edit an email in Emacs.
+The [[https://services.addons.thunderbird.net/en-US/thunderbird/addon/external-editor-revived/][External Editor Revived]] plugin can be used in Thunderbird in order to open and edit an email in Emacs.
 
-Open eml-files with =org-mode= turned on:
+**** eml-files
+
+Major mode for eml-files:
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'auto-mode-alist '("\\.eml\\'" . org-mode))
+(define-derived-mode eml-mode fundamental-mode "EML"
+  "Major mode for editing .eml files."
+  (local-set-key (kbd "C-c C-c") 'view-eml-buffer-file-in-gnus))
+#+END_SRC
+
+Open eml-files with =eml-mode= turned on:
+#+BEGIN_SRC emacs-lisp
+(add-to-list 'auto-mode-alist '("\\.eml\\'" . eml-mode))
+#+END_SRC
+
+View eml-file with Gnus:
+#+BEGIN_SRC emacs-lisp
+(defun view-eml-buffer-file-in-gnus ()
+	"View EML buffer file in Gnus."
+	(interactive)
+	(view-eml-as-gnus-group (buffer-file-name)))
+
+(defun view-eml-as-gnus-group (file)
+  "Open Gnus and create a Gnus group from EML FILE if it does not already
+exist."
+  (let* ((file-name (file-name-nondirectory file))
+         (group-name (car (cl-member file-name gnus-group-list :test 'string-suffix-p))))
+    (gnus)
+    (if group-name
+        (progn
+          (message "Group '%s' already exists." group-name)
+          (gnus-group-jump-to-group group-name))  ;; Enter the existing group
+      (progn
+        (gnus-group-make-doc-group file nil)  ;; Create the group
+				)))) 
 #+END_SRC
 
 **** mu4e 
