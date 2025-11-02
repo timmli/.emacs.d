@@ -8129,9 +8129,14 @@ Pomidor brings the Pomodoro technique to Emacs.
 (use-package pomidor
 	:ensure t
 	:init
-	(setq pomidor-sound-tick nil
-				pomidor-sound-tack nil
-				pomidor-sound-overwork t)
+	(setq
+	 ;; pomidor-sound-tick (expand-file-name (concat pomidor-dir "tick.wav")) 
+	 ;; pomidor-sound-tack (expand-file-name (concat pomidor-dir "tack.wav"))
+	 ;; pomidor-sound-overwork (expand-file-name (concat pomidor-dir "overwork.wav"))
+	 pomidor-play-sound-file (lambda (file) (start-process "my-pomidor-play-sound"
+																												 nil
+																												 "mpv"
+																												 file)))
 	)
 #+END_SRC
 
