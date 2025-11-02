@@ -2566,12 +2566,27 @@ Issues
 	;; )
 
 	;; Fixing the fixation on APA
-	(defun bibtex-completion-apa-format-reference (key)
+	(defun bibtex-completion-apa-format-reference (key &optional tooltip)
 		(tl/citeproc-format-bibtex-entry key
 																		 user-bibliography-file
 																		 default-csl-locale-dir
 																		 default-csl-style-file
-																		 nil t))
+																		 nil (unless tooltip t)))
+
+	(defun org-ref-cite-tooltip (_win _obj position)
+		"Get a tooltip for the cite at POSITION."
+		(let ((key (get-text-property position 'cite-key)))
+			(when key
+				(let* ((bibtex-completion-bibliography (org-ref-find-bibliography))
+							 (has-pdf (when (bibtex-completion-find-pdf key) bibtex-completion-pdf-symbol))
+							 (has-notes (when (cl-some #'identity
+																				 (mapcar (lambda (fn)
+																									 (funcall fn key))
+																								 bibtex-completion-find-note-functions))
+														bibtex-completion-notes-symbol)))
+					(format "%s%s %s" (or has-pdf "") (or has-notes "")
+									(bibtex-completion-apa-format-reference key t))))))
+	
 	)
 #+END_SRC
 
