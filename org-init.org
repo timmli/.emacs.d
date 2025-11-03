@@ -8823,6 +8823,19 @@ Taken from https://www.djcbsoftware.nl/code/mu/mu4e/Dired.html#Dired.
 (add-hook 'dired-mode-hook 'turn-on-gnus-dired-mode)
 #+END_SRC
 
+Select attachment file from within the compose buffer:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/mu4e-attach-file ()
+	"Select attachement file and add it at the end of the message in 
+a mu4e compose buffer." 
+	(interactive)
+	(let ((file (read-file-name "Attachment file: " 
+															(expand-file-name "Downloads" home-directory))))
+		(goto-char (point-max))
+		(mml-attach-file file)))
+#+END_SRC
+
 Paste images from clipboard:
 
 #+BEGIN_SRC emacs-lisp
@@ -16358,7 +16371,7 @@ Inspired by: https://github.com/abo-abo/hydra/wiki/Macro
 	("C-c C-d" message-dont-send)
 	("C-c C-j" gnus-delay-article)
 	("C-c C-k" mu4e-message-kill-buffer)
-	("af" mml-attach-file)
+	("af" tl/mu4e-attach-file)
 	("ab" mml-attach-buffer)
 	("ac" my/mu4e-attach-image-from-clipboard)
 	("aC" mu4e-compose-attach-captured-message)
