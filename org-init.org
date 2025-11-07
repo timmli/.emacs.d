@@ -10265,13 +10265,6 @@ https://github.com/wasamasa/nov.el
 
 *** PDF
 
-**** doc-view
-
-#+BEGIN_SRC emacs-lisp
-(when (eq system-type 'windows-nt)
-	(setq doc-view-ghostscript-program "gswin64c.exe"))
-#+END_SRC
-
 **** pdf-tools
 
 The hard part is to generate =epdfinfo.exe= under Windows, which is why I'm not using it there.
@@ -10293,7 +10286,9 @@ Issues
 	:config
 	(setq-default pdf-view-display-size 'fit-page) ; fit page by default
 	(setq pdf-view-resize-factor 1.10
-				pdf-view-selection-style 'glyph)
+				pdf-view-selection-style 'glyph
+				pdf-view-midnight-colors '("#DCDCCC" . "#383838") ; Colors of the Zenburn theme
+				)
 	(pdf-tools-install)
 	;; Manually set path to epdfinfo binary
 	;; (setq pdf-info-epdfinfo-program (expand-file-name "epdinfo.exe" (concat wemacs-dir "pdftools")))
@@ -16595,10 +16590,10 @@ Hydra taken from https://github.com/abo-abo/hydra/wiki/PDF-Tools#my-hydra-for-pd
                                                                                          ╭───────────┐
        Move     History       Scale/Fit       Annotations            Search/Link    Do   │ PDF Tools │
    ╭─────────────────────────────────────────────────────────────────────────────────────┴───────────╯
-         ^^_g_^^      _B_/_M-<left>_    ^↧^    _+_    ^ ^     [_C-c C-a l_] list       [_f_] search     [_u_] revert buffer
-         ^^^↑^^^         ^↑^^^          _H_    ^↑^  ↦ _W_ ↤   [_C-c C-a m_] markup...  [_o_] outline    [_i_] info
-         ^^_p_^^        ^ ^^^           ^↥^    _0_    ^ ^     [_C-c C-a t_] text       [_F_] link       [_d_] dark mode
-         ^^^↑^^^         ^↓^^^        ╭─^─^─┐  ^↓^  ╭─^ ^─┐   [_C-c C-a D_] delete     [_f_] search link
+         ^^_g_^^      _B_/_M-<left>_    ^↧^    _+_    ^ ^     [_C-c C-a l_] list       [_f_] search      [_u_] revert buffer
+         ^^^↑^^^         ^↑^^^          _H_    ^↑^  ↦ _W_ ↤   [_C-c C-a m_] markup...  [_o_] outline     [_i_] info
+         ^^_p_^^        ^ ^^^           ^↥^    _0_    ^ ^     [_C-c C-a t_] text       [_F_] link        [_d_] dark mode
+         ^^^↑^^^         ^↓^^^        ╭─^─^─┐  ^↓^  ╭─^ ^─┐   [_C-c C-a D_] delete     [_f_] search link [_m_] midnight mode
     _h_ ←pag_e_→ _l_  _N_/_M-<right>_ │ _P_ │  _-_    _b_     [_C-c C-a a_] attacments
          ^^^↓^^^         ^ ^^^        ╰─^─^─╯  ^ ^  ╰─^ ^─╯   [_C-w_]  copy
          ^^_n_^^         ^ ^^^        _r_eset slice box
@@ -16621,6 +16616,7 @@ Hydra taken from https://github.com/abo-abo/hydra/wiki/PDF-Tools#my-hydra-for-pd
 	("H" pdf-view-fit-height-to-window)
 	("W" pdf-view-fit-width-to-window)
 	("P" pdf-view-fit-page-to-window)
+	("m" pdf-view-midnight-minor-mode)
 	("n" pdf-view-next-page-command :color red)
 	("p" pdf-view-previous-page-command :color red)
 	("d" pdf-view-dark-minor-mode)
