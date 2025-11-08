@@ -10440,6 +10440,21 @@ Read and annotate djvu with Emacs. Builds on [[djvu]].
 
 *** Media player
 
+**** COMMENT Ready Player
+
+https://github.com/xenodium/ready-player
+
+Music and video player for Emacs.
+Depends on mpv, ffmpeg, ffmpegthumbnailer
+
+#+BEGIN_SRC emacs-lisp
+(use-package ready-player
+  :ensure t
+  :config
+  (ready-player-mode +1)
+	(setq ready-player-my-media-collection-location music-dir))
+#+END_SRC
+
 **** COMMENT Listen
 
 https://github.com/alphapapa/listen.el
