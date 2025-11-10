@@ -927,7 +927,7 @@ List active key bindings.
   :bind ("C-h b" . helm-descbinds))
 #+end_src
 
-*** org-mode
+*** helm-org
 
 https://github.com/emacs-helm/helm-org
 
