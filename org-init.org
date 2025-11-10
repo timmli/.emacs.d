@@ -8138,6 +8138,18 @@ Pomidor brings the Pomodoro technique to Emacs.
 																												 "mpv"
 																												 file)))
 	)
+
+(setq tl/pomidor-mute-tick-tack nil)
+
+(defun tl/pomidor-mute-tick-tack ()
+	(interactive)
+	(if tl/pomidor-mute-tick-tack
+			(setq pomidor-sound-tick (expand-file-name (concat pomidor-dir "tick.wav")) 
+						pomidor-sound-tack (expand-file-name (concat pomidor-dir "tack.wav"))
+						tl/pomidor-mute-tick-tack nil)
+		(setq pomidor-sound-tick nil 
+					pomidor-sound-tack nil
+					tl/pomidor-mute-tick-tack t)))
 #+END_SRC
 
 *** Typing tutor
@@ -16665,10 +16677,11 @@ Hydra taken from https://github.com/abo-abo/hydra/wiki/PDF-Tools#my-hydra-for-pd
 	"Pomidor"
 	("<return>" pomidor-stop "next")
 	("<space>" pomidor-break "pause")
+	("m" tl/pomidor-mute-tick-tack "(un)mute")
 	("R" pomidor-reset "reset")
 	("q" quit-window "quit window")
 	("Q" pomidor-quit "quit pomidor")
-)
+	)
 #+END_SRC
 
 ** hydra-position-register
