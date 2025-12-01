@@ -2726,6 +2726,32 @@ Superseded by [[Show clocked time per day]] in org-agenda.
 				))
 #+END_SRC
 
+*** Dependencies
+
+**** org-edna
+
+https://elpa.gnu.org/packages/org-edna.html
+https://www.nongnu.org/org-edna-el/
+
+Extensible Dependencies ’N’ Actions (EDNA) for Org Mode tasks
+
+Issues
+- [ ] Unfortunately throws =Edna Error at heading: Wrong type argument: sequencep, my-id-12345= when using =:BLOCKER:  ids(id:my-id-12345)=
+
+#+BEGIN_SRC emacs-lisp :tangle nil
+(use-package org-edna
+	:ensure t
+	:config (org-edna-mode))
+#+END_SRC
+
+**** Simple TODO dependencies
+
+https://orgmode.org/manual/TODO-dependencies.html
+
+**** org-depend
+
+https://git.sr.ht/%7Ebzg/org-contrib/tree/master/item/lisp/org-depend.el
+
 *** Download
 
 **** TODO org-download
