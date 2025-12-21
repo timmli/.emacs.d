@@ -202,13 +202,19 @@ with the favorite bookmark's query."
          (expr
           (if (or (null expr) edit)
               (mu4e-search-read-query prompt expr)
-            expr)))
+            expr))
+         (expr (if mu4e-query-rewrite-function ;; rewrite?
+                   (funcall mu4e-query-rewrite-function expr) expr)))
     (mu4e-mark-handle-when-leaving)
-    (mu4e--search-execute expr ignore-history)
+    ;; save the old present query to the history list?
+    (unless ignore-history
+      (when mu4e--search-last-query
+        (mu4e--search-push-query mu4e--search-last-query 'past)))
+    (mu4e--search-execute expr)
     (setq mu4e--search-msgid-target msgid
+          mu4e--search-last-query expr
           mu4e--search-view-target show)
-    (mu4e--search-maybe-reset-baseline expr)
-    (mu4e--modeline-update)))
+    (mu4e--search-maybe-reset-baseline expr)))
 
 (defun mu4e-search-edit ()
   "Edit the last search expression."
@@ -372,6 +378,7 @@ either `future' or `past'."
     "from:"
     "lang:"
     "maildir:"
+    "label:"
     "list:"
     "msgid"
     "mime:"
@@ -412,7 +419,7 @@ status, STATUS."
           '("attach" "draft" "flagged" "list" "new" "passed" "replied"
             "seen" "trashed" "unread" "encrypted" "signed" "personal"
             "calendar")))
-   ((looking-back "maildir:\\([a-zA-Z0-9/.]*\\)" nil)
+   ((looking-back "maildir:\\([a-zA-Z0-9/.-]*\\)" nil)
     (list (match-beginning 1)
           (match-end 1)
           (mapcar (lambda (dir)
@@ -439,7 +446,11 @@ status, STATUS."
    ((looking-back "list:\\([a-zA-Z0-9/.@]*\\)" nil)
     (list (match-beginning 1)
           (match-end 1)
-          mu4e--lists-hash))))
+          mu4e--lists-hash))
+   ((looking-back (concat "label:\\(\\(" mu4e-label-regex "\\)?\\)") nil)
+    (list (match-beginning 1)
+          (match-end 1)
+          mu4e-labels-list))))
 
 ;;; Interactive functions
 (defun mu4e-search-change-sorting (&optional field dir)
@@ -617,8 +628,66 @@ query before submitting it."
                     (mu4e-warn "No query for %s" chosen))))
     (mu4e-search-bookmark query edit)))
 
+;; Emacs bookmark support.
+
+(declare-function mu4e-view-message-with-message-id "mu4e-view")
+(declare-function mu4e-message-at-point             "mu4e-message")
+(declare-function mu4e-search-bookmark              "mu4e-search")
+(declare-function mu4e-server-last-query            "mu4e-server")
+
+(defun mu4e--jump-to-bookmark (bmark)
+  "Handle Emacs bookmark BMARK for either message or query."
+  (let ((message-id (bookmark-prop-get bmark 'message-id))
+        (last-query (bookmark-prop-get bmark 'last-query)))
+    (cond
+     (message-id  (mu4e-view-message-with-message-id message-id))
+     (last-query  (mu4e-search-bookmark (plist-get last-query :query))))))
+
+(defun mu4e--make-bookmark-record ()
+  "Create an Emacs bookmark for the message at point.
+Not to be confused with a *mu4e* bookmark: this is about the
+standard Emacs bookmarking facility.
+
+Also see `mu4e-emacs-bookmark-policy'."
+  (let* ((policy mu4e-emacs-bookmark-policy)
+         (policy (if (member policy '(message query))
+                     policy
+                   (mu4e-read-option "What to bookmark? "
+                                     '(("mMessage at point" . message)
+                                       ("qLast query" . query)))))
+         (bmark (cons nil (bookmark-make-record-default
+                           'no-file 'no-context))))
+    (progn
+      (bookmark-prop-set bmark 'handler 'mu4e--jump-to-bookmark)
+      ;; add bookmark-type specifics.
+      (cond
+       ;; bookmark the last query (the full plist)
+       ((eq policy 'query)
+        (let* ((last-query (mu4e-server-last-query))
+               (title (plist-get last-query :query)))
+          (bookmark-prop-set bmark 'defaults (list (concat "Query: " title)))
+          (bookmark-prop-set bmark 'last-query last-query)))
+
+       ;; bookmark the message at point
+       ((eq policy 'message)
+        (let* ((msg     (mu4e-message-at-point))
+               (subject (or (plist-get msg :subject) "No subject"))
+               (date    (plist-get msg :date))
+               (date    (if date (format-time-string "%F: " date) ""))
+               (title   (format "%s%s" date subject))
+               (msgid   (or (plist-get msg :message-id)
+                            (mu4e-error
+                             "Cannot bookmark message without message-id"))))
+          (bookmark-prop-set bmark 'defaults (list title))
+          (bookmark-prop-set bmark 'message-id msgid)))
+       (t ;; something went awry
+        (mu4e-error "Invalid bookmark policy"))))
+    ;;
+    bmark))
+
+
 (defvar mu4e-search-minor-mode-map
-    (let ((map (make-sparse-keymap)))
+  (let ((map (make-sparse-keymap)))
     (define-key map "s" #'mu4e-search)
     (define-key map "S" #'mu4e-search-edit)
     (define-key map "/" #'mu4e-search-narrow)
@@ -637,7 +706,7 @@ query before submitting it."
 
     (define-key map "j" #'mu4e-search-maildir)
     map)
-    "Keymap for mu4e-search-minor-mode.")
+  "Keymap for mu4e-search-minor-mode.")
 
 (define-minor-mode mu4e-search-minor-mode
   "Mode for searching for messages."

@@ -1,6 +1,6 @@
 ;;; mu4e-notification.el --- Mail notifications -*- lexical-binding: t-*-
 
-;; Copyright (C) 2023-2024 Dirk-Jan C. Binnema
+;; Copyright (C) 2023-2025 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -27,6 +27,8 @@
 
 (require 'mu4e-query-items)
 (require 'mu4e-bookmarks)
+
+(eval-when-compile (require 'dbus nil 'noerror))
 
 ;; for Emacs' built-in desktop notifications to work, we need
 ;; DBus
@@ -73,9 +75,11 @@ zero."
   (when-let* ((fav (mu4e-bookmark-favorite))
               (delta-unread (plist-get fav :delta-unread)))
     (when (and (fboundp 'notifications-close-notification)
+               (fboundp 'dbus-ignore-errors)
                mu4e--notification-id
                (zerop delta-unread))
-      (notifications-close-notification mu4e--notification-id)
+      (dbus-ignore-errors
+        (notifications-close-notification mu4e--notification-id))
       (setq mu4e--notification-id nil))
     (when (and (> delta-unread 0)
                (not (= delta-unread mu4e--last-delta-unread)))

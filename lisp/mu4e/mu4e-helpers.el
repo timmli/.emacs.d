@@ -288,7 +288,7 @@ user can then choose by typing CHAR.  Example:
 User now will be presented with a list: \"Choose an animal:
    [M]onkey, [G]nu, [x]Moose\".
 
-If optional character KEY is provied, use that instead of asking
+If optional character KEY is provided, use that instead of asking
 the user.
 
 Function returns the value (cdr) of the matching cell."
@@ -501,6 +501,13 @@ This includes expanding e.g. 3-5 into 3,4,5. If the letter
          (mu4e-warn "Attachment number must be greater than 0 (%d)" x))))
      list)))
 
+(defun mu4e-get-time-date (prompt)
+  "Determine the Emacs time value for time/date entered by user.
+Basically, a command around `parse-time-string' to read a user
+string after PROMPT."
+  (let ((timestr (read-string (mu4e-format "%s" prompt))))
+    (apply 'encode-time (parse-time-string timestr))))
+
 (defun mu4e-make-temp-file (ext)
   "Create a self-destructing temporary file with extension EXT.
 The file will self-destruct in a short while, enough to open it
@@ -520,30 +527,21 @@ Or go to the top level if there is none."
           ('mu4e-view-mode    "(mu4e)Message view")
           (_                  "mu4e"))))
 
+;;; Emacs bookmarks
+(defcustom mu4e-emacs-bookmark-policy 'message
+  "The policy to decide what kind of Emacs bookmark to create.
 
-;;; bookmarks
-(defun mu4e--make-bookmark-record ()
-  "Create a bookmark for the message at point."
-  (let* ((msg     (mu4e-message-at-point))
-         (subject (or (plist-get msg :subject) "No subject"))
-         (date	  (plist-get msg :date))
-         (date	  (if date (format-time-string "%F: " date) ""))
-         (title	  (format "%s%s" date subject))
-         (msgid	  (or (plist-get msg :message-id)
-                      (mu4e-error
-                       "Cannot bookmark message without message-id"))))
-    `(,title
-      ,@(bookmark-make-record-default 'no-file 'no-context)
-      (message-id . ,msgid)
-      (handler    . mu4e--jump-to-bookmark))))
+This applies to the Emacs bookmark system command `bookmark-set'.
 
-(declare-function mu4e-view-message-with-message-id "mu4e-view")
-(declare-function mu4e-message-at-point             "mu4e-message")
-
-(defun mu4e--jump-to-bookmark (bookmark)
-  "View the message referred to by BOOKMARK."
-  (when-let* ((msgid (bookmark-prop-get bookmark 'message-id)))
-    (mu4e-view-message-with-message-id msgid)))
+The policy is some symbol; you have the following choices:
+- `message': bookmark the message at point
+- `query': bookmark the most recent query
+- `ask': ask the user interactively"
+  :type '(choice
+          (const :tag "Bookmark query at point" message)
+          (const :tag "Bookmark the last query" query)
+          (const :tag "Ask user" ask))
+  :group 'mu4e)
 
 (defun mu4e--popup-lisp-buffer (bufname data)
   "Show or hide an s-expression string in a popup-buffer.
@@ -568,7 +566,12 @@ BUFNAME is the name of the buffer, and DATA is lisp-data, if any."
   "Set VAR to VAL if VAR is nil."
   `(unless ,var (setq ,var ,val)))
 
+
 ;;; Misc
+(defun mu4e--fun-val (val)
+  "If var is a function, return (funcall VAL), otherwise return VAL."
+  (if (functionp val) (funcall val) val))
+
 (defun mu4e-join-paths (directory &rest components)
   "Append COMPONENTS to DIRECTORY and return the resulting string.
 

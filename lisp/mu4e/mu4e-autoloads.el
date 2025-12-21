@@ -17,7 +17,7 @@ Then, show the main window, unless BACKGROUND (prefix-argument)
 is non-nil.
 
 (fn &optional BACKGROUND)" t)
-(register-definition-prefixes "mu4e" '("mu4e--"))
+(register-definition-prefixes "mu4e" '("mu4e-"))
 
 
 ;;; Generated autoloads from mu4e-actions.el
@@ -118,6 +118,11 @@ The message is resent as-is, without any editing. See
 ;;; Generated autoloads from mu4e-icalendar.el
 
 (register-definition-prefixes "mu4e-icalendar" '("mu4e-"))
+
+
+;;; Generated autoloads from mu4e-labels.el
+
+(register-definition-prefixes "mu4e-labels" '("mu4e-"))
 
 
 ;;; Generated autoloads from mu4e-lists.el

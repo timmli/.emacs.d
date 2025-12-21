@@ -347,14 +347,14 @@ Otherwise, do nothing."
                         "messages")
          (if mu4e-main-hide-personal-addresses ""
            (mu4e--key-val "personal addresses"
-                          (if addrs (mapconcat #'identity addrs ", "  ) "none"))))
+                          (if addrs (string-join addrs ", "  ) "none"))))
 
         (if mu4e-main-hide-personal-addresses ""
           (unless (mu4e-personal-address-p user-mail-address)
             (mu4e-message (concat
                            "Tip: `user-mail-address' ('%s') is not part "
                            "of mu's addresses; add it with 'mu init
-                        --my-address='") user-mail-address)))
+                        --personal-address='") user-mail-address)))
         (goto-char pos)))))
 
 (defun mu4e--main-view-queue ()

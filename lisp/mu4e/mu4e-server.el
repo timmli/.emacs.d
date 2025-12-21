@@ -26,7 +26,6 @@
 
 (require 'mu4e-helpers)
 
-
 ;;; Configuration
 (defcustom mu4e-mu-home nil
   "Location of an alternate mu home directory.
@@ -93,8 +92,59 @@ stop/start mu4e."
   :group 'mu4e
   :safe  'booleanp)
 
+(defcustom mu4e-mu-scm-server nil
+  "Tell the mu server to start an SCM/Guile REPL.
+
+This starts the REPL on a Unix domain socket, which can be
+connected to using various tools. This only works if mu has been
+built with SCM support (if in doubt, check the output output of
+\"mu info\" for the line \"scm-support\"); see Info
+node `(mu-scm) Top' for details on mu-scm.
+
+The REPL uses the same server instance that mu4e uses.
+
+Changing this variable only affects the next time the mu4e
+server is started."
+  :type  'boolean
+  :group 'mu4e
+  :safe  'booleanp)
+
+(defconst mu4e-mu-scm-repl-buffer-name
+  "*mu4e-mu-scm-repl*"
+  "Name for the mu-scm REPL buffer.")
+
+(defun mu4e-mu-scm-repl (new-repl)
+  "Start a mu-scm REPL using geiser, and switch to it.
+
+If NEW-REPL is non-nil or no REPL buffer exists yet,
+start a new one. Otherwise, use the (first) existing one.
+
+See `mu4e-mu-scm-server' to enable this; and requires the
+`geiser-guile' package.
+
+The REPL uses the same server instance that mu4e uses.
+
+Note: this REPL is not to be confused with the mu REPL as per
+`mu4e-server-repl'."
+  (interactive "P")
+  (unless (require 'geiser-guile nil 'noerror)
+    (mu4e-error "geiser-guile not found; please install"))
+  (let ((sock (plist-get (mu4e-server-properties) :scm-socket-path)))
+    (unless sock
+      (mu4e-error "socket-path unavailable"))
+    (when (fboundp 'geiser-connect-local)
+      (defvar geiser-repl-buffer-name-function) ;; avoid warning
+      (let ((geiser-repl-buffer-name-function
+             (lambda (_)
+               mu4e-mu-scm-repl-buffer-name)))
+        (if (and (buffer-live-p (get-buffer mu4e-mu-scm-repl-buffer-name))
+                 (not new-repl))
+            (switch-to-buffer mu4e-mu-scm-repl-buffer-name)
+          (geiser-connect-local 'guile sock))))))
+
 ;; Cached data
 (defvar mu4e-maildir-list)
+(defvar mu4e-labels-list)
 
 ;; Handlers are not strictly internal, but are not meant
 ;; for overriding outside mu4e. The are mainly for breaking
@@ -282,7 +332,7 @@ removed."
 (defun mu4e--server-plist-get (plist key)
   "Like `plist-get' but load data from file if it is a string.
 
-PLIST is a property-list, and KEY is the the key to search for.
+PLIST is a property-list, and KEY is the key to search for.
 
 
 E.g., (mu4e--server-plist-get (:foo bar) :foo)
@@ -432,9 +482,12 @@ The server output is as follows:
 
           (funcall mu4e-info-func sexp))
 
-         ;; get some data
-         ((plist-get sexp :maildirs)
+         ;; get some data; use plist-members, since the
+         ;; the value may be nil.
+         ((plist-member sexp :maildirs)
           (setq mu4e-maildir-list (mu4e--server-plist-get sexp :maildirs)))
+         ((plist-member sexp :labels)
+          (setq mu4e-labels-list (mu4e--server-plist-get sexp :labels)))
 
          ;; receive an error
          ((plist-get sexp :error)
@@ -467,6 +520,7 @@ As per issue #2198."
               `(,(when mu4e-mu-debug "--debug")
                 "server"
                 ,(when mu4e-mu-allow-temp-file "--allow-temp-file")
+                ,(when mu4e-mu-scm-server "--listen")
                 ,(when mu4e-mu-home (format "--muhome=%s" mu4e-mu-home)))))
 
 (defun mu4e--version-check ()
@@ -491,12 +545,15 @@ As per issue #2198."
         (mu4e-message "Found mu version %s" version)))))
 
 (defun mu4e-server-repl ()
-  "Start a mu4e-server repl.
+  "Start a mu4e-server REPL.
 
-This is meant for debugging/testing - the repl is designed for
+This is meant for debugging/testing - the REPL is designed for
 machines, not for humans.
 
-You cannot run the repl when mu4e is running (or vice-versa)."
+You cannot run the REPL when mu4e is running (or vice-versa).
+
+Not to be confused with the SCM/Guile REPL, as per
+`mu4e-mu-scm-server'."
   (interactive)
   (if (mu4e-running-p)
       (mu4e-error "Cannot run repl when mu4e is running")
@@ -615,7 +672,7 @@ get at most MAX contacts."
 
 (defun mu4e--server-data (kind)
   "Request data of some KIND.
-KIND is a symbol. Currently supported kinds: maildirs."
+KIND is a symbol. One of maildirs, labels."
   (mu4e--server-call-mu
    `(data :kind ,kind)))
 
@@ -665,6 +722,10 @@ the directory time stamp."
    `(index :cleanup ,(and cleanup t)
            :lazy-check ,(and lazy-check t)))
   (setq mu4e--server-indexing t)) ;; remember we're indexing.
+
+(defun mu4e--server-label (docid delta-expr)
+  "Apply the label DELTA-EXPR to the message with DOCID."
+  (mu4e--server-call-mu `(label :docid ,docid :labels ,delta-expr)))
 
 (defun mu4e--server-mkdir (path &optional update)
   "Create a new maildir-directory at file system PATH.

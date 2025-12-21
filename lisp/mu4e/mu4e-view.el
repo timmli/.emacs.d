@@ -389,6 +389,13 @@ list."
       (mu4e-view-mark-for-unmark)
     (mu4e-message "Unmarking needs to be done in the header list view")))
 
+(defun mu4e-view-mark-and-next (mark)
+  "Set MARK on the current message.
+  Then, move to the next message."
+  (interactive)
+  (mu4e--view-in-headers-context
+   (mu4e-headers-mark-and-next mark)))
+
 (defmacro mu4e--view-defun-mark-for (mark)
   "Define a function mu4e-view-mark-for- MARK."
   (let ((funcname (intern (format "mu4e-view-mark-for-%s" mark)))
@@ -411,6 +418,8 @@ list."
 (mu4e--view-defun-mark-for unread)
 (mu4e--view-defun-mark-for trash)
 (mu4e--view-defun-mark-for untrash)
+(mu4e--view-defun-mark-for label)
+(mu4e--view-defun-mark-for unlabel)
 
 (defun mu4e-view-marked-execute ()
   "Execute the marked actions."
@@ -619,7 +628,7 @@ This must be called while in the raw message buffer."
 (defun mu4e-view (msg)
   "Display the message MSG in a new buffer, and keep in sync with HDRSBUF.
 \"In sync\" here means that moving to the next/previous message
-in the the message view affects HDRSBUF, as does marking etc.
+in the message view affects HDRSBUF, as does marking etc.
 
 As a side-effect, a message that is being viewed loses its
 `unread' marking if it still had that."
@@ -823,12 +832,12 @@ Note that for some messages, this can trigger high CPU load."
               (':mailing-list
                (let ((list (plist-get msg :list)))
                  (if list (mu4e-get-mailing-list-shortname list) "")))
-              ((or ':flags ':tags)
-               (let ((flags (mapconcat (lambda (flag)
-                                         (if (symbolp flag)
-                                             (symbol-name flag)
-                                           flag)) fieldval ", ")))
-                 (mu4e--view-gnus-insert-header field flags)))
+              ((or ':flags ':labels ':tags)
+               (let ((items (mapconcat (lambda (item)
+                                         (if (symbolp item)
+                                             (symbol-name item)
+                                           item)) fieldval ", ")))
+                 (mu4e--view-gnus-insert-header field items)))
               (':size (mu4e--view-gnus-insert-header
                        field (mu4e-display-size fieldval)))
               ((or ':subject ':to ':from ':cc ':bcc ':from-or-to
@@ -1007,6 +1016,9 @@ This is useful for advising some Gnus-functionality that does not work in mu4e."
     (define-key map (kbd "-") #'mu4e-view-mark-for-unflag)
     (define-key map (kbd "=") #'mu4e-view-mark-for-untrash)
     (define-key map (kbd "&") #'mu4e-view-mark-custom)
+
+    (define-key map (kbd "l") #'mu4e-view-mark-for-label)
+    (define-key map (kbd "L") #'mu4e-view-mark-for-unlabel)
 
     (define-key map (kbd "*")             #'mu4e-view-mark-for-something)
     (define-key map (kbd "<kp-multiply>") #'mu4e-view-mark-for-something)

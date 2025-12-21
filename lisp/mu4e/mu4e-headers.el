@@ -180,7 +180,7 @@ When it is showing, respectively, From: or To:. It is a cons cell
 
 ;; marks for headers of the form; each is a cons-cell (basic . fancy)
 ;; each of which is basic ascii char and something fancy, respectively
-;; by default, we some conservative marks, even when 'fancy'
+;; by default, we use some conservative marks, even when 'fancy'
 ;; so they're less likely to break if people don't have certain fonts.
 ;; However, if you want to be really 'fancy', you could use something like
 ;; the following; esp. with a newer Emacs with color-icon support.
@@ -268,7 +268,7 @@ The first character of NAME is used as the shortcut."
      (lambda () (mu4e-get-time-date "Match messages after: ")))
     ("Bigger than"
      (lambda (msg bytes) (> (mu4e-msg-field msg :size) (* 1024 bytes)))
-     (lambda () (read-number "Match messages bigger than (Kbytes): "))))
+     (lambda () (read-number "Match messages bigger than (KB): "))))
   "List of custom markers-functions.
 
 The functions are to mark message that match some custom
@@ -281,7 +281,11 @@ and (optionally) PARAM, and should return non-nil when there's a
 match.
 * PARAM-FUNC is function that is evaluated once, and its value is
 then passed to PREDICATE-FUNC as PARAM. This is useful for
-getting user-input.")
+getting user-input.
+
+The default functions that take dates, use `mu4e-get-time-date'
+which wraps `parse-time-string' and hence requires the format to
+be compatible with that.")
 ;;; Internal variables/constants
 
 ;; docid cookies
@@ -495,7 +499,7 @@ while our display may be different)."
 
 (defun mu4e~headers-from-or-to (msg)
   "Get the From: address from MSG if not one of user's; otherwise get To:.
-When the from address for message MSG is one of the the user's
+When the from address for message MSG is one of the user's
 addresses, (as per `mu4e-personal-address-p'), show the To
 address. Otherwise, show the From address, prefixed with the
 appropriate `mu4e-headers-from-or-to-prefix'."
@@ -581,7 +585,7 @@ e.g. \"mutt\"."
                                            (mu4e-msg-field msg :date))))
       (:flags (propertize (mu4e~headers-flags-str val)
                           'help-echo (format "%S" val)))
-      (:tags (propertize (mapconcat 'identity val ", ")))
+      ((:labels :tags) (propertize (string-join val " ")))
       (:size (mu4e-display-size val))
       (t (mu4e~headers-custom-field-value msg field)))))
 
@@ -602,7 +606,7 @@ the correct column for display."
                             sum w
                             until (equal f field))))
       (setq val (string-trim-right val))
-      (if (> width (length val))
+      (if (> width (string-width val))
           (setq val (concat val " "))
         (setq val
               (concat
@@ -788,8 +792,6 @@ present, don't do anything."
                              buf nil t))
       (kill-buffer buf))))
 
-
-
 ;;; Performing queries (internal)
 (defconst mu4e~search-message "Searching...")
 (defconst mu4e~no-matches     "No matching messages found")
@@ -800,15 +802,13 @@ present, don't do anything."
 If so, do not attempt to switch buffers. This variable is to be let-bound
 to t before \"automatic\" searches.")
 
-(defun mu4e--search-execute (expr ignore-history)
+(defun mu4e--search-execute (expr &optional _ignore-history)
   "Search for query EXPR.
 
-Switch to the output buffer for the results. If IGNORE-HISTORY is
-true, do *not* update the query history stack."
+Switch to the output buffer for the results."
   (let* ((buf (mu4e-get-headers-buffer nil t))
          (view-window mu4e~headers-view-win)
          (inhibit-read-only t)
-         (rewritten-expr (funcall mu4e-query-rewrite-function expr))
          (maxnum (unless mu4e-search-full mu4e-search-results-limit)))
     (with-current-buffer buf
       ;; NOTE: this resets all buffer-local variables, including
@@ -816,13 +816,8 @@ true, do *not* update the query history stack."
       ;; headers buffer already exists when `mu4e-get-headers-buffer'
       ;; is called.
       (mu4e-headers-mode)
-      (setq mu4e~headers-view-win view-window)
-      (unless ignore-history
-        ;; save the old present query to the history list
-        (when mu4e--search-last-query
-          (mu4e--search-push-query mu4e--search-last-query 'past)))
-      (setq mu4e--search-last-query rewritten-expr)
-      (setq list-buffers-directory rewritten-expr)
+      (setq mu4e~headers-view-win view-window
+            list-buffers-directory expr)
       (mu4e--modeline-update))
 
     ;; when the buffer is already visible, select it; otherwise,
@@ -833,7 +828,7 @@ true, do *not* update the query history stack."
     (mu4e~headers-clear mu4e~search-message)
     (setq mu4e~headers-search-start (float-time))
     (mu4e--server-find
-     rewritten-expr
+     expr
      mu4e-search-threads
      mu4e-search-sort-field
      mu4e-search-sort-direction
@@ -892,10 +887,11 @@ COUNT is the number of messages found."
         (mu4e~headers-highlight (mu4e~headers-docid-at-point)))
       ;; maybe enable thread folding
       (when mu4e-search-threads
-        (mu4e-thread-mode))))
+        (mu4e-thread-mode)))
+    ;; might need updating
+    (setq header-line-format (mu4e~header-line-format)))
   ;; run-hooks
   (run-hooks 'mu4e-headers-found-hook))
-
 
 ;;; Marking
 
@@ -920,6 +916,8 @@ COUNT is the number of messages found."
 (mu4e~headers-defun-mark-for untrash)
 (mu4e~headers-defun-mark-for unmark)
 (mu4e~headers-defun-mark-for unread)
+(mu4e~headers-defun-mark-for label)
+(mu4e~headers-defun-mark-for unlabel)
 (mu4e~headers-defun-mark-for action)
 
 (declare-function mu4e-view-pipe "mu4e-view")
@@ -971,6 +969,9 @@ COUNT is the number of messages found."
 
     (define-key map (kbd "?")            #'mu4e-headers-mark-for-unread)
     (define-key map (kbd "!")            #'mu4e-headers-mark-for-read)
+    (define-key map (kbd "l")            #'mu4e-headers-mark-for-label)
+    (define-key map (kbd "L")            #'mu4e-headers-mark-for-unlabel)
+
     (define-key map (kbd "A")            #'mu4e-headers-mark-for-action)
 
     (define-key map (kbd "u")            #'mu4e-headers-mark-for-unmark)
@@ -1038,10 +1039,10 @@ you cannot sort by this field.
 If THREADS is non-nil, give a more informative error message."
   (if (not sortable)
       (if threads
-          (lambda (&optional e)
+          (lambda (&optional _e)
             (interactive "e")
             (mu4e-message "With threading, you can only sort by date"))
-        (lambda (&optional e)
+        (lambda (&optional  _e)
           (interactive "e")
           (mu4e-message "Field is not sortable")))
     (lambda (&optional e)
@@ -1181,8 +1182,7 @@ The following specs are supported:
   (setq
    truncate-lines t
    buffer-undo-list t ;; don't record undo information
-   overwrite-mode nil
-   header-line-format (mu4e~header-line-format))
+   overwrite-mode nil)
 
   (mu4e--mark-initialize) ;; initialize the marking subsystem
   (mu4e-context-minor-mode)

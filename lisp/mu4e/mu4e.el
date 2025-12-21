@@ -45,11 +45,23 @@
 (require 'mu4e-notification)
 (require 'mu4e-server)     ;; communication with backend
 
-
 (when mu4e-speedbar-support
   (require 'mu4e-speedbar)) ;; support for speedbar
 (when mu4e-org-support
   (require 'mu4e-org))      ;; support for org-mode links
+
+(defcustom mu4e-quit-hook nil
+  "Hook run just before quitting mu4e.
+
+This hook runs just before mu4e performs its own cleanup. For
+that reason, you should not invoke any
+asynchronous (non-blocking) code that expects mu4e to be running.
+
+The hook only fires when mu4e actually terminates -- i.e.,
+`mu4e-quit' _without_ the \"bury-only\" parameter."
+  :type 'hook
+  :package-version '(mu4e . "1.12.14")
+  :group 'mu4e)
 
 ;; We can't properly use compose buffers that are revived using
 ;; desktop-save-mode; so let's turn that off.
@@ -80,7 +92,7 @@ is non-nil."
           (switch-to-buffer mu4e-main-buffer-name)
         (mu4e--main-view)))))
 
-(defun mu4e-quit(&optional bury)
+(defun mu4e-quit (&optional bury)
   "Quit the mu4e session or bury the buffer.
 
 If prefix-argument BURY is non-nil, merely bury the buffer.
@@ -96,7 +108,7 @@ Otherwise, completely quit mu4e, including automatic updating."
 
 (defun mu4e--check-requirements ()
   "Check for the settings required for running mu4e."
-  (unless (>= emacs-major-version 25)
+  (unless (>= emacs-major-version 26)
     (mu4e-error "Emacs >= 25.x is required for mu4e"))
   (when (mu4e-server-properties)
     (unless (string= (mu4e-server-version) mu4e-mu-version)
@@ -160,8 +172,9 @@ invoke FUNC (if available) afterwards."
   (add-hook 'mu4e-query-items-updated-hook #'mu4e--main-redraw)
   (setq mu4e--initialized t) ;; last before we call the server.
   (mu4e--server-ping)
-  ;; ask for the maildir-list
+  ;; ask for the maildir-list and labels
   (mu4e--server-data 'maildirs)
+  (mu4e--server-data 'labels)
   ;; maybe request the list of contacts, automatically refreshed after
   ;; re-indexing
   (mu4e--query-items-refresh 'reset-baseline)
@@ -170,6 +183,7 @@ invoke FUNC (if available) afterwards."
 
 (defun mu4e--stop ()
   "Stop mu4e."
+  (run-hooks 'mu4e-quit-hook)
   (when mu4e--update-timer
     (cancel-timer mu4e--update-timer)
     (setq mu4e--update-timer nil))
@@ -249,12 +263,14 @@ invoke FUNC (if available) afterwards."
           (unless (and (not (string= mu4e--contacts-tstamp "0"))
                        (zerop (plist-get info :updated)))
             (mu4e--request-contacts-maybe)
-            (mu4e--server-data 'maildirs)) ;; update maildir list
+            (mu4e--server-data 'maildirs)
+            (mu4e--server-data 'labels)) ;; update maildir/labels list
+
           (mu4e--main-redraw))))
      ((plist-get info :message)
       (mu4e-index-message "%s" (plist-get info :message))))))
 
-(defun mu4e--init-handlers()
+(defun mu4e--init-handlers ()
   "Initialize the server message handlers.
 Only set set them if they were nil before, so overriding has a
 chance."

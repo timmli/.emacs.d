@@ -101,12 +101,12 @@ nil otherwise."
 (defcustom mu4e-maildir-shortcuts nil
   "A list of maildir shortcuts.
 
-Creating a shortcut makes it possible to quickly go to a
-particular maildir (folder), or quickly moving messages to
+Adding a shortcut to this list makes it possible to quickly go to
+a particular maildir (folder), or quickly moving messages to
 them (e.g., for archiving or refiling).
 
 The format is mostly the same as for `mu4e-bookmarks', with a few
-difference, so see its doc-string for further details.
+differences; see its doc-string for further details.
 
 The only field specific to `mu4e-maildir-shortcuts' is
 `:maildir', which is the property specifying the maildir for the
@@ -114,15 +114,15 @@ shortcut (e.g., \"/archive\").
 
 Example:
 
- (setq mu4e-maildir-shortcuts
-       '((:maildir \"/inbox\"     :key ?i :hide-if-no-unread t)
-         (:maildir \"/drafts\"    :key ?d :hide t)
-         (:maildir \"/sent\"      :key ?s :hide-unread t)))
+  (setq mu4e-maildir-shortcuts
+     \='((:maildir \"/inbox\"     :key ?i :hide-if-no-unread t)
+       (:maildir \"/drafts\"    :key ?d :hide t)
+       (:maildir \"/sent\"      :key ?s :hide-unread t)))
 
 You can use these shortcuts in the headers and view buffers, for
-example with `mu4e-mark-for-move-quick' (or \"m\", by default) or
-`mu4e-jump-to-maildir' (or \"j\", by default), followed by the
-designated shortcut character for the maildir.
+example with
+`mu4e-search-maildir' (\\<mu4e-search-minor-mode-map>\\[mu4e-search-maildir]).
+followed by the designated shortcut character for the maildir.
 
 Unlike in search queries, folder names with spaces in them must
 NOT be quoted, since mu4e does this for you."
@@ -131,13 +131,15 @@ NOT be quoted, since mu4e does this for you."
                  :value-type character
                  :tag "Alist (old format)")
           (repeat (plist
-                   :key-type (choice (const :tag "Maildir" :maildir)
-                                     (const :tag "Shortcut" :key)
-                                     (const :tag "Name of maildir" :name)
-                                     (const :tag "Hide from main view" :hide)
-                                     (const :tag "Do not count" :hide-unread))
+                   :key-type (choice
+                              (const :tag "Maildir" :maildir)
+                              (const :tag "Shortcut" :key)
+                              (const :tag "Name of maildir" :name)
+                              (const :tag "Hide from main view" :hide)
+                              (const :tag "Do not show unread counts" :hide-unread)
+                              (const :tag "Hide if no unread" :hide-if-no-unread))
                    :tag "Plist (new format)")))
-  :version "1.3.9"
+  :package-version "1.3.9"
   :group 'mu4e-folders)
 
 (defcustom mu4e-maildir-initial-input "/"
@@ -262,12 +264,14 @@ just the query-string.
 
 If the special shortcut \"o\" (for _o_ther) is used, or if there
 a no single-key elements in (mu4e-maildir-shortcuts), let user
-choose from all maildirs under `mu4e-maildir'.
+choose from all maildirs under `mu4e-maildir'. This is only
+available if mu4e is already running.
 
 The names of the maildirs are displayed in the minibuffer,
 suffixed with the short version of the unread counts, as per
 `mu4e--query-item-display-short-counts'."
-  (let* ((mdirs
+  (let* ((other-dirs (mu4e-get-maildirs))
+         (mdirs
           (seq-map
            (lambda (md)
              (let* ((qitem (mu4e--query-item-for-maildir-shortcut md))
@@ -280,14 +284,16 @@ suffixed with the short version of the unread counts, as per
                         unreads) md)))
            (mu4e-filter-single-key (mu4e-maildir-shortcuts))))
          ;; special case: handle pseudo-maildir 'other
-         (mdirs (and mdirs (append mdirs '(("oOther..." . other)))))
+         (mdirs (if (and mdirs other-dirs)
+                    (append mdirs '(("oOther..." . other)))
+                  mdirs))
          (chosen (and mdirs (mu4e-read-option prompt mdirs)))
          ;; if chosen nothing or other, ask for more.
          (chosen (if (or (not chosen) (eq chosen 'other))
                      (list :maildir
                            (substring-no-properties
                             (funcall mu4e-completing-read-function prompt
-                                     (mu4e-get-maildirs) nil nil
+                                     other-dirs nil nil
                                      mu4e-maildir-initial-input)))
                    chosen)))
     ;; return either the maildir (as a string), or the corresponding
@@ -314,7 +320,7 @@ Offer to create it if it does not exist yet."
 
 This is based on the variable `mu4e-attachment-dir', which is either:
 - if is a string, used it as-is
--  a function taking two string parameters, both of which can be nil:
+- a function taking two string parameters, both of which can be nil:
     (1) FNAME, a filename or a URL
     (2) MIMETYPE, a mime-type (such as \"text/plain\"."
   (let ((dir

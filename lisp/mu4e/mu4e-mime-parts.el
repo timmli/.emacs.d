@@ -106,6 +106,9 @@ There are some internal fields as well, e.g. ; subject to change:
                (when (and part (numberp index) (not (member index indices)))
                  (let* ((disp (mm-handle-disposition part))
                         (fname (mm-handle-filename part))
+                        (fname (and fname ;; massage
+                                    (gnus-map-function mm-file-name-rewrite-functions
+                                                       (file-name-nondirectory fname))))
                         (mime-type (mm-handle-media-type part))
                         (info
                          `(:part-index  ,index
@@ -137,7 +140,7 @@ There are some internal fields as well, e.g. ; subject to change:
          (seq-sort (lambda (p1 p2) (< (plist-get p1 :part-index)
                                       (plist-get p2 :part-index))) parts)))))
 
-;; https://emacs.stackexchange.com/questions/74547/completing-read-search-also-in-annotationsxc
+;; https://emacs.stackexchange.com/questions/74547/completing-read-search-also-in-annotations
 
 (defun mu4e--uniquify-file-name (fname)
   "Return a not-yet-existing filename based on FNAME.

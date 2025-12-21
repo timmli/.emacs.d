@@ -6,11 +6,11 @@
 
 ;;; Code:
 
-(defconst mu4e-mu-version "1.12.11"
+(defconst mu4e-mu-version "1.12.14-pre4"
   "Required mu binary version.
 mu4e's version must agree with this.")
 
-(defconst mu4e-doc-dir "/gnu/store/sq6nhnqh4zlaanq0yg5dnbs0ks8b3hdw-mu-1.12.11/share/doc/mu"
+(defconst mu4e-doc-dir "/gnu/store/mxdbwyxm4rc8f4fw6w0h4sfa1kmdd1a6-mu-1.12.13-1.46f91ab/share/doc/mu"
   "Directory for mu4e documentation.")
 
 (provide 'mu4e-config)
