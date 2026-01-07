@@ -4769,11 +4769,14 @@ See https://github.com/jkitchin/jmax/blob/master/org/org-show.org for more infor
 (require 'org-show) 
 #+END_SRC
 
-*** org-timeblock
+*** COMMENT org-timeblock
 
 https://github.com/ichernyshovvv/org-timeblock
 
 Show events in the agenda as timeblocks.
+
+Issues
+- [ ] Emacs v30.2:  Error (use-package): mastodon/:catch: Symbol’s function definition is void: compat--copy-tree
 
 #+BEGIN_SRC emacs-lisp
 (use-package org-timeblock
@@ -7795,6 +7798,9 @@ Activated in =dired= with <S-s>.
 #+END_SRC
 
 **** dired+
+:PROPERTIES:
+:DIR:      ./
+:END:
 
 https://www.emacswiki.org/emacs/DiredPlus
 
@@ -9718,7 +9724,7 @@ Issues:
 
 *** Mastodon
 
-**** TODO mastodon.el
+**** TODO COMMENT mastodon.el
 :LOGBOOK:
 - State "TODO"       from              [2024-10-23 Wed 08:40]
 :END:
@@ -9726,6 +9732,9 @@ Issues:
 https://codeberg.org/martianh/mastodon.el
 
 A Mastodon client for Emacs.
+
+Issues
+- [ ] Emacs v30.2:  Error (use-package): mastodon/:catch: Symbol’s function definition is void: compat--copy-tree
 
 #+BEGIN_SRC emacs-lisp
 (use-package mastodon
