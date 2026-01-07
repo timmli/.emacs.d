@@ -95,6 +95,37 @@ The message is resent as-is, without any editing. See
 (register-definition-prefixes "mu4e-contrib" '("eshell/mu4e-attach" "mu4e-"))
 
 
+;;; Generated autoloads from mu4e-dbus.el
+
+(defvar mu4e-dbus-mode nil "\
+Non-nil if Mu4e-Dbus mode is enabled.
+See the `mu4e-dbus-mode' command
+for a description of this minor mode.
+Setting this variable directly does not take effect;
+either customize it (see the info node `Easy Customization')
+or call the function `mu4e-dbus-mode'.")
+(custom-autoload 'mu4e-dbus-mode "mu4e-dbus" nil)
+(autoload 'mu4e-dbus-mode "mu4e-dbus" "\
+Minor mode for enabling and disable the mu4e DBus service.
+
+This is a global minor mode.  If called interactively, toggle the
+`Mu4e-Dbus mode' mode.  If the prefix argument is positive, enable the
+mode, and if it is zero or negative, disable the mode.
+
+If called from Lisp, toggle the mode if ARG is `toggle'.  Enable the
+mode if ARG is nil, omitted, or is a positive number.  Disable the mode
+if ARG is a negative number.
+
+To check whether the minor mode is enabled in the current buffer,
+evaluate `(default-value \\='mu4e-dbus-mode)'.
+
+The mode's hook is called both when the mode is enabled and when it is
+disabled.
+
+(fn &optional ARG)" t)
+(register-definition-prefixes "mu4e-dbus" '("mu4e-"))
+
+
 ;;; Generated autoloads from mu4e-draft.el
 
 (register-definition-prefixes "mu4e-draft" '("mu4e-"))
