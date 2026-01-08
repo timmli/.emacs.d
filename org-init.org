@@ -5427,7 +5427,7 @@ Function to sync contacts using [[https://github.com/pimutils/vdirsyncer][vdirsy
 		(with-current-buffer buffer
 			(call-process "vdirsyncer-sync-contacts.sh" nil t nil)
 			(setq buffer-read-only t)
-      (local-set-key (kbd "q") 'kill-this-buffer)
+      (local-set-key (kbd "q") 'kill-current-buffer)
 			(switch-to-buffer buffer)
 			(goto-char (point-min)))
 		;; (start-process-shell-command name buffer command)
@@ -10733,7 +10733,7 @@ Version 2015-06-12"
 
 Kill buffer:
  #+begin_src emacs-lisp
-(global-set-key (kbd "M-<f3>") 'kill-this-buffer) ; M-<f4> is bound to killing the application under xfce.
+(global-set-key (kbd "M-<f3>") 'kill-current-buffer) ; M-<f4> is bound to killing the application under xfce.
  #+end_src
  
 Revert buffer:
