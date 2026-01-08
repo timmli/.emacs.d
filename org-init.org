@@ -11712,11 +11712,12 @@ Not sure whether I want to auto-indent whole files ...
 https://github.com/DarthFennec/highlight-indent-guides
 
 Show vertical line per indentation level.
+Disabled for now.
 
 Issues:
 - [ ] Vertical lines sometimes do not have the right color (white or barely visible). This is independent of =highlight-indent-guides-method=.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no 
 (use-package highlight-indent-guides
 	:ensure t
 	:config
@@ -11725,7 +11726,7 @@ Issues:
 	)
 #+end_src
 
-*** TODO indent-bars
+*** indent-bars
 :LOGBOOK:
 - State "TODO"       from              [2024-09-26 Thu 14:45]
 :END:
@@ -11733,6 +11734,12 @@ Issues:
 https://github.com/jdtsmith/indent-bars
 
 Indentation guide supporting tree-sitter. Maybe an alternative to [[highlight-indent-guides]]?
+
+#+begin_src emacs-lisp
+(use-package indent-bars
+	:ensure t
+  :hook ((prog-mode-hook) . indent-bars-mode))
+#+end_src
 
 ** Selection
 
