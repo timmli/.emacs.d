@@ -11717,14 +11717,14 @@ Disabled for now.
 Issues:
 - [ ] Vertical lines sometimes do not have the right color (white or barely visible). This is independent of =highlight-indent-guides-method=.
 
-#+begin_src emacs-lisp :tangle no 
+#+BEGIN_SRC emacs-lisp :tangle no 
 (use-package highlight-indent-guides
 	:ensure t
 	:config
 	(add-hook 'prog-mode-hook 'highlight-indent-guides-mode)
 	(setq highlight-indent-guides-method 'bitmap)
 	)
-#+end_src
+#+END_SRC
 
 *** indent-bars
 :LOGBOOK:
@@ -11735,11 +11735,25 @@ https://github.com/jdtsmith/indent-bars
 
 Indentation guide supporting tree-sitter. Maybe an alternative to [[highlight-indent-guides]]?
 
-#+begin_src emacs-lisp
+#+BEGIN_SRC emacs-lisp
 (use-package indent-bars
 	:ensure t
-  :hook ((prog-mode-hook) . indent-bars-mode))
-#+end_src
+  :hook ((prog-mode-hook) . indent-bars-mode)
+	:config
+	(setq
+   indent-bars-color '(highlight :face-bg t :blend 0.15)
+   ;; indent-bars-pattern "."
+   indent-bars-width-frac 0.25
+   indent-bars-pad-frac 0.3
+   indent-bars-zigzag nil
+   ;; indent-bars-color-by-depth '(:regexp "outline-\\([0-9]+\\)" :blend 1) ; blend=1: blend with BG only
+	 indent-bars-color-by-depth nil
+   ;; indent-bars-highlight-current-depth '(:blend 0.5) ; pump up the BG blend on current
+	 indent-bars-highlight-current-depth '(:blend 1.0 :width 0.25 :pattern ".")
+   indent-bars-display-on-blank-lines nil)
+	)
+
+#+END_SRC
 
 ** Selection
 
