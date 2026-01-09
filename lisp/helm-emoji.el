@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: 
 ;; Version: 
-;; Last modified: 2026-01-09 Fri 15:52:20
+;; Last modified: 2026-01-09 Fri 20:00:26
 ;; Package-Requires: 
 ;; Keywords: convenience
 
@@ -69,7 +69,8 @@
 
 (defvar helm-emoji--actions
   (helm-make-actions
-   "Insert emoji" #'helm-emoji-insert-action)
+   "Insert emoji" #'helm-emoji-insert-action
+   "Copy emoji to clipboard" #'helm-emoji-copy-to-clipboard-action)
   "List of pairs (STRING FUNCTIONSYMBOL).
 They represent the actions used in `helm-emoji'.")
 
@@ -79,30 +80,36 @@ They represent the actions used in `helm-emoji'.")
 		(emoji--add-recent symbol)
 		(insert symbol)))
 
+(defun helm-emoji-copy-to-clipboard-action (candidate)
+  "Copy selected emoji of CANDIDATE to clipboard."
+  (let ((symbol (plist-get (car candidate) :symbol)))
+		(kill-new symbol)))
+
+
 ;;;###autoload
-(defun helm-emoji (&optional input)
-  (interactive)
-	(emoji--init)
-  (helm :sources (list
-									(helm-build-sync-source "Recently used emojis"
-										:candidates #'(lambda () (helm-emoji--make-candidates 'recent))
-										:display-to-real nil ; Transform the selected candidate when passing it to action.
-										:action helm-emoji--actions
-										;; :action-transformer (lambda (actions candidate)
-										;;                       (helm-emoji-transformed-actions actions
-										;;                                                        candidate))
-										)
-									(helm-build-sync-source "Complete list of emojis"
-										:candidates #'(lambda () (helm-emoji--make-candidates 'all))
-										:display-to-real nil ; Transform the selected candidate when passing it to action.
-										:action helm-emoji--actions
-										;; :action-transformer (lambda (actions candidate)
-										;;                       (helm-emoji-transformed-actions actions
-										;;                                                        candidate))
-										))
-        :buffer "*helm-emoji*"
-        :truncate-lines helm-buffers-truncate-lines
-        :input (or input "")))
+  (defun helm-emoji (&optional input)
+    (interactive)
+	  (emoji--init)
+    (helm :sources (list
+									  (helm-build-sync-source "Recently used emojis"
+										  :candidates #'(lambda () (helm-emoji--make-candidates 'recent))
+										  :display-to-real nil ; Transform the selected candidate when passing it to action.
+										  :action helm-emoji--actions
+										  ;; :action-transformer (lambda (actions candidate)
+										  ;;                       (helm-emoji-transformed-actions actions
+										  ;;                                                        candidate))
+										  )
+									  (helm-build-sync-source "Complete list of emojis"
+										  :candidates #'(lambda () (helm-emoji--make-candidates 'all))
+										  :display-to-real nil ; Transform the selected candidate when passing it to action.
+										  :action helm-emoji--actions
+										  ;; :action-transformer (lambda (actions candidate)
+										  ;;                       (helm-emoji-transformed-actions actions
+										  ;;                                                        candidate))
+										  ))
+          :buffer "*helm-emoji*"
+          :truncate-lines helm-buffers-truncate-lines
+          :input (or input "")))
 
 (setq helm-emojis--abbreviation-alist
 			'(("👍" . ":+1:")
