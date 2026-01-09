@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL: 
 ;; Version: 
-;; Last modified: 2026-01-09 Fri 15:37:23
+;; Last modified: 2026-01-09 Fri 15:52:20
 ;; Package-Requires: 
 ;; Keywords: convenience
 
@@ -42,10 +42,10 @@
 							 emoji--names)
 			(setq emojis (reverse emojis)))
 		(when (and (eq mode 'recent)
-							 (slot-value emoji--recent 'cached-value))
+							 (multisession-value emoji--recent))
 			(setq emojis
 						(cl-loop
-						 for recent-emoji in (slot-value emoji--recent 'cached-value)
+						 for recent-emoji in (multisession-value emoji--recent)
 						 for description = (gethash recent-emoji emoji--names)
 						 collect (cons recent-emoji description)
 						 )))
