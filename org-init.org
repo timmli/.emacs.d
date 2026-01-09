@@ -491,6 +491,20 @@ Further information:
 (global-set-key (kbd "C-c i e") 'emoji-search)
 #+END_SRC
 
+**** helm-emoji
+
+!!! WORK IN PROGRESS !!!
+
+Select emojis with Helm.
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm-emoji
+  :load-path "lisp/helm-emoji.el"
+	:config
+	(global-set-key (kbd "C-c i e") 'helm-emoji)
+	)
+#+END_SRC
+
 **** COMMENT emacs-emojify
 
 https://github.com/iqbalansari/emacs-emojify
@@ -11752,7 +11766,6 @@ Indentation guide supporting tree-sitter. Maybe an alternative to [[highlight-in
 	 indent-bars-highlight-current-depth '(:blend 1.0 :width 0.25 :pattern ".")
    indent-bars-display-on-blank-lines nil)
 	)
-
 #+END_SRC
 
 ** Selection
