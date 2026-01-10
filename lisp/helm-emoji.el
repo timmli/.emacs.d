@@ -3,10 +3,10 @@
 ;; Copyright (C) 2026 Timm Lichte
 
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
-;; URL: 
-;; Version: 
-;; Last modified: 2026-01-10 Sat 11:20:55
-;; Package-Requires: 
+;; URL:
+;; Version:
+;; Last modified: 2026-01-10 Sat 11:30:59
+;; Package-Requires:
 ;; Keywords: convenience
 
 ;; This program is free software: you can redistribute it and/or modify
@@ -32,8 +32,6 @@
 (defvar helm-emoji-candidate-format
 	"%s   %-20s %s"
   "Visual format of a candidate.")
-
-(defvar helm-emoji--candidates nil)
 
 (defun helm-emoji--make-candidates (mode)
   "Make alist of candidates depending on MODE."
@@ -95,19 +93,11 @@ They represent the actions used in `helm-emoji'.")
 									(helm-build-sync-source "Recently used emojis"
 										:candidates #'(lambda () (helm-emoji--make-candidates 'recent))
 										:display-to-real nil ; Transform the selected candidate when passing it to action.
-										:action helm-emoji--actions
-										;; :action-transformer (lambda (actions candidate)
-										;;                       (helm-emoji-transformed-actions actions
-										;;                                                        candidate))
-										)
+										:action helm-emoji--actions)
 									(helm-build-sync-source "Complete list of emojis"
 										:candidates #'(lambda () (helm-emoji--make-candidates 'all))
 										:display-to-real nil ; Transform the selected candidate when passing it to action.
-										:action helm-emoji--actions
-										;; :action-transformer (lambda (actions candidate)
-										;;                       (helm-emoji-transformed-actions actions
-										;;                                                        candidate))
-										))
+										:action helm-emoji--actions))
         :buffer "*helm-emoji*"
         :truncate-lines helm-buffers-truncate-lines
         :input (or input "")))
