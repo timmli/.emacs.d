@@ -2508,11 +2508,15 @@ https://github.com/andras-simonyi/citeproc-el
 
 citeproc-el is an Emacs Lisp library for rendering citations and bibliographies in styles described in the Citation Style Language (CSL). 
 
+#+BEGIN_SRC emacs-lisp
+(use-package citeproc
+	:ensure t
+	:pin MELPA)
+#+END_SRC
+
 I define a general function that formats a bibtex entry according to a given CSL file, which is used in [[helm-bibtex]]: 
 
 #+BEGIN_SRC emacs-lisp
-(use-package citeproc
-	:ensure t)
 
 (defun tl/citeproc-format-bibtex-entry (bibtex-key bibtex-bibliography locale-dir csl-file &optional output-format choose-format)
   "Generate a formatted citation string for BIBTEX-KEY of BIBTEX-BIBLIOGRAPHY 
