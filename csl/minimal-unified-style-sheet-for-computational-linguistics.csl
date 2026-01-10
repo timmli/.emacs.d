@@ -6,16 +6,16 @@
     <title-short>MUSS</title-short>
     <id>http://www.zotero.org/styles/minimal-unified-style-sheet-for-computational-linguistics</id>
     <link rel="self" href="http://www.zotero.org/styles/minimal-unified-style-sheet-for-computational-linguistics"/>
+    <link href="https://github.com/timmli/biblatex-muss" rel="documentation"/>
     <author>
       <name>Timm Lichte</name>
       <email>timm.lichte@uni-tuebingen.de</email>
     </author>
     <category citation-format="author-date"/>
     <category field="linguistics"/>
-		<category field="engineering"/>
-    <summary></summary>
-    <link href="https://github.com/timmli/biblatex-muss" rel="documentation"/>
-    <updated>2023-09-10T21:42:26+00:00</updated>
+    <category field="engineering"/>
+    <summary/>
+    <updated>2026-01-10T15:44:57+00:00</updated>
     <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
   </info>
   <locale>
@@ -91,14 +91,14 @@
       <text variable="DOI" prefix="DOI: "/>
       <choose>
         <if match="none" variable="DOI">
-          <text variable="URL"/>
-          <choose>
-            <if match="any" variable="accessed">
-              <group prefix=" (" suffix=")">
-                <date form="text" variable="accessed"/>
-              </group>
-            </if>
-          </choose>
+          <group delimiter=" ">
+            <text variable="URL"/>
+            <choose>
+              <if match="all" variable="accessed" type="webpage">
+                <date form="text" variable="accessed" prefix="(accessed on " suffix=")"/>
+              </if>
+            </choose>
+          </group>
         </if>
       </choose>
     </group>
