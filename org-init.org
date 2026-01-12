@@ -12977,7 +12977,7 @@ Call dictcc with word under cursor or marked region:
 	(if (use-region-p)
 			(dictcc (concat "\"" (filter-buffer-substring (region-beginning) (region-end)) "\""))
 		(if (word-at-point)
-				(dictcc (word-at-point))
+				(dictcc (substring-no-properties (word-at-point)))
       (call-interactively 'dictcc))
 		))
 (global-set-key (kbd "C-0") 'tl/dictcc-at-point)
