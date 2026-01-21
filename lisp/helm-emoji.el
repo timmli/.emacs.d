@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL:
 ;; Version:
-;; Last modified: 2026-01-21 Wed 18:05:22
+;; Last modified: 2026-01-21 Wed 18:09:54
 ;; Package-Requires:
 ;; Keywords: convenience
 
@@ -30,7 +30,7 @@
 (require 'helm)
 
 (defvar helm-emoji-candidate-format
-  "%s   %-12s %-20s %s"
+  "%s   %-20s %s %s"
   "Visual format of a candidate.")
 
 (defun helm-emoji--make-candidates (mode)
@@ -66,8 +66,8 @@
        for category = (cdr (assoc symbol emoji-category-alist))
        for candidate-format = (format helm-emoji-candidate-format
                                       symbol
-                                      (concat "[" category "]")
                                       (or abbreviation "")
+                                      (concat "[" category "]")
                                       description)
        for candidate-plist = `(:symbol ,symbol :description ,description)
        if (and (stringp symbol)
