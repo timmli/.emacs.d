@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL:
 ;; Version:
-;; Last modified: 2026-01-21 Wed 18:09:54
+;; Last modified: 2026-01-21 Wed 22:41:35
 ;; Package-Requires:
 ;; Keywords: convenience
 
@@ -33,48 +33,70 @@
   "%s   %-20s %s %s"
   "Visual format of a candidate.")
 
+(defvar helm-emoji--emoji-properties-alist nil
+  "Alist of string-plist pairs which represent the emojis and their properties used in `helm-emoji'.")
+
+(defvar helm-emoji--all-candidates nil
+  "List of string-plist pairs which represent all possible candidates used in `helm-emoji'.")
+
 (defun helm-emoji--make-candidates (mode)
   "Make alist of candidates depending on MODE."
-  (let ((emojis)
-        (emoji-category-alist))
-	  (dolist (category emoji--labels)
-		  (let ((label (car category)))
-			  (if (listp (cadr category))  ; Check if there is a subcategory
-					  (dolist (subcategory (cdr category))
-						  (dolist (emoji (cdr subcategory))
-							  (push (cons emoji label) emoji-category-alist)))
-				  (dolist (emoji (cdr category))  ; Handle "flat" category
-					  (push (cons emoji label) emoji-category-alist)))))
-    (when (eq mode 'all)
-      (maphash (lambda (key value)
-                 (push (cons key value) emojis))
-               emoji--names)
-      (setq emojis (reverse emojis)))
-    (when (and (eq mode 'recent)
-               (multisession-value emoji--recent))
-      (setq emojis
+  (unless helm-emoji--emoji-properties-alist
+    (setq helm-emoji--emoji-properties-alist
+          (let ((emojis)
+                (emoji-category-alist))
+	          (dolist (category emoji--labels)
+		          (let ((label (car category)))
+			          (if (listp (cadr category))  ; Check if there is a subcategory
+					          (dolist (subcategory (cdr category))
+						          (dolist (emoji (cdr subcategory))
+							          (push (cons emoji label) emoji-category-alist)))
+				          (dolist (emoji (cdr category))  ; Handle categories without subcategories 
+					          (push (cons emoji label) emoji-category-alist)))))
+            (maphash (lambda (key value)
+                       (push (cons key value) emojis))
+                     emoji--names)
+            (setq emojis (reverse emojis))
             (cl-loop
-             for recent-emoji in (multisession-value emoji--recent)
-             for description = (gethash recent-emoji emoji--names)
-             collect (cons recent-emoji description))))
-    (when emojis
+             for emoji in emojis
+             for symbol = (car emoji)
+             for description = (cdr emoji)
+             for abbreviation = (cdr (assoc symbol helm-emojis--abbreviation-alist))
+             for category = (cdr (assoc symbol emoji-category-alist))
+             for candidate-format = (format helm-emoji-candidate-format
+                                            symbol
+                                            (or abbreviation "")
+                                            (concat "[" category "]")
+                                            description)
+             for candidate-plist = `(:symbol ,symbol
+                                             :category ,category
+                                             :description ,description
+                                             :format ,candidate-format)
+             if (and (stringp symbol)
+                     (= (string-width symbol) 2))
+             collect `(,symbol
+                       .
+                       ,(list candidate-plist)))
+            ))
+    (setq helm-emoji--all-candidates
+          (cl-loop
+           for item in helm-emoji--emoji-properties-alist
+           for candidate-plist = (car (cdr item))
+           for candidate-format = (plist-get candidate-plist :format)
+           collect `(,candidate-format
+                     .
+                     ,(list candidate-plist)))))
+  (if (and (eq mode 'recent)
+           (multisession-value emoji--recent))
       (cl-loop
-       for emoji in emojis
-       for symbol = (car emoji)
-       for description = (cdr emoji)
-       for abbreviation = (cdr (assoc symbol helm-emojis--abbreviation-alist))
-       for category = (cdr (assoc symbol emoji-category-alist))
-       for candidate-format = (format helm-emoji-candidate-format
-                                      symbol
-                                      (or abbreviation "")
-                                      (concat "[" category "]")
-                                      description)
-       for candidate-plist = `(:symbol ,symbol :description ,description)
-       if (and (stringp symbol)
-               (= (string-width symbol) 2))
+       for symbol in (multisession-value emoji--recent)
+       for candidate-plist = (car (cdr (assoc symbol helm-emoji--emoji-properties-alist)))
+       for candidate-format = (plist-get candidate-plist :format)
        collect `(,candidate-format
                  .
-                 ,(list candidate-plist))))))
+                 ,(list candidate-plist)))
+    helm-emoji--all-candidates
+    ))
 
 (defvar helm-emoji--actions
   (helm-make-actions
@@ -110,6 +132,7 @@ They represent the actions used in `helm-emoji'.")
                     :display-to-real nil ; Transform the selected candidate when passing it to action.
                     :action helm-emoji--actions))
         :buffer "*helm-emoji*"
+        :update (lambda () (setq helm-emoji--candidates nil))
         :truncate-lines helm-buffers-truncate-lines
         :input (or input "")))
 
