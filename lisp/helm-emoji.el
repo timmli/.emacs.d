@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL:
 ;; Version:
-;; Last modified: 2026-01-21 Wed 16:50:44
+;; Last modified: 2026-01-21 Wed 18:05:22
 ;; Package-Requires:
 ;; Keywords: convenience
 
@@ -30,12 +30,21 @@
 (require 'helm)
 
 (defvar helm-emoji-candidate-format
-  "%s   %-20s %s"
+  "%s   %-12s %-20s %s"
   "Visual format of a candidate.")
 
 (defun helm-emoji--make-candidates (mode)
   "Make alist of candidates depending on MODE."
-  (let ((emojis))
+  (let ((emojis)
+        (emoji-category-alist))
+	  (dolist (category emoji--labels)
+		  (let ((label (car category)))
+			  (if (listp (cadr category))  ; Check if there is a subcategory
+					  (dolist (subcategory (cdr category))
+						  (dolist (emoji (cdr subcategory))
+							  (push (cons emoji label) emoji-category-alist)))
+				  (dolist (emoji (cdr category))  ; Handle "flat" category
+					  (push (cons emoji label) emoji-category-alist)))))
     (when (eq mode 'all)
       (maphash (lambda (key value)
                  (push (cons key value) emojis))
@@ -54,8 +63,10 @@
        for symbol = (car emoji)
        for description = (cdr emoji)
        for abbreviation = (cdr (assoc symbol helm-emojis--abbreviation-alist))
+       for category = (cdr (assoc symbol emoji-category-alist))
        for candidate-format = (format helm-emoji-candidate-format
                                       symbol
+                                      (concat "[" category "]")
                                       (or abbreviation "")
                                       description)
        for candidate-plist = `(:symbol ,symbol :description ,description)
