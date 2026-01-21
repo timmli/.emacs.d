@@ -5616,7 +5616,8 @@ https://github.com/kiwanami/emacs-calfw/
 Powerful calendar view for Emacs.
 
 Issues:
-- [ ] Week numbers are not shown: https://github.com/kiwanami/emacs-calfw/issues/137
+- [ ] Week numbers are not shown in month view:
+      - https://github.com/kiwanami/emacs-calfw/issues/137
 - [ ] Recurring events in imported ics files are not shown.
 - [X] v2: =calfw-compat= is missing in the MELPA recipe: https://github.com/melpa/melpa/pull/9653
 
@@ -5710,6 +5711,21 @@ Helper functions:
 	(if (url-https-file-exists-p url)
 			(url-copy-file url filename t nil nil)
 		(display-warning 'calendar (concat "Could not download " filename))))
+#+END_SRC
+
+Show week numbers in week view (code from https://github.com/kiwanami/emacs-calfw/issues/137#issuecomment-3421903342):
+
+#+BEGIN_SRC emacs-lisp
+(advice-add
+ #'calfw-render-title-period
+ :around
+ (lambda (oldfn begin-date end-date)
+   (format "%s / Week %2d"
+           (funcall oldfn begin-date end-date)
+           (car
+            (calendar-iso-from-absolute
+             (calendar-absolute-from-gregorian
+              begin-date))))))
 #+END_SRC
 
 *** khalel
