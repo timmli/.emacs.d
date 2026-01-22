@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL:
 ;; Version:
-;; Last modified: 2026-01-21 Wed 22:41:35
+;; Last modified: 2026-01-22 Thu 19:24:50
 ;; Package-Requires:
 ;; Keywords: convenience
 
@@ -42,25 +42,23 @@
 (defun helm-emoji--make-candidates (mode)
   "Make alist of candidates depending on MODE."
   (unless helm-emoji--emoji-properties-alist
+    (setq helm-emoji--all-candidates nil)
     (setq helm-emoji--emoji-properties-alist
-          (let ((emojis)
+          (let ((emoji+description-list)
                 (emoji-category-alist))
-	          (dolist (category emoji--labels)
-		          (let ((label (car category)))
-			          (if (listp (cadr category))  ; Check if there is a subcategory
-					          (dolist (subcategory (cdr category))
-						          (dolist (emoji (cdr subcategory))
-							          (push (cons emoji label) emoji-category-alist)))
-				          (dolist (emoji (cdr category))  ; Handle categories without subcategories 
-					          (push (cons emoji label) emoji-category-alist)))))
-            (maphash (lambda (key value)
-                       (push (cons key value) emojis))
-                     emoji--names)
-            (setq emojis (reverse emojis))
+            ;; Process emoji--labels
+            (dolist (category emoji--labels)
+              (let ((label (car category)))
+                (if (listp (cadr category))  ; Check if there is a subcategory
+                    (dolist (subcategory (cdr category))
+                      (dolist (emoji (cdr subcategory))
+                        (push (cons emoji label) emoji-category-alist)))
+                  (dolist (emoji (cdr category))  ; Handle categories without subcategories 
+                    (push (cons emoji label) emoji-category-alist)))))
             (cl-loop
-             for emoji in emojis
-             for symbol = (car emoji)
-             for description = (cdr emoji)
+             for key being the hash-keys of emoji--names
+             for symbol = key
+             for description = (gethash key emoji--names)
              for abbreviation = (cdr (assoc symbol helm-emojis--abbreviation-alist))
              for category = (cdr (assoc symbol emoji-category-alist))
              for candidate-format = (format helm-emoji-candidate-format
@@ -74,35 +72,29 @@
                                              :format ,candidate-format)
              if (and (stringp symbol)
                      (= (string-width symbol) 2))
-             collect `(,symbol
-                       .
-                       ,(list candidate-plist)))
-            ))
-    (setq helm-emoji--all-candidates
-          (cl-loop
-           for item in helm-emoji--emoji-properties-alist
-           for candidate-plist = (car (cdr item))
-           for candidate-format = (plist-get candidate-plist :format)
-           collect `(,candidate-format
-                     .
-                     ,(list candidate-plist)))))
+             do (push `(,candidate-format . ,(list candidate-plist))
+                      helm-emoji--all-candidates)
+             collect `(,symbol . ,(list candidate-plist)))))
+    (setq helm-emoji--all-candidates (reverse helm-emoji--all-candidates)))
   (if (and (eq mode 'recent)
            (multisession-value emoji--recent))
       (cl-loop
        for symbol in (multisession-value emoji--recent)
        for candidate-plist = (car (cdr (assoc symbol helm-emoji--emoji-properties-alist)))
        for candidate-format = (plist-get candidate-plist :format)
-       collect `(,candidate-format
-                 .
-                 ,(list candidate-plist)))
-    helm-emoji--all-candidates
-    ))
+       collect `(,candidate-format . ,(list candidate-plist)))
+    helm-emoji--all-candidates))
 
-(defvar helm-emoji--actions
-  (helm-make-actions
-   "Insert emoji" #'helm-emoji-insert-action
-   "Copy emoji to clipboard" #'helm-emoji-copy-to-clipboard-action)
-  "List of pairs (STRING FUNCTIONSYMBOL).
+(cl-loop
+ ;; for key being the hash-keys of my-hash
+ for key being the hash-keys of emoji--names
+ do (print key)) 
+
+ (defvar helm-emoji--actions
+   (helm-make-actions
+    "Insert emoji" #'helm-emoji-insert-action
+    "Copy emoji to clipboard" #'helm-emoji-copy-to-clipboard-action)
+   "List of pairs (STRING FUNCTIONSYMBOL).
 They represent the actions used in `helm-emoji'.")
 
 (defun helm-emoji-insert-action (candidate)
