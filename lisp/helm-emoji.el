@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL:
 ;; Version:
-;; Last modified: 2026-01-22 Thu 21:27:35
+;; Last modified: 2026-01-22 Thu 21:36:45
 ;; Package-Requires:
 ;; Keywords: convenience
 
@@ -119,7 +119,7 @@ They represent the actions used in `helm-emoji'.")
                     :display-to-real nil ; Transform the selected candidate when passing it to action.
                     :action helm-emoji--actions))
         :buffer "*helm-emoji*"
-        :update (lambda () (setq helm-emoji--candidates nil))
+        :update (lambda () (setq helm-emoji--emoji-properties-alist nil))
         :truncate-lines helm-buffers-truncate-lines
         :input (or input "")))
 
