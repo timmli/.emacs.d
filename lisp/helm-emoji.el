@@ -5,7 +5,7 @@
 ;; Author: Timm Lichte <timm.lichte@uni-tuebingen.de>
 ;; URL:
 ;; Version:
-;; Last modified: 2026-01-22 Thu 19:24:50
+;; Last modified: 2026-01-22 Thu 21:27:35
 ;; Package-Requires:
 ;; Keywords: convenience
 
@@ -42,10 +42,10 @@
 (defun helm-emoji--make-candidates (mode)
   "Make alist of candidates depending on MODE."
   (unless helm-emoji--emoji-properties-alist
+    (message "helm-emoji: creating emoji database ...")
     (setq helm-emoji--all-candidates nil)
     (setq helm-emoji--emoji-properties-alist
-          (let ((emoji+description-list)
-                (emoji-category-alist))
+          (let ((emoji-category-alist))
             ;; Process emoji--labels
             (dolist (category emoji--labels)
               (let ((label (car category)))
@@ -85,16 +85,11 @@
        collect `(,candidate-format . ,(list candidate-plist)))
     helm-emoji--all-candidates))
 
-(cl-loop
- ;; for key being the hash-keys of my-hash
- for key being the hash-keys of emoji--names
- do (print key)) 
-
- (defvar helm-emoji--actions
-   (helm-make-actions
-    "Insert emoji" #'helm-emoji-insert-action
-    "Copy emoji to clipboard" #'helm-emoji-copy-to-clipboard-action)
-   "List of pairs (STRING FUNCTIONSYMBOL).
+(defvar helm-emoji--actions
+  (helm-make-actions
+   "Insert emoji" #'helm-emoji-insert-action
+   "Copy emoji to clipboard" #'helm-emoji-copy-to-clipboard-action)
+  "List of pairs (STRING FUNCTIONSYMBOL).
 They represent the actions used in `helm-emoji'.")
 
 (defun helm-emoji-insert-action (candidate)
