@@ -494,13 +494,16 @@ Further information:
 
 **** helm-emoji
 
-!!! WORK IN PROGRESS !!!
+https://codeberg.org/timmli/helm-emoji
 
 Select emojis with Helm.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-emoji
-  :load-path "lisp/helm-emoji.el"
+	:vc (:url "https://codeberg.org/timmli/helm-emoji"
+						:branch "main"
+						:rev :newest)
+  ;; :load-path "lisp/helm-emoji.el"
 	:config
 	(global-set-key (kbd "C-c i e") 'helm-emoji)
 	)
