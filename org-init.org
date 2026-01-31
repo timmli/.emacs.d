@@ -12990,12 +12990,15 @@ Call dictcc with word under cursor or marked region:
 #+BEGIN_SRC emacs-lisp
 (defun tl/dictcc-at-point ()
   (interactive)
-	(if (use-region-p)
-			(dictcc (concat "\"" (filter-buffer-substring (region-beginning) (region-end)) "\""))
-		(if (word-at-point)
-				(dictcc (substring-no-properties (word-at-point)))
-      (call-interactively 'dictcc))
-		))
+	(cond ((use-region-p)
+				 (dictcc (concat "\"" (filter-buffer-substring (region-beginning) (region-end)) "\"")))
+				((and (string-equal (buffer-mode) "pdf-view-mode")
+							(pdf-view-active-region-text))
+				 (dictcc (substring-no-properties (car (pdf-view-active-region-text)))))
+				((and (not (string-equal (buffer-mode) "pdf-view-mode"))
+							(word-at-point))
+				 (dictcc (substring-no-properties (word-at-point))))
+				(t (call-interactively 'dictcc))))
 (global-set-key (kbd "C-0") 'tl/dictcc-at-point)
 #+END_SRC
 
