@@ -5946,6 +5946,16 @@ Guides
 Makefiles
 - https://nullprogram.com/blog/2020/01/22/
 
+#+BEGIN_SRC emacs-lisp
+(defun tl/perform-code-checks-in-buffer ()
+	(interactive)
+	(progn
+		(call-interactively 'checkdoc)
+		(call-interactively 'package-lint-current-buffer)
+		(call-interactively 'flycheck-buffer)
+		(elisp-byte-compile-file)))
+#+END_SRC
+
 ***** package-lint
 
 https://github.com/purcell/package-lint
@@ -5966,6 +5976,18 @@ Build packages using their recipes.
 
 #+BEGIN_SRC emacs-lisp
 (use-package package-build
+	:ensure t
+	:pin MELPA)
+#+END_SRC
+
+***** flycheck-package
+
+https://github.com/purcell/flycheck-package
+
+[[Flycheck]] checker for the metadata in Emacs Lisp files which are intended to be packages.
+
+#+BEGIN_SRC emacs-lisp
+(use-package flycheck-package
 	:ensure t
 	:pin MELPA)
 #+END_SRC
