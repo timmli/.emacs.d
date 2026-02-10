@@ -5964,11 +5964,28 @@ Makefiles
 #+BEGIN_SRC emacs-lisp
 (defun tl/perform-code-checks-in-buffer ()
 	(interactive)
-	(progn
-		(call-interactively 'checkdoc)
-		(call-interactively 'package-lint-current-buffer)
+	(let ((byte-compile-warnings t)
+				(buf (current-buffer)))
+		(switch-to-buffer buf)
 		(call-interactively 'flycheck-buffer)
-		(elisp-byte-compile-file)))
+		(call-interactively 'flycheck-list-errors)
+		(switch-to-buffer buf)
+		(call-interactively 'checkdoc)
+		(switch-to-buffer buf)
+		(call-interactively 'package-lint-current-buffer)
+		(switch-to-buffer buf)
+		(elisp-byte-compile-file)
+		(progn 
+			(delete-other-windows)
+			(dotimes (i 5)
+				(split-window-vertically)
+				(balance-windows))			
+			(let ((buffers '("*compilation*" "*Compile-Log*" "*Package-Lint*" "*Checkdoc Status*" "*Flycheck errors*")))
+				(dotimes (i 5)
+					(other-window 1)
+					(switch-to-buffer (nth i buffers))))
+			(other-window 1)
+			(switch-to-buffer buf))))
 #+END_SRC
 
 ***** package-lint
