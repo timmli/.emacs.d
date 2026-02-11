@@ -6024,6 +6024,25 @@ https://github.com/purcell/flycheck-package
 	:pin MELPA)
 #+END_SRC
 
+***** buttercup
+
+https://github.com/jorgenschaefer/emacs-buttercup
+
+Testing framework for Emacs Lisp.
+
+I don't use it right now. 
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(use-package buttercup
+	:ensure t)
+#+END_SRC
+
+***** ERT: Emacs Lisp Regression Testing
+
+https://www.gnu.org/software/emacs/manual/html_mono/ert.html
+
+Built-in tool for automated testing in Emacs Lisp.
+
 **** Benchmarking
 
 ***** elisp-benchmarks 
