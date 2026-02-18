@@ -5967,6 +5967,7 @@ Makefiles
 	(let ((byte-compile-warnings t)
 				(buf (current-buffer)))
 		(switch-to-buffer buf)
+		(flycheck-mode)
 		(call-interactively 'flycheck-buffer)
 		(call-interactively 'flycheck-list-errors)
 		(switch-to-buffer buf)
