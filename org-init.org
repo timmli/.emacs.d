@@ -500,10 +500,11 @@ Select emojis with Helm.
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-emoji
+  :ensure t
 	;; :vc (:url "https://codeberg.org/timmli/helm-emoji"
 	;; 					:branch "main"
 	;; 					:rev :newest)
-  :load-path "lisp/helm-emoji.el"
+	;; :load-path "lisp/helm-emoji.el"
 	:config
 	(global-set-key (kbd "C-c i e") 'helm-emoji)
 	)
@@ -5957,6 +5958,9 @@ Guides
 - https://github.com/bbatsov/emacs-lisp-style-guide
 - https://spin.atomicobject.com/2016/05/27/write-emacs-package/
 - https://github.com/alphapapa/emacs-package-dev-handbook?tab=readme-ov-file#binding
+
+MELPA FAQ
+- https://github.com/melpa/melpa/wiki/FAQ
 
 Makefiles
 - https://nullprogram.com/blog/2020/01/22/
