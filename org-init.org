@@ -962,16 +962,20 @@ Complete tags with =helm= when using =org-set-tags=:
 	)
 #+END_SRC
 
-*** helm-swoop
+*** COMMENT helm-swoop
 
-https://github.com/emacsorphanage/helm-swoop
+https://github.com/emacsattic/helm-swoop
 
 Search buffer while showing matches in a separate buffer.
+
+The package was removed from MELPA since there had been no maintainer for some time: https://github.com/melpa/melpa/pull/9520#issuecomment-3042180680
 
 #+begin_src emacs-lisp
 (use-package helm-swoop
 	:ensure t
-	:pin MELPA
+	:vc (:url "https://github.com/emacsattic/helm-swoop"
+						:branch "main"
+						:rev :newest) 
 	:config
 	;; Move up and down like isearch
 	(define-key helm-swoop-map (kbd "C-r") 'helm-previous-line)
@@ -999,7 +1003,8 @@ Search buffer while showing matches in a separate buffer.
 	(setq helm-swoop-pre-input-function
 				(lambda () nil))
 
-  :bind ("C-c /" . helm-swoop))
+  ;; :bind ("C-c /" . helm-swoop)
+	)
 #+END_SRC
 
 *** swiper-helm 
@@ -1007,14 +1012,13 @@ Search buffer while showing matches in a separate buffer.
 https://github.com/abo-abo/swiper-helm
 
 Swiper with Helm backend.
-
-Issues:
-- [ ] Error: "swiper-helm: Cannot open load file: No such file or directory, helm-match-plugin"
+Unfortunately, it lacks the edit mode of [[helm-swoop]].
 
 #+BEGIN_SRC emacs-lisp
 (use-package swiper-helm
   :ensure t
-  :bind ("C-s" . swiper-helm))
+  ;; :bind ("C-s" . swiper-helm)
+	)
 #+END_SRC
 
 *** helm-dash
@@ -17469,7 +17473,7 @@ Key bindings roughly following the conventions of the Windows habitat.
 																						(if (string= (buffer-mode) "pdf-view-mode")
 																								;; helm-swoop does not work here
 																								(call-interactively 'pdf-occur) ; `call-interactively' is needed by occur
-																							(helm-swoop))))
+																							(swiper-helm))))
 						;; (define-key map (kbd "C-S-f a") 'helm-multi-swoop-all)
 						;; (define-key map (kbd "C-S-f m") 'helm-multi-swoop-current-mode)
 						;; (define-key map (kbd "C-f") 'swiper-helm)
