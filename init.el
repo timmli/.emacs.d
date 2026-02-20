@@ -319,15 +319,21 @@ This variable should be changed in private-emacs-settings.el.")
 (require 'quelpa-use-package)
 
 ;; straight.el: yet another (purely functional) package manager
-;; https://github.com/raxod502/straight.el
+;; https://github.com/radian-software/straight.el
+;; Straight emits a warning if package.el is present and
+;; loaded. Silence it.
+(add-to-list 'warning-suppress-types '(straight package))
 (defvar bootstrap-version)
 (let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
+       (expand-file-name
+        "straight/repos/straight.el/bootstrap.el"
+        (or (bound-and-true-p straight-base-dir)
+            user-emacs-directory)))
+      (bootstrap-version 7))
   (unless (file-exists-p bootstrap-file)
     (with-current-buffer
         (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+         "https://raw.githubusercontent.com/radian-software/straight.el/develop/install.el"
          'silent 'inhibit-cookies)
       (goto-char (point-max))
       (eval-print-last-sexp)))
