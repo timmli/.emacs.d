@@ -1127,11 +1127,13 @@ Quick, comprehensive search on org-mode files.
 	)
 #+END_SRC
 
-*** helm-ag
+*** COMMENT helm-ag
 
 https://github.com/emacsorphanage/helm-ag
 
 Helm interface to [[https://github.com/ggreer/the_silver_searcher][The Silver Searcher]].
+
+The package was removed from MELPA since there had been no maintainer for some time: https://github.com/melpa/melpa/pull/9520
 
 #+BEGIN_SRC emacs-lisp
 (use-package helm-ag
@@ -15922,8 +15924,6 @@ _s_: stop
 :END:
 
 - [ ] needs revision
-- [ ] define hydra for helm-ag
-      - [ ] unfold org-mode headings in follow mode
 
 Inspired by https://github.com/abo-abo/hydra/wiki/Helm-2.
 
@@ -16969,17 +16969,17 @@ I've added this to make it fit into [[*hydra-f3][hydra-f3]]:
   ^^                     ^^                      ^^                   ^^          ╭────────┐   
    ^in buffer^            ^across buffers^        ^grep-like^          ^file^     │ Search │
 ╭─^^─────────────────────^^──────────────────────^^───────────────────^^──────────┴────────╯
-   _b_ helm-swoop         _B_ all buffers         _a_ helm-ag          _f_ helm-find
+   _b_ helm-swoop         _B_ all visible buffers _a_ ag               _f_ helm-find
    _s_ isearch forward    _M_ all buffers         _g_ git grep         _c_ helm-recoll
    _r_ isearch backward   ^^  with current mode   _p_ projectile grep
    _o_ occur              _O_ all buffers         _R_ ripgrep
    ^^                     ^^                      _P_ pdfgrep 
 "
-	("a" helm-ag)
-	("b" helm-swoop)
-	("B" helm-multi-swoop-all)
+	("a" helm-do-grep-ag)
+	("b" swiper-helm)
+	("B" helm-occur-visible-buffers)
 	("c" helm-recoll-all)
-	("M" helm-multi-swoop-current-mode)
+	("M" swiper-multi)
 	("f" helm-find)
   ("g" helm-grep-do-git-grep)
   ("O" multi-occur)
