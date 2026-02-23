@@ -13838,6 +13838,19 @@ Non-interactive frame and window functions.
 (use-package frame-fns)
 #+END_SRC
 
+** winpulse
+
+https://github.com/xenodium/winpulse
+
+Flash the background of Emacs windows whenever they gain focus.
+
+#+BEGIN_SRC emacs-lisp
+(use-package winpulse
+	:ensure t
+  :config
+  (winpulse-mode +1))
+#+END_SRC
+
 * Bookmarks
 
 [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Bookmarks.html][Bookmarks]] are built into Emacs and similar to [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Registers.html][registers]]: they store positions one can jump back to. "Unlike registers, they have long names, and they persist automatically from one Emacs session to the next."
