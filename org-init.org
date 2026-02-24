@@ -13069,9 +13069,10 @@ Look up translations in the translation dictionaries of [[https://www.dict.cc/][
 #+BEGIN_SRC emacs-lisp
 (use-package dictcc
 	:ensure t
+  :config
+	(setq dictcc-completion-backend 'helm)
 	:bind
-	(("C-0" . dictcc))
-)
+	(("C-0" . dictcc)))
 #+END_SRC
 
 Call dictcc with word under cursor or marked region:
