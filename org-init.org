@@ -8225,6 +8225,19 @@ Copied from https://oremacs.com/2015/01/12/dired-file-size/ and slightly adapted
 (define-key dired-mode-map (kbd "z") 'dired-get-size)
 #+END_SRC
 
+**** trashed
+
+https://github.com/shingo256/trashed
+
+Open, view, browse, restore or permanently delete trashed files or directories in trash can.
+
+#+BEGIN_SRC emacs-lisp
+(use-package trashed
+	:ensure t
+	;; :config (global-set-key (kbd "C-c t") 'trashed)
+	)
+#+END_SRC
+
 **** COMMENT ranger, deer
 
 https://github.com/ralesi/ranger.el
@@ -15211,7 +15224,7 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
   ^^                     ^^             ^^                  _S_: symlink          _z_: size
   ^^            v        ^^             _w_: copy file name _P_: change property _ow_: open in other window
             _<down>_     ^^             _W_: copy path      _c_/_Z_: compress      _of_: open in other frame
-  ^^                     ^^       _C-c g l_: git link       _=_: diff
+  ^^                     ^^       _C-c g l_: git link       _=_: diff             _T_ : open trash 
    _._: home  _j_: jump  _f_: find        _$_: wdired         _am_: attach to mail    ^^
    ^^         ^^         ^^             ^^                    _af_: goto attached heading
    ^^         ^^         ^^             ^^                    _&_: clone file                 _q_: quit hydra 
@@ -15235,6 +15248,7 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
 	("<delete>" dired-do-delete)
 	("R" dired-do-rename)
 	("S" dired-do-symlink)
+	("T" trashed)
 	("Z" dired-do-compress)
 	("c" dired-do-compress-to)
 	("/" dired-narrow)
