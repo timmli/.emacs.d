@@ -31,3 +31,6 @@
 [submodule "lisp/org-drawio"]
 	path = lisp/org-drawio
 	url = https://codeberg.org/timmli/org-drawio.git
+[submodule "lisp/dictcc"]
+	path = lisp/dictcc
+	url = https://github.com/timmli/dictcc.el

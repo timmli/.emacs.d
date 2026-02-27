@@ -13081,7 +13081,8 @@ Look up translations in the translation dictionaries of [[https://www.dict.cc/][
 
 #+BEGIN_SRC emacs-lisp
 (use-package dictcc
-	:ensure t
+	;; :ensure t
+  :load-path "lisp/dictcc/"
   :config
 	(setq dictcc-completion-backend 'helm)
 	:bind
