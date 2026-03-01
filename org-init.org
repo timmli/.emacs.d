@@ -290,6 +290,7 @@ Highlight line of cursor:
 Soft-wrap lines:
 #+BEGIN_SRC emacs-lisp
 (global-visual-line-mode t)
+(global-visual-wrap-prefix-mode 1) ; Continuation lines are displayed with proper indentation
 #+END_SRC
 
 Display line numbers in the modeline:
