@@ -290,7 +290,9 @@ Highlight line of cursor:
 Soft-wrap lines:
 #+BEGIN_SRC emacs-lisp
 (global-visual-line-mode t)
-(global-visual-wrap-prefix-mode 1) ; Continuation lines are displayed with proper indentation
+
+;; This breaks the indentation in Org and is therefore commented.
+;; (global-visual-wrap-prefix-mode 1) ; Continuation lines are displayed with proper indentation
 #+END_SRC
 
 Display line numbers in the modeline:
@@ -9536,7 +9538,7 @@ directory."
 
 Documentation: https://www.djcbsoftware.nl/code/mu/mu4e/Org_002dmode-links.html
 
-Load org-mode integration (FIXME: necessary?):
+Load org-mode integration, particularly org-links:
 #+BEGIN_SRC emacs-lisp
 (require 'mu4e-org)
 #+END_SRC
