@@ -2100,8 +2100,13 @@ Customize the content of views:
 														(end (save-excursion (org-end-of-subtree t)(point))
 																 ;; Alternative: (org-entry-end-position)
 																 ))
-											 (and (org-entry-get nil "TIMESTAMP")
-														end))))
+											 (and
+												(or (org-entry-get nil "TIMESTAMP")
+														(save-excursion
+															(beginning-of-line)
+															(re-search-forward (org-re-timestamp 'inactive)
+																								 (line-end-position) t)))
+												end)))) ; Return value type must be integeger or marker. 
 								 ;; The following does it the usual way, but this would exclude also 
 								 ;; headings which are scheduled or with a deadline.   
 								 ;; '(org-agenda-skip-entry-if 'timestamp)
@@ -2117,8 +2122,8 @@ Customize the content of views:
 								 (org-agenda-prefix-format '((tags . " %i %-12:c %?-12t")))
 								 ))))
 				("C" "Clocked Headings"
-         ((tags "*"
-                ((org-agenda-overriding-header "Clocked Headings")
+				 ((tags "*"
+								((org-agenda-overriding-header "Clocked Headings")
 								 (org-agenda-prefix-format '((tags . " %i %-12:c %?-12t")))
 								 (org-agenda-skip-function
 									;; Skip if non-nil and proceed search at returned position.
@@ -2142,7 +2147,7 @@ Customize the content of views:
 				("A" "Complete list of agenda and tasks"
 				 ,tl/org-agenda-structure
 				 ;; ((org-agenda-tag-filter-preset '("+@home")))
-				 )
+																																		 )
 				))
 #+END_SRC
 
