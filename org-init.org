@@ -12040,6 +12040,11 @@ This package is deactivated because I actually never use it intentionally, but u
 	(add-hook 'prog-mode-hook 'hs-org/minor-mode))
 #+END_SRC
 
+
+** Compilation
+
+- https://emacsredux.com/blog/2026/03/06/mastering-compilation-mode/
+
 ** Context menu
 
 #+BEGIN_SRC emacs-lisp
