@@ -12040,6 +12040,11 @@ This package is deactivated because I actually never use it intentionally, but u
 	(add-hook 'prog-mode-hook 'hs-org/minor-mode))
 #+END_SRC
 
+
+** Compilation
+
+- https://emacsredux.com/blog/2026/03/06/mastering-compilation-mode/
+
 ** Context menu
 
 #+BEGIN_SRC emacs-lisp
@@ -13869,6 +13874,9 @@ Non-interactive frame and window functions.
 https://github.com/xenodium/winpulse
 
 Flash the background of Emacs windows whenever they gain focus.
+
+Issues
+- [ ] Also flash when changing frames: https://github.com/xenodium/winpulse/issues/1
 
 #+BEGIN_SRC emacs-lisp
 (use-package winpulse
