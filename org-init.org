@@ -7418,6 +7418,12 @@ https://ess.r-project.org/index.php?Section=home
 	(setq inferior-ess-r-program "R"))
 #+END_SRC
 
+*** RTF
+
+**** rtf-view
+
+https://github.com/danielcmccarthy/rtf-view
+
 *** Shell scripts
 
 The associated major modes is =sh-mode=, for which =shell-script-mode= is an alias.
