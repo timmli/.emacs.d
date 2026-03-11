@@ -13322,7 +13322,6 @@ Issues:
 	)
 #+END_SRC
 
-
 ** Scrolling
 
 *** ultra-scroll
@@ -13342,6 +13341,10 @@ Package for enabling smooth scrolling in buffers
   :config
   (ultra-scroll-mode 1))
 #+END_SRC
+
+** AI/LLMs
+
+- https://batsov.com/articles/2026/03/09/emacs-and-vim-in-the-age-of-ai/
 
 * Files
 
