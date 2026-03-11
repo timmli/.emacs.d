@@ -12054,6 +12054,12 @@ This package is deactivated because I actually never use it intentionally, but u
 
 - https://emacsredux.com/blog/2026/03/06/mastering-compilation-mode/
 
+To recompile all packages installed in =package-user-dir=, execute the following:
+
+#+BEGIN_SRC emacs-lisp :tangle nil
+(byte-recompile-directory package-user-dir nil 'force)
+#+END_SRC
+
 ** Context menu
 
 #+BEGIN_SRC emacs-lisp
