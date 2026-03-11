@@ -12057,6 +12057,11 @@ This package is deactivated because I actually never use it intentionally, but u
 To recompile all packages installed in =package-user-dir=, execute the following:
 
 #+BEGIN_SRC emacs-lisp :tangle nil
+;; Recompile if .el newer than .elc 
+(byte-recompile-directory package-user-dir)
+;; Recompile if .elc is missing
+(byte-recompile-directory package-user-dir 0)
+;; Recompile everything
 (byte-recompile-directory package-user-dir nil 'force)
 #+END_SRC
 
