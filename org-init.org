@@ -13192,17 +13192,7 @@ Requires access to DeepL's REST API. [[go-translates]] is easier to use.
 
 ** Printing
 
-This solution reuses code from here:
-- https://stackoverflow.com/a/7401222/6452961
-- https://emacs.stackexchange.com/a/9373/12336
-
 #+BEGIN_SRC emacs-lisp
-(require 'ps-print)
-
-;; In order to avoid printing from buffers with dark theme
-;; (use-package load-theme-buffer-local
-;; 	:ensure t)
-
 (defun tl/harden-visual-line-breaks-in-buffer ()
 	"Insert real newlines at visual line breaks."
 	(interactive)
@@ -13216,6 +13206,54 @@ This solution reuses code from here:
 				(when (this-line-empty-p)
 					(kill-line)))
 			(forward-line))))
+#+END_SRC
+
+*** Buffer --> HTML --> Browser/PDF
+
+Using =htmlfontify-buffer= and opening results in a browser, which can then be printed.
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/print-buffer-to-html ()
+	(interactive)
+	(let* ((buf (current-buffer))
+				 (progmode (derived-mode-p 'prog-mode))
+				 (cont (if (region-active-p)
+									 (buffer-substring (region-beginning) (region-end))
+								 (buffer-string)))
+				 (path (read-directory-name "Save HTML to: " (expand-file-name "~/Downloads")))
+				 (filename (concat path
+													 "print_"
+													 (replace-regexp-in-string "\\ \\|\\[\\|\\]\\|\\*" "" (buffer-name buf))
+													 "_"
+													 (format-time-string "%Y-%m-%d")
+													 ".html")))
+		(with-temp-buffer
+			(rename-buffer (concat "print_"(buffer-name buf)))
+			(insert cont)
+			(visual-line-mode t)
+			(tl/harden-visual-line-breaks-in-buffer)
+			;; (when progmode (display-line-numbers-mode)) ; FIME: Export line numbers
+			(htmlfontify-buffer)
+			(write-file filename)
+			(message "Buffer %s printed to %s" buf filename)
+			(when (yes-or-no-p (concat "Open " filename " with browser? "))
+														(browse-url-of-file filename)))))
+#+END_SRC
+
+*** Buffer --> PS --> PDF
+
+This solution reuses code from here:
+- https://stackoverflow.com/a/7401222/6452961
+- https://emacs.stackexchange.com/a/9373/12336
+
+Unfortunately, PS only supports a handful of fonts which lack coverage. Thus special characters such as ┌ will likely not be printed.
+
+#+BEGIN_SRC emacs-lisp
+(require 'ps-print)
+
+;; In order to avoid printing from buffers with dark theme
+;; (use-package load-theme-buffer-local
+;; 	:ensure t)
 
 ;; Print line numbers when in prog-mode
 (add-hook 'prog-mode-hook
@@ -13246,7 +13284,7 @@ This command depends on the shell command `ps2pdf'."
 							(ps-print-with-faces start-pos end-pos (concat filename ".ps")))
 					(progn (ps-print-without-faces start-pos end-pos (concat filename ".ps"))))))
 		(shell-command (concat "ps2pdf " filename ".ps " filename ".pdf" ))
-		(delete-file (concat filename ".ps"))
+		;; (delete-file (concat filename ".ps"))
 		(message (concat "PDF saved to " filename ".pdf"))))
 #+END_SRC
 
@@ -14688,7 +14726,7 @@ Hydra for everything about windows and frames.
 	("V" flip-frame :exit t)
 	("z" winner-undo)
 	("Z" winner-redo)
-	("p" tl/print-buffer-to-pdf :exit t)
+	("p" tl/print-buffer-to-html :exit t)
 	("q" nil :color blue)
 	("<f1>" hydra-f1/body :exit t)
 	("<f3>" hydra-f3/body :exit t)
