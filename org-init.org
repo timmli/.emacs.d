@@ -1175,6 +1175,7 @@ Issues:
 - [ ] https://github.com/emacs-helm/helm-recoll/issues/22
 
 #+BEGIN_SRC emacs-lisp
+(require 'eieio-compat) ; Necessary in Emacs > 29.0.50
 (use-package helm-recoll
 	:ensure t
   :commands helm-recoll
