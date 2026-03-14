@@ -15,7 +15,7 @@
     <category field="linguistics"/>
     <category field="engineering"/>
     <summary/>
-    <updated>2026-01-10T15:44:57+00:00</updated>
+    <updated>2026-03-13T13:32:17+00:00</updated>
     <rights license="http://creativecommons.org/licenses/by-sa/3.0/">This work is licensed under a Creative Commons Attribution-ShareAlike 3.0 License</rights>
   </info>
   <locale>
@@ -88,7 +88,7 @@
   <macro name="ACCESS">
     <group delimiter=". ">
       <text macro="ACCESS-publisher"/>
-      <text variable="DOI" prefix="DOI: "/>
+      <text variable="DOI" prefix="doi:"/>
       <choose>
         <if match="none" variable="DOI">
           <group delimiter=" ">
