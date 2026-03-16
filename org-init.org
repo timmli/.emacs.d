@@ -696,7 +696,8 @@ Enable with (advice-add 'message :before 'add-timestamp-to-message)"
 
 Shorten yes/no answers to y/n:
 #+BEGIN_SRC emacs-lisp
-(fset 'yes-or-no-p 'y-or-n-p)
+(setq use-short-answers t) ; Available since Emacs 28
+;; (fset 'yes-or-no-p 'y-or-n-p)
 #+END_SRC
 
 ** ido, ivy
