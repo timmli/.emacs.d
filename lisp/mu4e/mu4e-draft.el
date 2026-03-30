@@ -26,6 +26,7 @@
 ;; look a little convoluted since we need to subvert the gnus/message
 ;; functions a bit to work with mu4e.
 (require 'message)
+(require 'mm-decode)
 (require 'mu4e-config)
 (require 'mu4e-helpers)
 (require 'mu4e-contacts)
@@ -186,6 +187,17 @@ you don't consider that reasonable, set to nil."
   :safe 'booleanp
   :group 'mu4e-compose)
 
+(defcustom mu4e-compose-reply-include-mime-types '("text/x-patch")
+  "MIME types from the parent message to include when replying.
+
+When replying to a message, MIME parts with content-types in this
+list are automatically included in the the reply message. This is
+useful for carrying over patches or other structured text parts.
+
+Set to nil to disable."
+  :type '(repeat string)
+  :group 'mu4e-compose)
+
 ;;
 ;; display the ready-to-go display buffer in the desired way.
 ;;
@@ -322,6 +334,12 @@ With HEADERS-ONLY non-nil, only include the headers part."
       (insert (format "Message-Id: <%s>\n" (plist-get msg :message-id))))
     (mu4e--delimit-headers 'undelimit)
     (ignore-errors (run-hooks 'gnus-article-decode-hook))
+    ;; If the buffer is still unibyte after decoding (e.g., message has raw
+    ;; UTF-8 headers that are not RFC-2047-enxcoded), decode remaining bytes as
+    ;; UTF-8 so they don't show as octal escapes (\303\251 etc.) in reply
+    ;; buffers. #2722.
+    (unless enable-multibyte-characters
+      (decode-coding-region (point-min) (point-max) 'utf-8))
     (buffer-substring-no-properties (point-min) (point-max))))
 
 (defvar mu4e--draft-buffer-max-name-length 48)
@@ -773,6 +791,50 @@ Returns the new buffer."
       ;; prepare possible message actions (such as cleaning-up)
       (mu4e--prepare-post oldframe oldwinconf)
       draft-buffer)))
+
+(defun mu4e--collect-mime-parts (handles types)
+  "Collect MIME parts from HANDLES with content-types in TYPES.
+
+HANDLES is as returned by `mm-dissect-buffer'. TYPES is a list of
+MIME type strings.
+
+Returns a list of matching leaf handles."
+  (cond
+   ;; Leaf handle (buffer in car).
+   ((bufferp (car handles))
+    (when (member (mm-handle-media-type handles) types)
+      (list handles)))
+   ;; Composite handle, e.g. multipart/* (type string in car).
+   ((stringp (car handles))
+    (mapcan (lambda (h) (mu4e--collect-mime-parts h types))
+            (cdr handles)))
+   ;; Plain list of handles.
+   (t
+    (mapcan (lambda (h) (mu4e--collect-mime-parts h types))
+            handles))))
+
+(defun mu4e--reply-insert-mime-parts (msg)
+  "Insert MIME parts from MSG matching `mu4e-compose-reply-include-mime-types'.
+Matching parts are inserted inline at point so that the user can
+comment on them directly."
+  (when mu4e-compose-reply-include-mime-types
+    (let ((handles
+           (with-temp-buffer
+             (insert-file-contents-literally
+              (mu4e-message-readable-path msg))
+             (mm-dissect-buffer t t))))
+      (when handles
+        (unwind-protect
+            (dolist (part (mu4e--collect-mime-parts
+                          handles mu4e-compose-reply-include-mime-types))
+              (let ((filename (mm-handle-filename part))
+                    (content (mm-get-part part)))
+                (insert "\n")
+                (when filename
+                  (insert filename ":\n"))
+                (insert content)
+                (unless (bolp) (insert "\n"))))
+          (mm-destroy-parts handles))))))
 
 (defun mu4e--draft-with-parent (compose-type parent compose-func)
   "Draft a message based on some parent message.

@@ -45,6 +45,7 @@
 (require 'mu4e-notification)
 (require 'mu4e-server)     ;; communication with backend
 
+(require 'mu4e-transient)
 (when mu4e-speedbar-support
   (require 'mu4e-speedbar)) ;; support for speedbar
 (when mu4e-org-support
@@ -110,8 +111,8 @@ Otherwise, completely quit mu4e, including automatic updating."
 
 (defun mu4e--check-requirements ()
   "Check for the settings required for running mu4e."
-  (unless (>= emacs-major-version 26)
-    (mu4e-error "Emacs >= 25.x is required for mu4e"))
+  (unless (>= emacs-major-version 28)
+    (mu4e-error "Emacs >= 28.x is required for mu4e"))
   (when (mu4e-server-properties)
     (unless (string= (mu4e-server-version) mu4e-mu-version)
       (mu4e-error "The mu server has version %s, but we need %s"

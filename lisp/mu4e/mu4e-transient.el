@@ -1,13 +1,32 @@
-;;; mu4e-transient.el --- -*- coding: utf-8; lexical-binding: t -*-
-;;
-;; Copyright (C) 2025 Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
+;;; mu4e.el ---  Mu-based mua for emacs -*- lexical-binding: t -*-
+
+;; Copyright (C) 2025-2026 Dirk-Jan C. Binnema
+
+;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
+;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
+
+;; This file is not part of GNU Emacs.
+
+;; SPDX-License-Identifier: GPL-3.0-or-later
+
+;; mu4e is free software: you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; mu4e is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with mu4e.  If not, see <http://www.gnu.org/licenses/>.
 
 ;;; Commentary:
 ;;;
-;;; Define "transients" for some mu4e functionality.
+;;; Define a "transient" menu for some mu4e functionality.
 
 ;;; Code:
-(require 'mu4e)
 (require 'mu4e-bookmarks)
 (require 'mu4e-compose)
 (require 'mu4e-draft)
@@ -19,6 +38,9 @@
 (require 'transient)
 
 ;; Helpers.
+
+
+(declare-function mu4e "mu4e")
 
 (defun mu4e--toggle-description(name val)
   "Return a string for a transient toggle with NAME.
@@ -137,6 +159,9 @@ toggle-function is created."
     ;;("a" "archive")
 ]])
 
+
+
+;;;###autoload(autoload 'mu4e-transient-menu "mu4e-transient" nil t)
 (transient-define-prefix mu4e-transient-menu()
   "Mu4e main menu."
   [["Main"
@@ -150,9 +175,9 @@ toggle-function is created."
          (format "Context %s"
                  (if ctx (propertize (mu4e-context-name ctx)
                                      'face 'transient-value) "")))))
-    ("d" "Docs & links"      mu4e--prefix-docs-links)
-    ("D" "Debug/tweaks..."   mu4e--prefix-debug-tweaks)
-    ("M-q" "Quit"             mu4e-quit)]
+    ("d" "Docs & links"        mu4e--prefix-docs-links)
+    ("D" "Debug/tweaks..."     mu4e--prefix-debug-tweaks)
+    ("M-q" "Quit"              mu4e-quit)]
    ["Search"
     ("b" "Bookmark"            mu4e-search-bookmark)
     ("j" "Maildir"             mu4e-search-maildir)
