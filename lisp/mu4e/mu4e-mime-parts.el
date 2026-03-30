@@ -93,50 +93,42 @@ There are some internal fields as well, e.g. ; subject to change:
 
     :target-dir      : Target directory for saving
     :attachment-like : When it has a filename, we can save it
-    :handle          : Gnus handle."
+    :handle          : Gnus handle.
+
+This uses `gnus-article-mime-handle-alist'."
   (or mu4e--view-mime-parts
       (setq
        mu4e--view-mime-parts
-       (let ((parts) (indices))
-         (save-excursion
-           (goto-char (point-min))
-           (while (not (eobp))
-             (when-let* ((part (get-text-property (point) 'gnus-data))
-                        (index (get-text-property (point) 'gnus-part)))
-               (when (and part (numberp index) (not (member index indices)))
-                 (let* ((disp (mm-handle-disposition part))
-                        (fname (mm-handle-filename part))
-                        (fname (and fname ;; massage
-                                    (gnus-map-function mm-file-name-rewrite-functions
-                                                       (file-name-nondirectory fname))))
-                        (mime-type (mm-handle-media-type part))
-                        (info
-                         `(:part-index  ,index
-                           :mime-type   ,mime-type
-                           :encoding    ,(mm-handle-encoding part)
-                           :disposition ,(car-safe disp)
-
-                           ;; if there's no file-name, invent one
-                           ;; XXX perhaps guess extension based on mime-type
-                           :filename   ,(or fname
-                                            (format "mime-part-%02d" index))
-
-                           ;; below are internal
-
-                           :target-dir ,(mu4e-determine-attachment-dir
-                                         fname mime-type)
-                           ;; 'attachment-like' just means it has its own
-                           ;; filename an we thus we can save it through
-                           ;; `mu4e-view-save-attachments', even if it has an
-                           ;; 'inline' disposition.
-                           :attachment-like ,(if fname t nil)
-                           :handle          ,part)))
-                   (push index indices)
-                   (push info parts))))
-             (goto-char (or (next-single-property-change (point) 'gnus-part)
-                            (point-max)))))
-         ;; sort by the GNU's part-index, so the order is the same as
-         ;; in the message on screen
+       (let ((parts))
+         (dolist (entry gnus-article-mime-handle-alist)
+           (let* ((index (car entry))
+                  (handle (cdr entry)))
+             (when (and (numberp index) (listp handle)
+                        (bufferp (car-safe handle)))
+               (let* ((disp (mm-handle-disposition handle))
+                      (fname (mm-handle-filename handle))
+                      (fname (and fname
+                                  (gnus-map-function
+                                   mm-file-name-rewrite-functions
+                                   (file-name-nondirectory fname))))
+                      (mime-type (mm-handle-media-type handle)))
+                 (push `(:part-index  ,index
+                         :mime-type   ,mime-type
+                         :encoding    ,(mm-handle-encoding handle)
+                         :disposition ,(car-safe disp)
+                         ;; if there's no file-name, invent one
+                         ;; XXX perhaps guess extension based on mime-type
+                         :filename    ,(or fname
+                                           (format "mime-part-%02d" index))
+                         :target-dir  ,(mu4e-determine-attachment-dir
+                                        fname mime-type)
+                          ;; 'attachment-like' just means it has its own
+                         ;; filename an we thus we can save it through
+                         ;; `mu4e-view-save-attachments', even if it has an
+                         ;; 'inline' disposition.
+                         :attachment-like ,(if fname t nil)
+                         :handle      ,handle)
+                       parts)))))
          (seq-sort (lambda (p1 p2) (< (plist-get p1 :part-index)
                                       (plist-get p2 :part-index))) parts)))))
 
@@ -355,9 +347,9 @@ files."
     ;;
 
     ;; save MIME-part to a file
-    (:name "save"  :handler gnus-article-save-part :receives index)
+    (:name "save"  :handler mm-save-part :receives handle)
     ;; pipe MIME-part to some arbitrary shell command
-    (:name "|pipe" :handler gnus-article-pipe-part :receives index)
+    (:name "|pipe" :handler mm-pipe-part :receives handle)
     ;; open with the default handler, if any
     (:name "open" :handler mu4e--view-open-file :receives temp)
     ;; open with some custom file.
@@ -393,6 +385,7 @@ Each of the actions is a plist with keys
                        ;; - a string, which is taken as a shell command
 
   :receives            ;;  a symbol specifying what the handler receives
+                       ;; - handle: the Gnus MIME handle for the part
                        ;; - index: the index number of the mime part (default)
                        ;; - temp: the full path to the mime part in a
                        ;;         temporary file, which is deleted immediately
@@ -477,6 +470,7 @@ the third MIME-part."
                   (cond
                    ((functionp handler)
                     (cond
+                     ((eq receives 'handle) (funcall handler handle))
                      ((eq receives 'index) (funcall handler id))
                      ((eq receives 'pipe)
                       (funcall handler (mm-with-unibyte-buffer

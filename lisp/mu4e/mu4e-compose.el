@@ -380,6 +380,8 @@ non-nil, make it a \"wide\" reply (a.k.a. \"reply-to-all\")."
        (with-current-buffer (mu4e--message-call #'message-reply to wide)
          (message-goto-body)
          (insert (mu4e--compose-cite parent))
+         ;; include matching MIME parts from the parent
+         (mu4e--reply-insert-mime-parts parent)
          (current-buffer))))))
 
 ;;;###autoload

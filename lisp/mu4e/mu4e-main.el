@@ -49,8 +49,12 @@
 
   This can be useful to avoid the noise when there are many, and
 also hides the warning if your `user-mail-address' is not part of
-the personal addresses."
-  :type 'boolean
+the personal addresses.
+
+If set to t hide all personal addresses; if set to some number,
+at most so so many addresses."
+  :type '(choice (boolean :tag "Hide addresses")
+                 (natnum :tag "Maximum number to show"))
   :group 'mu4e-main)
 
 (defcustom mu4e-main-hide-fully-read nil
@@ -203,10 +207,10 @@ binding representation, remove that first letter."
          (bindstr
           (if (and alt (> (length bindstr) 1)) alt bindstr))
          (title ;; remove first letter afrer [] if it equal last of binding
-          (mu4e-string-replace
+          (string-replace
            (concat "[@]" (substring bindstr -1)) "[@]" title))
          (title ;; insert binding in [@]
-          (mu4e-string-replace
+          (string-replace
            "[@]" (format "[%s]" (propertize bindstr 'face 'mu4e-highlight-face))
            title))
          (map (make-sparse-keymap)))
@@ -285,19 +289,35 @@ for aligning them."
           (current-time-string baseline-t)
         "Never"))))
 
+(defun mu4e--personal-addresses ()
+  "Return menu information regarding personal addresses."
+  (let* ((maybe-num mu4e-main-hide-personal-addresses)
+         (addrs (mu4e-personal-addresses))
+         (addrs (if (natnump maybe-num) ;; all or subset?
+                    (seq-take addrs maybe-num)
+                  addrs)))
+    ;; show personal addresses, or some subset?
+    (if (eq mu4e-main-hide-personal-addresses t)
+        ""
+      (mu4e--key-val "personal addresses"
+                     (if addrs (string-join addrs ", ") "none")))))
+
 (defun mu4e--main-redraw ()
-  "Redraw the main buffer if there is one.
-Otherwise, do nothing."
+  "Redraw the main buffer if there is one."
   (when-let* ((buffer (get-buffer mu4e-main-buffer-name))
               (buffer (and (buffer-live-p buffer) buffer)))
     (with-current-buffer buffer
       (let* ((inhibit-read-only t)
              (pos (point))
-             (addrs (mu4e-personal-addresses))
              (max-length (seq-reduce (lambda (a b)
                                        (max a (length (plist-get b :name))))
                                      (mu4e-query-items) 0)))
-        (mu4e-main-mode)
+
+        ;; must be in mu4e-main-mode, or the bindings
+        ;; handling won't work.
+        (unless (eq major-mode 'mu4e-main-mode)
+          (mu4e-main-mode))
+
         (erase-buffer)
         (insert
          "* "
@@ -345,16 +365,7 @@ Otherwise, do nothing."
          (mu4e--key-val "in store"
                         (format "%d" (plist-get mu4e--server-props :doccount))
                         "messages")
-         (if mu4e-main-hide-personal-addresses ""
-           (mu4e--key-val "personal addresses"
-                          (if addrs (string-join addrs ", "  ) "none"))))
-
-        (if mu4e-main-hide-personal-addresses ""
-          (unless (mu4e-personal-address-p user-mail-address)
-            (mu4e-message (concat
-                           "Tip: `user-mail-address' ('%s') is not part "
-                           "of mu's addresses; add it with 'mu init
-                        --personal-address='") user-mail-address)))
+         (mu4e--personal-addresses))
         (goto-char pos)))))
 
 (defun mu4e--main-view-queue ()
@@ -394,13 +405,11 @@ If `mu4e-split-view' equals \\='single-window, show a mu4e menu
 instead."
   (if (eq mu4e-split-view 'single-window)
       (mu4e--main-menu)
-    (let ((buf (get-buffer-create mu4e-main-buffer-name))
-          (inhibit-read-only t))
-      (with-current-buffer buf
-        (mu4e--main-redraw))
+    (let* ((buf (get-buffer-create mu4e-main-buffer-name))
+           (inhibit-read-only t))
+      (mu4e--main-redraw)
       (mu4e-display-buffer buf t)
-      (run-hooks 'mu4e-main-rendered-hook)))
-  (goto-char (point-min)))
+      (run-hooks 'mu4e-main-rendered-hook))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; Interactive functions
@@ -409,13 +418,12 @@ instead."
   "Toggle sending mail mode, either queued or direct."
   (interactive)
   (unless (file-directory-p smtpmail-queue-dir)
-    (mu4e-error "`smtpmail-queue-dir' does not exist"))
+    (mu4e-warn"`smtpmail-queue-dir' does not exist"))
   (setq smtpmail-queue-mail (not smtpmail-queue-mail))
   (mu4e-message
    (concat "Outgoing mail will now be "
            (if smtpmail-queue-mail "queued" "sent directly")))
-  (unless (or (eq mu4e-split-view 'single-window)
-              (not (buffer-live-p (get-buffer mu4e-main-buffer-name))))
+  (unless (or (eq mu4e-split-view 'single-window))
     (mu4e--main-redraw)))
 
 (defun mu4e--main-menu ()

@@ -1,6 +1,6 @@
 ;;; mu4e-obsolete.el --- Obsolete things -*- lexical-binding: t -*-
 
-;; Copyright (C) 2022-2024 Dirk-Jan C. Binnema
+;; Copyright (C) 2022-2026 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -76,6 +76,44 @@
 (make-obsolete-variable 'mu4e-view-prefer-html "No longer in use" "1.7.0")
 (make-obsolete-variable 'mu4e-view-html-plaintext-ratio-heuristic
                         "No longer in use" "1.7.0")
+
+(define-obsolete-function-alias 'mu4e-view-headers-next  'mu4e-headers-next "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-headers-prev  'mu4e-headers-prev "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-mark-pattern  'mu4e-headers-mark-pattern "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-unmark        'mu4e-mark-unmark-all "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-unmark-all    'mu4e-mark-unmark-all "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-search-narrow 'mu4e-search-narrow "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-search-edit   'mu4e-search-edit "1.14.0")
+
+
+(define-obsolete-function-alias 'mu4e-view-search-edit   'mu4e-search-edit "1.14.0")
+
+(define-obsolete-function-alias 'mu4e-view-mark-for-move 'mu4e-headers-mark-for-move "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-mark-for-refile 'mu4e-headers-mark-for-refile "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-mark-for-delete 'mu4e-headers-mark-for-delete "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-mark-for-flag 'mu4e-headers-mark-for-flag "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-mark-for-unflag 'mu4e-headers-mark-for-unflag "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-mark-for-unmark 'mu4e-headers-mark-for-unmark "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-mark-for-something 'mu4e-headers-mark-for-something "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-mark-for-read 'mu4e-headers-mark-for-read "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-mark-for-unread 'mu4e-headers-mark-for-unread "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-mark-for-trash 'mu4e-headers-mark-for-trash "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-mark-for-untrash 'mu4e-headers-mark-for-untrash "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-mark-for-label 'mu4e-headers-mark-for-label "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-mark-for-unlabel 'mu4e-headers-mark-for-unlabel "1.14.0")
+
+(define-obsolete-function-alias 'mu4e-view-mark-custom 'mu4e-headers-mark-custom "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-unmark 'mu4e-headers-mark-for-unmark "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-marked-execute 'mu4e-mark-execute-all "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-mark-thread 'mu4e-headers-mark-thread "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-mark-subthread 'mu4e-headers-mark-subthread "1.14.0")
+
+(define-obsolete-function-alias 'mu4e-view-thread-goto-root 'mu4e-headers-thread-goto-root "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-thread-fold-toggle-goto-next
+  'mu4e-headers-thread-fold-toggle-goto-next "1.14.0")
+(define-obsolete-function-alias 'mu4e-view-thread-fold-toggle-goto-prev
+  'mu4e-headers-thread-fold-toggle-goto-prev "1.14.0")
+
 (make-obsolete-variable 'mu4e-message-body-rewrite-functions
                         "No longer in use" "1.7.0")
 ;;; Html2Text
@@ -282,6 +320,8 @@
                         "1.12.5")
 ;; mu4e.
 (define-obsolete-function-alias 'mu4e-clear-caches #'ignore "1.11.15")
+
+(define-obsolete-function-alias 'mu4e-string-replace #'string-replace "1.14.0")
 
 (provide 'mu4e-obsolete)
 ;;; mu4e-obsolete.el ends here

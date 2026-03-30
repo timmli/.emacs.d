@@ -243,6 +243,7 @@ Create buttons for any mu4e BUFFER.
 
 ;;; Generated autoloads from mu4e-transient.el
 
+(autoload 'mu4e-transient-menu "mu4e-transient" nil t)
 (register-definition-prefixes "mu4e-transient" '("mu4e--define-toggle-suffix"))
 
 
