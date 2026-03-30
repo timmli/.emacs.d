@@ -15424,6 +15424,8 @@ Don't ask for the path when searching for files:
 
 ** hydra-org
 
+*** hydra-org-main
+
 #+BEGIN_SRC emacs-lisp
 (defhydra hydra-org-main (:hint nil :color blue)
 	"
@@ -15536,8 +15538,9 @@ Taken from https://emacs.stackexchange.com/a/26840/12336 and modified:
 #+BEGIN_SRC emacs-lisp
 (defun tl/org-show-sublevels ()
 	(interactive)
-	(outline-hide-sublevels (+ (org-current-level) 1))
-	(recenter-top-bottom)
+	(org-fold-show-branches)
+	;; (outline-hide-sublevels (+ (org-current-level) 1))
+	;; (recenter-top-bottom)
 	)
 #+END_SRC
 
