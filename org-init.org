@@ -3191,6 +3191,10 @@ https://ox-hugo.scripter.co/
 
 Export to Hugo-compatible markdown.
 
+Issues:
+- [ ] org-export-get-date: Wrong type argument: listp, ""
+      - https://github.com/kaushalmodi/ox-hugo/issues/776
+
 #+BEGIN_SRC emacs-lisp
 (use-package ox-hugo
 	:pin MELPA
