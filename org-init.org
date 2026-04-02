@@ -2053,7 +2053,13 @@ Do not dim blocked headings (headings with TODO subheadings):
 (setq org-agenda-dim-blocked-tasks nil)
 #+END_SRC
 
-**** Views
+**** TODO Views
+:LOGBOOK:
+- State "TODO"       from              [2026-04-02 Thu 11:09]
+:END:
+
+Issues:
+- [ ] An empty clock ("(0:00)") is shown on the last line of certain views, for example the tags view. 
 
 Specifying the timespan of org-agenda views:
 
@@ -2146,6 +2152,21 @@ Customize the content of views:
 														end))))
 								 (org-agenda-sorting-strategy '((tags user-defined-down)))
 								 ))))
+				;; FIXME: Work in progress
+				("S" "Scheduled headings"
+				 ((tags "*"
+								((org-agenda-overriding-header "Scheduled headings")
+								 (org-agenda-prefix-format
+									'((tags . " %i %-12:c %(org-entry-get nil \"SCHEDULED\") ")))
+								 (org-agenda-sorting-strategy '((tags scheduled-up))) ; Does not work with search!
+								 (org-agenda-skip-function
+									(lambda ()
+										(org-back-to-heading t)
+										(let ((end (or (save-excursion (outline-next-heading) (point))
+																	 (save-excursion (org-end-of-subtree t) (point)))))
+											(and	(or (not (org-entry-get nil "SCHEDULED"))
+																(org-entry-get nil "CLOSED"))
+														end))))))))
 				("W" "Work-related agenda and tasks"
 				 ,tl/org-agenda-structure
 				 ((org-agenda-tag-filter-preset '("+@work"))))
@@ -2155,7 +2176,7 @@ Customize the content of views:
 				("A" "Complete list of agenda and tasks"
 				 ,tl/org-agenda-structure
 				 ;; ((org-agenda-tag-filter-preset '("+@home")))
-																																		 )
+				 )
 				))
 #+END_SRC
 
