@@ -2153,8 +2153,21 @@ Customize the content of views:
 								 (org-agenda-sorting-strategy '((tags user-defined-down)))
 								 ))))
 				;; FIXME: Work in progress
-				("S" "Scheduled headings"
+				("D" "Deadlines & Scheduled"
 				 ((tags "*"
+								((org-agenda-overriding-header "Deadlines")
+								 (org-agenda-prefix-format
+									'((tags . " %i %-12:c %(org-entry-get nil \"DEADLINE\") ")))
+								 (org-agenda-sorting-strategy '((tags deadline-up))) ; Does not work with search!
+								 (org-agenda-skip-function
+									(lambda ()
+										(org-back-to-heading t)
+										(let ((end (or (save-excursion (outline-next-heading) (point))
+																	 (save-excursion (org-end-of-subtree t) (point)))))
+											(and	(or (not (org-entry-get nil "DEADLINE"))
+																(org-entry-get nil "CLOSED"))
+														end))))))
+					(tags "*"
 								((org-agenda-overriding-header "Scheduled headings")
 								 (org-agenda-prefix-format
 									'((tags . " %i %-12:c %(org-entry-get nil \"SCHEDULED\") ")))
@@ -2235,11 +2248,16 @@ Set up key bindings for each view:
 	(interactive)
 	(org-agenda nil "C"))
 
+(defun org-agenda-list-deadlines ()
+	(interactive)
+	(org-agenda nil "D"))
+
 (define-key org-agenda-mode-map (kbd "W") 'org-agenda-list-work)
 (define-key org-agenda-mode-map (kbd "H") 'org-agenda-list-home)
 (define-key org-agenda-mode-map (kbd "A") 'org-agenda-list-complete)
 (define-key org-agenda-mode-map (kbd "E") 'org-agenda-list-events)
 (define-key org-agenda-mode-map (kbd "C") 'org-agenda-list-clocks)
+(define-key org-agenda-mode-map (kbd "D") 'org-agenda-list-deadlines)
 #+END_SRC
 
 **** Gantt charts
@@ -15674,21 +15692,21 @@ Download with [[org-download]].
     ^^                     ^^                 ^^                       ^^                        ╭────────────┐
      ^Calendar^             ^Heading^          ^Clocking^               ^Filter^                 │ org-agenda │
 	╭─^^─────────────────────^^─────────────────^^───────────────────────^^────────────────────────┴────────────╯
-    _b_ backward d/w/y     _+_ priority up    _I_ clock in					   _/_ by tag            _S_ync with CalDAV
+    _b_ backward d/w/y     _+_ priority up    _I_ clock in					   _/_ by tag            s_Y_nc with CalDAV
     _._ today              _-_ priority down  _O_ clock out					   _<_ by category    
     _f_ forward d/w/y      _t_ set todo       _J_ jump to clocked-in	 \^ siblings        
     _j_ goto date          _:_ set tags       _R_ clocking report  	   _|_ remove all     
     _d_ day view           _>_ set date       ^^                       _l_ show done (log mode) 
     _w_ week view    _C-c C-d_ set deadline   ^^
-   _vm_ month view   _C-c C-s_ set schedule   ^^                       _C_ complete agenda
+   _vm_ month view   _C-c C-s_ set schedule   ^^                       _A_ all
    _vy_ year view        _C-k_ kill           ^^                       _H_ home agenda ^^         _r_efresh
     ^^       _M-S-<up>_ earlier hour       _M-S-<up>_ earlier time     _W_ work agenda ^^         _q_uit hydra
     ^^     _M-S-<down>_ later hour       _M-S-<down>_ later time       _E_ events      ^^        e_x_it agenda
-    ^^    _M-S-<right>_ earlier day            ^^                       
-    ^^     _M-S-<down>_ later day              ^^                      _m_ mark						
-    _h_ show holidays		^^									   ^^		 							     _u_ unmark          
-    _]_ show inactive timestamps ^^					   ^^	 								     _B_ action on marked
-    _k_ capture with timestamp	 ^^				     ^^			 								^^                  
+    ^^    _M-S-<right>_ earlier day            ^^                      _C_ clocks 
+    ^^     _M-S-<down>_ later day              ^^                      _D_ deadlines & scheduled
+    _h_ show holidays		^^									   ^^		 							     _m_ mark						 
+    _]_ show inactive timestamps ^^					   ^^	 								     _u_ unmark          
+    _k_ capture with timestamp	 ^^				     ^^			 								 _B_ action on marked^
 "																																			
 	("+" org-agenda-priority-up)
 	("-" org-agenda-priority-down)
@@ -15697,14 +15715,16 @@ Download with [[org-download]].
 	("vm" org-agenda-month-view)
 	("vy" org-agenda-year-view)
 	("h" org-agenda-holidays)
+	("A" org-agenda-list-complete)
 	("H" org-agenda-list-home)
 	("W" org-agenda-list-work)
-	("C" org-agenda-list-complete)
 	("E" org-agenda-list-events)
+	("C" org-agenda-list-clocks)
+	("D" org-agenda-list-deadlines)
 	("I" org-agenda-clock-in)
 	("O" org-agenda-clockreport-mode)
 	("R" org-agenda-clock-in)
-	("S" tl/org-export-agenda-to-caldav :color blue)
+	("Y" tl/org-export-agenda-to-caldav :color blue)
 	("f" org-agenda-later)
 	("b" org-agenda-earlier)
 	("F" org-agenda-follow-mode)
