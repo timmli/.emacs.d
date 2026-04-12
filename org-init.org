@@ -2691,7 +2691,9 @@ Set colors:
  )
 #+END_SRC
 
-*** Capture templates
+*** Capturing
+
+**** Capture templates
 
 - Template expansions: http://orgmode.org/manual/Template-expansion.html
 
@@ -2733,11 +2735,25 @@ Set colors:
 				))
 #+END_SRC
 
-**** org-capture-extension (for browsers)
+**** Capture websites
+
+***** org-capture-extension (for browsers)
 
 https://github.com/sprig/org-capture-extension
 
 Extension for Chrome and Firefox that adds a "Capture" button sending the site address, title, and selected text (if any) to emacs via [[org-protocol]]. 
+
+***** org-web-tools
+
+https://github.com/alphapapa/org-web-tools
+https://merrick.luois.me/posts/web-clipping-with-org-roam
+
+Retrieve web page content via its URL and process it into Org-mode content.
+
+#+BEGIN_SRC emacs-lisp :tangle no
+(use-package org-web-tools
+	:ensure t)
+#+END_SRC
 
 *** Clocking and logging
 
