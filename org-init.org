@@ -8455,6 +8455,8 @@ The [[https://services.addons.thunderbird.net/en-US/thunderbird/addon/external-e
 
 **** eml-files
 
+Text format for storing email messages following the [[https://www.rfc-editor.org/rfc/rfc5322][RFC 5322]].
+
 Major mode for eml-files:
 #+BEGIN_SRC emacs-lisp
 (define-derived-mode eml-mode fundamental-mode "EML"
@@ -8487,6 +8489,17 @@ it does not already exist."
 			(progn
 				(gnus-group-make-doc-group file nil)  ;; Create the group
 				)))) 
+#+END_SRC
+
+**** msg-files
+
+Binary format developed by Microsoft for storing individual email messages in Outlook.
+
+This formart cannot be displayed in Emacs in a human-readable way, but must be be converted to the eml format, for example, with =msgconvert=:
+
+#+BEGIN_SRC bash :tangle no
+sudo apt install libemail-outlook-message-perl
+msgconvert email.msg
 #+END_SRC
 
 **** mu4e 
