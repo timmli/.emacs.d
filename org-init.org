@@ -2733,6 +2733,12 @@ Set colors:
 				))
 #+END_SRC
 
+**** org-capture-extension (for browsers)
+
+https://github.com/sprig/org-capture-extension
+
+Extension for Chrome and Firefox that adds a "Capture" button sending the site address, title, and selected text (if any) to emacs via [[org-protocol]]. 
+
 *** Clocking and logging
 
 Collect log entries in drawer:
