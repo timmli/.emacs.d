@@ -11023,7 +11023,12 @@ Fuzzy search in [[helm]].
 		(helm :sources '(helm-bufler-source))))
 #+END_SRC
 
-** Autocomplete
+** Completion
+
+Overview
+- https://www.chiply.dev/post-vompeccc
+
+*** [[Helm]]
 
 *** yasnippet
 
