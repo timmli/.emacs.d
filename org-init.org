@@ -11099,16 +11099,19 @@ Similar to `yas/org-insert-time-stamp`"
 
 *** TODO company
 
+http://company-mode.github.io/
+
+Completion framework for text and code.
+
 - [ ] completion of LaTeX code in AUCTex
 - [ ] completion in org-mode of LaTeX code
 
 **** General settings
 
-http://company-mode.github.io/
-
 #+BEGIN_SRC emacs-lisp
 (use-package company
 	:ensure t
+	:pin MELPA
 	:config
 
 	;; some general variables
@@ -11291,7 +11294,7 @@ Currently, I don't need this and it seems to hinder the completion of LaTeX comm
 
 **** yasnippet
 
-Execute when all backends added to =company-backends=.
+Add yasnippet backend to all other backends. Naturally, this needs to be executed last, when when all backends have been added to =company-backends=.
 
 #+BEGIN_SRC emacs-lisp
 ;; Code from https://emacs.stackexchange.com/a/10520/12336
