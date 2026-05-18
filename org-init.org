@@ -3263,6 +3263,38 @@ Issues:
   :after ox)
 #+END_SRC
 
+#+BEGIN_SRC emacs-lisp
+(with-eval-after-load 'ox-hugo
+	(defun org-hugo--get-date (info fmt)
+		"Return current post's publish date as a string.
+
+The date is derived with this precedence:
+
+1. `:logbook-date' property from INFO
+
+2. `CLOSED' time stamp if the point is in an Org subtree with the
+   `CLOSED' property set (usually generated automatically when
+   switching a heading's TODO state to \"DONE\")
+
+3. `EXPORT_DATE' property in current post subtree
+
+4. Date if set in the Org file's \"#+date\" keyword. This date is
+   formatted using the time format string FMT.
+
+If none of the above apply, return nil.
+
+INFO is a plist used as a communication channel."
+		(or
+		 (plist-get info :logbook-date)
+		 (org-entry-get (point) "CLOSED")
+		 (org-string-nw-p
+			(org-export-data (plist-get info :date) info)) ;`org-export-data' required
+		 ;; Commented by TL
+		 ;; (org-string-nw-p
+		 ;;  (org-export-get-date info fmt))
+		 )))
+#+END_SRC
+
 **** ox-reveal
 
 https://github.com/yjwen/org-reveal/
