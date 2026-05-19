@@ -1,6 +1,6 @@
 ;;; mu4e-contrib.el --- User-contributed functions -*- lexical-binding: t -*-
 
-;; Copyright (C) 2013-2023 Dirk-Jan C. Binnema
+;; Copyright (C) 2013-2026 Dirk-Jan C. Binnema
 
 ;; This file is not part of GNU Emacs.
 
@@ -155,12 +155,11 @@ the file."
         (bufs nil)
         ;; Remove directories from the list
         (files-to-attach
-         (delq nil (mapcar
-                    (lambda (f) (if (or (not (file-exists-p f))
-                                        (file-directory-p f))
-                                    nil
-                                  (expand-file-name f)))
-                    (mu4e--flatten-list (reverse args))))))
+         (seq-keep
+          (lambda (f) (when (and (file-exists-p f)
+                                (not (file-directory-p f)))
+                        (expand-file-name f)))
+          (mu4e--flatten-list (reverse args)))))
     ;; warn if user tries to attach without any files marked
     (if (null files-to-attach)
         (error "No files to attach")
@@ -173,7 +172,7 @@ the file."
       (if (and bufs
                (y-or-n-p "Attach files to existing mail composition buffer? "))
           (setq destination
-                (if (= (length bufs) 1)
+                (if (length= bufs 1)
                     (get-buffer (car bufs))
                   (let ((prompt (mu4e-format "%s" "Attach to buffer")))
                     (substring-no-properties

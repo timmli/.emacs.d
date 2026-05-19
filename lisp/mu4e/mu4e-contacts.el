@@ -1,6 +1,6 @@
 ;;; mu4e-contacts.el --- Dealing with contacts -*- lexical-binding: t -*-
 
-;; Copyright (C) 2022-2025 Dirk-Jan C. Binnema
+;; Copyright (C) 2022-2026 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -236,7 +236,7 @@ The reverse of the RFC atext definition is then tested. If it
 matches, nil is returned, if not, it returns a symbol
 `rfc822-atom'."
   (cond
-   ((= (length ph) 0) 'rfc822-empty)
+   ((length= ph 0) 'rfc822-empty)
    ((= (aref ph 0) ?\")
     (if (string-match "\"\\([^\"\\\n]\\|\\\\.\\|\\\\\n\\)*\"" ph)
         'rfc822-quoted-string

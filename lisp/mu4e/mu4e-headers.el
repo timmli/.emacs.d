@@ -1,6 +1,6 @@
 ;;; mu4e-headers.el --- Message headers -*- lexical-binding: t  -*-
 
-;; Copyright (C) 2011-2025 Dirk-Jan C. Binnema
+;; Copyright (C) 2011-2026 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -68,7 +68,7 @@
   "A list of header fields to show in the headers buffer.
 Each element has the form (HEADER . WIDTH), where HEADER is one of
 the available headers (see `mu4e-header-info') and WIDTH is the
-respective width in characters.
+respective width in characters
 
 A width of nil means \"unrestricted\", and this is best reserved
 for the rightmost (last) field. Note that emacs may become very
@@ -83,15 +83,10 @@ altogether."
                                   mu4e-header-info)
                         (restricted-sexp
                          :tag "User-specified header"
-                         :match-alternatives (mu4e--headers-header-p)))
+                         :match-alternatives (mu4e--valid-header-p)))
                        (choice (integer :tag "width")
                                (const :tag "unrestricted width" nil))))
   :group 'mu4e-headers)
-
-(defun mu4e--headers-header-p (symbol)
-  "Is SYMBOL a valid mu4e header?
-This means its either one of the build-in or user-specified headers."
-  (assoc symbol (append mu4e-header-info mu4e-header-info-custom)))
 
 (defcustom mu4e-headers-date-format "%x"
   "Date format to use in the headers view.
@@ -807,17 +802,16 @@ to t before \"automatic\" searches.")
 
 Switch to the output buffer for the results."
   (let* ((buf (mu4e-get-headers-buffer nil t))
-         (view-window mu4e~headers-view-win)
          (inhibit-read-only t)
          (maxnum (unless mu4e-search-full mu4e-search-results-limit)))
     (with-current-buffer buf
-      ;; NOTE: this resets all buffer-local variables, including
-      ;; `mu4e~headers-view-win', which may have a live window if the
-      ;; headers buffer already exists when `mu4e-get-headers-buffer'
-      ;; is called.
-      (mu4e-headers-mode)
-      (setq mu4e~headers-view-win view-window
-            list-buffers-directory expr)
+      ;; NOTE: `mu4e-headers-mode' resets all buffer-local variables, including
+      ;; `mu4e~headers-view-win', which may have a live window if the headers
+      ;; buffer already existed. Save & restore after the mode reset.
+      (let ((view-window mu4e~headers-view-win))
+        (mu4e-headers-mode)
+        (setq mu4e~headers-view-win view-window
+              list-buffers-directory expr))
       (mu4e--modeline-update))
 
     ;; For interactive searches, display the buffer if not already visible; for
@@ -900,30 +894,25 @@ COUNT is the number of messages found."
 
 If we're already in the headers buffer/window, do nothing.
 If we're in the message view, temporarily switch."
-  `(progn
+  `(if (eq major-mode 'mu4e-headers-mode)
+       (progn ,@body)
      (let* ((msg (mu4e-message-at-point))
             (buffer (mu4e-get-headers-buffer))
             (docid (mu4e-message-field msg :docid)))
        (unless (and buffer msg docid)
          (mu4e-error "Action is not possible"))
-       ;; make sure to select the window if possible, or jumping won't be
-       ;; reflected.
-       (with-selected-window (get-buffer-window buffer)
+       ;; Select the window if possible, or jumping won't be reflected.
+       ;; Note: in single-window mode the headers buffer is probably not
+       ;; visible; in that case, fall back to the selected window.
+       (with-selected-window (or (get-buffer-window buffer) (selected-window))
          (with-current-buffer buffer
            (mu4e-thread-unfold-all)
            (if (or (mu4e~headers-goto-docid docid)
-                   ;; TODO: Is this the best way to find another
-                   ;; relevant docid for a view buffer?
-                   ;;
-                   ;; If you attach a view buffer to another headers
-                   ;; buffer that does not contain the current docid
-                   ;; then `mu4e~headers-goto-docid' returns nil and we
-                   ;; get an error. This "hack" instead gets its
-                   ;; now-changed headers buffer's current message as a
-                   ;; docid
-                   (mu4e~headers-goto-docid
-                    (with-current-buffer buffer
-                      (mu4e-message-field (mu4e-message-at-point) :docid))))
+                   ;; Docid lookup can fail when the headers buffer was
+                   ;; refreshed (e.g., re-indexing during compose).  Fall
+                   ;; back to the stable message-id. #2902.
+                   (mu4e-headers-goto-message-id
+                    (mu4e-message-field msg :message-id)))
                (progn ,@body)
              (mu4e-error "Cannot find message in headers buffer")))))))
 
@@ -1106,7 +1095,7 @@ If THREADS is non-nil, give a more informative error message."
      (mapcar
       (lambda (item)
         (let* ((field (car item)) (width (cdr item))
-               (info (cdr (assoc field fields)))
+               (info (alist-get field fields))
                (sortable-info (plist-get info :sortable))
                ;; the effective sort-field for this field is as per its info;
                ;; if t, it's the field itself; otherwise it's either some

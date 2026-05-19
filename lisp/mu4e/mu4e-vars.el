@@ -379,6 +379,13 @@ Note that when using the gnus-based view, you only have access to
 a limited set of message fields: only the ones used in the
 header-view, not including, for instance, the message body.")
 
+(defun mu4e--valid-header-p (symbol)
+  "Is SYMBOL a valid mu4e header?
+This means its either one of the build-in or user-specified headers."
+  (assoc symbol (append mu4e-header-info mu4e-header-info-custom)))
+
+
+
 ;;; Internals
 
 (defvar-local mu4e~headers-view-win nil

@@ -1,6 +1,6 @@
 ;;; mu4e-bookmarks.el --- Bookmarks handling -*- lexical-binding: t -*-
 
-;; Copyright (C) 2011-2025 Dirk-Jan C. Binnema
+;; Copyright (C) 2011-2026 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -147,7 +147,7 @@ with KEY."
   "Get `mu4e-bookmarks' in the (new) format.
 Convert from the old format if needed."
   (seq-map (lambda (item)
-             (if (and (listp item) (= (length item) 3))
+             (if (and (listp item) (length= item 3))
                  `(:name  ,(nth 1 item) :query ,(nth 0 item)
                           :key   ,(nth 2 item))
                item))

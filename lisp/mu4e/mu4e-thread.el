@@ -1,6 +1,7 @@
 ;;; mu4e-thread.el --- Thread folding support -*- lexical-binding: t -*-
 
 ;; Copyright (C) 2023 Nicolas P. Rougier
+;; Copyright (C) 2023-2026 Dirk-Jan C. Binnema
 
 ;; Author: Nicolas P. Rougier <Nicolas.Rougier@inria.fr>
 ;; Keywords: mail
@@ -161,7 +162,7 @@ Reset individual folding states."
       (while (not (eobp))
         (when-let* ((msg (get-text-property (point) 'msg))
                     (docid (mu4e-message-field msg :docid))
-                    (state (cdr (assoc docid mu4e-thread--docids))))
+                    (state (alist-get docid mu4e-thread--docids)))
           (if (eq state 'folded)
               (mu4e-thread-fold)
             (mu4e-thread-unfold)))

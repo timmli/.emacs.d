@@ -1,6 +1,6 @@
 ;;; mu4e-helpers.el --- Helper functions -*- lexical-binding: t -*-
 
-;; Copyright (C) 2022-2025 Dirk-Jan C. Binnema
+;; Copyright (C) 2022-2026 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -38,10 +38,111 @@
 
 ;;; Customization
 
-(defcustom mu4e-debug nil
-  "When set to non-nil, log debug information to the mu4e log buffer."
-  :type 'boolean
+;;; Icons
+
+(defcustom mu4e-file-name-to-icon-function nil
+  "Function to return an icon for a file name, or nil.
+When set, this should be a function that takes a file name and
+returns a string (icon) or nil.
+
+If you have the `nerd-icons' package, you can put
+`nerd-icons-icon-for-file' here; or with `all-the-icons', use
+`all-the-icons-icon-for-file'."
+  :type '(choice (const :tag "None" nil) function)
   :group 'mu4e)
+
+(defcustom mu4e-mime-type-to-icon-function nil
+    "Function to return an icon for a MIME type, or nil.
+When set, this should be a function that takes a MIME-type string
+and returns a string (icon) or nil.
+
+When nil, `mu4e-mime-type-to-icon' falls back to converting the
+MIME type to a file extension and using
+`mu4e-file-name-to-icon-function'."
+    :type '(choice (const :tag "None" nil) function)
+    :group 'mu4e)
+
+(defun mu4e-file-name-to-icon (filename)
+  "Return an icon string for FILENAME, or nil.
+Uses `mu4e-file-name-to-icon-function' if set."
+  (when (and filename mu4e-file-name-to-icon-function)
+    (funcall mu4e-file-name-to-icon-function filename)))
+
+(defconst mu4e--mime-subtype-extension-alist
+  '(("plain"         . "txt")
+    ("x-shellscript" . "sh")
+    ("svg+xml"       . "svg"))
+  "Alist mapping MIME subtypes to file extensions for known quirks.
+Used by `mu4e-mime-type-to-icon' when deriving a dummy filename
+from a MIME type.
+
+Only entries whose mapping cannot be obtained by simply stripping
+a leading `x-' need to be listed here.")
+
+(defun mu4e--mime-type-extension (mime-type)
+  "Derive a plausible file extension from MIME-TYPE.
+
+Uses `mu4e--mime-subtype-extension-alist' for known quirks,
+otherwise strips any `x-' prefix from the subtype (the part
+after the `/').
+
+Returns nil for malformed MIME types."
+  (when (and mime-type (string-match "/\\(.+\\)\\'" mime-type))
+    (let ((sub (downcase (match-string 1 mime-type))))
+      (or (cdr (assoc sub mu4e--mime-subtype-extension-alist))
+          (replace-regexp-in-string "\\`x-" "" sub)))))
+
+(defun mu4e-mime-type-to-icon (mime-type)
+  "Return an icon string for MIME-TYPE, or nil.
+
+Uses `mu4e-mime-type-to-icon-function' if set; otherwise
+falls back to `mu4e-file-name-to-icon' with a dummy filename
+derived from the MIME type's subtype (e.g. `image/png' yields
+`file.png'), consulting `mu4e--mime-subtype-extension-alist'
+for known quirks like `text/plain' -> `txt'."
+  (when mime-type
+    (or (and mu4e-mime-type-to-icon-function
+             (funcall mu4e-mime-type-to-icon-function mime-type))
+        (when-let* ((ext (mu4e--mime-type-extension mime-type)))
+          (mu4e-file-name-to-icon (concat "file." ext))))))
+
+;;; Messages, warnings and errors
+(defun mu4e-format (frm &rest args)
+  "Create [mu4e]-prefixed string based on format FRM and ARGS."
+  (concat
+   "[" (propertize "mu4e" 'face 'mu4e-title-face) "] "
+   (apply 'format frm
+          (mapcar (lambda (x)
+                    (if (stringp x)
+                        (decode-coding-string x 'utf-8)
+                      x))
+                  args))))
+
+(defun mu4e-message (frm &rest args)
+  "Display FRM with ARGS like `message' in mu4e style.
+If we're waiting for user-input or if there's some message in the
+echo area, don't show anything."
+  (unless (or (active-minibuffer-window))
+    (message "%s" (apply 'mu4e-format frm args))))
+
+(declare-function mu4e~loading-close "mu4e-headers")
+
+(defun mu4e-error (frm &rest args)
+  "Display an error with FRM and ARGS like `mu4e-message'.
+
+Create [mu4e]-prefixed error based on format FRM and ARGS. Does a
+local-exit and does not return, and raises a
+debuggable (backtrace) error."
+  (mu4e-log 'error (apply 'mu4e-format frm args))
+  (error "%s" (apply 'mu4e-format frm args)))
+
+(defun mu4e-warn (frm &rest args)
+  "Create [mu4e]-prefixed warning based on format FRM and ARGS.
+Does a local-exit and does not return."
+  (mu4e-log 'error (apply 'mu4e-format frm args))
+  (user-error "%s" (apply 'mu4e-format frm args)))
+
+;;; Reading user input
 
 (defcustom mu4e-completing-read-function #'ido-completing-read
   "Function to be used to receive user-input during completion.
@@ -84,84 +185,6 @@ Tastes differ, but without any such frameworks, the unaugmented
 Emacs `completing-read' is rather Spartan."
   :type 'boolean
   :group 'mu4e)
-
-(defcustom mu4e-use-fancy-chars nil
-  "When set, allow fancy (Unicode) characters for marks/threads.
-You can customize the exact fancy characters used with
-`mu4e-marks' and various `mu4e-headers-..-mark' and
-`mu4e-headers..-prefix' variables."
-  :type 'boolean
-  :group 'mu4e)
-
-;; maybe move the next ones... but they're convenient
-;; here because they're needed in multiple buffers.
-
-(defcustom mu4e-view-auto-mark-as-read t
-  "Automatically mark messages as read when you read them.
-This is the default behavior, but can be turned off, for example
-when using a read-only file-system.
-
-This can also be set to a function; if so, receives a message
-plist which should evaluate to nil if the message should *not* be
-marked as read-only, or non-nil otherwise."
-  :type '(choice
-          boolean
-          function)
-  :group 'mu4e-view)
-
-(defun mu4e-select-other-view ()
-  "Switch between headers view and message view."
-  (interactive)
-  (let* ((other-buf
-          (cond
-           ((mu4e-current-buffer-type-p 'view)
-            (mu4e-get-headers-buffer))
-           ((mu4e-current-buffer-type-p 'headers)
-            (mu4e-get-view-buffer))
-           (t (mu4e-error
-               "This window is neither the headers nor the view window"))))
-         (other-win (and other-buf (get-buffer-window other-buf))))
-    (if (window-live-p other-win)
-        (select-window other-win)
-      (mu4e-message "No window to switch to"))))
-
-;;; Messages, warnings and errors
-(defun mu4e-format (frm &rest args)
-  "Create [mu4e]-prefixed string based on format FRM and ARGS."
-  (concat
-   "[" (propertize "mu4e" 'face 'mu4e-title-face) "] "
-   (apply 'format frm
-          (mapcar (lambda (x)
-                    (if (stringp x)
-                        (decode-coding-string x 'utf-8)
-                      x))
-                  args))))
-
-(defun mu4e-message (frm &rest args)
-  "Display FRM with ARGS like `message' in mu4e style.
-If we're waiting for user-input or if there's some message in the
-echo area, don't show anything."
-  (unless (or (active-minibuffer-window))
-    (message "%s" (apply 'mu4e-format frm args))))
-
-(declare-function mu4e~loading-close "mu4e-headers")
-
-(defun mu4e-error (frm &rest args)
-  "Display an error with FRM and ARGS like `mu4e-message'.
-
-Create [mu4e]-prefixed error based on format FRM and ARGS. Does a
-local-exit and does not return, and raises a
-debuggable (backtrace) error."
-  (mu4e-log 'error (apply 'mu4e-format frm args))
-  (error "%s" (apply 'mu4e-format frm args)))
-
-(defun mu4e-warn (frm &rest args)
-  "Create [mu4e]-prefixed warning based on format FRM and ARGS.
-Does a local-exit and does not return."
-  (mu4e-log 'error (apply 'mu4e-format frm args))
-  (user-error "%s" (apply 'mu4e-format frm args)))
-
-;;; Reading user input
 
 (defun mu4e--plist-get (lst prop)
   "Get PROP from plist LST and raise an error if not present."
@@ -321,6 +344,11 @@ Function returns the value (cdr) of the matching cell."
               lst))
 
 ;;; Logging / debugging
+
+(defcustom mu4e-debug nil
+  "When set to non-nil, log debug information to the mu4e log buffer."
+  :type 'boolean
+  :group 'mu4e)
 
 (defconst mu4e--log-max-size 1000000
   "Max number of characters to keep around in the log buffer.")
@@ -526,6 +554,46 @@ Or go to the top level if there is none."
           ('mu4e-headers-mode "(mu4e)Headers view")
           ('mu4e-view-mode    "(mu4e)Message view")
           (_                  "mu4e"))))
+
+(defcustom mu4e-use-fancy-chars nil
+  "When set, allow fancy (Unicode) characters for marks/threads.
+You can customize the exact fancy characters used with
+`mu4e-marks' and various `mu4e-headers-..-mark' and
+`mu4e-headers..-prefix' variables."
+  :type 'boolean
+  :group 'mu4e)
+
+;; maybe move the next ones... but they're convenient
+;; here because they're needed in multiple buffers.
+
+(defcustom mu4e-view-auto-mark-as-read t
+  "Automatically mark messages as read when you read them.
+This is the default behavior, but can be turned off, for example
+when using a read-only file-system.
+
+This can also be set to a function; if so, receives a message
+plist which should evaluate to nil if the message should *not* be
+marked as read-only, or non-nil otherwise."
+  :type '(choice
+          boolean
+          function)
+  :group 'mu4e-view)
+
+(defun mu4e-select-other-view ()
+  "Switch between headers view and message view."
+  (interactive)
+  (let* ((other-buf
+          (cond
+           ((mu4e-current-buffer-type-p 'view)
+            (mu4e-get-headers-buffer))
+           ((mu4e-current-buffer-type-p 'headers)
+            (mu4e-get-view-buffer))
+           (t (mu4e-error
+               "This window is neither the headers nor the view window"))))
+         (other-win (and other-buf (get-buffer-window other-buf))))
+    (if (window-live-p other-win)
+        (select-window other-win)
+      (mu4e-message "No window to switch to"))))
 
 ;;; Emacs bookmarks
 (defcustom mu4e-emacs-bookmark-policy 'message

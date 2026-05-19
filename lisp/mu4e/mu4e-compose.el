@@ -91,8 +91,6 @@ This multiplexes the `message-mode' hooks `message-send-actions',
   :type 'hook
   :group 'mu4e-compose)
 
-
-
 (defvar mu4e-captured-message)
 (defun mu4e-compose-attach-captured-message ()
   "Insert the last captured message file as an attachment.

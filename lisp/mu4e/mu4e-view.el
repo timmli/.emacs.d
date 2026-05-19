@@ -61,17 +61,27 @@ Otherwise, don't move to the next message."
   :group 'mu4e-view)
 
 (defcustom mu4e-view-fields
-  '(:from :to  :cc :subject :flags :date :maildir :mailing-list :tags)
-  "Header fields to display in the message view buffer.
+  '(:from :to  :cc :subject :flags :date
+          :maildir :mailing-list :tags :labels)
+  "Mu4e header fields to display in the message view buffer.
 
 For the complete list of available headers, see
 `mu4e-header-info'.
 
-Note, you can use this to add fields that are not otherwise
-shown; you can further tweak the other fields using e.g.,
-`gnus-visible-headers' and `gnus-ignored-headers' - see the gnus
-documentation for details."
-  :type '(repeat symbol)
+In addition to the mu4e fields, Gnus _also_ can show fields; See
+`gnus-visible-headers' and `gnus-ignored-headers'. A special case
+is the Attachments: header: see
+`gnus-mime-display-attachment-buttons-in-header', and
+`gnus-mime-button-line-format' for tweaking the appearance."
+  :type `(repeat (choice
+                  ,@(mapcar (lambda (h)
+                              (list 'const :tag
+                                    (plist-get (cdr h) :help)
+                                    (car h)))
+                            mu4e-header-info)
+                  (restricted-sexp
+                   :tag "User-specified header"
+                   :match-alternatives (mu4e--valid-header-p))))
   :group 'mu4e-view)
 
 (defcustom mu4e-view-actions
@@ -235,7 +245,7 @@ any further, go the next message."
       (scroll-up)
     (error
      (when mu4e-view-scroll-to-next
-       (mu4e-view-headers-next)))))
+       (mu4e-headers-next)))))
 
 (defun mu4e-scroll-up ()
   "Scroll text of selected window up one line."
@@ -320,6 +330,14 @@ Also number them so they can be opened using `mu4e-view-go-to-url'."
                            (propertize (format "\u200B[%d]" num)
                                        'face 'mu4e-url-number-face)))))))))
 
+
+(defun mu4e--view-remove-url-activations ()
+  "Remove URL activations previously added by `mu4e--view-activate-urls'."
+  (dolist (ov (overlays-in (point-min) (point-max)))
+    (when (overlay-get ov 'mu4e-overlay)
+      (delete-overlay ov)))
+  (setq mu4e--view-link-map
+        (make-hash-table :size 32 :weakness nil)))
 
 (defun mu4e--view-get-urls-num (prompt &optional multi)
   "Ask the user with PROMPT for an URL number for MSG.
@@ -463,7 +481,8 @@ As a side-effect, a message that is being viewed loses its
       (let ((inhibit-read-only t)
             (gnus-unbuttonized-mime-types '(".*/.*"))
             (gnus-buttonized-mime-types
-             (append (list "multipart/signed" "multipart/encrypted")
+             (append (list "multipart/signed" "multipart/encrypted"
+                           "multipart/alternative")
                      gnus-buttonized-mime-types))
             (gnus-inhibit-mime-unbuttonizing mu4e--view-show-mime-buttons))
         (erase-buffer)
@@ -497,6 +516,31 @@ As a side-effect, a message that is being viewed loses its
       ;; only needed on some setups; #2683
       (goto-char (point-min)))))
 
+(defun mu4e--view-cleanup-message-text ()
+  "Clean up the rendered message for use as cited text in replies.
+
+In particular, strip Gnus MIME-part buttons (e.g. attachment
+lines like \"[2. foo.pdf --- application/pdf; foo.pdf]\") so
+they do not end up in cited replies.
+
+This expects to be called while in that message buffer."
+  (let ((pos (point-min)) start)
+    (while (setq start (text-property-any
+                        pos (point-max)
+                        ;; filter out gnus-mm-display-part, not
+                        ;; _all_ buttons (#2922)
+                        'gnus-callback 'gnus-mm-display-part))
+      (let* ((end (or (next-single-property-change
+                       start 'gnus-callback nil (point-max))
+                      (point-max)))
+             (bol (save-excursion (goto-char start)
+                                  (line-beginning-position)))
+             (eol (save-excursion (goto-char end)
+                                  (min (point-max)
+                                       (1+ (line-end-position))))))
+        (delete-region bol eol)
+        (setq pos bol)))))
+
 (defun mu4e-view-message-text (msg)
   "Return the rendered MSG as a string."
   (with-temp-buffer
@@ -506,6 +550,7 @@ As a side-effect, a message that is being viewed loses its
           (gnus-unbuttonized-mime-types '(".*/.*"))
           (mu4e-view-fields '(:from :to :cc :subject :date)))
       (mu4e--view-render-buffer msg)
+      (mu4e--view-cleanup-message-text)
       (buffer-substring-no-properties (point-min) (point-max)))))
 
 (defun mu4e-action-view-in-browser (msg &optional skip-headers)
@@ -543,11 +588,19 @@ determine which browser function to use."
            (xwidget-webkit-browse-url url))))
     (mu4e-action-view-in-browser msg)))
 
+(defun mu4e--view-html-displayed-p ()
+  "Is any text/html MIME part currently displayed?
+Uses the MIME handle alist populated by Gnus after rendering."
+  (seq-find (lambda (handle)
+              (and (equal (mm-handle-media-type (cdr handle)) "text/html")
+                   (mm-handle-displayed-p (cdr handle))))
+            gnus-article-mime-handle-alist))
+
 (defun mu4e--view-render-buffer (msg)
   "Render current buffer with MSG using Gnus' article mode.
 The buffer must already contain the raw message.  This function
 decodes and displays it, sets up the original-article-buffer, and
-activates URLs."
+activates URLs (in plain-text mode only)."
   (let* ((inhibit-read-only t)
          ;; Let gnus-summary-buffer be nil; all gnus-art.el code
          ;; guards its usage with `gnus-buffer-live-p' or
@@ -585,7 +638,12 @@ activates URLs."
           ;; just continue if some of the decoding fails.
           (ignore-errors (run-hooks 'gnus-article-decode-hook))
           (gnus-article-prepare-display)
-          (mu4e--view-activate-urls)
+          (mu4e--view-add-mime-icons)
+          ;; Only activate URLs in plain-text mode; in HTML mode
+          ;; the renderer already provides its own clickable links
+          ;; (#2094).
+          (unless (mu4e--view-html-displayed-p)
+            (mu4e--view-activate-urls))
           (kill-local-variable 'bookmark-make-record-function)
           (setq mu4e~gnus-article-mime-handles gnus-article-mime-handles
                 gnus-article-decoded-p gnus-article-decode-hook)
@@ -640,6 +698,72 @@ Note that for some messages, this can trigger high CPU load."
   (setq gnus-article-emulate-mime (not gnus-article-emulate-mime))
   (mu4e-view-refresh))
 
+(defun mu4e--view-insert-headers (msg &optional raw-headers)
+  "Insert mu4e headers for MSG into the current buffer at point.
+RAW-HEADERS, when non-nil, is an alist of (FIELD . VALUE) strings
+for standard RFC headers (From, To, Cc, etc.) that should be
+rendered directly.  When nil, those fields are left for Gnus to
+render.  After inserting, highlight the headers."
+  (dolist (field mu4e-view-fields)
+    (let ((fieldval (mu4e-message-field msg field)))
+      (pcase field
+        ((or ':path ':maildir ':list)
+         (mu4e--view-gnus-insert-header field fieldval))
+        (':message-id
+         (when-let* ((msgid (plist-get msg :message-id)))
+           (mu4e--view-gnus-insert-header field (format "<%s>" msgid))))
+        (':mailing-list
+         (let ((list (plist-get msg :list)))
+           (when list
+             (mu4e--view-gnus-insert-header
+              field (mu4e-get-mailing-list-shortname list)))))
+        ((or ':flags ':labels ':tags)
+         (let ((items (mapconcat (lambda (item)
+                                  (if (symbolp item)
+                                      (symbol-name item)
+                                    item))
+                                fieldval ", ")))
+           (mu4e--view-gnus-insert-header field items)))
+        (':size (mu4e--view-gnus-insert-header
+                 field (mu4e-display-size fieldval)))
+        ((or ':subject ':to ':from ':cc ':bcc ':from-or-to
+             ':user-agent ':date)
+         ;; Standard fields: insert from raw-headers if available,
+         ;; otherwise they are handled by Gnus.
+         (when-let* ((raw (and raw-headers (cdr (assq field raw-headers)))))
+           (mu4e--view-gnus-insert-header field raw)))
+        (_
+         (mu4e--view-gnus-insert-header-custom msg field)))))
+  ;; Highlight the header block we just inserted
+  (let ((gnus-treatment-function-alist
+         '((gnus-treat-highlight-headers
+            gnus-article-highlight-headers))))
+    (gnus-treat-article 'head)))
+
+(defun mu4e--view-add-mime-icons ()
+  "Add file icons before MIME attachment buttons.
+Scan the buffer for Gnus MIME buttons (via the `gnus-data' text
+property) and insert an icon before each one, based on the
+filename."
+  (save-excursion
+    (let ((pos (point-min))
+          (positions nil)
+          (inhibit-read-only t))
+      ;; Collect button start positions (forward scan).
+      (while (setq pos (next-single-property-change pos 'gnus-data))
+        (when (get-text-property pos 'gnus-data)
+          (push pos positions)) ;; naturally in reverse order
+        (setq pos (or (next-single-property-change pos 'gnus-data)
+                      (point-max))))
+      ;; Insert icons in reverse order so positions stay valid.
+      (dolist (p positions)
+        (when-let* ((handle (get-text-property p 'gnus-data))
+                    ((listp handle))
+                    (name (mm-handle-filename handle))
+                    (icon (mu4e-file-name-to-icon name)))
+          (goto-char p)
+          (insert icon " "))))))
+
 (defun mu4e--view-gnus-display-mime (msg)
   "Like `gnus-display-mime', but include mu4e headers to MSG."
   (lambda (&optional ihandles)
@@ -649,39 +773,15 @@ Note that for some messages, this can trigger high CPU load."
         (article-goto-body)
         (forward-line -1)
         (narrow-to-region (point) (point))
-        (dolist (field mu4e-view-fields)
-          (let ((fieldval (mu4e-message-field msg field)))
-            (pcase field
-              ((or ':path ':maildir ':list)
-               (mu4e--view-gnus-insert-header field fieldval))
-              (':message-id
-               (when-let* ((msgid (plist-get msg :message-id)))
-                 (mu4e--view-gnus-insert-header field (format "<%s>" msgid))))
-              (':mailing-list
-               (let ((list (plist-get msg :list)))
-                 (if list (mu4e-get-mailing-list-shortname list) "")))
-              ((or ':flags ':labels ':tags)
-               (let ((items (mapconcat (lambda (item)
-                                         (if (symbolp item)
-                                             (symbol-name item)
-                                           item)) fieldval ", ")))
-                 (mu4e--view-gnus-insert-header field items)))
-              (':size (mu4e--view-gnus-insert-header
-                       field (mu4e-display-size fieldval)))
-              ((or ':subject ':to ':from ':cc ':bcc ':from-or-to
-                   ':user-agent ':date ':attachments
-                   ':signature ':decryption)) ;; handled by Gnus
-              (_
-               (mu4e--view-gnus-insert-header-custom msg field)))))
-        (let ((gnus-treatment-function-alist
-               '((gnus-treat-highlight-headers
-                  gnus-article-highlight-headers))))
-          (gnus-treat-article 'head))))))
+        (mu4e--view-insert-headers msg)))))
 
 (defun mu4e--view-gnus-insert-header (field val)
   "Insert a header FIELD with value VAL."
-  (let* ((info (cdr (assoc field mu4e-header-info)))
-         (key (plist-get info :name))
+  (let* ((info (alist-get field mu4e-header-info))
+         (key (or (plist-get info :name)
+                  ;; Fallback for fields not in mu4e-header-info
+                  ;; (e.g. :user-agent): derive from the keyword name.
+                  (capitalize (substring (symbol-name field) 1))))
          (help (plist-get info :help)))
     (if (and val (> (length val) 0))
         (insert (propertize (concat key ":") 'help-echo help)
@@ -689,8 +789,8 @@ Note that for some messages, this can trigger high CPU load."
 
 (defun mu4e--view-gnus-insert-header-custom (msg field)
   "Insert MSG's custom FIELD."
-  (let* ((info (cdr-safe (or (assoc field mu4e-header-info-custom)
-                             (mu4e-error "Custom field %S not found" field))))
+  (let* ((info (or (alist-get field mu4e-header-info-custom)
+                   (mu4e-error "Custom field %S not found" field)))
          (key (plist-get info :name))
          (func (or (plist-get info :function)
                    (mu4e-error "No :function defined for custom field %S %S"
@@ -971,23 +1071,39 @@ Article Treatment' for more options."
   (funcall (mu4e-read-option "Massage: " mu4e-view-massage-options)))
 
 (defun mu4e-view-toggle-html ()
-  "Toggle html-display of the first html-part found."
+  "Toggle between the HTML and plain-text alternatives.
+Works for `multipart/alternative' messages by pressing the
+corresponding Gnus selector button in the buffer."
   (interactive)
-  ;; This function assumes `gnus-article-mime-handle-alist' is sorted by
-  ;; pertinence, i.e. the first HTML part found in it is the most important one.
   (save-excursion
-    (if-let*((html-part
-              (seq-find (lambda (handle)
-                          (equal (mm-handle-media-type (cdr handle))
-                                 "text/html"))
-                        gnus-article-mime-handle-alist))
-             (text-part
-              (seq-find (lambda (handle)
-                          (equal (mm-handle-media-type (cdr handle))
-                                 "text/plain"))
-                        gnus-article-mime-handle-alist)))
-        (gnus-article-inline-part (car html-part))
-      (mu4e-warn "Cannot switch; no html and/or text part in this message"))))
+    (let ((inhibit-read-only t))
+      (if-let* ((alt (seq-find
+                      (lambda (h)
+                        (equal (mm-handle-media-type (cdr h))
+                               "multipart/alternative"))
+                      gnus-article-mime-handle-alist))
+                (children (cdr (cdr alt)))
+                (html (seq-find
+                       (lambda (h) (equal (mm-handle-media-type h) "text/html"))
+                       children))
+                (plain (seq-find
+                        (lambda (h) (equal (mm-handle-media-type h) "text/plain"))
+                        children))
+                (target (if (mm-handle-displayed-p html) plain html))
+                ;; Search from the body (this avoids find the wrong
+                ;; `gnus-data' in the Attachments: header, if any.
+                (pos (save-excursion
+                       (article-goto-body)
+                       (text-property-any (point) (point-max)
+                                          'gnus-data target))))
+          (progn
+            (goto-char pos)
+            (gnus-article-press-button)
+            (if (mm-handle-displayed-p html)
+                (mu4e--view-remove-url-activations)
+              (mu4e--view-activate-urls)))
+        (mu4e-warn
+         "Cannot switch; no html and/or text part in this message")))))
 ;;; Bug Reference mode support
 
 ;; Due to mu4e's view buffer handling (mu4e-view-mode is called long before the

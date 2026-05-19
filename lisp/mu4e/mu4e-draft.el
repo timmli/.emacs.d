@@ -1,6 +1,6 @@
 ;;; mu4e-draft.el --- Helpers for m4e-compose -*- lexical-binding: t -*-
 
-;; Copyright (C) 2024-2025 Dirk-Jan C. Binnema
+;; Copyright (C) 2024-2026 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -41,7 +41,7 @@
 (declare-function mu4e "mu4e")
 
 (defcustom mu4e-compose-crypto-policy
-  '(encrypt-encrypted-replies sign-encrypted-replies)
+  '(encrypt-encrypted-replies sign-encrypted-replies sign-signed-replies)
   "Policy to control when messages will be signed/encrypted.
 
 The value is a list which influence the way draft messages are
@@ -59,6 +59,8 @@ created. Specifically, it might contain:
   non-encrypted messages.
 - `sign-encrypted-replies': Add a signature when responding
   to encrypted messages.
+- `sign-signed-replies': Add a signature when responding to
+  signed messages.
 
 It should be noted that certain symbols have priorities over one
 another. So `sign-all-messages' implies `sign-all-replies', which
@@ -84,7 +86,11 @@ All `sign-*' options have a `encrypt-*' analogue."
               (const :tag "Sign replies to encrypted messages"
                      sign-encrypted-replies)
               (const :tag "Encrypt replies to encrypted messages"
-                     encrypt-encrypted-replies))
+                     encrypt-encrypted-replies)
+              (const :tag "Sign replies to signed messages"
+                     sign-signed-replies)
+              (const :tag "Encrypt replies to signed messages"
+                     encrypt-signed-replies))
   :group 'mu4e-compose)
 
 ;;; Crypto
@@ -93,6 +99,8 @@ All `sign-*' options have a `encrypt-*' analogue."
 See `mu4e-compose-crypto-policy' for more details."
   (let* ((encrypted-p
           (and parent (memq 'encrypted (mu4e-message-field parent :flags))))
+         (signed-p
+          (and parent (memq 'signed (mu4e-message-field parent :flags))))
          (encrypt
           (or (memq 'encrypt-all-messages mu4e-compose-crypto-policy)
               (and (memq 'encrypt-new-messages mu4e-compose-crypto-policy)
@@ -105,9 +113,12 @@ See `mu4e-compose-crypto-policy' for more details."
                    (memq 'encrypt-all-replies mu4e-compose-crypto-policy))
               (and (eq compose-type 'reply) (not encrypted-p) ;; plain replies
                    (memq 'encrypt-plain-replies mu4e-compose-crypto-policy))
-              (and (eq compose-type 'reply) encrypted-p
+              (and (eq compose-type 'reply) encrypted-p ;; encrypted replies
                    (memq 'encrypt-encrypted-replies
-                         mu4e-compose-crypto-policy)))) ;; encrypted replies
+                         mu4e-compose-crypto-policy))
+              (and (eq compose-type 'reply) signed-p ;; signed replies
+                   (memq 'encrypt-signed-replies
+                         mu4e-compose-crypto-policy))))
          (sign
           (or (memq 'sign-all-messages mu4e-compose-crypto-policy)
               (and (eq compose-type 'new) ;; new messages
@@ -121,7 +132,9 @@ See `mu4e-compose-crypto-policy' for more details."
               (and (eq compose-type 'reply) (not encrypted-p) ;; plain replies
                    (memq 'sign-plain-replies mu4e-compose-crypto-policy))
               (and (eq compose-type 'reply) encrypted-p ;; encrypted replies
-                   (memq 'sign-encrypted-replies mu4e-compose-crypto-policy)))))
+                   (memq 'sign-encrypted-replies mu4e-compose-crypto-policy))
+              (and (eq compose-type 'reply) signed-p ;; signed replies
+                   (memq 'sign-signed-replies mu4e-compose-crypto-policy)))))
     (cond ((and sign encrypt) (mml-secure-message-sign-encrypt))
           (sign (mml-secure-message-sign))
           (encrypt (mml-secure-message-encrypt)))))
@@ -187,7 +200,8 @@ you don't consider that reasonable, set to nil."
   :safe 'booleanp
   :group 'mu4e-compose)
 
-(defcustom mu4e-compose-reply-include-mime-types '("text/x-patch")
+(defcustom mu4e-compose-reply-include-mime-types
+  '("text/x-patch" "text/x-diff")
   "MIME types from the parent message to include when replying.
 
 When replying to a message, MIME parts with content-types in this
@@ -333,13 +347,17 @@ With HEADERS-ONLY non-nil, only include the headers part."
       (goto-char (point-min))
       (insert (format "Message-Id: <%s>\n" (plist-get msg :message-id))))
     (mu4e--delimit-headers 'undelimit)
+    ;; Decode raw UTF-8 bytes in headers before running decode hooks. Without
+    ;; this, hooks may switch the buffer to multibyte (via body decoding) while
+    ;; raw UTF-8 header bytes remain as individual eight-bit characters, causing
+    ;; garbled subjects like t\303\251st in replies. Only decode headers to
+    ;; avoid interfering with body charset handling by article-decode-charset.
+    ;; #2722.
+    (save-excursion
+      (rfc822-goto-eoh)
+      (decode-coding-region (point-min) (point) 'utf-8))
+    (mm-enable-multibyte)
     (ignore-errors (run-hooks 'gnus-article-decode-hook))
-    ;; If the buffer is still unibyte after decoding (e.g., message has raw
-    ;; UTF-8 headers that are not RFC-2047-enxcoded), decode remaining bytes as
-    ;; UTF-8 so they don't show as octal escapes (\303\251 etc.) in reply
-    ;; buffers. #2722.
-    (unless enable-multibyte-characters
-      (decode-coding-region (point-min) (point-max) 'utf-8))
     (buffer-substring-no-properties (point-min) (point-max))))
 
 (defvar mu4e--draft-buffer-max-name-length 48)
@@ -684,20 +702,48 @@ See `set-window-configuration' for further details."
   (when mu4e--before-draft-window-config
     ;;(message "RESTORE to %s" mu4e--before-draft-window-config)
     (set-window-configuration mu4e--before-draft-window-config)
-    (setq mu4e--before-draft-window-config nil)))
+    (setq mu4e--before-draft-window-config nil)
+    ;; After restoring the window configuration, the headers cursor position
+    ;; may be stale (the headers buffer can change during compose due to
+    ;; re-indexing or flag updates). Re-sync with the view message. #2902.
+    (mu4e--compose-post-sync-headers)))
+
+(declare-function mu4e-get-view-buffer "mu4e-window")
+(declare-function mu4e~headers-goto-docid "mu4e-headers")
+(declare-function mu4e~headers-highlight "mu4e-headers")
+
+(defun mu4e--compose-post-sync-headers ()
+  "Sync the headers buffer cursor with the current view message.
+After restoring the window configuration, the headers cursor may
+point to the wrong message.  Navigate to the message that the
+view buffer is showing, if any."
+  (when-let* ((view-buf (mu4e-get-view-buffer))
+              (msg (with-current-buffer view-buf
+                     (and (derived-mode-p 'mu4e-view-mode)
+                          (bound-and-true-p mu4e--view-message))))
+              (docid (plist-get msg :docid))
+              (headers-buf (mu4e-get-headers-buffer)))
+    (when (buffer-live-p headers-buf)
+      (with-current-buffer headers-buf
+        (when (mu4e~headers-goto-docid docid)
+          (mu4e~headers-highlight docid))))))
 
 (defvar mu4e--draft-activation-frame nil
   "Frame from which composition was activated.
-Used internally for mu4e-compose-post-kill-frame.")
+Used internally for `mu4e-compose-post-kill-frame'.")
+
+(defvar mu4e--draft-compose-frame nil
+  "Frame in which the composition buffer is displayed.
+Used internally for `mu4e-compose-post-kill-frame'.")
 
 (defun mu4e-compose-post-kill-frame ()
   "Function that might kill the composition frame.
 This is for use in `mu4e-compose-post-hook'."
-  (let ((msgframe (selected-frame)))
-    ;;(message "kill frame? %s %s" mu4e--draft-activation-frame msgframe)
-    (when (and (frame-live-p msgframe)
-               (not (eq mu4e--draft-activation-frame msgframe)))
-      (delete-frame msgframe))))
+  (when-let* ((compose-frame mu4e--draft-compose-frame)
+              (activation-frame mu4e--draft-activation-frame))
+    (when (and (frame-live-p compose-frame)
+               (not (eq activation-frame compose-frame)))
+      (delete-frame compose-frame))))
 
 (defvar mu4e-message-post-action nil
   "Runtime variable for use with `mu4e-compose-post-hook'.
@@ -705,15 +751,24 @@ It contains a symbol denoting the action that triggered the hook,
 either `send', `exit', `kill' or `postpone'.")
 
 (defvar mu4e-compose-post-hook)
+(defvar-local mu4e--post-hook-done nil
+  "Whether `mu4e-compose-post-hook' has already run for this buffer.")
+
 (defun mu4e--message-post-actions (trigger)
   "Invoked after we're done with a message with TRIGGER.
 
 See `mu4e-message-post-action' for the available triggers.
 
 I.e. this multiplexes the `message-(send|exit|kill|postpone)-actions';
-with the mu4e-message-post-action set accordingly."
-  (setq mu4e-message-post-action trigger)
-  (run-hooks 'mu4e-compose-post-hook))
+with the mu4e-message-post-action set accordingly.
+
+The hook is run at most once per compose buffer; e.g. send-and-exit
+triggers both `send' and `exit' actions but only the first one
+fires the hook."
+  (unless mu4e--post-hook-done
+    (setq mu4e--post-hook-done t)
+    (setq mu4e-message-post-action trigger)
+    (run-hooks 'mu4e-compose-post-hook)))
 
 (defun mu4e--prepare-post (&optional oldframe oldwindconf)
     "Prepare the `mu4e-compose-post-hook` handling.
@@ -722,9 +777,12 @@ Set up some message actions. In particular, handle closing frames
 when we created it. OLDFRAME is the frame from which the
 message-composition was triggered. OLDWINDCONF is the current
 window configuration."
-    ;; remember current frame & window conf
-    (setq mu4e--draft-activation-frame oldframe
-          mu4e--before-draft-window-config oldwindconf)
+    ;; remember current frame & window configuration; make these buffer-local so
+    ;; each composition buffer tracks its *own* activation context, which is
+    ;; needed when multiple compositions exist simultaneously.
+    (setq-local mu4e--draft-activation-frame oldframe
+                mu4e--draft-compose-frame (selected-frame)
+                mu4e--before-draft-window-config oldwindconf)
 
     ;; make message's "post" hooks local, and multiplex them
     (make-local-variable 'message-send-actions)

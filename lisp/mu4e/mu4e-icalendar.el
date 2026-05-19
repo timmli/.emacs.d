@@ -1,6 +1,7 @@
 ;;; mu4e-icalendar.el --- iCalendar & diary integration -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2019-2023 Christophe Troestler
+;; Copyright (C) 2019-2026 Christophe Troestler
+;; Copyright (C) 2019-2026 Dirk-Jan C. Binnema
 
 ;; Author: Christophe Troestler <Christophe.Troestler@umons.ac.be>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -106,7 +107,7 @@
                  (gnus-icalendar-event-reply-from-buffer
                   (current-buffer) status (gnus-icalendar-identities))))
          (msg (mu4e-message-at-point 'noerror))
-         (charset (cdr (assoc 'charset (mm-handle-type handle)))))
+         (charset (alist-get 'charset (mm-handle-type handle))))
     (when reply
       (cl-labels
           ((fold-icalendar-buffer
@@ -157,7 +158,7 @@
                 (mu4e--icalendar-insert-diary event status
                                               mu4e-icalendar-diary-file)))))))))
 
-(declare-function mu4e-view-headers-next "mu4e-view")
+
 (defun mu4e--icalendar-trash-message (original-msg)
   "Trash the message ORIGINAL-MSG and move to the next one."
   (lambda (docid path)
@@ -173,14 +174,8 @@
       (when (and (mu4e~headers-view-this-message-p docid)
                  (buffer-live-p (mu4e-get-view-buffer)))
         (mu4e-display-buffer (mu4e-get-view-buffer))
-        (or (mu4e-view-headers-next)
+        (or (mu4e-headers-next)
             (kill-buffer-and-window))))))
-
-;; (defun mu4e--icalendar-trash-message-hook (original-msg)
-;;   "Trash the iCalendar message ORIGINAL-MSG."
-;;   (lambda ()
-;;     (setq mu4e-sent-func
-;;           (mu4e--icalendar-trash-message original-msg))))
 
 (defun mu4e--icalendar-insert-diary (event reply-status filename)
   "Insert a diary entry for the EVENT in file named FILENAME.

@@ -1,6 +1,6 @@
 ;;; mu4e-search.el --- Search-related functions -*- lexical-binding: t -*-
 
-;; Copyright (C) 2021-2025 Dirk-Jan C. Binnema
+;; Copyright (C) 2021-2026 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -203,6 +203,7 @@ with the favorite bookmark's query."
           (if (or (null expr) edit)
               (mu4e-search-read-query prompt expr)
             expr))
+         (expr (replace-regexp-in-string (rx control) " " expr))
          (expr (if mu4e-query-rewrite-function ;; rewrite?
                    (funcall mu4e-query-rewrite-function expr) expr)))
     (mu4e-mark-handle-when-leaving)
@@ -480,7 +481,7 @@ by the `:date' field."
          ;; note: 'sortable' is either a boolean (meaning: if non-nil, this is
          ;; sortable field), _or_ another field (meaning: sort by this other
          ;; field).
-         (sortable (plist-get (cdr (assoc field mu4e-header-info)) :sortable))
+         (sortable (plist-get (alist-get field mu4e-header-info) :sortable))
          ;; error check
          (sortable
           (if sortable
