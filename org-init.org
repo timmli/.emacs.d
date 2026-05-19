@@ -9516,6 +9516,7 @@ Signing and encryption (vice versa verification and decryption) is done using [[
 Documentation:   
 - https://www.djcbsoftware.nl/code/mu/mu4e/Signing-and-encrypting.html
 - https://www.gnu.org/software/emacs/manual/html_node/message/Using-S_002fMIME.html
+- https://jherrlin.github.io/posts/emacs-gnupg-and-pass/
 
 Global settings:
 #+BEGIN_SRC emacs-lisp
@@ -11060,6 +11061,12 @@ Fuzzy search in [[helm]].
 Overview
 - https://www.chiply.dev/post-vompeccc
 
+*** Dabbrev
+
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Dynamic-Abbrevs.html
+
+Built-in package for the dynamic completion of words by searching for words starting with the prefix at point.
+
 *** [[Helm]]
 
 *** yasnippet
@@ -11294,7 +11301,7 @@ Currently, I don't need this and it seems to hinder the completion of LaTeX comm
 
 **** yasnippet
 
-Add yasnippet backend to all other backends. Naturally, this needs to be executed last, when when all backends have been added to =company-backends=.
+Add yasnippet backend to all other backends. Naturally, this should to be executed last, after all backends have been added to =company-backends=.
 
 #+BEGIN_SRC emacs-lisp
 ;; Code from https://emacs.stackexchange.com/a/10520/12336
