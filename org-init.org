@@ -9781,12 +9781,28 @@ I mainly use this for scheduling when to work on messages. For this, I add a sui
 Let's also add keybindings for capturing messages:
 
 #+BEGIN_SRC emacs-lisp
-(defun tl/mu4e-schedule-email ()
-  (interactive)
-  (org-capture nil "s"))
+(defun tl/mu4e-schedule-email-at-point ()
+	"Schedule email at point when in `mu4e-headers-mode' or `mu4e-view-mode'.
 
-(define-key mu4e-headers-mode-map (kbd "C-c C-s") 'tl/mu4e-schedule-email)
-(define-key mu4e-view-mode-map    (kbd "C-c C-s") 'tl/mu4e-schedule-email)
+If the email is already scheduled, change the timestamp.  This works by capturing the email with the `org-capture' mechanism." 
+  (interactive)
+  (let* ((msg-id (mu4e-message-field (mu4e-message-at-point) :message-id))
+				 (org-file (expand-file-name "captures.org" org-directory))
+				 (already-exists
+					(with-current-buffer (find-file-noselect org-file)
+						(save-excursion
+							(goto-char (point-min))
+							(when (and (re-search-forward (format "mu4e:msgid:%s"
+																										(regexp-quote msg-id))
+																						nil t)
+												 (org-at-heading-p))
+								(call-interactively 'org-schedule)
+								t)))))
+		(unless already-exists
+			(org-capture nil "s"))))
+
+(define-key mu4e-headers-mode-map (kbd "C-c C-s") 'tl/mu4e-schedule-email-at-point)
+(define-key mu4e-view-mode-map    (kbd "C-c C-s") 'tl/mu4e-schedule-email-at-point)
 #+END_SRC
 
 Not sure I will use this:
