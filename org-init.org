@@ -8799,7 +8799,7 @@ Keys:
 (setq mu4e-view-show-addresses t)
 
 ;; Customize header fields to show in mu4e-view. This only adds :bcc and :size.
-(setq mu4e-view-fields '(:from :to :cc :bcc :subject :flags :date :maildir :mailing-list :tags :attachments :size :signature :decryption))
+(setq mu4e-view-fields '(:from :to :cc :bcc :subject :flags :date :maildir :mailing-list :tags :size))
 
 ;; Show images inline
 (setq mu4e-view-show-images t)
@@ -8943,10 +8943,9 @@ Finally, activate the iCalendar-to-Org export:
 (gnus-icalendar-org-setup)
 #+END_SRC
 
-****** TODO Show size of each attachment
-:LOGBOOK:
-- State "TODO"       from              [2024-05-02 Thu 23:12]
-:END:
+****** Show size of each attachment
+
+As of v1.14.1, =mu4e-view-save-attachments= also shows the size of each attachment.
 
 ****** Display attachments
 
