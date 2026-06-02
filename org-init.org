@@ -9781,6 +9781,17 @@ I mainly use this for scheduling when to work on messages. For this, I add a sui
 Let's also add keybindings for capturing messages:
 
 #+BEGIN_SRC emacs-lisp
+(defun tl/mu4e-schedule-email ()
+  (interactive)
+  (org-capture nil "s"))
+
+(define-key mu4e-headers-mode-map (kbd "C-c C-s") 'tl/mu4e-schedule-email)
+(define-key mu4e-view-mode-map    (kbd "C-c C-s") 'tl/mu4e-schedule-email)
+#+END_SRC
+
+Not sure I will use this:
+
+#+BEGIN_SRC emacs-lisp
 (define-key mu4e-headers-mode-map (kbd "C-c c") 'mu4e-org-store-and-capture)
 (define-key mu4e-view-mode-map    (kbd "C-c c") 'mu4e-org-store-and-capture)
 #+END_SRC
