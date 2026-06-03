@@ -9398,6 +9398,15 @@ Taken from https://github.com/djcb/mu/issues/1843, but should be fixed in upcomp
 (add-function :around mu4e-compose-cite-function #'tv/mu4e-remove-buttons-in-reply)
 #+END_SRC
 
+When using =comment-or-uncomment-region-or-line= for quoting and unquoting, by default only single ">" at beginning of a line with a succeeding whitespace are recognized as comments. The following extends the definition:  
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'mu4e-compose-mode-hook
+          (lambda ()
+						;; Default: (setq-local comment-start-skip "^> [ 	]*")
+            (setq-local comment-start-skip "\\(?:>+\\)\\s-*")))
+#+END_SRC
+
 The following interactive functions could be handy for stepwise quoting or unquoting regions, but I prefer using the more simplistic =comment-or-uncomment-region-or-line=:
 
 #+BEGIN_SRC emacs-lisp :tangle no
@@ -9971,7 +9980,7 @@ https://codeberg.org/emacs-jabber/emacs-jabber
 An XMPP/Jabber client for Emacs.
 
 Issues:
-- [ ] OMEMO support missing: https://codeberg.org/emacs-jabber/emacs-jabber/issues/9
+- [X] OMEMO support missing: https://codeberg.org/emacs-jabber/emacs-jabber/issues/9
 
 #+BEGIN_SRC emacs-lisp
 (use-package jabber
@@ -12766,6 +12775,13 @@ Taken from https://emacs.stackexchange.com/a/21356/12336:
 #+END_SRC
 
 ** Commenting
+
+What counts as a comment is defined in the syntax table of a mode.
+
+- =comment-start= :: start string used when adding a comment
+- =comment-end= :: end string used when adding a comment
+- =comment-start-skip= :: regexp used to recognize a comment start in text
+- =comment-end-skip= :: regexp used to recognize a comment end in text
 
 *** Keys
 
