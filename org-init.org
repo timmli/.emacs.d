@@ -8799,6 +8799,7 @@ Keys:
 (setq mu4e-view-show-addresses t)
 
 ;; Customize header fields to show in mu4e-view. This only adds :bcc and :size.
+;; Make sure that only fields supported by `mu4e-view-fields' are used!
 (setq mu4e-view-fields '(:from :to :cc :bcc :subject :flags :date :maildir :mailing-list :tags :size))
 
 ;; Show images inline
@@ -9959,29 +9960,6 @@ Show an email thread in a single buffer.
 	:after mu4e
 	:config (global-mu4e-conversation-mode)
 )
-#+END_SRC
-
-**** COMMENT notmuch under Windows
-
-Idea: offlineimap and notmuch are running in a WSL where also the maildir is located. Emacs calls notmuch from outside to search and obtain mails from the WSL maildir.
-
-- [X] install offlinimap and notmuch in the WSL
-- [X] write shell script to call notmuch from windows (=remote-notmuch.bat=)
-- [ ] BUG: search and display of mail not working ("Spawning child process: Invalid argument"); seems to be a problem with shell.el
-- [ ] configure offlineimap to invoke notmuch on changes in maildir
-- [ ] start offlineimap when starting notmuch in emacs.
-- [ ] configure smtp
-
-https://wwwtech.de/articles/2016/jul/my-personal-mail-setup
-https://notmuchmail.org/remoteusage/
-https://kkatsuyuki.github.io/notmuch-conf/
-https://admiralakber.github.io/2018/09/20/myos-email/
-
-#+BEGIN_SRC emacs-lisp
-(use-package notmuch
-	:ensure t
-	:config
-	(setq notmuch-command "remote-notmuch.bat")) ; make sure this is in your PATH variable
 #+END_SRC
 
 *** Chat
