@@ -13983,7 +13983,7 @@ I don't use this right now.
 	)
 #+END_SRC
 
-** TODO dimmer
+** dimmer
 :LOGBOOK:
 - State "TODO"       from              [2024-07-29 Mon 10:47]
 :END:
@@ -13993,10 +13993,10 @@ https://github.com/gonewest818/dimmer.el
 Visually highlight the selected buffer.
 
 Issues 
-- [ ] dimmer-face-color: Wrong type argument: stringp, reset
+- [X] dimmer-face-color: Wrong type argument: stringp, reset
       - https://github.com/gonewest818/dimmer.el/issues/69
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp
 (use-package dimmer
 	:ensure t
 	:pin MELPA
