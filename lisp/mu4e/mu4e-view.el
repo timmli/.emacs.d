@@ -759,7 +759,9 @@ filename."
       (dolist (p positions)
         (when-let* ((handle (get-text-property p 'gnus-data))
                     ((listp handle))
-                    (name (mm-handle-filename handle))
+										;; Added by TL following https://github.com/djcb/mu/commit/a7594a1f7bfe7459a73d64a6f9b538b757276738
+										(name (ignore-errors (mm-handle-filename handle)))
+                    ;; (name (mm-handle-filename handle))
                     (icon (mu4e-file-name-to-icon name)))
           (goto-char p)
           (insert icon " "))))))
