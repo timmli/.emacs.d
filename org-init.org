@@ -575,9 +575,6 @@ Make the mode line nicer and better readable.
 	(sml/setup))
 #+END_SRC
 
-#+RESULTS:
-: t
-
 *** minions
 
 https://github.com/tarsius/minions
