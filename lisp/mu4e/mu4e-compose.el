@@ -238,8 +238,8 @@ When enabled, this attempts to put mu4e's completions at the
 start of the buffer-local `completion-at-point-functions'. Other
 completion functions still apply."
   (when mu4e-compose-complete-addresses
-    (set (make-local-variable 'completion-ignore-case) t)
-    (set (make-local-variable 'completion-cycle-threshold) 7)
+    (setq-local completion-ignore-case t)
+    (setq-local completion-cycle-threshold 7)
     (add-to-list (make-local-variable 'completion-styles) 'substring)
     (add-hook 'completion-at-point-functions
               #'mu4e--compose-complete-contact-field -10 t)))
@@ -268,9 +268,6 @@ buffers; lets remap its faces so it uses the ones for mu4e."
     (define-key map (kbd "C-c C-u")  #'mu4e-update-mail-and-index)
     (define-key map (kbd "C-c ;")    #'mu4e-compose-context-switch)
 
-    ;; emacs 29
-    ;;(keymap-set map "<remap> <beginning-of-buffer>" #'mu4e-compose-goto-top)
-    ;;(keymap-set map "<remap> <end-of-buffer>" #'mu4e-compose-goto-bottom)
     (define-key map (vector 'remap #'beginning-of-buffer)
                 #'mu4e-compose-goto-top)
     (define-key map (vector 'remap #'end-of-buffer)
@@ -289,13 +286,13 @@ buffers; lets remap its faces so it uses the ones for mu4e."
   (when (eq major-mode 'mu4e-compose-mode)
     (mu4e-warn "Not available in mu4e")))
 
-(defun mu4e--neutralize-undesirables ()
-  "Beware Gnus commands that do not work with mu4e."
-  ;; the Field menu contains many items that don't apply.
-  (advice-add 'gnus-delay-article
-              :before #'mu4e--compose-unsupported) ;; # XXX does not work?!
-  (advice-add 'message-goto-newsgroups :before #'mu4e--compose-unsupported)
-  (advice-add 'message-insert-newsgroups :before #'mu4e--compose-unsupported))
+;; Neutralize Gnus commands that do not work with mu4e. The advice is a no-op
+;; outside mu4e-compose-mode (see `mu4e--compose-unsupported'), so it is safe
+;; to install unconditionally at load time.
+(advice-add 'gnus-delay-article
+            :before #'mu4e--compose-unsupported) ;; # XXX does not work?!
+(advice-add 'message-goto-newsgroups :before #'mu4e--compose-unsupported)
+(advice-add 'message-insert-newsgroups :before #'mu4e--compose-unsupported)
 
 (define-derived-mode mu4e-compose-mode message-mode "mu4e:compose"
   "Major mode for the mu4e message composition, derived from `message-mode'.
@@ -303,13 +300,12 @@ buffers; lets remap its faces so it uses the ones for mu4e."
   (progn
     (use-local-map mu4e-compose-mode-map)
     (mu4e-context-minor-mode)
-    (mu4e--neutralize-undesirables)
     (mu4e--compose-remap-faces)
     (setq-local nobreak-char-display nil)
     ;; set this to allow mu4e to work when gnus-agent is unplugged in gnus
-    (set (make-local-variable 'message-send-mail-real-function) nil)
+    (setq-local message-send-mail-real-function nil)
     ;; Set to nil to enable `electric-quote-local-mode' to work:
-    (set (make-local-variable 'comment-use-syntax) nil)
+    (setq-local comment-use-syntax nil)
     (mu4e--compose-setup-completion) ;; maybe offer address completion
     (if mu4e-compose-format-flowed   ;; format-flowed
         (progn
@@ -329,19 +325,26 @@ buffers; lets remap its faces so it uses the ones for mu4e."
     (message-cite-original-without-signature)
     (delete-region (point-min) (point-max))))
 
-(defun mu4e--compose-cite (msg)
-  "Return a cited version of the ORIG message MSG (a string).
-This function uses `message-cite-function', and its settings apply."
-  (with-temp-buffer
-    (insert (mu4e-view-message-text msg))
-    (goto-char (point-min))
-    (push-mark (point-max))
-    (let ((message-signature-separator "^-- *$")
-          (message-signature-insert-empty-line t))
-      (funcall message-cite-function))
-    (pop-mark)
-    (goto-char (point-min))
-    (buffer-string)))
+(defun mu4e--compose-cite (msg &optional region)
+  "Return a cited version of the message MSG (a string).
+If REGION is non-nil, cite it instead of MSG' body. This function
+uses `message-cite-function', and its settings apply."
+  (let ((orig (mu4e-view-message-text msg)))
+    (with-temp-buffer
+      (insert orig)
+      (goto-char (point-min))
+      ;; if we have a region, replace the body with it.
+      (save-excursion
+        (when (and region (re-search-forward "\n\n" nil 'noerror))
+          (delete-region (point) (point-max))
+          (insert region)))
+      (push-mark (point-max))
+      (let ((message-signature-separator "^-- *$")
+            (message-signature-insert-empty-line t))
+        (funcall message-cite-function))
+      (pop-mark)
+      (goto-char (point-min))
+      (buffer-string))))
 
 ;;; Interactive functions
 
@@ -369,15 +372,24 @@ SWITCH-FUNCTION is ignored."
 (defun mu4e-compose-reply-to (&optional to wide)
   "Reply to the message at point.
 Optional TO can be the To: address for the message. If WIDE is
-non-nil, make it a \"wide\" reply (a.k.a. \"reply-to-all\")."
+non-nil, make it a \"wide\" reply (a.k.a. \"reply-to-all\").
+
+The original message body is cited (as per
+`message-cite-function'). If some region in the view buffer is
+selected, that region is used instead of the original message
+body for citing.'"
   (interactive)
-  (let ((parent (mu4e-message-at-point)))
+  (let ((parent (mu4e-message-at-point))
+        (region (when (and (eq major-mode 'mu4e-view-mode)
+                           (use-region-p))
+                  (buffer-substring-no-properties
+                   (region-beginning) (region-end)))))
     (mu4e--draft-with-parent
      'reply parent
      (lambda ()
        (with-current-buffer (mu4e--message-call #'message-reply to wide)
          (message-goto-body)
-         (insert (mu4e--compose-cite parent))
+         (insert (mu4e--compose-cite parent region))
          ;; include matching MIME parts from the parent
          (mu4e--reply-insert-mime-parts parent)
          (current-buffer))))))

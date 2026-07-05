@@ -46,6 +46,11 @@ Reply to the message at point.
 Optional TO can be the To: address for the message. If WIDE is
 non-nil, make it a \"wide\" reply (a.k.a. \"reply-to-all\").
 
+The original message body is cited (as per
+`message-cite-function'). If some region in the view buffer is
+selected, that region is used instead of the original message
+body for citing.'
+
 (fn &optional TO WIDE)" t)
 (autoload 'mu4e-compose-reply "mu4e-compose" "\
 Reply to the message at point.
@@ -178,7 +183,7 @@ disabled.
 
 ;;; Generated autoloads from mu4e-mime-parts.el
 
-(register-definition-prefixes "mu4e-mime-parts" '("mu4e"))
+(register-definition-prefixes "mu4e-mime-parts" '("mu4e-"))
 
 
 ;;; Generated autoloads from mu4e-modeline.el
@@ -209,6 +214,9 @@ the query (for links starting with \"query:\").
 Store a link to the current message or query.
 (depending on `mu4e-org-link-query-in-headers-mode', and capture
 it with org)." t)
+(autoload 'mu4e-org-agenda-links "mu4e-org" "\
+Show mu4e:msgid links found in `org-agenda-files'.
+Display a tabulated-list buffer with Context and File columns." t)
 (register-definition-prefixes "mu4e-org" '("mu4e-"))
 
 
