@@ -13880,6 +13880,8 @@ Project management based on Git repositories.
   :commands (projectile-find-file 
 						 projectile-switch-project) 
   :diminish projectile-mode
+	:init
+	(projectile-mode +1)
   :config
 	(setq projectile-remember-window-configs t
 				projectile-enable-caching t			  ; speed up projectile by caching index
@@ -13888,9 +13890,7 @@ Project management based on Git repositories.
 				;; projectile-keymap-prefix (kbd "C-x p") ; change keymap prefix (obsolete sind v2.0.0)
 				projectile-switch-project-action 'projectile-dired ; use dired when switching projects
 				)
-	(define-key projectile-mode-map (kbd "C-x p") 'projectile-command-map)
-  (projectile-global-mode)
-	)
+	(define-key projectile-mode-map (kbd "C-x p") 'projectile-command-map))
 #+END_SRC
 
 Use helm for completions.
