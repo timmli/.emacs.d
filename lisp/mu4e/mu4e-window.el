@@ -103,7 +103,11 @@ A symbol:
 
 For backward compatibility with `mu4e-compose-in-new-frame', t is
 treated as =\\'frame."
-  :type 'symbol
+  :type '(choice (const :tag "New buffer" nil)
+                 (const :tag "New window" window)
+                 (const :tag "New frame" frame)
+                 (const :tag "New frame (compat)" t)
+                 (const :tag "Use display-buffer" display-buffer))
   :group 'mu4e-compose)
 
 (declare-function mu4e-view-mode "mu4e-view")
@@ -187,16 +191,6 @@ buffer's major mode."
   (eq (mu4e--get-current-buffer-type) type))
 
 
-;; backward-compat; buffer-local-boundp was introduced in emacs 28.
-(defun mu4e--buffer-local-boundp (symbol buffer)
-  "Return non-nil if SYMBOL is bound in BUFFER.
-Also see `local-variable-p'."
-  (condition-case nil
-      (buffer-local-value symbol buffer)
-    (:success t)
-    (void-variable nil)))
-
-
 (defun mu4e-get-view-buffer (&optional headers-buffer create)
   "Return a view buffer belonging optionally to HEADERS-BUFFER.
 
@@ -225,7 +219,7 @@ being created if CREATE is non-nil."
           (linked-buffer
            (mu4e-get-view-buffers
             (lambda (buf)
-              (and (mu4e--buffer-local-boundp 'mu4e-linked-headers-buffer buf)
+              (and (buffer-local-boundp 'mu4e-linked-headers-buffer buf)
                    (eq mu4e-linked-headers-buffer headers-buffer))))))
       ;; If such a linked buffer exists and its buffer is live, we use that
       ;; buffer.
@@ -252,7 +246,7 @@ being created if CREATE is non-nil."
         ;; Required. The call chain of `mu4e-view-mode' ends up
         ;; calling `kill-all-local-variables', which destroys the
         ;; local binding.
-        (set (make-local-variable 'mu4e-linked-headers-buffer) headers-buffer))
+        (setq-local mu4e-linked-headers-buffer headers-buffer))
       buffer)))
 
 ;; backward compat: `display-buffer-full-frame' only appears in emacs 29.

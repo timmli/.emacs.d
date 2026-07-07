@@ -474,6 +474,12 @@ As a side-effect, a message that is being viewed loses its
       (if (memq mu4e-split-view '(horizontal vertical))
           (delete-windows-on existing-buffer t))
       (kill-buffer existing-buffer))
+
+    ;; HACK: we create a *Summary* buffer, since its mere existence
+    ;; is enough for some gnus commands / functions to work in
+    ;; in the mu4e view as well.
+    (get-buffer-create (or gnus-summary-buffer "*Summary*"))
+
     (setq gnus-article-buffer (mu4e-get-view-buffer nil t))
     (with-current-buffer gnus-article-buffer
       (when linked-headers-buffer
@@ -645,10 +651,10 @@ activates URLs (in plain-text mode only)."
           (unless (mu4e--view-html-displayed-p)
             (mu4e--view-activate-urls))
           (kill-local-variable 'bookmark-make-record-function)
-          (setq mu4e~gnus-article-mime-handles gnus-article-mime-handles
+          (setq mu4e--view-gnus-article-mime-handles gnus-article-mime-handles
                 gnus-article-decoded-p gnus-article-decode-hook)
           (set-buffer-modified-p nil)
-          (add-hook 'kill-buffer-hook #'mu4e--view-kill-mime-handles))
+          (add-hook 'kill-buffer-hook #'mu4e--view-buffer-cleanup))
       (epg-error
        (mu4e-message "EPG error: %s; fall back to raw view"
                      (error-message-string err))))))
@@ -759,9 +765,7 @@ filename."
       (dolist (p positions)
         (when-let* ((handle (get-text-property p 'gnus-data))
                     ((listp handle))
-										;; Added by TL following https://github.com/djcb/mu/commit/a7594a1f7bfe7459a73d64a6f9b538b757276738
-										(name (ignore-errors (mm-handle-filename handle)))
-                    ;; (name (mm-handle-filename handle))
+                    (name (ignore-errors (mm-handle-filename handle)))
                     (icon (mu4e-file-name-to-icon name)))
           (goto-char p)
           (insert icon " "))))))
@@ -785,7 +789,7 @@ filename."
                   ;; (e.g. :user-agent): derive from the keyword name.
                   (capitalize (substring (symbol-name field) 1))))
          (help (plist-get info :help)))
-    (if (and val (> (length val) 0))
+    (if (and val (not (string-empty-p val)))
         (insert (propertize (concat key ":") 'help-echo help)
                 " " val "\n"))))
 
@@ -799,7 +803,7 @@ filename."
                                field info)))
          (val (funcall func msg))
          (help (plist-get info :help)))
-    (when (and val (> (length val) 0))
+    (when (and val (not (string-empty-p val)))
       (insert (propertize (concat key ":") 'help-echo help) " " val "\n"))))
 
 (define-advice gnus-icalendar-event-from-handle

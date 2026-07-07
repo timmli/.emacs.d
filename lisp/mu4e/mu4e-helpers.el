@@ -28,7 +28,6 @@
 ;;; Code:
 
 (require 'seq)
-(require 'ido)
 (require 'cl-lib)
 (require 'bookmark)
 (require 'message)
@@ -360,9 +359,8 @@ Function returns the value (cdr) of the matching cell."
   (unless (get-buffer mu4e--log-buffer-name)
     (with-current-buffer (get-buffer-create mu4e--log-buffer-name)
       (view-mode)
-      (when (fboundp 'so-long-mode)
-        (unless (eq major-mode 'so-long-mode)
-          (eval '(so-long-mode))))
+      (unless (eq major-mode 'so-long-mode)
+        (so-long-mode))
       (setq buffer-undo-list t)))
   mu4e--log-buffer-name)
 
@@ -536,11 +534,16 @@ string after PROMPT."
   (let ((timestr (read-string (mu4e-format "%s" prompt))))
     (apply 'encode-time (parse-time-string timestr))))
 
+
+(defvar mu4e--temp-dir nil "Directory for temporary files.
+Created when mu4e starts, and removed when it closes.")
+
 (defun mu4e-make-temp-file (ext)
   "Create a self-destructing temporary file with extension EXT.
 The file will self-destruct in a short while, enough to open it
 in an external program."
-  (let ((tmpfile (make-temp-file "mu4e-" nil (concat "." ext))))
+  (let* ((temporary-file-directory (or mu4e--temp-dir temporary-file-directory))
+         (tmpfile (make-temp-file "mu4e-" nil (concat "." ext))))
     (run-at-time "30 sec" nil
                  (lambda () (ignore-errors (delete-file tmpfile))))
     tmpfile))
@@ -722,7 +725,7 @@ shorter keys in some cases where there are multiple bindings."
   ;; not a perfect heuristic: e.g. '<up>' is longer that 'C-p'
   (car-safe
    (seq-sort (lambda (b1 b2)
-               (< (length b1) (length b2)))
+               (length< b1 (length b2)))
              (seq-map #'key-description
                       (where-is-internal cmd)))))
 

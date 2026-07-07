@@ -1185,21 +1185,16 @@ The following specs are supported:
   (use-local-map mu4e-headers-mode-map)
   (make-local-variable 'mu4e~headers-proc)
   (make-local-variable 'mu4e~highlighted-docid)
-  (set (make-local-variable 'hl-line-face) 'mu4e-header-highlight-face)
+  (setq-local hl-line-face 'mu4e-header-highlight-face)
 
   ;; Eldoc support
   (when (and (featurep 'eldoc) mu4e-eldoc-support)
-    (if (boundp 'eldoc-documentation-functions)
-        ;; Emacs 28 or newer
-        (add-hook 'eldoc-documentation-functions
-                  #'mu4e-headers-eldoc-function nil t)
-      ;; Emacs 27 or older
-      (add-function :before-until (local 'eldoc-documentation-function)
-                    #'mu4e-headers-eldoc-function)))
+    (add-hook 'eldoc-documentation-functions
+              #'mu4e-headers-eldoc-function nil t))
 
   ;; support bookmarks.
-  (set (make-local-variable 'bookmark-make-record-function)
-       'mu4e--make-bookmark-record)
+  (setq-local bookmark-make-record-function
+              #'mu4e--make-bookmark-record)
   ;; maybe update the current headers upon indexing changes
   (add-hook 'mu4e-index-updated-hook #'mu4e~headers-maybe-auto-update)
   (setq
