@@ -4665,6 +4665,9 @@ Issues
   :pin MELPA
 	:init
 	(setq org-roam-v2-ack t)
+	;; EXPERIMENTAL: Update database at every startup
+	;; and also load org-roam
+	(org-roam-db-sync)
   :custom
   (org-roam-directory my-org-roam-directory)
 	(org-roam-file-extensions '("org" "org_archive"))
