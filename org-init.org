@@ -8054,7 +8054,9 @@ Send marked directories or files in visible Dired buffers to Meld for comparison
                    (dired-get-marked-files))
           (setq files (append files (dired-get-marked-files))))))
     (if (or (<= (length files) 1)
-            (not (cl-every 'file-directory-p files)))
+						;; TL: commented the following --> compare also files!
+            ;; (not (cl-every 'file-directory-p files))
+						)
         (message "Please mark at least two directories.")
       (apply 'start-process "meld" nil "meld" files))))
 
