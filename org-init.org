@@ -15592,6 +15592,7 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
 	("=" diredp-ediff "ediff")
 	("e" ora-ediff-files "ediff on marked")
 	("d" ztree-diff "diff on directories")
+	("m" my/dired-meld-diff-all-dwim "diff with Meld")
 	("p" diffpdf-dired--command "diffpdf")
 	("q" hydra-dired-main/body "quit" :color blue)
 	)
