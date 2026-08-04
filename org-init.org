@@ -5765,6 +5765,7 @@ Powerful calendar view for Emacs.
 Issues:
 - [ ] Week numbers are not shown in month view:
       - https://github.com/kiwanami/emacs-calfw/issues/137
+            - There is a hack for week view but not month view. 
 - [ ] Recurring events in imported ics files are not shown.
 - [X] v2: =calfw-compat= is missing in the MELPA recipe: https://github.com/melpa/melpa/pull/9653
 
@@ -5851,8 +5852,7 @@ Helper functions:
 												(plist-get cal ':file)
 											(concat trimmed-private-emacs-settings-dir name ".ics"))))
 				 (cfw:ical-create-source name file color)))
-		 my-private-calendars))
-	 ))
+		 my-private-calendars))))
 
 (defun tl/check-url-and-download-file (url filename)
 	(if (url-https-file-exists-p url)
@@ -8961,6 +8961,7 @@ It depends on [[https://pldaniels.com/altermime/][alterMIME]].
 
 - [ ] Adapt the Org heading generated for the event
       - See function gnus-icalendar-event->org-entry (not yet customizable)
+      - Intended format: =* <timestamp> <event title> (<event location>) :appointment:=
 
 With the help of Gnus, iCalendar invitations can be viewed and replied to.
 Documentation: https://www.djcbsoftware.nl/code/mu/mu4e/iCalendar.html
@@ -11757,6 +11758,7 @@ Fast spell checking without external programs.
 
 Issues:
 - [ ] Module could not be opened: "/home/timm/.emacs.d/elpa/jinx-2.8/jinx-mod.so", "libenchant-2.so.2: cannot open shared object file: No such file or directory"
+      - https://github.com/minad/jinx/discussions/268
 
 https://github.com/minad/jinx
 
