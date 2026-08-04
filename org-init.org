@@ -5204,6 +5204,13 @@ Pixel-perfect visual alignment for Org and Markdown tables.
 	)
 #+END_SRC
 
+**** grid-table
+
+https://github.com/yibie/grid-table
+
+A table system that supports cell merging, Excel-like formulas, rich-text rendering, and more. 
+Tables are stored externally in a lispy format.
+
 *** Tags
 
 Tags can be set globally as default using the variable =org-tag-alist=. 
