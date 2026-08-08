@@ -2694,6 +2694,17 @@ Set colors:
 
 *** Capturing
 
+=org-capture= is a function for creating quick notes that are further processed (e.g. moved to some other place) later.
+
+See https://howardism.org/Technical/Emacs/capturing-intro.html for a nice introduction. 
+
+By default, "captures" are stored in a single file specified with =my-org-capture-file=.
+
+#+BEGIN_SRC emacs-lisp
+(defvar my-org-capture-file (expand-file-name "zettel/captures.org" org-directory)
+	"Path to the Org file in which items created with `org-capture' are stored.")
+#+END_SRC
+
 **** Capture templates
 
 - Template expansions: http://orgmode.org/manual/Template-expansion.html
@@ -2703,9 +2714,7 @@ Set colors:
 			`(
 				;; uses appointment tag
 				("a" "Appointment"
-				 entry (file+headline 
-								(lambda () (expand-file-name "captures.org" org-directory))
-								"Appointments")
+				 entry (file+headline my-org-capture-file "Appointments")
 				 "* %^T %?\t:appointment:\n\n" 
 				 :prepend t
 				 :jump-to-captured t
@@ -2714,24 +2723,16 @@ Set colors:
 				;; ;; used for org-gcal
 				;; ("a" "Appointment" entry (file (concat org-directory "/gcal.org"))
 				;;  "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
-				("t" "Todo" entry (file+headline
-													 (lambda () (expand-file-name "captures.org" org-directory))
-													 "Todos")
+				("t" "Todo" entry (file+headline my-org-capture-file "Todos")
 				 "* TODO %?\t%^G\n :LOGBOOK:\n - CREATED: %U\n :END:\n\n About region:%i\n %a" :prepend t)
-				("j" "Journal" entry (file+datetree (lambda ()(expand-file-name "journal.org" org-directory)))
+				("j" "Journal" entry (file+datetree my-org-capture-file)
 				 "* %?\t%^G\n CREATED: %U\n About region:%i\n %a")
-				("c" "Code" entry (file+headline 
-													 (lambda () (expand-file-name "captures.org" org-directory ))
-													 "Code")
+				("c" "Code" entry (file+headline my-org-capture-file "Code")
 				 "* %?\t%^G\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a" :prepend t)
 				;; The following two templates are used by the org-capture extension in your web browser
-				("p" "Protocol" entry (file+headline
-															 (lambda () (expand-file-name "captures.org" org-directory ))
-															 "Bookmarks from the web browser")
+				("p" "Protocol" entry (file+headline my-org-capture-file "Bookmarks from the web browser")
          "* [[%:link][%:description]]\nCREATED: %U\n\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n%?" :prepend t)
-				("L" "Protocol Link" entry (file+headline
-																		(lambda () (expand-file-name "captures.org" org-directory ))
-																		"Bookmarks from the web browser")
+				("L" "Protocol Link" entry (file+headline my-org-capture-file "Bookmarks from the web browser")
          "* [[%:link][%:description]] \nCREATED: %U\n\n%?" :prepend t)
 				))
 #+END_SRC
@@ -8975,7 +8976,7 @@ Documentation: https://www.djcbsoftware.nl/code/mu/mu4e/iCalendar.html
 Furthermore, with Gnus, one can convert iCalendar invitations to Org headings using the [[Capture templates][Org capture mechanism]].
 
 #+BEGIN_SRC emacs-lisp
-(setq gnus-icalendar-org-capture-file (expand-file-name "captures.org" org-directory))
+(setq gnus-icalendar-org-capture-file my-org-capture-file)
 (setq gnus-icalendar-org-capture-headline "Calendar")
 #+END_SRC
 
@@ -9843,9 +9844,7 @@ I mainly use this for scheduling when to work on messages. For this, I add a sui
 #+BEGIN_SRC emacs-lisp
 (add-to-list 'org-capture-templates
 						 '("s" "Scheduled emails" entry
-							 (file+headline (lambda nil
-																(expand-file-name "captures.org" org-directory))
-															"Scheduled emails")
+							 (file+headline my-org-capture-file "Scheduled emails")
 							 "* %?%a\nSCHEDULED: %^T" :prepend t))
 #+END_SRC
 
@@ -9858,7 +9857,7 @@ Let's also add keybindings for capturing messages:
 If the email is already scheduled, change the timestamp.  This works by capturing the email with the `org-capture' mechanism." 
   (interactive)
   (let* ((msg-id (mu4e-message-field (mu4e-message-at-point) :message-id))
-				 (org-file (expand-file-name "captures.org" org-directory))
+				 (org-file my-org-capture-file)
 				 (already-exists
 					(with-current-buffer (find-file-noselect org-file)
 						(save-excursion
@@ -14216,8 +14215,8 @@ Work with Git forges from the comfort of Magit.
 - supports Github and Gitlab out of the box. Further Git forges can be installed with [[https://github.com/magit/ghub][ghub]]. 
 
 Usage:
-- [[https://magit.vc/manual/forge/Getting-Started.html][Getting started]]
-- [[https://magit.vc/manual/ghub/Getting-Started.html#Getting-Started][Getting started with ghub]]
+- [[https://docs.magit.vc/forge/Getting-Started.html][Getting started]]
+- [[https://docs.magit.vc/ghub/Getting-Started.html#Getting-Started][Getting started with ghub]]
 
 Issues:
 
