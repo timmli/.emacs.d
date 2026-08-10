@@ -2586,9 +2586,21 @@ https://merrick.luois.me/posts/web-clipping-with-org-roam
 
 Retrieve web page content via its URL and process it into Org-mode content.
 
-#+BEGIN_SRC emacs-lisp :tangle no
+#+BEGIN_SRC emacs-lisp
 (use-package org-web-tools
 	:ensure t)
+#+END_SRC
+
+Helper function for retrieving websites of URLs at point:
+
+#+BEGIN_SRC emacs-lisp
+(defun tl/org-attach-website-at-point ()
+	"When point is on an URL, download the website and attach it to the closest heading."
+	(interactive)
+	(let* ((url (thing-at-point 'url)))
+		(when url
+			(org-id-get-create)
+			(org-web-tools-archive-attach url))))
 #+END_SRC
 
 *** Clocking and logging
