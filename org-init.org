@@ -2558,16 +2558,41 @@ By default, "captures" are stored in a single file specified with =my-org-captur
 				;; ("a" "Appointment" entry (file (concat org-directory "/gcal.org"))
 				;;  "* %?\n\n%^T\n\n:PROPERTIES:\n\n:END:\n\n")
 				("t" "Todo" entry (file+headline my-org-capture-file "Todos")
-				 "* TODO %?\t%^G\n :LOGBOOK:\n - CREATED: %U\n :END:\n\n About region:%i\n %a" :prepend t)
+				 "* TODO %?\t%^G\n :LOGBOOK:\n - CREATED: %U\n :END:\n\n About region:%i\n %a"
+				 :prepend t)
 				("j" "Journal" entry (file+datetree my-org-capture-file)
 				 "* %?\t%^G\n CREATED: %U\n About region:%i\n %a")
 				("c" "Code" entry (file+headline my-org-capture-file "Code")
 				 "* %?\t%^G\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a" :prepend t)
 				;; The following two templates are used by the org-capture extension in your web browser
 				("p" "Protocol" entry (file+headline my-org-capture-file "Bookmarks from the web browser")
-         "* [[%:link][%:description]]\nCREATED: %U\n\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n%?" :prepend t)
+         "* [[%:link][%:description]]\nCREATED: %U\n\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n%?"
+				 :prepend t
+				 :jump-to-captured t
+				 :before-finalize
+				 (lambda ()
+					 (when (y-or-n-p "Download and attach website? ")
+						 (let* ((case-fold-search t))
+							 (save-excursion
+								 ;; It is assumed that the URL is part of the header.
+								 (org-back-to-heading t)
+								 (when (re-search-forward "\\(https?://[^]]+\\)"
+																					(line-end-position) t)
+									 (call-interactively 'tl/org-attach-website-at-point)))))))
 				("L" "Protocol Link" entry (file+headline my-org-capture-file "Bookmarks from the web browser")
-         "* [[%:link][%:description]] \nCREATED: %U\n\n%?" :prepend t)
+         "* [[%:link][%:description]] \nCREATED: %U\n\n%?"
+				 :prepend t
+				 :jump-to-captured t
+				 :before-finalize
+				 (lambda ()
+					 (when (y-or-n-p "Download and attach website? ")
+						 (let* ((case-fold-search t))
+							 (save-excursion
+								 ;; It is assumed that the URL is part of the header.
+								 (org-back-to-heading t)
+								 (when (re-search-forward "\\(https?://[^]]+\\)"
+																					(line-end-position) t)
+									 (call-interactively 'tl/org-attach-website-at-point)))))))
 				))
 #+END_SRC
 
