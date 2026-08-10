@@ -15165,7 +15165,6 @@ Hydra for global org-mode keys:
 (global-set-key (kbd "<f9>") 'hydra-f9/body)
 #+END_SRC
 
-
 ** hydra-artist
 
 Hydra for [[Artist][artist-mode]].
@@ -15347,7 +15346,7 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
             _<down>_     ^^             _W_: copy path      _c_/_Z_: compress      _of_: open in other frame
   ^^                     ^^       _C-c g l_: git link       _=_: diff             _T_ : open trash 
    _._: home  _j_: jump  _f_: find        _$_: wdired         _am_: attach to mail    ^^
-   ^^         ^^         ^^             ^^                    _af_: goto attached heading
+   ^^         ^^         ^^             ^^                    _ah_: goto attached heading
    ^^         ^^         ^^             ^^                    _&_: clone file                 _q_: quit hydra 
 -^----------^------------------------^----^---------------^-------^-------------^----^---------------------
 "
@@ -15360,7 +15359,7 @@ Error (use-package): cider-hydra/:catch: Cannot open load file: No such file or 
 	("*" hydra-dired-mark/body :color blue)
 	("P" hydra-dired-properties/body :color blue)
 	("am" gnus-dired-attach :color blue)
-	("af" my-org-attach-visit-headline-from-dired :color blue)
+	("ah" my-org-attach-visit-headline-from-dired :color blue)
 	("O" dired-do-chown)
 	("M" dired-do-chmod)
 	("G" dired-do-chgrp)
