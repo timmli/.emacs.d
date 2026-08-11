@@ -2566,7 +2566,7 @@ By default, "captures" are stored in a single file specified with =my-org-captur
 				 "* %?\t%^G\n#+BEGIN_SRC %^{language}\n\n#+END_SRC\n CREATED: %U\n About region:%i\n %a" :prepend t)
 				;; The following two templates are used by the org-capture extension in your web browser
 				("p" "Protocol" entry (file+headline my-org-capture-file "Bookmarks from the web browser")
-         "* [[%:link][%:description]]\t%^G\nCREATED: %U\n\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n%?"
+         "* [[%:link][%:description]]\t:url:%^G\nCREATED: %U\n\n #+BEGIN_QUOTE\n%i\n#+END_QUOTE\n\n%?"
 				 :prepend t
 				 :jump-to-captured t
 				 :before-finalize
@@ -2580,7 +2580,7 @@ By default, "captures" are stored in a single file specified with =my-org-captur
 																					(line-end-position) t)
 									 (call-interactively 'tl/org-attach-website-at-point)))))))
 				("L" "Protocol Link" entry (file+headline my-org-capture-file "Bookmarks from the web browser")
-         "* [[%:link][%:description]]\t%^G\nCREATED: %U\n\n%?"
+         "* [[%:link][%:description]]\t:url:%^G\nCREATED: %U\n\n%?"
 				 :prepend t
 				 :jump-to-captured t
 				 :before-finalize
