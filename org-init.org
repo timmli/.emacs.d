@@ -15719,6 +15719,7 @@ Download with [[org-download]].
 	("r" org-download-rename-at-point "rename " :exit t)
 	("s" org-download-screenshot "screenshot" :exit t)
 	("u" org-download-image "url" :exit t)
+	("w" tl/org-attach-website-at-point "website" :exit t)
 	("y" org-download-yank "yank" :exit t)
 	("q" nil :color blue)
 	)
