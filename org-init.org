@@ -2620,12 +2620,17 @@ Helper function for retrieving websites of URLs at point:
 
 #+BEGIN_SRC emacs-lisp
 (defun tl/org-attach-website-at-point ()
-	"When point is on an URL, download the website and attach it to the closest heading."
+	"Download the website of a URL and attach it to the closest heading.
+
+There is either an URL at point or the user is prompted for one."
 	(interactive)
-	(let* ((url (thing-at-point 'url)))
-		(when url
-			(org-id-get-create)
-			(org-web-tools-archive-attach url))))
+	(let* ((url (or (thing-at-point 'url)
+									(read-string "Provide URL: ")))
+		(if url
+				(progn
+					(org-id-get-create)
+					(org-web-tools-archive-attach url))
+			(message "tl/org-attach-website-at-point: Warning: No URL found, aborting download."))))
 #+END_SRC
 
 *** Clocking and logging
