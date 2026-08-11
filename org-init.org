@@ -15530,6 +15530,7 @@ Don't ask for the path when searching for files:
      _1_ move to top              _D_ download
      _N_ number headings
      _x_ add/open hand notes
+     _w_ open attach website
 "
 	("a" org-attach)
 	("A" hydra-org-archive/body)
@@ -15555,6 +15556,7 @@ Don't ask for the path when searching for files:
 	("P" org-set-property-and-value)
 	("r" org-ref)
 	("s" org-sort)
+	("w" org-web-tools-archive-view)
 	("x" tl/org-add-or-open-xournal-attachment)
 	("/" org-sparse-tree)
 	("." tl/org-timestamp-dwim)
