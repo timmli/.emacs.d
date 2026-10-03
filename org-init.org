@@ -2415,7 +2415,6 @@ citeproc-el is an Emacs Lisp library for rendering citations and bibliographies 
 I define a general function that formats a bibtex entry according to a given CSL file, which is used in [[helm-bibtex]]: 
 
 #+BEGIN_SRC emacs-lisp
-
 (defun tl/citeproc-format-bibtex-entry (bibtex-key bibtex-bibliography locale-dir csl-file &optional output-format choose-format)
   "Generate a formatted citation string for BIBTEX-KEY of BIBTEX-BIBLIOGRAPHY 
 using CSL-FILE and LOCALE-DIR.
@@ -2425,18 +2424,22 @@ OUTPUT-FORMAT can be any of the formats defined in `citeproc-fmt--formatters-ali
 If OUTPUT-FORMAT is nil and CHOOSE-FORMAT is non-nil, let the user select a
 format specified in `citeproc-fmt--formatters-alist`."
   (let* ((locale-getter (citeproc-locale-getter-from-dir locale-dir))
-         (item-getter (citeproc-itemgetter-from-bibtex bibtex-bibliography))
-         (proc (citeproc-create csl-file item-getter locale-getter))
-         (citation (citeproc-citation-create :cites `(((id . ,bibtex-key)))))
-         (cites (list citation)))
-    (citeproc-append-citations cites proc)
-    (car (citeproc-render-bib proc (or output-format
+				 ;; Use entry types of MUSS
+				 (bibtex-BibTeX-entry-alist bibtex-biblatex-entry-alist)
+				 ;; Use BibLaTeX-to-CSL mapping
+				 (citeproc-bt--to-csl-types-alist citeproc-blt-to-csl-types-alist)
+				 (item-getter (citeproc-itemgetter-from-bibtex bibtex-bibliography))
+				 (proc (citeproc-create csl-file item-getter locale-getter))
+				 (citation (citeproc-citation-create :cites `(((id . ,bibtex-key)))))
+				 (cites (list citation)))
+		(citeproc-append-citations cites proc)
+		(car (citeproc-render-bib proc (or output-format
 																			 (and choose-format
 																						(intern 
 																						 (completing-read
 																							"Choose Format: "
 																							(mapcar #'car citeproc-fmt--formatters-alist))))
-																			 'plain))))) 
+																			 'plain)))))
 #+END_SRC
 
 **** org-cite
