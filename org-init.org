@@ -2202,6 +2202,12 @@ Add horizontal timeline of current day to agenda.
 	(add-hook 'org-agenda-finalize-hook 'org-timeline-insert-timeline :append))
 #+END_SRC
 
+**** org-timegrid
+
+https://github.com/Gleek/org-timegrid
+
+SVG week calendar for Org mode. 
+
 **** org-conflict
 
 =org-conflict= helps to detect and resolve scheduling conflicts.
