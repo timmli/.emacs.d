@@ -863,37 +863,9 @@ Unfortunately, it lacks the edit mode of [[helm-swoop]].
 	)
 #+END_SRC
 
-*** helm-dash
-
-https://github.com/dash-docs-el/helm-dash
-
-Browse [[https://www.kapeli.com/dash][Dash]] docsets with helm. 
-=helm-dash= depends on =sqlite3= which you probably have to install manually:
-http://sqlite.org/download.html
-
-#+BEGIN_SRC emacs-lisp
-(use-package helm-dash
-	:ensure t
-	:init
-	(setq helm-dash-common-docsets			; active in all buffers
-				'())
-	(setq helm-dash-browser-func 'eww)		; use internal web browser
-	(setq helm-dash-docsets-path docsets-dir) ; FIXME: under windows, helm-dash does not install docsets here but in ~/AppData/... Because of missing tar command?
-	(add-hook 'latex-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
-	(add-hook 'TeX-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("LaTeX"))))
-	(add-hook 'emacs-lisp-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Emacs Lisp"))))
-	;; (add-hook 'js2-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("JavaScript"))))
-	(add-hook 'org-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Org_Mode"))))
-	(add-hook 'plantuml-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("PlantUML"))))
-	(add-hook 'sh-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Bash"))))
-	;; (add-hook 'perl-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Perl"))))
-	(add-hook 'python-mode-hook (lambda () (interactive)(setq-local helm-dash-docsets '("Python 3" "SciPy" "NumPy"))))
-	:bind
-	(("C-h d" . helm-dash))
-	)
-#+END_SRC
-
 *** COMMENT helm-gtags
+
+https://github.com/emacsorphanage/helm-gtags
 
 I don't use it right now.
 
