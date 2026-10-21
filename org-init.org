@@ -7566,7 +7566,7 @@ Usage: when in a HTML buffer,
 - call httpd-start & impatient-mode
 - open your browser at http://localhost:8080/imp/
 
-**** COMMENT skewer-mode
+**** skewer-mode
 
 https://github.com/skeeto/skewer-mode
 
