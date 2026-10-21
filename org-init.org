@@ -6219,6 +6219,31 @@ Major mode for editing JSON files.
 	:ensure t)
 #+END_SRC
 
+
+*** Language Server Protocol (LSP)
+
+**** eglot
+
+https://www.gnu.org/software/emacs/manual/html_node/eglot/
+https://www.gnu.org/software/emacs/manual/html_node/eglot/Quick-Start.html
+
+Built-in LSP support.
+
+Configuration:
+1. Select and install a language server.
+       - Pre-configured language servers --> See variable =eglot-server-programs=. 
+2. Turn on Eglot for your project.
+       - =M-x eglot=
+
+Supported language servers (installed separately)
+- TypeScript/JavaScript: https://github.com/typescript-language-server/typescript-language-server
+
+**** lsp-mode
+
+https://emacs-lsp.github.io/lsp-mode/
+
+Comprehensive LSP support for Emacs.
+
 *** LaTeX
 
 **** TODO AUCTeX 
