@@ -6183,7 +6183,7 @@ If the file keyword =// Last modified:= is present within the first 20 lines, th
 
 **** JSDoc
 
-[[https://jsdoc.app/][JSDoc]] is a commeting style of JavaScript source code. Other than [[https://en.wikipedia.org/wiki/Docstring][docstrings]] in languages like Lisp, however, these comments are not part of the program, and are usually stripped off during parsing.
+[[https://jsdoc.app/][JSDoc]] is a commenting style of JavaScript source code. Other than [[https://en.wikipedia.org/wiki/Docstring][docstrings]] in languages like Lisp, however, these comments are not part of the program, and are usually stripped off during parsing.
 
 ***** jsdoc.el
 
@@ -6196,15 +6196,21 @@ Provides simple [[https://jsdoc.app/][JSDoc]] support for the prize of requiring
 :ensure t)
 #+END_SRC
 
-**** TODO indium
+**** [[skewer-mode]]
 
-https://github.com/NicolasPetton/Indium
+**** [[eglot]]
 
-JavaScript development environment for Emacs
+Automatically start eglot in every =js-mode= buffer: 
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'foo-mode-hook 'eglot-ensure)
+#+END_SRC 
 
 **** TODO tern
 
-for better autocompletion
+https://ternjs.github.io/doc/manual.html#emacs
+
+For better autocompletion.
 
 *** JSON
 
@@ -7507,7 +7513,7 @@ More general information:
 - https://tree-sitter.github.io/tree-sitter/
 
 Installation & configuration in Emacs:
-- https://www.masteringemacs.org/article/how-to-get-started-tree-sitter
+- Emacs 29/30: https://www.masteringemacs.org/article/how-to-get-started-tree-sitter
 
 List of available grammars, which can be installed with =treesit-install-language-grammar=:
 
