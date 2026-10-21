@@ -7553,6 +7553,25 @@ However, as described in https://www.masteringemacs.org/article/how-to-get-start
 
 *** Web development
 
+**** multi-web-mode
+
+https://github.com/fgallina/multi-web-mode
+
+Use different major modes when editing a HTML buffer with PHP, JavaScript, or CSS code.
+Deprecated and deactivated.
+
+#+BEGIN_SRC emacs-lisp tangle: no
+(use-package multi-web-mode
+	:ensure t
+	:config
+	(setq mweb-default-major-mode 'html-mode)
+	(setq mweb-tags '((php-mode "<\\?php\\|<\\? \\|<\\?=" "\\?>")
+										(js-mode "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
+										(css-mode "<style +type=\"text/css\"[^>]*>" "</style>")))
+	(setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5"))
+	(multi-web-global-mode 1))
+#+END_SRC
+
 **** web-mode
 
 https://web-mode.org/
