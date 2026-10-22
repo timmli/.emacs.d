@@ -10903,6 +10903,7 @@ Slim GIF screencasts for Emacs. This package uses [[https://github.com/resurrect
 #+END_SRC
 
 * Minor modes
+
 ** COMMENT literal-calc-mode
 
 https://github.com/sulami/literate-calc-mode.el
@@ -10938,6 +10939,26 @@ https://www.emacswiki.org/emacs/SoLong
 #+BEGIN_SRC emacs-lisp
 (when (require 'so-long nil :noerror)
    (global-so-long-mode 1))
+#+END_SRC
+
+** ElDoc
+
+https://www.gnu.org/software/emacs/manual/html_node/emacs/Programming-Language-Doc.html
+
+Buffer-local minor mode that helps with looking up documentation of symbols (functions, methods, classes, variables, etc.).
+
+*** eldoc-box 
+
+https://github.com/casouri/eldoc-box
+
+Display ElDoc documentations in a childframe.
+
+#+BEGIN_SRC emacs-lisp
+(use-package eldoc-box
+	:ensure t
+	:config
+	(add-hook 'eglot-managed-mode-hook #'eldoc-box-hover-mode t)
+	(add-hook 'eldoc-box-buffer-setup-hook #'eldoc-box-prettify-ts-errors 0 t))
 #+END_SRC
 
 * Buffer
