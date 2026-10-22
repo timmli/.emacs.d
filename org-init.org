@@ -6203,7 +6203,7 @@ Provides simple [[https://jsdoc.app/][JSDoc]] support for the prize of requiring
 Automatically start eglot in every =js-mode= buffer: 
 
 #+BEGIN_SRC emacs-lisp
-(add-hook 'foo-mode-hook 'eglot-ensure)
+(add-hook 'js-mode-hook 'eglot-ensure)
 #+END_SRC 
 
 **** TODO tern
@@ -6224,7 +6224,6 @@ Major mode for editing JSON files.
 (use-package json-mode
 	:ensure t)
 #+END_SRC
-
 
 *** Language Server Protocol (LSP)
 
