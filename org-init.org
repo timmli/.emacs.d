@@ -15291,7 +15291,6 @@ Hydra for [[Artist][artist-mode]].
 	)
 #+END_SRC
 
-
 ** hydra-bibtex
 
 #+BEGIN_SRC emacs-lisp
@@ -15544,6 +15543,58 @@ Don't ask for the path when searching for files:
 	("eb" eval-buffer "evaluate buffer" :color blue)
 	("q" nil "quit" :color blue)
 	)
+#+END_SRC
+
+** hydra-eglot
+
+#+BEGIN_SRC emacs-lisp
+(defhydra hydra-eglot (:color blue :hint nil)
+	"
+        ^^                    ^^                     ^^                   ^^                     ╭────────┐
+       ^Navigation^          ^Editing^              ^Info^                ^Server^               │ eglot  │
+    ╭─^^────────────────────^^──────────────────────^^────────────────────^^─────────────────────┴────────╯
+      _d_: definition       _n_: rename            _h_: documentation    _l_: connections
+      _r_: references       _a_: code actions      _D_: buffer errors    _?_: connection info
+      _<_: xref back        _o_: organize import   _P_: project errors   _e_: events
+      _>_: xref forward     _x_: extract           _I_: inlay hints      _g_: stderr
+      _i_: symbols          _f_: format            _t_: type hierarchy   _R_: reconnect
+      _c_: completion       ^^                     _C_: call hierarchy   _S_: shut down
+                                                                                                _q_: close
+"
+  ;; Navigation
+  ("d" xref-find-definitions)
+  ("r" xref-find-references)
+  ("<" xref-go-back)
+  (">" xref-go-forward)
+  ("i" imenu)
+  ("c" completion-at-point)
+
+  ;; Editing and refactoring
+  ("n" eglot-rename)
+  ("a" eglot-code-actions)
+  ("o" eglot-code-action-organize-imports)
+  ("x" eglot-code-action-extract)
+  ("f" eglot-format)
+
+  ;; Information and diagnostics
+  ("h" eldoc-doc-buffer)
+  ("D" flymake-show-buffer-diagnostics)
+  ("P" flymake-show-project-diagnostics)
+  ("I" eglot-inlay-hints-mode)
+  ("t" eglot-show-type-hierarchy)
+  ("C" eglot-show-call-hierarchy)
+
+  ;; Server management and troubleshooting
+  ("l" eglot-list-connections)
+  ("?" eglot-describe-connection)
+  ("e" eglot-events-buffer)
+  ("g" eglot-stderr-buffer)
+  ("R" eglot-reconnect)
+  ("S" eglot-shutdown)
+  ("q" nil))
+
+(with-eval-after-load 'eglot
+  (define-key eglot-mode-map (kbd "<f6>") #'hydra-eglot/body))
 #+END_SRC
 
 ** hydra-org
