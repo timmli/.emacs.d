@@ -7751,6 +7751,11 @@ Drag and drop files from Dired to non-Emacs windows:
 (setq dired-mouse-drag-files t)
 #+END_SRC
 
+Do not ask whether directories should be copied recursively.
+#+BEGIN_SRC emacs-lisp
+(setq dired-recursive-copies 'always)
+#+END_SRC
+
 **** Mark/Unmark 
 
 Use shift-up and shift-down in the usual way.
