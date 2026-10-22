@@ -6242,6 +6242,9 @@ Configuration:
 
 Supported language servers (installed separately)
 - TypeScript/JavaScript: https://github.com/typescript-language-server/typescript-language-server
+- HTML/CSS/JSON: https://github.com/hrsh7th/vscode-langservers-extracted
+- Python: https://github.com/python-lsp/python-lsp-server
+      - =sudo apt install python3-pylsp python3-pylsp-black python3-pylsp-mypy=
 
 **** lsp-mode
 
@@ -7398,6 +7401,14 @@ sudo pip install jedi
   :init
   (add-hook 'python-mode-hook 'my/python-mode-hook))
 #+END_SRC
+
+**** [[eglot]]
+
+Automatically start eglot in every =python-mode= buffer: 
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'python-mode-hook 'eglot-ensure)
+#+END_SRC 
 
 **** ein (Jupyter noteboook)
 
