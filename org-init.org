@@ -5879,6 +5879,16 @@ From the README: "=eval-sexp-fu= provides tiny improvements to expression evalua
   :defer t)
 #+END_SRC
 
+*** CSS
+
+**** [[eglot]]
+
+Automatically start eglot in every =css-mode= buffer: 
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'css-mode-hook 'eglot-ensure)
+#+END_SRC 
+
 *** EditorConfig
 
 [[https://editorconfig.org/][EditorConfig]] helps specifying and sharing coding styles for consistent coding.
@@ -6125,6 +6135,8 @@ Major mode for [[https://www.graphviz.org/][graphiz/dot]] code.
 #+END_SRC
 
 *** HTML
+
+**** [[web-mode]]
 
 **** htmlize
 
@@ -7601,7 +7613,7 @@ https://github.com/fxbois/web-mode
 	("\\.djhtml\\'" . web-mode)
 	("\\.html?\\'" . web-mode)
 	("\\.xml\\'" . web-mode)
-	("\\.css\\'" . web-mode)
+	;; ("\\.css\\'" . web-mode)
 	("\\.svg\\'" . web-mode)
 	:config
 	;; highlight enclosing tags of the element under cursor
