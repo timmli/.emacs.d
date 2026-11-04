@@ -8338,6 +8338,17 @@ Copied from https://oremacs.com/2015/01/12/dired-file-size/ and slightly adapted
 (define-key dired-mode-map (kbd "z") 'dired-get-size)
 #+END_SRC
 
+**** sudo-edit
+
+https://github.com/nflath/sudo-edit
+
+Open files with sudo rights using [[Tramp]].
+
+#+BEGIN_SRC emacs-lisp
+(use-package sudo-edit
+	:ensure t)
+#+END_SRC
+
 **** trashed
 
 https://github.com/shingo256/trashed
