@@ -1,6 +1,6 @@
 ;;; mu4e-compose.el --- Compose and send messages -*- lexical-binding: t -*-
 
-;; Copyright (C) 2011-2024 Dirk-Jan C. Binnema
+;; Copyright (C) 2011-2026 Dirk-Jan C. Binnema
 
 ;; Author: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
 ;; Maintainer: Dirk-Jan C. Binnema <djcb@djcbsoftware.nl>
@@ -40,7 +40,6 @@
 (require 'mu4e-folders)
 
 (require 'mu4e-draft)
-
 
 ;;; User configuration for compose-mode
 (defgroup mu4e-compose nil
@@ -170,6 +169,8 @@ the file under our feet, which is a bit fragile."
     (unless (and name (not force) (eq old-context name))
       (unless (and (not force)
                    (eq old-context (mu4e-context-switch nil name)))
+        ;; remember the new context, to be re-applied when sending.
+        (setq mu4e--compose-context (mu4e-context-name (mu4e-context-current)))
         (save-excursion
           ;; Change From / Organization if needed.
           (message-replace-header "Organization"
@@ -184,7 +185,6 @@ the file under our feet, which is a bit fragile."
             (delete-region (point) (point-max)))
           (when message-signature
               (save-excursion (message-insert-signature))))))))
-
 
 ;;; Address completion
 
@@ -212,7 +212,11 @@ I.e., either \"name <email>\" or \"email\". Return nil if not found.
 This function can be used for `completion-at-point-functions', to
 complete addresses. This can be used from outside mu4e, but mu4e
 must be active (running) for this to work."
-  (let* ((end (point))
+  (let* ((end (save-excursion
+                (let ((p (point)))
+                  (skip-chars-forward "^,\n")
+                  (skip-chars-backward " \t" p))
+                (point)))
          (start (save-excursion
                   (re-search-backward "\\(\\`\\|[\n:,]\\)[ \t]*")
                   (goto-char (match-end 0))
@@ -470,16 +474,35 @@ variables ‘message-forward-as-mime’ and
 ;;;###autoload
 (defun mu4e-compose-resend (address)
   "Re-send the message at point to ADDRESS.
-The message is resent as-is, without any editing. See
-`message-resend' for details."
+
+This wraps `message-resend' - the message is resent as-is,
+without any editing.
+
+However, note that while `message-resend' does not handle
+Fcc: (and won't save copies of outgoing mail),
+`mu4e-compose-resend' does honor `mu4e-sent-messages-behavior'."
   (interactive
    (list (completing-read
           "Resend message to address: " mu4e--contacts-set)))
-  (let ((msg (mu4e-message-at-point)))
+  (let* ((msg (mu4e-message-at-point))
+         (fcc-path (mu4e--fcc-path (mu4e--draft-basename) msg))
+         (fcc-handler
+          (lambda ()
+            ;; set up Fcc for mu4e-sent-messages-behavior
+            (let ((buf (current-buffer)))
+              (with-temp-buffer
+                (insert-buffer-substring buf)
+                (mu4e--delimit-headers 'undelimit)
+                (mu4e--fcc-handler fcc-path))))))
     (with-temp-buffer
       (mu4e--prepare-draft msg)
       (insert-file-contents (mu4e-message-readable-path msg))
-      (message-resend address))))
+      (unwind-protect
+          (progn
+            ;; run `message-resend', honor `mu4e-sent-messages-behavior'
+            (add-hook 'message-sent-hook fcc-handler)
+            (message-resend address))
+        (remove-hook 'message-sent-hook fcc-handler)))))
 
 ;;; Compose-mode
 

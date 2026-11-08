@@ -246,6 +246,10 @@ messages, it is nil.")
   "The compose-type for the current message.")
 (put 'mu4e-compose-type 'permanent-local t)
 
+(defvar-local mu4e--compose-context nil
+  "Name of the context this draft was composed in.")
+(put 'mu4e--compose-context 'permanent-local t)
+
 ;;; Filenames
 (defun mu4e--draft-basename()
   "Construct a randomized filename for a message with flags FLAGSTR.
@@ -356,7 +360,8 @@ With HEADERS-ONLY non-nil, only include the headers part."
       (rfc822-goto-eoh)
       (decode-coding-region (point-min) (point) 'utf-8))
     (mm-enable-multibyte)
-    (ignore-errors (run-hooks 'gnus-article-decode-hook))
+    (let ((rfc2047-quote-decoded-words-containing-tspecials t))
+      (ignore-errors (run-hooks 'gnus-article-decode-hook)))
     (buffer-substring-no-properties (point-min) (point-max))))
 
 (defvar mu4e--draft-buffer-max-name-length 48)
@@ -497,21 +502,18 @@ appropriate flag at the message forwarded or replied-to."
 
 (defun mu4e--compose-message-sent ()
   "Mu4e's `message-sent-hook' handling."
-  ;; typically, draft is gone and the sent message appears in sent. Update flags
-  ;; for related messages, i.e. for Forwarded ('Passed') and Replied messages,
-  ;; try to set the appropriate flag at the message forwarded or replied-to.
-  (when-let* ((fcc-path (message-field-value "Fcc")))
-    (mu4e--set-parent-flags fcc-path)
-    ;; we end up with a ((buried) buffer here, visiting the
-    ;; fcc-path; not quite sure why. But let's get rid of it (#2681)
-    (when-let* ((buf (find-buffer-visiting fcc-path)))
-      (kill-buffer buf)))
-  ;; remove draft
-  (when-let* ((draft (buffer-file-name)))
-    (mu4e--server-remove draft)))
+  (when-let* ((path (buffer-file-name)))
+    ;; Update flags for related messages, i.e. for Forwarded ('Passed') and
+    ;; Replied messages, try to set the appropriate flag at the message
+    ;; forwarded or replied-to.
+    (mu4e--set-parent-flags path)
+    ;; remove draft
+    (mu4e--server-remove path)))
 
 (defun mu4e--compose-before-send ()
   "Function called just before sending a message."
+  (when-let* ((cname mu4e--compose-context))
+    (mu4e-context-switch nil cname)) ;; restore; may have changed
   ;; Remove References: if In-Reply-To: is missing.
   ;; This allows the user to effectively start a new message-thread by
   ;; removing the In-Reply-To header.
@@ -650,7 +652,9 @@ COMPOSE-TYPE and PARENT are as in `mu4e--draft'."
   ;; available in mode-hooks.
   (setq-local
    mu4e-compose-parent-message parent
-   mu4e-compose-type compose-type)
+   mu4e-compose-type compose-type
+   mu4e--compose-context (when-let* ((ctx (mu4e-context-current)))
+                           (mu4e-context-name ctx)))
 
   ;; draft path
   (unless (eq compose-type 'edit)

@@ -31,6 +31,7 @@
 (require 'cl-lib)
 (require 'bookmark)
 (require 'message)
+(require 'crm)
 
 (require 'mu4e-window)
 (require 'mu4e-config)
@@ -140,6 +141,23 @@ debuggable (backtrace) error."
 Does a local-exit and does not return."
   (mu4e-log 'error (apply 'mu4e-format frm args))
   (user-error "%s" (apply 'mu4e-format frm args)))
+
+
+(defun mu4e--check-sec (str type)
+  "Decorate suspicious strings.
+
+If available, use `textsec-suspicious-p' to decorate suspicious
+strings. STR is some string, and TYPE its type, as
+`textsec-suspicious-p'.
+
+If STR looks suspicious, return it with face
+`textsec-suspicious', with the specific warning as a tooltip.
+
+Otherwise, return STR unchanged."
+  (if-let* ((_ (fboundp 'textsec-suspicious-p))
+           (wrn (textsec-suspicious-p str type)))
+      (propertize str 'face 'textsec-suspicious 'tooltip wrn)
+    str))
 
 ;;; Reading user input
 
@@ -342,6 +360,43 @@ Function returns the value (cdr) of the matching cell."
                 (characterp (plist-get item :key)))
               lst))
 
+;;;; Completing multiple candidates
+
+(defconst mu4e--separator ",;|"
+  "Characters to try as separator for `mu4e--completing-read-multiple'.")
+
+(defun mu4e--find-suitable-separator (table)
+  "Find a separator for completing multiple candidates from TABLE.
+TABLE is a completion table. Return the first character in
+`mu4e--separator' that is not part of any of the candidates in
+TABLE, or nil if there is none."
+  (let ((candidates (all-completions "" table)))
+    (seq-find (lambda (sep)
+                (not (seq-some (lambda (candidate)
+                                 (string-search (string sep) candidate))
+                               candidates)))
+              mu4e--separator)))
+
+(defvar crm-prompt) ;; emacs 31
+
+(defun mu4e--completing-read-multiple (prompt table)
+  "Read multiple candidates from completion TABLE, with PROMPT.
+This is like `completing-read-multiple', but chooses a separator
+as per `mu4e--find-suitable-separator'; raise an error if there is none.
+
+Only candidates in TABLE are accepted.
+
+Return list of the chosen candidates."
+  (let* ((sep (string
+               (or (mu4e--find-suitable-separator table)
+                   (mu4e-error "No suitable separator for candidates"))))
+         (crm-separator (propertize (rx (* blank) (literal sep) (* blank))
+                                    'separator sep))
+         ;; we add our own separator description.
+         (crm-prompt "%p"))
+    (completing-read-multiple
+     (format "%s (%s-separated list): " prompt sep) table nil t)))
+
 ;;; Logging / debugging
 
 (defcustom mu4e-debug nil
@@ -525,7 +580,9 @@ This includes expanding e.g. 3-5 into 3,4,5. If the letter
          (mu4e-warn "Attachment %d bigger than maximum (%d)" x n))
         ((< x 1)
          (mu4e-warn "Attachment number must be greater than 0 (%d)" x))))
-     list)))
+     list)
+    ;; the numbers were pushed, so restore the order
+    (nreverse list)))
 
 (defun mu4e-get-time-date (prompt)
   "Determine the Emacs time value for time/date entered by user.
@@ -713,6 +770,9 @@ which we need to avoid #2661."
                   (save-excursion
                     (goto-char end-of-headers)
                     (insert-before-markers header))))))))
+      ;; `syntax-propertize' can't widen, so make sure it won't need to
+      ;; (Emacs bug#81035).
+      (syntax-propertize end-of-headers)
       (narrow-to-region end-of-headers (point-max)))))
 
 (defun mu4e-key-description (cmd)
@@ -728,6 +788,37 @@ shorter keys in some cases where there are multiple bindings."
                (length< b1 (length b2)))
              (seq-map #'key-description
                       (where-is-internal cmd)))))
+
+(defvar xwidget-webkit-disable-javascript)
+
+(defun mu4e-xwidget-usable-p (&optional ignore-display)
+  "Do we have usable xwidget support?
+That means that the feature is available, and supports disabling
+JavaScript.
+
+Also check that we have a graphical display, unless IGNORE-DISPLAY
+is non-nil (interactively, with prefix argument).
+
+Called interactively, show a message saying whether xwidget is
+usable, and if not, why not.
+
+Return t if xwidget is usable for mu4e, nil otherwise."
+  (interactive "P")
+  (let ((msg
+         (cond
+          ((not (featurep 'xwidget-internal))
+           "Emacs built without xwidget support")
+          ((not (progn (require 'xwidget)
+                       (boundp 'xwidget-webkit-disable-javascript)))
+           ;; i.e., too old Emacs; enabling JavaScript is not safe
+           "JavaScript cannot be disabled")
+          ((and (not ignore-display) (not (display-graphic-p)))
+           "No graphical display"))))
+    (when (called-interactively-p 'interactive)
+      (if msg
+          (mu4e-message "Xwidget not usable: %s" msg)
+        (mu4e-message "Xwidget is usable")))
+    (not msg)))
 
 (provide 'mu4e-helpers)
 ;;; mu4e-helpers.el ends here

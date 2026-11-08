@@ -1217,6 +1217,20 @@ The following specs are supported:
 (defvar mu4e~highlighted-docid nil
   "The highlighted docid.")
 
+(defun mu4e~headers-sync-window-point ()
+  "Propagate the headers buffer's point to all windows showing it.
+Emacs only keeps a window's window-point automatically in sync
+with the buffer's point for the *selected* window, let's attempt
+to fix that by hand."
+  (when-let* ((buf (mu4e-get-headers-buffer))
+              ((buffer-live-p buf)))
+    (let ((pos (with-current-buffer buf (point))))
+      (walk-windows
+       (lambda (win)
+         (when (eq (window-buffer win) buf)
+           (set-window-point win pos)))
+       nil t))))
+
 (defun mu4e~headers-highlight (docid)
   "Highlight the header with DOCID, or do nothing if it's not found.
 Also, un-highlight any previously highlighted headers."
@@ -1229,7 +1243,8 @@ Also, un-highlight any previously highlighted headers."
       ;; now, highlight the new one
       (when (mu4e~headers-goto-docid docid)
         (hl-line-highlight)))
-    (setq mu4e~highlighted-docid docid)))
+    (setq mu4e~highlighted-docid docid))
+  (mu4e~headers-sync-window-point))
 
 ;;; Misc 2
 
@@ -1481,7 +1496,16 @@ If set to non-nil, open message after `mu4e-headers-next' and
 `mu4e-headers-prev' if pointing at a message after the move and
 there is a live message view.
 
-This variable is for let-binding when scripting.")
+This variable is for let-binding.")
+
+(defun mu4e~headers-view-win-p ()
+  "Is `mu4e~headers-view-win' live and showing a message view?
+This is either a view buffer or its xwidget buffer; both have
+`mu4e--view-message' set."
+  (and (window-live-p mu4e~headers-view-win)
+       (buffer-local-value 'mu4e--view-message
+                           (window-buffer mu4e~headers-view-win))
+       t))
 
 (defun mu4e~headers-move (lines)
     "Move point LINES lines.
@@ -1507,19 +1531,11 @@ view-window, open the message unless
              ;; the end of another invisible overlay covering
              ;; previous EOL.
              (move-to-column 2)
-             ;; update all windows showing the headers buffer
-             (walk-windows
-              (lambda (win)
-                (when (eq (window-buffer win)
-                          (mu4e-get-headers-buffer (buffer-name)))
-                  (set-window-point win (point))))
-              nil t)
              ;; If the assigned (and buffer-local) `mu4e~headers-view-win'
              ;; is not live then that is indicates the user does not want
-             ;; to pop up the view when they navigate in the headers
-             ;; buffer.
+             ;; to pop up the view.
              (when (and mu4e-headers-open-after-move
-                        (window-live-p mu4e~headers-view-win))
+                        (mu4e~headers-view-win-p))
                (mu4e-headers-view-message))
              ;; attempt to highlight the new line, display the message
              (mu4e~headers-highlight docid)

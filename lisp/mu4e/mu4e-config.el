@@ -25,14 +25,14 @@
 
 ;;; Code:
 
-(defconst mu4e-mu-version "1.14.3"
+(defconst mu4e-mu-version "1.14.4"
   "Required mu binary version.
 mu4e's version must agree with this.")
 
-(defconst mu4e-doc-dir "/gnu/store/l4j1vk97yssypq5m1i7fkmmgkifs47v5-mu-1.14.3/share/doc/mu"
+(defconst mu4e-doc-dir "/gnu/store/lpgfh23a1gb5b6aj508kx1877k68mhdx-mu-1.14.4/share/doc/mu"
   "Directory for mu4e documentation.")
 
-(defconst mu4e-icon-path "/gnu/store/l4j1vk97yssypq5m1i7fkmmgkifs47v5-mu-1.14.3/share/icons/hicolor/scalable/apps/mu-icon.svg"
+(defconst mu4e-icon-path "/gnu/store/lpgfh23a1gb5b6aj508kx1877k68mhdx-mu-1.14.4/share/icons/hicolor/scalable/apps/mu-icon.svg"
   "Path to the mu/mu4e icon.")
 
 (provide 'mu4e-config)

@@ -11,8 +11,8 @@
 
 ;;; Generated autoloads from mu4e.el
 
-(autoload 'mu4e "mu4e" "\
-If mu4e is not running yet, start it.
+(autoload 'mu4e "mu4e"
+"If mu4e is not running yet, start it.
 Then, show the main window, unless BACKGROUND (prefix-argument)
 is non-nil.
 
@@ -33,16 +33,16 @@ is non-nil.
 ;;; Generated autoloads from mu4e-compose.el
 
 (defalias 'mu4e-compose-mail #'mu4e-compose-new)
-(autoload 'mu4e-compose-new "mu4e-compose" "\
-Mu4e's implementation of `compose-mail'.
+(autoload 'mu4e-compose-new "mu4e-compose"
+"Mu4e's implementation of `compose-mail'.
 TO, SUBJECT, OTHER-HEADERS, CONTINUE, YANK-ACTION SEND-ACTIONS
 RETURN-ACTION are as described in `compose-mail', and to the
 extend that they do not conflict with mu4e's inner workings.
 SWITCH-FUNCTION is ignored.
 
 (fn &optional TO SUBJECT OTHER-HEADERS CONTINUE SWITCH-FUNCTION YANK-ACTION SEND-ACTIONS RETURN-ACTION &rest _)" t)
-(autoload 'mu4e-compose-reply-to "mu4e-compose" "\
-Reply to the message at point.
+(autoload 'mu4e-compose-reply-to "mu4e-compose"
+"Reply to the message at point.
 Optional TO can be the To: address for the message. If WIDE is
 non-nil, make it a \"wide\" reply (a.k.a. \"reply-to-all\").
 
@@ -52,28 +52,33 @@ selected, that region is used instead of the original message
 body for citing.'
 
 (fn &optional TO WIDE)" t)
-(autoload 'mu4e-compose-reply "mu4e-compose" "\
-Reply to the message at point.
+(autoload 'mu4e-compose-reply "mu4e-compose"
+"Reply to the message at point.
 If WIDE is non-nil, make it a \"wide\" reply (a.k.a.
 \"reply-to-all\").
 
 (fn &optional WIDE)" t)
-(autoload 'mu4e-compose-wide-reply "mu4e-compose" "\
-Wide reply to the message at point.
+(autoload 'mu4e-compose-wide-reply "mu4e-compose"
+"Wide reply to the message at point.
 I.e., \"reply-to-all\"." t)
-(autoload 'mu4e-compose-supersede "mu4e-compose" "\
-Supersede the message at point.
+(autoload 'mu4e-compose-supersede "mu4e-compose"
+"Supersede the message at point.
 
 That is, send the message again, with all the same recipients;
 this can be useful to follow-up on a sent message. The message
 must originate from the current user, as determined through
 `mu4e-personal-or-alternative-address-p'." t)
-(autoload 'mu4e-compose-edit "mu4e-compose" "\
-Edit an existing draft message." t)
-(autoload 'mu4e-compose-resend "mu4e-compose" "\
-Re-send the message at point to ADDRESS.
-The message is resent as-is, without any editing. See
-`message-resend' for details.
+(autoload 'mu4e-compose-edit "mu4e-compose"
+"Edit an existing draft message." t)
+(autoload 'mu4e-compose-resend "mu4e-compose"
+"Re-send the message at point to ADDRESS.
+
+This wraps `message-resend' - the message is resent as-is,
+without any editing.
+
+However, note that while `message-resend' does not handle
+Fcc: (and won't save copies of outgoing mail),
+`mu4e-compose-resend' does honor `mu4e-sent-messages-behavior'.
 
 (fn ADDRESS)" t)
 (define-mail-user-agent 'mu4e-user-agent #'mu4e-compose-mail #'message-send-and-exit #'message-kill-buffer 'message-send-hook)
@@ -102,16 +107,16 @@ The message is resent as-is, without any editing. See
 
 ;;; Generated autoloads from mu4e-dbus.el
 
-(defvar mu4e-dbus-mode nil "\
-Non-nil if Mu4e-Dbus mode is enabled.
+(defvar mu4e-dbus-mode nil
+"Non-nil if Mu4e-Dbus mode is enabled.
 See the `mu4e-dbus-mode' command
 for a description of this minor mode.
 Setting this variable directly does not take effect;
 either customize it (see the info node `Easy Customization')
 or call the function `mu4e-dbus-mode'.")
 (custom-autoload 'mu4e-dbus-mode "mu4e-dbus" nil)
-(autoload 'mu4e-dbus-mode "mu4e-dbus" "\
-Minor mode for enabling and disable the mu4e DBus service.
+(autoload 'mu4e-dbus-mode "mu4e-dbus"
+"Minor mode for enabling and disable the mu4e DBus service.
 
 This is a global minor mode.  If called interactively, toggle the
 `Mu4e-Dbus mode' mode.  If the prefix argument is positive, enable the
@@ -198,24 +203,24 @@ disabled.
 
 ;;; Generated autoloads from mu4e-org.el
 
-(autoload 'mu4e-org-store-link "mu4e-org" "\
-Store a link to a mu4e message or query.
+(autoload 'mu4e-org-store-link "mu4e-org"
+"Store a link to a mu4e message or query.
 It links to the last known query when in `mu4e-headers-mode' with
 `mu4e-org-link-query-in-headers-mode' set; otherwise it links to
 a specific message, based on its message-id, so that links stay
 valid even after moving the message around.")
-(autoload 'mu4e-org-open "mu4e-org" "\
-Open the org LINK.
+(autoload 'mu4e-org-open "mu4e-org"
+"Open the org LINK.
 Open the mu4e message (for links starting with \"msgid:\") or run
 the query (for links starting with \"query:\").
 
 (fn LINK)")
-(autoload 'mu4e-org-store-and-capture "mu4e-org" "\
-Store a link to the current message or query.
+(autoload 'mu4e-org-store-and-capture "mu4e-org"
+"Store a link to the current message or query.
 (depending on `mu4e-org-link-query-in-headers-mode', and capture
 it with org)." t)
-(autoload 'mu4e-org-agenda-links "mu4e-org" "\
-Show mu4e:msgid links found in `org-agenda-files'.
+(autoload 'mu4e-org-agenda-links "mu4e-org"
+"Show mu4e:msgid links found in `org-agenda-files'.
 Display a tabulated-list buffer with Context and File columns." t)
 (register-definition-prefixes "mu4e-org" '("mu4e-"))
 
@@ -237,8 +242,8 @@ Display a tabulated-list buffer with Context and File columns." t)
 
 ;;; Generated autoloads from mu4e-speedbar.el
 
-(autoload 'mu4e-speedbar-buttons "mu4e-speedbar" "\
-Create buttons for any mu4e BUFFER.
+(autoload 'mu4e-speedbar-buttons "mu4e-speedbar"
+"Create buttons for any mu4e BUFFER.
 
 (fn &optional BUFFER)" t)
 (register-definition-prefixes "mu4e-speedbar" '("mu4e"))
@@ -268,6 +273,16 @@ Create buttons for any mu4e BUFFER.
 ;;; Generated autoloads from mu4e-view.el
 
 (register-definition-prefixes "mu4e-view" '("gnus-icalendar-event-from-handle" "mu4e-"))
+
+
+;;; Generated autoloads from mu4e-view-html.el
+
+(register-definition-prefixes "mu4e-view-html" '("mu4e-"))
+
+
+;;; Generated autoloads from mu4e-view-xwidget.el
+
+(register-definition-prefixes "mu4e-view-xwidget" '("mu4e--view-"))
 
 
 ;;; Generated autoloads from mu4e-window.el

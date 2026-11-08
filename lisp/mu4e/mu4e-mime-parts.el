@@ -201,7 +201,11 @@ Note: this is not compatible with `helm-mode'."
       (mu4e-warn "Not supported with helm")
     (when mu4e--completions-table
         (insert (string-join
-                 (seq-map #'car mu4e--completions-table) ", ")))))
+                 (seq-map #'car mu4e--completions-table)
+                 ;; the separator chosen by `mu4e--completing-read-multiple'
+                 (concat (or (get-text-property 0 'separator crm-separator)
+                             ",")
+                         " "))))))
 
 (defvar mu4e-view-completion-minor-mode-map
   (let ((map (make-sparse-keymap)))
@@ -272,7 +276,7 @@ COMPLETIONS is the list of completion strings to affixate."
 (defvar helm-comp-read-use-marked)
 (defun mu4e--completing-read-real (prompt candidates multi)
   "Call the appropriate completion-read function.
-- PROMPT is a string informing the user what to complete
+- PROMPT is a string informing what to complete
 - CANDIDATES is an alist of candidates of the form
     (id . part)
 - MULTI if t, allow for completing _multiple_ candidates."
@@ -283,11 +287,11 @@ COMPLETIONS is the list of completion strings to affixate."
     ;; basically, with helm, helm-comp-read-use-marked + completing-read
     ;; is preferred over completing-read-multiple
     (let ((helm-comp-read-use-marked t))
-      (completing-read prompt candidates)))
+      (completing-read (concat prompt ": ") candidates)))
    (multi
-    (completing-read-multiple prompt candidates))
+    (mu4e--completing-read-multiple prompt candidates))
    (t
-    (completing-read prompt candidates))))
+    (completing-read (concat prompt ": ") candidates))))
 
 (defun mu4e--completing-read (prompt candidates type &optional multi)
   "Read the part-id of some MIME-type in this message.
@@ -295,7 +299,7 @@ COMPLETIONS is the list of completion strings to affixate."
 Presents the user with completions for the MIME-parts in
 the current message.
 
-- PROMPT is a string informing the user what to complete
+- PROMPT is a string informing what to complete
 - CANDIDATES is an alist of candidates of the form
     (id . part)
 - TYPE is the annotation type to use as per `mu4e--part-affixation'.
@@ -328,7 +332,11 @@ Optionally,
   "Save files from the current view buffer.
 
 Save the attachments that are selected. If none are explicitly
-selected then *all* attachments will be saved. For using subset,
+selected then *all* attachments will be saved. Note that this
+won't work with some completion frameworks *always* select some
+candidate.
+
+To insert all candidates, then manually specify some subset,
 there is \\[mu4e-view-complete-all] to select all attachments.
 
 Note all MIME-parts that are \"attachment-like\" (have a
@@ -340,34 +348,24 @@ one is determined using `mu4e-attachment-dir'.
 
 This command assumes unique filenames for the attachments, since
 that is how the underlying completion mechanism works. If there
-are duplicates, only one is recognized.
-
-Furthermore, file-names that match `crm-separator' (by default, a
-comma and some optional whitespace) are not supported (see
-`completing-read-multiple' for further details). Hence, when we
-detect that, the function bails out and advises to use
-`mu4e-view-mime-part-action' instead, which does support such
-files."
+are duplicates, only one is recognized."
   (interactive "P")
   (let* ((parts (mu4e-view-mime-parts))
          (candidates  (seq-map
                        (lambda (fpart)
-                         (let ((fname (plist-get fpart :filename)))
-                           (when (and crm-separator
-                                      (string-match-p crm-separator fname))
-                             (mu4e-warn
-                              (concat
-                               "File(s) match `crm-separator'; "
-                               "use mu4e-view-mime-part-action instead")))
-                           ;; (filename . annotation)
-                           (cons fname fpart)))
+                         ;; (filename . annotation)
+                         (cons (plist-get fpart :filename) fpart))
                        (seq-filter
                         (lambda (part) (plist-get part :attachment-like))
                         parts)))
          (candidates (or candidates
                          (mu4e-warn "No attachments for this message")))
+         (_ (unless (mu4e--find-suitable-separator candidates)
+              (mu4e-warn
+               (concat "No suitable separator for the file names; "
+                       "use mu4e-view-mime-part-action instead"))))
          (files (or (mu4e--completing-read
-                     "Save attachments (default: save all): " candidates
+                     "Save attachments" candidates
                      'attachment 'multi)
                     (mapcar #'car-safe candidates)))
          (custom-dir (when ask-dir (read-directory-name
@@ -492,7 +490,7 @@ the third MIME-part."
                          (mu4e-warn "No MIME-parts for this message")))
          (ids (seq-map #'string-to-number
                        (if n (list (number-to-string n))
-                           (mu4e--completing-read "MIME-part(s) to operate on: "
+                           (mu4e--completing-read "MIME-part(s) to operate on"
                                                   candidates
                                                   'mime-part 'multi))))
          (options
@@ -554,159 +552,6 @@ the third MIME-part."
         (call-process-shell-command pipecmd path t t)
         (view-mode)))
     (display-buffer buf)))
-
-;;; Message as HTML
-
-(defconst mu4e--view-plain-text-html-template
-  (concat "<html><head><meta charset=\"utf-8\"/></head>"
-          "<body><pre style=\"white-space:pre-wrap\">%s"
-          "</pre></body></html>")
-  "HTML template for wrapping a plain-text message body.
-The %s is replaced by the HTML-escaped text.")
-
-(defun mu4e--view-mime-part (handles media-type)
-  "Find the first MIME part with MEDIA-TYPE in HANDLES.
-HANDLES is a MIME handle or handle tree, as produced by
-`mm-dissect-buffer'.
-
-Return the handle, or nil."
-  (cond
-   ((not (listp handles)) nil)
-   ;; leaf: check media type
-   ((bufferp (car handles))
-    (when (equal (mm-handle-media-type handles) media-type)
-      handles))
-   ;; composite: recurse through sub-handles
-   (t (seq-some (lambda (handle)
-                  (mu4e--view-mime-part handle media-type))
-                (cdr handles)))))
-
-(defun mu4e--view-cid-parts (handles)
-  "Collect all MIME parts in HANDLES that have a Content-ID.
-Return an alist of (CID . HANDLE) pairs."
-  (cond
-   ((not (listp handles)) nil)
-   ((bufferp (car handles))
-    (when-let* ((id (mm-handle-id handles)))
-      ;; strip the angle brackets from the content-id
-      (list (cons (replace-regexp-in-string
-                   (rx (or (seq bos "<") (seq ">" eos))) "" id)
-                  handles))))
-   (t (seq-mapcat #'mu4e--view-cid-parts (cdr handles)))))
-
-(defun mu4e--view-resolve-cids (html cid-parts)
-  "Replace \"cid:\" references in HTML with data:-URIs.
-CID-PARTS is an alist of (CID . HANDLE) pairs, as per
-`mu4e--view-cid-parts'. Return the updated HTML."
-  (dolist (part cid-parts html)
-    (let* ((handle (cdr part))
-           (data-uri (format "data:%s;base64,%s"
-                             (mm-handle-media-type handle)
-                             (base64-encode-string
-                              (mm-get-part handle) t))))
-      (setq html (replace-regexp-in-string
-                  (regexp-quote (concat "cid:" (car part)))
-                  data-uri html t t)))))
-
-(defun mu4e--view-html-escape (text)
-  "Escape TEXT for inclusion in HTML."
-  (seq-reduce (lambda (text pair)
-                (replace-regexp-in-string (car pair) (cdr pair) text t t))
-              '(("&" . "&amp;") ("<" . "&lt;") (">" . "&gt;"))
-              text))
-
-(defconst mu4e--view-url-regexp
-  (rx "http" (? "s") "://"
-      (* (any "-a-zA-Z0-9._~%#?&=/+:;@!$*(),'"))
-      (any "-a-zA-Z0-9_~%#&=/+@$'"))
-  "Regexp matching URLs in text.
-The final character class excludes punctuation, so that e.g. a
-full-stop after the URL is not included.")
-
-(defconst mu4e--view-email-regexp
-  (rx (any "a-zA-Z0-9") (* (any "-a-zA-Z0-9._%+"))
-      "@" (+ (any "-a-zA-Z0-9.")) "." (>= 2 alpha))
-  "Regexp matching e-mail addresses.")
-
-(defconst mu4e--view-linkable-regexp
-  (rx (or (regexp mu4e--view-url-regexp)
-          (regexp mu4e--view-email-regexp)))
-  "Regexp matching linkable things: URLs and e-mail addresses.")
-
-(defun mu4e--view-linkable-url (match)
-  "Return the URL for MATCH."
-  (if (string-match-p (rx bos (regexp mu4e--view-email-regexp) eos)
-                      match)
-      (concat "mailto:" match)
-    match))
-
-(defun mu4e--view-linkify-html (text)
-  "Turn URLs/e-mail addresses in escaped TEXT into HTML links."
-  (replace-regexp-in-string
-   mu4e--view-linkable-regexp
-   (lambda (match)
-     (format "<a href=\"%s\">%s</a>"
-             (mu4e--view-linkable-url match) match))
-   text t t))
-
-(defun mu4e--view-mime-part-string (handle)
-  "Return MIME part HANDLE as a decoded string."
-  (let* ((charset (mail-content-type-get (mm-handle-type handle) 'charset))
-         (coding (and charset (mm-charset-to-coding-system charset)))
-         (coding (if (memq coding '(nil ascii)) 'utf-8 coding)))
-    (decode-coding-string (mm-get-part handle) coding)))
-
-(defconst mu4e--view-html-headers-html-pre
-  (concat "<div style=\"font-family:sans-serif;padding-bottom:8px;"
-          "border-bottom:1px solid #ccc;margin-bottom:8px\">\n")
-  "HTML fragment that opens the message-headers block.")
-
-(defconst mu4e--view-html-headers-html-post
-  ;; the empty paragraph is invisible in external browsers but a nice empty line
-  ;; in shr.
-  "</div>\n<p style=\"margin:0\"></p>\n"
-  "HTML fragment that closes the message-headers block.")
-
-(defun mu4e--view-html-headers (msg)
-  "Create an HTML block for the headers of message MSG."
-  (concat
-   mu4e--view-html-headers-html-pre
-   (mapconcat
-    (lambda (field)
-      (if-let* ((val (mu4e-message-field-raw msg field))
-                (val (pcase field
-                       ((or :from :to :cc)
-                        (mapconcat #'mu4e-contact-full val ", "))
-                       (:date (message-make-date val))
-                       (_ val))))
-          (format "<b>%s:</b> %s<br>\n"
-                  (capitalize (substring (symbol-name field) 1))
-                  (mu4e--view-html-escape val))
-        ""))
-    '(:from :to :cc :date :subject) "")
-   mu4e--view-html-headers-html-post))
-
-(defun mu4e--view-html-prepend-headers (html headers)
-  "Insert the HEADERS block at the beginning of the body of HTML."
-  (let ((case-fold-search t))
-    (cond
-     ((string-match (rx "<body" (* (not (any ">"))) ">") html)
-      (replace-match (concat (match-string 0 html) headers) t t html))
-     ((string-match (rx "</head" (* (not (any ">"))) ">") html)
-      (replace-match (concat (match-string 0 html) headers) t t html))
-     (t (concat headers html)))))
-
-(defun mu4e--view-extract-html (handles)
-  "Extract an HTML body string from MIME HANDLES, or nil.
-Prefer text/html part; otherwise construct HTML from a
-text/plain part, if any."
-  (if-let* ((handle (mu4e--view-mime-part handles "text/html")))
-      (mu4e--view-mime-part-string handle)
-    (when-let* ((handle (mu4e--view-mime-part handles "text/plain")))
-      (format mu4e--view-plain-text-html-template
-              (mu4e--view-linkify-html
-               (mu4e--view-html-escape
-                (mu4e--view-mime-part-string handle)))))))
 
 (provide 'mu4e-mime-parts)
 ;;; mu4e-mime-parts.el ends here
