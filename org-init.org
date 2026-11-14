@@ -7779,6 +7779,13 @@ Do not ask whether directories should be copied recursively.
 (setq dired-recursive-copies 'always)
 #+END_SRC
 
+Compress with .zip instead of .tar.gz:
+#+BEGIN_SRC emacs-lisp
+(setq dired-compress-file-default-suffix ".zip")
+(setq dired-compress-directory-default-suffix ".zip")
+(add-to-list 'dired-compress-file-alist '("\\.zip\\'" . "zip %o -r --filesync %i"))
+#+END_SRC
+
 **** Mark/Unmark 
 
 Use shift-up and shift-down in the usual way.
