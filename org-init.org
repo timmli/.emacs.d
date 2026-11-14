@@ -7783,7 +7783,9 @@ Compress with .zip instead of .tar.gz:
 #+BEGIN_SRC emacs-lisp
 (setq dired-compress-file-default-suffix ".zip")
 (setq dired-compress-directory-default-suffix ".zip")
-(add-to-list 'dired-compress-file-alist '("\\.zip\\'" . "zip %o -r --filesync %i"))
+
+(with-eval-after-load 'dired-compress
+  (add-to-list 'dired-compress-file-alist '("\\.zip\\'" . "zip %o -r --filesync %i")))
 #+END_SRC
 
 **** Mark/Unmark 
