@@ -8248,14 +8248,18 @@ See https://github.com/Fuco1/dired-hacks#dired-collapse.
 
 **** dired-efap
 
+https://github.com/juan-leon/dired-efap
+
 Rename file name at point.
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired-efap
 	:ensure t
 	:config
-	(setq dired-efap-initial-filename-selection nil)
+	(setq dired-efap-initial-filename-selection nil
+				dired-efap-use-mouse nil)
 	(define-key dired-mode-map (kbd "r") 'dired-efap)
+	(define-key dired-mode-map [down-mouse-1] dired-efap-old-mouse-func)
 	)
 #+END_SRC
 
