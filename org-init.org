@@ -7772,6 +7772,8 @@ Move to trash can (recycle bin under windows) when deleting:
 Drag and drop files from Dired to non-Emacs windows:
 #+BEGIN_SRC emacs-lisp
 (setq dired-mouse-drag-files t)
+(with-eval-after-load 'dired
+  (define-key dired-mode-map [down-mouse-1] #'dired-mouse-drag))
 #+END_SRC
 
 Do not ask whether directories should be copied recursively.
