@@ -7786,7 +7786,7 @@ Compress with .zip instead of .tar.gz:
 (setq dired-compress-file-default-suffix ".zip")
 (setq dired-compress-directory-default-suffix ".zip")
 
-(with-eval-after-load 'dired-compress
+(with-eval-after-load 'dired-aux
   (add-to-list 'dired-compress-file-alist '("\\.zip\\'" . "zip %o -r --filesync %i")))
 #+END_SRC
 
